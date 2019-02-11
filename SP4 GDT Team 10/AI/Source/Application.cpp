@@ -11,7 +11,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "SceneGraph.h"
 #include "SceneSP.h"
 
 GLFWwindow* m_window;

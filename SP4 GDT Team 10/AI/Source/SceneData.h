@@ -22,6 +22,8 @@ public:
 	void SetWorldHeight(float worldheight);
 	float GetWorldWidth();
 	void SetWorldWidth(float worldwidth);
+	float GetElapsedTime();
+	void SetElapsedTime(float elapsedTime);
 private:
 	SceneData();
 	~SceneData();
@@ -33,6 +35,7 @@ private:
 
 	float m_worldHeight;
 	float m_worldWidth;
+	float f_elapsedTime;
 };
 
 #endif

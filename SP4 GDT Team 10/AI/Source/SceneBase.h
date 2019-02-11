@@ -95,6 +95,7 @@ public:
 		GEO_BLUE_TOWER,
 
 		GEO_GRASS,
+		GEO_SEA,
 
 		GEO_BACKGROUND,
 
