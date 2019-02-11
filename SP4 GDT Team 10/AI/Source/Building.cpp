@@ -1,10 +1,11 @@
 #include "Building.h"
 #include "ConcreteMessages.h"
 
-Building::Building(GAMEOBJECT_TYPE typeValue) : GameObject(typeValue)
+Building::Building(GAMEOBJECT_TYPE typeValue) 
+	: GameObject(typeValue),
+	eCurrState(COMPLETED)
 {
 	//GameObject(typeValue);
-	this->type;
 	std::cout << "Building Constructor" << std::endl;
 }
 

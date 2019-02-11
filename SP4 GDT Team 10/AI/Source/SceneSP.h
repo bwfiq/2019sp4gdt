@@ -41,6 +41,8 @@ protected:
 	int m_objectCount;
 
 	GAME_STATE game_state;
+
+	GameObject* selected; //Gameobject selected by mouse click, can do actions from UI choices that pop up
 };
 
 #endif

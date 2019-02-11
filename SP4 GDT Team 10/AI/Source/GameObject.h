@@ -34,6 +34,9 @@ struct GameObject : public ObjectBase
 	int id;
 	float moveSpeed;
 	GameObject * goTarget;
+
+	bool bHovered, bSelected;
+
 	/*
 	bool moveLeft;
 	bool moveRight;

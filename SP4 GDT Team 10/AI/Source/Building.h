@@ -11,7 +11,16 @@ struct Building : public GameObject
 	bool moveUp;
 	bool moveDown;*/
 
+	enum STATES
+	{
+		COMPLETED = 0,
+		CONSTRUCTING,
+		BROKEN,
+		BLUEPRINT,
+		STATES_TOTAL //Should not have any enums below this
+	};
 
+	STATES eCurrState;
 
 	virtual bool Handle(Message* msg);
 

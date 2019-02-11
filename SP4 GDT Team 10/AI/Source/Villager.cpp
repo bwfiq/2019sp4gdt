@@ -1,10 +1,16 @@
 #include "Villager.h"
 #include "ConcreteMessages.h"
 
-Villager::Villager(GAMEOBJECT_TYPE typeValue) : GameObject(typeValue)
+Villager::Villager(GAMEOBJECT_TYPE typeValue)
+	: GameObject(typeValue),
+	fEfficiency(1.f),
+	eCurrState(HEALTHY)
 {
 	//GameObject(typeValue);
-	this->type;
+	for (auto stat : iStats)
+	{
+		stat = 100;
+	}
 	std::cout << "Villager Constructor" << std::endl;
 }
 
