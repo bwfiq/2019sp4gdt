@@ -444,6 +444,25 @@ void SceneSP::Render()
 	// Model matrix : an identity matrix (model will be at the origin)
 	modelStack.LoadIdentity();
 
+	float mX, mY;
+	MouseController::GetInstance()->GetMousePosition(mX, mY);
+	//normalizedDeviceCoords
+	mX = 0.5f*(2.35f) - (2.35f * mX) / Application::GetInstance().GetWindowWidth();
+	mY = 0.5f*(1.425f) - (1.425f * mY) / Application::GetInstance().GetWindowHeight();
+
+	
+	//std::cout << mX << " - " << mY << std::endl;
+	Vector3 ray(-mX, mY, -1);
+	ray.Normalize();
+	ray = viewStack.Top().GetInverse() * ray;
+	//std::cout << ray << std::endl;
+	modelStack.PushMatrix();
+	Vector3 adsada = camera.position + ray * 1;
+	modelStack.Translate(adsada.x, adsada.y, adsada.z);
+	modelStack.Scale(0.025, 0.025, 0.025);
+	RenderMesh(meshList[GEO_VILLAGER], false);
+	modelStack.PopMatrix();
+
 	RenderMesh(meshList[GEO_AXES], false);
 
 	static float asd = 0;

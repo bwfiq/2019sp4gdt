@@ -163,6 +163,7 @@
     <ClCompile Include="Source\Maze.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\MeshBuilder.cpp" />
+    <ClCompile Include="Source\MousePicker.cpp" />
     <ClCompile Include="Source\PostOffice.cpp" />
     <ClCompile Include="Source\ProjectileManager.cpp" />
     <ClCompile Include="Source\Projectiles.cpp" />
@@ -192,6 +193,7 @@
     <ClInclude Include="Source\Mesh.h" />
     <ClInclude Include="Source\MeshBuilder.h" />
     <ClInclude Include="Source\Message.h" />
+    <ClInclude Include="Source\MousePicker.h" />
     <ClInclude Include="Source\Node.h" />
     <ClInclude Include="Source\ObjectBase.h" />
     <ClInclude Include="Source\PostOffice.h" />
