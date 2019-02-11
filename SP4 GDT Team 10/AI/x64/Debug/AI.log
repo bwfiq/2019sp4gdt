@@ -1,0 +1,70 @@
+﻿  Application.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\application.h(5): fatal error C1083: Cannot open include file: 'timer.h': No such file or directory
+  Camera.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\camera.h(4): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  GameObject.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\gameobject.h(4): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  Graph.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\graph.h(3): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  LoadOBJ.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\vertex.h(4): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  LoadTGA.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\loadtga.cpp(4): fatal error C1083: Cannot open include file: 'GL\glew.h': No such file or directory
+  main.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\application.h(5): fatal error C1083: Cannot open include file: 'timer.h': No such file or directory
+  Maze.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\maze.cpp(3): fatal error C1083: Cannot open include file: 'MyMath.h': No such file or directory
+  Mesh.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\mesh.cpp(3): fatal error C1083: Cannot open include file: 'GL\glew.h': No such file or directory
+  MeshBuilder.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\vertex.h(4): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  PostOffice.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\postoffice.h(4): fatal error C1083: Cannot open include file: 'SingletonTemplate.h': No such file or directory
+  SceneAssignment.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\gameobject.h(4): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  SceneBase.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\scenebase.h(5): fatal error C1083: Cannot open include file: 'Mtx44.h': No such file or directory
+  SceneData.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\scenedata.h(4): fatal error C1083: Cannot open include file: 'SingletonTemplate.h': No such file or directory
+  SceneGraph.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\gameobject.h(4): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  SceneHex.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\gameobject.h(4): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  SceneMaze.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\gameobject.h(4): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  SceneMovement.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\gameobject.h(4): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  SceneQueen.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\gameobject.h(4): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  SceneTurn.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\gameobject.h(4): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  Generating Code...
+  Compiling...
+  shader.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\shader.cpp(12): fatal error C1083: Cannot open include file: 'GL/glew.h': No such file or directory
+  SMManager.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\smmanager.h(4): fatal error C1083: Cannot open include file: 'SingletonTemplate.h': No such file or directory
+  State.cpp
+  StateMachine.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\gameobject.h(4): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  StatesAdult.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\gameobject.h(4): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  StatesAnimal.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\gameobject.h(4): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  StatesChief.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\gameobject.h(4): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  StatesChildren.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\gameobject.h(4): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  StatesCommon.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\gameobject.h(4): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  StatesFish.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\gameobject.h(4): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  StatesGuard.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\gameobject.h(4): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  StatesHunter.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\gameobject.h(4): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  StatesShark.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\gameobject.h(4): fatal error C1083: Cannot open include file: 'Vector3.h': No such file or directory
+  Utility.cpp
+c:\users\173623w\downloads\dm2242_ai_graph\dm2242_ai_graph\ai\source\utility.h(4): fatal error C1083: Cannot open include file: 'Mtx44.h': No such file or directory
+  Generating Code...
