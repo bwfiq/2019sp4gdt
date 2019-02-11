@@ -9,15 +9,24 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="FSM">
+      <UniqueIdentifier>{30c188d0-1daf-4280-a4db-5a608eaedc21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SceneSP">
+      <UniqueIdentifier>{94c0f1e9-62ab-4ec6-866a-2f858257b69c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{d5532570-7ef4-4f13-899a-6f12d9494798}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Messaging">
+      <UniqueIdentifier>{ac3f5102-4cec-49d1-87f5-99487ff18970}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObjects">
+      <UniqueIdentifier>{d4065c97-5426-4698-b511-bd373995b920}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\LoadOBJ.cpp">
@@ -44,19 +53,7 @@
     <ClCompile Include="Source\Utility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\State.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\StateMachine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\SceneData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\PostOffice.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SMManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Maze.cpp">
@@ -74,15 +71,30 @@
     <ClCompile Include="Source\Projectiles.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\SMManager.cpp">
+      <Filter>FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SceneSP.cpp">
+      <Filter>SceneSP</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Camera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\PostOffice.cpp">
+      <Filter>Messaging</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StateMachine.cpp">
+      <Filter>FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\State.cpp">
+      <Filter>FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GameObject.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Geometry.h">
@@ -121,28 +133,10 @@
     <ClInclude Include="Source\Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\State.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\StateMachine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\SceneData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\ConcreteMessages.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Message.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ObjectBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\PostOffice.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SMManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Node.h">
@@ -162,6 +156,33 @@
     </ClInclude>
     <ClInclude Include="Source\Projectiles.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SMManager.h">
+      <Filter>FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneSP.h">
+      <Filter>SceneSP</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Camera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\PostOffice.h">
+      <Filter>Messaging</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StateMachine.h">
+      <Filter>FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\State.h">
+      <Filter>FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GameObject.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ObjectBase.h">
+      <Filter>Messaging</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ConcreteMessages.h">
+      <Filter>Messaging</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -168,6 +168,7 @@
     <ClCompile Include="Source\SceneBase.cpp" />
     <ClCompile Include="Source\SceneData.cpp" />
     <ClCompile Include="Source\SceneGraph.cpp" />
+    <ClCompile Include="Source\SceneSP.cpp" />
     <ClCompile Include="Source\shader.cpp" />
     <ClCompile Include="Source\SMManager.cpp" />
     <ClCompile Include="Source\State.cpp" />
@@ -198,6 +199,7 @@
     <ClInclude Include="Source\SceneData.h" />
     <ClInclude Include="Source\SceneGraph.h" />
     <ClInclude Include="Source\SceneBase.h" />
+    <ClInclude Include="Source\SceneSP.h" />
     <ClInclude Include="Source\shader.hpp" />
     <ClInclude Include="Source\SMManager.h" />
     <ClInclude Include="Source\State.h" />
