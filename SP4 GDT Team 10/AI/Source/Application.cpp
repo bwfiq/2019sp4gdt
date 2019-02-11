@@ -12,6 +12,7 @@
 #include <stdlib.h>
 
 #include "SceneGraph.h"
+#include "SceneSP.h"
 
 GLFWwindow* m_window;
 const unsigned char FPS = 60; // FPS of this game
@@ -125,7 +126,7 @@ Scene *scene = NULL;
 void Application::Run()
 {
 	//Main Loop
-	scene = new SceneGraph();
+	scene = new SceneSP();
 	scene->Init();
 	temp = scene;
 

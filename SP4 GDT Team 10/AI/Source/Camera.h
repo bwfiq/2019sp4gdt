@@ -9,6 +9,7 @@ public:
 	Vector3 position;
 	Vector3 target;
 	Vector3 up;
+	float fDistance;
 
 	Camera();
 	~Camera();

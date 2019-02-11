@@ -97,7 +97,13 @@ void SceneBase::Init()
 	glUniform1f(m_parameters[U_LIGHT0_COSINNER], lights[0].cosInner);
 	glUniform1f(m_parameters[U_LIGHT0_EXPONENT], lights[0].exponent);
 
-	camera.Init(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));
+	//camera.Init(Vector3(-3, 3, 3), Vector3(0, 0, 0), Vector3(0, 1, 0));
+	camera.Init(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));
+	Vector3 dir = camera.target - camera.position;
+	dir.Normalize();
+	Vector3 right(1, 0, 0);
+	camera.up = right.Cross(dir);
+	camera.fDistance = (camera.target - camera.position).Length();
 
 	for(int i = 0; i < NUM_GEOMETRY; ++i)
 	{
@@ -195,7 +201,25 @@ void SceneBase::Update(double dt)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	if(Application::IsKeyPressed('4'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	
+	static float asd = 0;
+	asd += (float)dt;
+//	camera.position = Vector3(0, 1 + cosf(asd), 1);
+	if (Application::IsKeyPressed('I'))
+		camera.position.z -= 1 * dt;
+	if (Application::IsKeyPressed('K'))
+		camera.position.z += 1 * dt;
+	if (Application::IsKeyPressed('J'))
+		camera.position.x -= 1 * dt;
+	if (Application::IsKeyPressed('L'))
+		camera.position.x += 1 * dt;
+
+	Vector3 right(1, 0, 0);
+	Vector3 dir = camera.up.Cross(right);
+	dir.Normalize();
+	camera.target = camera.position + dir * camera.fDistance;
+
+
+	//camera.up = right.Cross(dir);
 	fps = (float)(1.f / dt);
 }
 

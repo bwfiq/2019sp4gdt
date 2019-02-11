@@ -23,6 +23,7 @@ void Camera::Reset()
 	position.Set(1, 0, 0);
 	target.Set(0, 0, 0);
 	up.Set(0, 1, 0);
+	fDistance = 1;
 }
 
 void Camera::Update(double dt)
