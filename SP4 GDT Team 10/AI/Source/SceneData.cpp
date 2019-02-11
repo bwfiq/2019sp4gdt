@@ -70,6 +70,16 @@ void SceneData::SetWorldWidth(float worldwidth)
 	m_worldWidth = worldwidth;
 }
 
+float SceneData::GetElapsedTime()
+{
+	return this->f_elapsedTime;
+}
+
+void SceneData::SetElapsedTime(float elapsedTime)
+{
+	this->f_elapsedTime = elapsedTime;
+}
+
 SceneData::SceneData()
 {
 }

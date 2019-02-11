@@ -10,11 +10,14 @@
 #include "ProjectileManager.h"
 
 #include "SMManager.h"
+#include "MouseController.h"
 
 #include "Villager.h"
 #include "Building.h"
 
 #define START_PLAYER false
+#define SEA_WIDTH	50.f
+#define SEA_HEIGHT	50.f
 SceneSP::SceneSP()
 {
 }
@@ -32,6 +35,7 @@ void SceneSP::Init()
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
 	SceneData::GetInstance()->SetWorldHeight(m_worldHeight);
 	SceneData::GetInstance()->SetWorldWidth(m_worldWidth);
+	SceneData::GetInstance()->SetElapsedTime(0);
 	PostOffice::GetInstance()->Register("Scene", this);
 
 	//Physics code here
@@ -227,8 +231,12 @@ void SceneSP::Update(double dt)
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
 
-	SceneData::GetInstance()->SetWorldHeight(m_worldHeight);
-	SceneData::GetInstance()->SetWorldWidth(m_worldWidth);
+	SceneData* SD = SceneData::GetInstance();
+
+	SD->SetWorldHeight(m_worldHeight);
+	SD->SetWorldWidth(m_worldWidth);
+	SD->SetElapsedTime(SD->GetElapsedTime() + (float)dt);
+	MouseController* MC = MouseController::GetInstance();
 
 	if (Application::IsKeyPressed(VK_OEM_MINUS))
 	{
@@ -247,6 +255,8 @@ void SceneSP::Update(double dt)
 	if (Application::IsKeyPressed(VK_RETURN))
 	{
 	}
+	if (MC->IsButtonPressed(MouseController::LMB))
+		std::cout << "asd" << std::endl;
 
 	//Input Section
 	static bool bPState = false;
@@ -327,6 +337,27 @@ void SceneSP::Update(double dt)
 		bSpaceState = false;
 	}
 
+	// sea movement
+	/*if (Application::IsKeyPressed('I'))
+		fSeaDeltaZ += 0.5f * dt;
+	if (Application::IsKeyPressed('K'))
+		fSeaDeltaZ -= 0.5f * dt;
+	if (Application::IsKeyPressed('J'))
+		fSeaDeltaX += 0.5f * dt;
+	if (Application::IsKeyPressed('L'))
+		fSeaDeltaX -= 0.5f * dt;
+
+
+	fSeaDeltaX += (5.f - fSeaDeltaX) *0.1f * dt;*/
+	if (fSeaDeltaX >= SEA_WIDTH / 4)
+		fSeaDeltaX = -SEA_WIDTH / 4;
+	fSeaDeltaX += dt;
+	if (fSeaDeltaZ >= SEA_HEIGHT / 4)
+		fSeaDeltaZ = -SEA_HEIGHT / 4;
+	fSeaDeltaZ += dt;
+
+	fSeaDeltaY = 0.25f + 0.25f * cosf(SD->GetElapsedTime());
+
 	ProjectileManager::GetInstance()->Update(dt * m_speed);
 	static const float NPC_VELOCITY = 10.f;
 	for (auto go : m_goList)
@@ -357,14 +388,13 @@ void SceneSP::Update(double dt)
 				}
 			}
 		}
-		else */
-		//if (go->type == GameObject::GO_CREEP_MELEE || go->type == GameObject::GO_CREEP_RANGE)
+		else if (go->type == GameObject::GO_CREEP_MELEE || go->type == GameObject::GO_CREEP_RANGE)
 		{
 			if (go->smID != "")
 			{
-				//		SMManager::GetInstance()->GetSM(go->smID)->Update(dt * m_speed, go);
+				SMManager::GetInstance()->GetSM(go->smID)->Update(dt * m_speed, go);
 			}
-		}
+		}*/
 		go->pos += go->vel * dt * m_speed;
 	}
 }
@@ -426,46 +456,15 @@ void SceneSP::Render()
 	RenderMesh(meshList[GEO_GRASS], false);
 	modelStack.PopMatrix();
 
+	modelStack.PushMatrix();
+	modelStack.Translate(fSeaDeltaX, fSeaDeltaY - 0.51f, fSeaDeltaZ);
+	modelStack.Rotate(-90, 1, 0, 0);
+	modelStack.Scale(SEA_WIDTH, 50, 50);
+	RenderMesh(meshList[GEO_SEA], false);
+	modelStack.PopMatrix();
+
 	//On screen text
 	std::ostringstream ss;
-	////Render the Graph
-	//for (auto edge : m_graph.m_edges)
-	//{
-	//	modelStack.PushMatrix();
-	//	modelStack.Translate(edge->src->pos.x, edge->src->pos.y, 0);
-	//	Vector3 dir = edge->dst->pos - edge->src->pos;
-	//		modelStack.PushMatrix();
-	//		ss.str("");
-	//		ss.precision(3);
-	//		ss << edge->length;
-	//		modelStack.Translate(dir.x * 0.5, dir.y * 0.5, 1);
-	//		modelStack.Scale(3, 3, 1);
-	//		//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 2, edge->src->pos.x + dir.x * 0.5f, edge->src->pos.y + dir.y * 0.5f);
-	//		RenderText(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0));
-	//		modelStack.PopMatrix();
-	//	modelStack.Rotate(Math::RadianToDegree(atan2(dir.y, dir.x)), 0, 0, 1);
-	//	modelStack.Scale(edge->length, 1, 1);
-	//	RenderMesh(meshList[GEO_LINE], false);
-	//	modelStack.PopMatrix();	
-	//}
-	//for (auto node : m_graph.m_nodes)
-	//{
-	//	modelStack.PushMatrix();
-	//	modelStack.Translate(node->pos.x, node->pos.y, 0);
-	//		modelStack.PushMatrix();
-	//		ss.str("");
-	//		ss.precision(3);
-	//		ss << node->ID;
-	//		modelStack.Translate(0, 3, 1);
-	//		modelStack.Scale(3, 3, 1);
-	//		//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 2, edge->src->pos.x + dir.x * 0.5f, edge->src->pos.y + dir.y * 0.5f);
-	//		RenderText(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0));
-	//		modelStack.PopMatrix();		
-	//	modelStack.Scale(4, 4, 1);
-	//	modelStack.Rotate(90, 1, 0, 0);
-	//	RenderMesh(meshList[GEO_GREYHEX], false);
-	//	modelStack.PopMatrix();
-	//}
 
 	for (auto go : m_goList)
 	{

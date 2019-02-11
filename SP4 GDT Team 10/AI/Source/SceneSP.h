@@ -40,6 +40,10 @@ protected:
 	float m_worldHeight;
 	int m_objectCount;
 
+	float fSeaDeltaX = 0;
+	float fSeaDeltaZ = 0;
+	float fSeaDeltaY = 0;
+	bool bSeaYDir = false;
 	GAME_STATE game_state;
 
 	GameObject* selected; //Gameobject selected by mouse click, can do actions from UI choices that pop up

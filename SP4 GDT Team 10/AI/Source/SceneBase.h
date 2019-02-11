@@ -98,8 +98,12 @@ public:
 		GEO_BLUE_TOWER,
 
 		GEO_GRASS,
+<<<<<<< HEAD
+		GEO_SEA,
+=======
 		GEO_VILLAGER,
 		GEO_BUILDING,
+>>>>>>> fedcd525c289eab226b48604d88d19b545238674
 
 		GEO_BACKGROUND,
 

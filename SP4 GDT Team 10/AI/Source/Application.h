@@ -5,6 +5,7 @@
 #include "timer.h"
 
 struct Scene;
+struct GLFWwindow;
 
 class Application
 {
@@ -22,6 +23,12 @@ public:
 	static void GetCursorPos(double *xpos, double *ypos);
 	static int GetWindowWidth();
 	static int GetWindowHeight();
+
+	static void MouseButtonCallbacks(GLFWwindow* window, int button, int action, int mods);
+	static void MouseScrollCallbacks(GLFWwindow* window, double xoffset, double yoffset);
+
+	void UpdateInput();
+	void PostInputUpdate();
 
 	void Iterate();
 
