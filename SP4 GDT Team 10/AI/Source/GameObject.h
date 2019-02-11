@@ -19,6 +19,7 @@ struct GameObject : public ObjectBase
 		GO_CIRCLE,
 
 		GO_VILLAGER,
+		GO_BUILDING,
 
 		GO_TOTAL, //must be last
 	};
