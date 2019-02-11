@@ -153,6 +153,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp" />
+    <ClCompile Include="Source\Building.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\GameObject.cpp" />
     <ClCompile Include="Source\Graph.cpp" />
@@ -167,16 +168,17 @@
     <ClCompile Include="Source\Projectiles.cpp" />
     <ClCompile Include="Source\SceneBase.cpp" />
     <ClCompile Include="Source\SceneData.cpp" />
-    <ClCompile Include="Source\SceneGraph.cpp" />
     <ClCompile Include="Source\SceneSP.cpp" />
     <ClCompile Include="Source\shader.cpp" />
     <ClCompile Include="Source\SMManager.cpp" />
     <ClCompile Include="Source\State.cpp" />
     <ClCompile Include="Source\StateMachine.cpp" />
     <ClCompile Include="Source\Utility.cpp" />
+    <ClCompile Include="Source\Villager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h" />
+    <ClInclude Include="Source\Building.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\ConcreteMessages.h" />
     <ClInclude Include="Source\GameObject.h" />
@@ -197,7 +199,6 @@
     <ClInclude Include="Source\Projectiles.h" />
     <ClInclude Include="Source\Scene.h" />
     <ClInclude Include="Source\SceneData.h" />
-    <ClInclude Include="Source\SceneGraph.h" />
     <ClInclude Include="Source\SceneBase.h" />
     <ClInclude Include="Source\SceneSP.h" />
     <ClInclude Include="Source\shader.hpp" />
@@ -206,6 +207,7 @@
     <ClInclude Include="Source\StateMachine.h" />
     <ClInclude Include="Source\Utility.h" />
     <ClInclude Include="Source\Vertex.h" />
+    <ClInclude Include="Source\Villager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

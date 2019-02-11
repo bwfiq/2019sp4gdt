@@ -59,9 +59,6 @@
     <ClCompile Include="Source\Maze.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\SceneGraph.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Graph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -90,6 +87,12 @@
       <Filter>FSM</Filter>
     </ClCompile>
     <ClCompile Include="Source\GameObject.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Villager.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Building.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
   </ItemGroup>
@@ -145,9 +148,6 @@
     <ClInclude Include="Source\Maze.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\SceneGraph.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Graph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -183,6 +183,12 @@
     </ClInclude>
     <ClInclude Include="Source\ConcreteMessages.h">
       <Filter>Messaging</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Villager.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Building.h">
+      <Filter>GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
