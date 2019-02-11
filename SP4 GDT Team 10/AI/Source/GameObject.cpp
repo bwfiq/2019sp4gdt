@@ -31,7 +31,10 @@ GameObject::GameObject(GAMEOBJECT_TYPE typeValue)
 {
 	static int count = 0;
 	id = ++count;
+	this->type;
 	//moveLeft = moveRight = moveUp = moveDown = true;
+
+	std::cout << "GameObject Constructor" << std::endl;
 }
 
 GameObject::~GameObject()

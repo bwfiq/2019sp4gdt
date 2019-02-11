@@ -12,6 +12,9 @@
 #include "SMManager.h"
 #include "MouseController.h"
 
+#include "Villager.h"
+#include "Building.h"
+
 #define START_PLAYER false
 SceneSP::SceneSP()
 {
@@ -37,8 +40,12 @@ void SceneSP::Init()
 
 	Math::InitRNG();
 
-	//GameObject* go = FetchGO(GameObject::GO_VILLAGER);
-	//go->pos.Set(0, go->scale.y * 0.5f, 0);
+	GameObject* go = FetchGO(GameObject::GO_VILLAGER);
+	go->pos.Set(0, go->scale.y * 0.5f, 0);
+
+	go = FetchGO(GameObject::GO_BUILDING);
+	go->scale.y = 1.5f;
+	go->pos.Set(1.5f, go->scale.y * 0.5f, 0);
 	//go->vel.Set(1, 0, 0);
 }
 
@@ -84,8 +91,21 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 	}
 	for (unsigned i = 0; i < 5; ++i)
 	{
-		GameObject *go = new GameObject(type);
-		m_goList.push_back(go);
+		GameObject *go = nullptr;
+		switch (type)
+		{
+		case GameObject::GO_VILLAGER:
+			go = new Villager(type);
+			break;
+		case GameObject::GO_BUILDING:
+			go = new Building(type);
+			break;
+		default:
+			go = new GameObject(type);
+			break;
+		}
+		if(go != nullptr)
+			m_goList.push_back(go);
 	}
 	return FetchGO(type);
 }
@@ -363,7 +383,14 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_CUBE], false);
+		RenderMesh(meshList[GEO_VILLAGER], false, 0.5f);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_BUILDING:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_BUILDING], false, 1.f);
 		modelStack.PopMatrix();
 		break;
 	default:
@@ -397,7 +424,7 @@ void SceneSP::Render()
 	asd += 0.01;
 	modelStack.PushMatrix();
 	//modelStack.Translate(0, 0.5f + cosf(asd) * 0.15f, 0);
-	modelStack.Translate(0, 0, 0);
+	modelStack.Translate(0, -0.5f, 0);
 	//modelStack.Rotate(-90, 1, 0, 0);
 	modelStack.Scale(5, 1, 5);
 	RenderMesh(meshList[GEO_GRASS], false);

@@ -19,6 +19,7 @@ struct GameObject : public ObjectBase
 		GO_CIRCLE,
 
 		GO_VILLAGER,
+		GO_BUILDING,
 
 		GO_TOTAL, //must be last
 	};
@@ -45,7 +46,7 @@ struct GameObject : public ObjectBase
 	State *m_currState;
 	State *m_nextState;
 
-	bool Handle(Message* msg);
+	virtual bool Handle(Message* msg);
 
 	/*
 	//Pathfinding
