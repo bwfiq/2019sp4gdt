@@ -17,24 +17,8 @@ struct GameObject : public ObjectBase
 		GO_BALL,
 		GO_CROSS,
 		GO_CIRCLE,
-		GO_FISH,
-		GO_SHARK,
-		GO_FISHFOOD,
-		GO_BLACK,
-		GO_WHITE,
 
-		//Assignment
-		GO_CHIEF,
-		GO_GUARD,
-		GO_CHILDREN,
-		GO_ANIMAL,
-		GO_ADULT,
-		GO_HUNTER,
-
-		GO_NPC,
-		GO_CREEP_MELEE,
-		GO_CREEP_RANGE,
-		GO_TOWER,
+		GO_VILLAGER,
 
 		GO_TOTAL, //must be last
 	};
@@ -47,16 +31,13 @@ struct GameObject : public ObjectBase
 	float mass;
 	Vector3 target;
 	int id;
-	int steps;
-	float energy;
 	float moveSpeed;
-	float countDown;
-	GameObject *nearest;
+	GameObject * goTarget;
+	/*
 	bool moveLeft;
 	bool moveRight;
 	bool moveUp;
-	bool moveDown;
-
+	bool moveDown;*/
 
 	std::string smID;
 	// For shared state machine
@@ -64,14 +45,13 @@ struct GameObject : public ObjectBase
 	State *m_currState;
 	State *m_nextState;
 
-	Node::House side;
+	bool Handle(Message* msg);
 
-	Node* NTarget;
-
+	/*
 	//Pathfinding
 	std::stack<Node*> path;
 
-	bool Handle(Message* msg);
+
 
 	bool mapRead;
 	bool moving;
@@ -108,7 +88,7 @@ struct GameObject : public ObjectBase
 
 	float attMaxBounceTime;
 	float attBounceTime;
-
+	*/
 	GameObject(GAMEOBJECT_TYPE typeValue = GO_NONE);
 	~GameObject();
 };

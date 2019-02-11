@@ -36,6 +36,9 @@ void SceneSP::Init()
 
 	Math::InitRNG();
 
+	//GameObject* go = FetchGO(GameObject::GO_VILLAGER);
+	//go->pos.Set(0, go->scale.y * 0.5f, 0);
+	//go->vel.Set(1, 0, 0);
 }
 
 
@@ -47,38 +50,8 @@ bool SceneSP::Handle(Message* message)
 	{
 		switch (messageWRU->type)
 		{
-		case MessageWRU::NEAREST_SHARK:
-		{
-			float nearestDistance = FLT_MAX;
-			for (auto go2 : m_goList)
-			{
-				if (!go2->active || go2->type != GameObject::GO_SHARK)
-					continue;
-				float distance = (messageWRU->go->pos - go2->pos).Length();
-				if (distance < messageWRU->threshold && distance < nearestDistance && messageWRU->go->m_currState->GetStateID() == "Full")
-				{
-					nearestDistance = distance;
-					messageWRU->go->nearest = go2;
-				}
-			}
-		}
-		break;
-		case MessageWRU::NEAREST_ENEMY:
-		{
-			float nearestDistance = FLT_MAX;
-			for (auto go2 : m_goList)
-			{
-				if (!go2->active || go2->faction == messageWRU->go->faction)
-					continue;
-				float distance = (messageWRU->go->pos - go2->pos).Length();
-				if (distance <= messageWRU->threshold && distance < nearestDistance)
-				{
-					nearestDistance = distance;
-					messageWRU->go->nearest = go2;
-				}
-			}
-		}
-		break;
+		default:
+			break;
 		}
 		delete message;
 		return true;
@@ -99,42 +72,12 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			++m_objectCount;
 			switch (type)
 			{
-			case GameObject::GO_TOWER:
-				go->attBounceTime = 0;
-				go->attMaxBounceTime = 1.5f;
-				go->health = 300;
-				go->maxhealth = 300;
-				go->scale.Set(7.f, 7.f, 1.f);
-				go->damage = 40;
-
-				go->range = 2.5 * go->scale.x;
-				go->aggroRange = 2.5 * go->scale.x;
-				break;
-			case GameObject::GO_CREEP_MELEE:
-				go->attBounceTime = 0;
-				go->attMaxBounceTime = 0.8f;
-				go->health = 100;
-				go->maxhealth = 100;
-				go->scale.Set(7.f, 7.f, 1.f);
-				go->damage = 10;
-
-				go->range = 1 * go->scale.x;
-				go->aggroRange = 3 * go->scale.x;
-				break;
-			case GameObject::GO_CREEP_RANGE:
-				go->attBounceTime = 0;
-				go->attMaxBounceTime = 1.5f;
-				go->health = 60;
-				go->maxhealth = 60;
-				go->scale.Set(7.f, 7.f, 1.f);
-				go->damage = 30;
-
-				go->range = 1.5 * go->scale.x;
-				go->aggroRange = 3 * go->scale.x;
+			case GameObject::GO_VILLAGER:
+				go->scale.Set(1.f, 1.f, 1.f);
 				break;
 			}
 
-			go->nearest = NULL;
+			go->goTarget = NULL;
 			return go;
 		}
 	}
@@ -355,8 +298,8 @@ void SceneSP::Update(double dt)
 		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 		if (posX < m_worldHeight && posY < m_worldHeight)
 		{
-			GameObject* go = FetchGO(GameObject::GO_NPC);
-			go->pos.Set(posX, posY);
+			//GameObject* go = FetchGO(GameObject::GO_NPC);
+			//go->pos.Set(posX, posY);
 		}
 	}
 	else if (bSpaceState && !Application::IsKeyPressed(VK_SPACE))
@@ -370,7 +313,7 @@ void SceneSP::Update(double dt)
 	{
 		if (!go->active)
 			continue;
-		if (go->type == GameObject::GO_NPC)
+		/*if (go->type == GameObject::GO_NPC)
 		{
 			if (go->target == NULL)
 			{
@@ -394,11 +337,15 @@ void SceneSP::Update(double dt)
 				}
 			}
 		}
-		else if (go->type == GameObject::GO_CREEP_MELEE || go->type == GameObject::GO_CREEP_RANGE)
+		else */
+		//if (go->type == GameObject::GO_CREEP_MELEE || go->type == GameObject::GO_CREEP_RANGE)
 		{
 			if (go->smID != "")
-				SMManager::GetInstance()->GetSM(go->smID)->Update(dt * m_speed, go);
+			{
+				//		SMManager::GetInstance()->GetSM(go->smID)->Update(dt * m_speed, go);
+			}
 		}
+		go->pos += go->vel * dt * m_speed;
 	}
 }
 
@@ -408,12 +355,14 @@ void SceneSP::RenderGO(GameObject *go)
 	static float healthBarScale = 0.7f;
 	switch (go->type)
 	{
-	case GameObject::GO_NPC:
+	case GameObject::GO_VILLAGER:
 		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, go->pos.y, 2);
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_QUEEN], false);
+		RenderMesh(meshList[GEO_CUBE], false);
 		modelStack.PopMatrix();
+		break;
+	default:
 		break;
 	}
 }
@@ -440,11 +389,14 @@ void SceneSP::Render()
 
 	RenderMesh(meshList[GEO_AXES], false);
 
+	static float asd = 0;
+	asd += 0.01;
 	modelStack.PushMatrix();
+	//modelStack.Translate(0, 0.5f + cosf(asd) * 0.15f, 0);
 	modelStack.Translate(0, 0, 0);
-	modelStack.Rotate(-90, 1, 0, 0);
-	modelStack.Scale(1, 1, 1);
-	RenderMesh(meshList[GEO_WHITEQUAD], false);
+	//modelStack.Rotate(-90, 1, 0, 0);
+	modelStack.Scale(5, 1, 5);
+	RenderMesh(meshList[GEO_GRASS], false);
 	modelStack.PopMatrix();
 
 	//On screen text

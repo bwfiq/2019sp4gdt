@@ -73,8 +73,8 @@ void Projectiles::CheckForCollision(void)
 		//}
 		//ProjectileManager::GetInstance()->AddProjectileHit(thatEnemy->pos);
 
-		if(target != NULL)
-			target->health = Math::Max(0, target->health - damage);
+	//	if(target != NULL)
+	//		target->health = Math::Max(0, target->health - damage);
 		active = false;
 	}
 }

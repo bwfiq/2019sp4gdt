@@ -8,37 +8,37 @@ GameObject::GameObject(GAMEOBJECT_TYPE typeValue)
 	active(false),
 	mass(1.f),
 	moveSpeed(1.f),
-	energy(10.f),
+	//energy(10.f),
 	smID(""),
-	nearest(NULL),
+	goTarget(NULL),
 	m_currState(NULL),
 	m_nextState(NULL),
-	NTarget(NULL),
-	steps(0),
-	countDown(0),
-	side(Node::TOP_LEFT),
-	timer(0),
-	curr(0, 0),
-	mapRead(false),
-	moving(false),
-	currNode(NULL),
-	damage(0),
-	health(0),
-	actionTime(0.f),
-	range(0),
-	attBounceTime(0),
-	attMaxBounceTime(1)
+	//NTarget(NULL),
+	//steps(0),
+	//countDown(0),
+	//side(Node::TOP_LEFT),
+	timer(0)
+	//curr(0, 0),
+	//mapRead(false),
+	//moving(false),
+	//currNode(NULL),
+	//damage(0),
+	//health(0),
+	//actionTime(0.f),
+	//range(0),
+	//attBounceTime(0),
+	//attMaxBounceTime(1)
 {
 	static int count = 0;
 	id = ++count;
-	moveLeft = moveRight = moveUp = moveDown = true;
+	//moveLeft = moveRight = moveUp = moveDown = true;
 }
 
 GameObject::~GameObject()
 {
-	while (!path.empty())
+	//while (!path.empty())
 	{
-		path.pop();
+	//	path.pop();
 	}
 }
 
@@ -49,13 +49,6 @@ bool GameObject::Handle(Message* msg)
 	{
 	case MessageObject::ACTIVE_OBJECT:
 		if (this->active)
-		{
-			delete msg;
-			return true;
-		}
-		break;
-	case MessageObject::ACTIVE_FISH:
-		if (this->active && this->type == GameObject::GO_FISH)
 		{
 			delete msg;
 			return true;
