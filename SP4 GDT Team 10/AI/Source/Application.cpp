@@ -13,6 +13,8 @@
 
 #include "SceneSP.h"
 
+#include "MouseController.h"
+
 GLFWwindow* m_window;
 const unsigned char FPS = 60; // FPS of this game
 const unsigned int frameTime = 1000 / FPS; // time for each frame
@@ -59,6 +61,41 @@ int Application::GetWindowWidth()
 int Application::GetWindowHeight()
 {
 	return m_height;
+}
+
+void Application::MouseButtonCallbacks(GLFWwindow* window, int button, int action, int mods)
+{
+	if (action == GLFW_PRESS)
+		MouseController::GetInstance()->UpdateMouseButtonPressed(button);
+	else
+		MouseController::GetInstance()->UpdateMouseButtonReleased(button);
+}
+
+void Application::MouseScrollCallbacks(GLFWwindow* window, double xoffset, double yoffset)
+{
+	MouseController::GetInstance()->UpdateMouseScroll(xoffset, yoffset);
+}
+
+void Application::UpdateInput()
+{
+	double mouse_currX, mouse_currY;
+	glfwGetCursorPos(m_window, &mouse_currX, &mouse_currY);
+	MouseController::GetInstance()->UpdateMousePosition(mouse_currX, mouse_currY);
+}
+
+void Application::PostInputUpdate()
+{
+	if (MouseController::GetInstance()->GetKeepMouseCentered())
+	{
+		double mouse_currX, mouse_currY;
+		mouse_currX = m_width >> 1;
+		mouse_currY = m_height >> 1;
+		MouseController::GetInstance()->UpdateMousePosition(mouse_currX, mouse_currY);
+		glfwSetCursorPos(m_window, mouse_currX, mouse_currY);
+	}
+
+	// Call input systems to update at end of frame
+	MouseController::GetInstance()->EndFrameUpdate();
 }
 
 Application::Application()
@@ -119,6 +156,9 @@ void Application::Init()
 		//return -1;
 	}
 
+	glfwSetMouseButtonCallback(m_window, &Application::MouseButtonCallbacks);
+	glfwSetScrollCallback(m_window, &Application::MouseScrollCallbacks);
+
 	temp = NULL;
 }
 Scene *scene = NULL;
@@ -132,13 +172,17 @@ void Application::Run()
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
 	while (!glfwWindowShouldClose(m_window) && !IsKeyPressed(VK_ESCAPE))
 	{
+		//Get and organize events, like keyboard and mouse input, window resizing, etc...
+		glfwPollEvents();
+		UpdateInput();
+
 		scene->Update(m_timer.getElapsedTime());
 		scene->Render();
 		//Swap buffers
 		glfwSwapBuffers(m_window);
-		//Get and organize events, like keyboard and mouse input, window resizing, etc...
-		glfwPollEvents();
+		
         m_timer.waitUntil(frameTime);       // Frame rate limiter. Limits each frame to a specified time in ms.   
+		PostInputUpdate();
 
 	} //Check if the ESC key had been pressed or if the window had been closed
 	scene->Exit();

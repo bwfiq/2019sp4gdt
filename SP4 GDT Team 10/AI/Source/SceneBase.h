@@ -38,6 +38,9 @@ class SceneBase : public Scene
 		U_COLOR_TEXTURE,
 		U_TEXT_ENABLED,
 		U_TEXT_COLOR,
+
+		U_ALPHA,
+
 		U_TOTAL,
 	};
 public:
@@ -95,7 +98,12 @@ public:
 		GEO_BLUE_TOWER,
 
 		GEO_GRASS,
+<<<<<<< HEAD
 		GEO_SEA,
+=======
+		GEO_VILLAGER,
+		GEO_BUILDING,
+>>>>>>> fedcd525c289eab226b48604d88d19b545238674
 
 		GEO_BACKGROUND,
 
@@ -113,7 +121,7 @@ public:
 
 	void RenderText(Mesh* mesh, std::string text, Color color);
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y);
-	void RenderMesh(Mesh *mesh, bool enableLight);
+	void RenderMesh(Mesh *mesh, bool enableLight, float alpha = 1.0f);
 protected:
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];

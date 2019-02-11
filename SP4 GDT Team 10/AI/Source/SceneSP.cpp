@@ -10,6 +10,10 @@
 #include "ProjectileManager.h"
 
 #include "SMManager.h"
+#include "MouseController.h"
+
+#include "Villager.h"
+#include "Building.h"
 
 #define START_PLAYER false
 #define SEA_WIDTH	50.f
@@ -39,8 +43,12 @@ void SceneSP::Init()
 
 	Math::InitRNG();
 
-	//GameObject* go = FetchGO(GameObject::GO_VILLAGER);
-	//go->pos.Set(0, go->scale.y * 0.5f, 0);
+	GameObject* go = FetchGO(GameObject::GO_VILLAGER);
+	go->pos.Set(0, go->scale.y * 0.5f, 0);
+
+	go = FetchGO(GameObject::GO_BUILDING);
+	go->scale.y = 1.5f;
+	go->pos.Set(1.5f, go->scale.y * 0.5f, 0);
 	//go->vel.Set(1, 0, 0);
 }
 
@@ -86,8 +94,21 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 	}
 	for (unsigned i = 0; i < 5; ++i)
 	{
-		GameObject *go = new GameObject(type);
-		m_goList.push_back(go);
+		GameObject *go = nullptr;
+		switch (type)
+		{
+		case GameObject::GO_VILLAGER:
+			go = new Villager(type);
+			break;
+		case GameObject::GO_BUILDING:
+			go = new Building(type);
+			break;
+		default:
+			go = new GameObject(type);
+			break;
+		}
+		if(go != nullptr)
+			m_goList.push_back(go);
 	}
 	return FetchGO(type);
 }
@@ -215,6 +236,7 @@ void SceneSP::Update(double dt)
 	SD->SetWorldHeight(m_worldHeight);
 	SD->SetWorldWidth(m_worldWidth);
 	SD->SetElapsedTime(SD->GetElapsedTime() + (float)dt);
+	MouseController* MC = MouseController::GetInstance();
 
 	if (Application::IsKeyPressed(VK_OEM_MINUS))
 	{
@@ -233,6 +255,8 @@ void SceneSP::Update(double dt)
 	if (Application::IsKeyPressed(VK_RETURN))
 	{
 	}
+	if (MC->IsButtonPressed(MouseController::LMB))
+		std::cout << "asd" << std::endl;
 
 	//Input Section
 	static bool bPState = false;
@@ -385,7 +409,14 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_CUBE], false);
+		RenderMesh(meshList[GEO_VILLAGER], false, 0.5f);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_BUILDING:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_BUILDING], false, 1.f);
 		modelStack.PopMatrix();
 		break;
 	default:
