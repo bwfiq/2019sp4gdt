@@ -45,7 +45,7 @@ struct GameObject : public ObjectBase
 	State *m_currState;
 	State *m_nextState;
 
-	bool Handle(Message* msg);
+	virtual bool Handle(Message* msg);
 
 	/*
 	//Pathfinding
