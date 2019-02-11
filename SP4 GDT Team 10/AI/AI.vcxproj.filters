@@ -59,9 +59,6 @@
     <ClCompile Include="Source\Maze.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\SceneGraph.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Graph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -143,9 +140,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Maze.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SceneGraph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Graph.h">

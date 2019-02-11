@@ -10,6 +10,7 @@
 #include "ProjectileManager.h"
 
 #include "SMManager.h"
+#include "MouseController.h"
 
 #define START_PLAYER false
 SceneSP::SceneSP()
@@ -209,6 +210,7 @@ void SceneSP::Update(double dt)
 
 	SceneData::GetInstance()->SetWorldHeight(m_worldHeight);
 	SceneData::GetInstance()->SetWorldWidth(m_worldWidth);
+	MouseController* MC = MouseController::GetInstance();
 
 	if (Application::IsKeyPressed(VK_OEM_MINUS))
 	{
@@ -227,6 +229,8 @@ void SceneSP::Update(double dt)
 	if (Application::IsKeyPressed(VK_RETURN))
 	{
 	}
+	if (MC->IsButtonPressed(MouseController::LMB))
+		std::cout << "asd" << std::endl;
 
 	//Input Section
 	static bool bPState = false;
