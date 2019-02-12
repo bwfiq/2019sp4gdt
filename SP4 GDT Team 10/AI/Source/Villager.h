@@ -37,6 +37,10 @@ struct Villager : public GameObject
 
 	virtual bool Handle(Message* msg);
 
+	void DoFunction();
+
+	//virtual void TheFunction(GameObject* go);
+
 	Villager(GAMEOBJECT_TYPE typeValue = GO_NONE);
 	~Villager();
 };

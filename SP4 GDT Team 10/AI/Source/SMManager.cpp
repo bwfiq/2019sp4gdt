@@ -1,5 +1,7 @@
 #include "SMManager.h"
 
+#include "StateVillager.h"
+
 SMManager::SMManager()
 {
 
@@ -27,17 +29,21 @@ StateMachine* SMManager::GetSM(const std::string& smID)
 	{
 		return m_smMap.find(smID)->second;
 	}
-	/*
-	else if (smID == "MinionSM")
+	
+	else if (smID == "VillagerSM")
 	{
-		StateMachine* SMMinion = new StateMachine("MinionSM");
-		SMMinion->AddState(new StateChase("Chase"));
-		SMMinion->AddState(new StateAttack("Attack"));
-		SMMinion->AddState(new StatePath("Path"));
-		SMMinion->AddState(new StateDead("Dead"));
-		this->AddSM(SMMinion);
-		return SMMinion;
-	}*/
+		StateMachine* SMVillager = new StateMachine("VillagerSM");
+		SMVillager->AddState(new StateIdle("Idle"));
+		SMVillager->AddState(new StateAttack("Attack"));
+		SMVillager->AddState(new StatePath("Path"));
+		SMVillager->AddState(new StateDead("Dead"));
+		SMVillager->AddState(new StateChopTree("ChopTree"));
+		SMVillager->AddState(new StateForaging("Foraging"));
+		SMVillager->AddState(new StatePickedUp("PickedUp"));
+		SMVillager->AddState(new StateInHut("InHut"));
+		this->AddSM(SMVillager);
+		return SMVillager;
+	}
 	else
 	{
 		return NULL;

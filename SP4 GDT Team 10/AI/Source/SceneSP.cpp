@@ -44,12 +44,14 @@ void SceneSP::Init()
 
 	Math::InitRNG();
 
-	GameObject* go = FetchGO(GameObject::GO_VILLAGER);
-	go->pos.Set(0, go->scale.y * 0.5f, 0);
+	goVillager = FetchGO(GameObject::GO_VILLAGER);
+	goVillager->pos.Set(0, goVillager->scale.y * 0.5f, 0);
 
-	go = FetchGO(GameObject::GO_CHIEFHUT);
-	go->scale.y = 1.5f;
-	go->pos.Set(1.5f, go->scale.y * 0.5f, 0);
+	goChiefHut = FetchGO(GameObject::GO_CHIEFHUT);
+	goChiefHut->scale.y = 1.5f;
+	goChiefHut->pos.Set(1.5f, goChiefHut->scale.y * 0.5f, 0);
+
+
 	//go->vel.Set(1, 0, 0);
 }
 
@@ -100,6 +102,8 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 		{
 		case GameObject::GO_VILLAGER:
 			go = new Villager(type);
+			go->smID = "VillagerSM";
+			go->m_currState = go->m_nextState = SMManager::GetInstance()->GetSM(go->smID)->GetState("Idle");
 			break;
 		case GameObject::GO_BUILDING:
 			go = new Building(type);
@@ -273,6 +277,19 @@ void SceneSP::Update(double dt)
 		bPState = false;
 		std::cout << "P UP" << std::endl;
 	}
+	static bool bFState = false;
+	if (!bFState && Application::IsKeyPressed('F'))
+	{
+		bFState = true;
+
+		//static_cast<Villager*>(goVillager)->DoFunction();
+		goVillager->goTarget = goChiefHut;
+	}
+	else if (bFState && !Application::IsKeyPressed('F'))
+	{
+		bFState = false;
+		std::cout << "F UP" << std::endl;
+	}
 
 	/*
 	static bool bLButtonState = false;
@@ -401,7 +418,11 @@ void SceneSP::Update(double dt)
 				SMManager::GetInstance()->GetSM(go->smID)->Update(dt * m_speed, go);
 			}
 		}*/
-		go->pos += go->vel * dt * m_speed;
+		//go->pos += go->vel * dt * m_speed;
+		if (go->smID != "")
+		{
+			SMManager::GetInstance()->GetSM(go->smID)->Update(dt * m_speed, go);
+		}
 	}
 }
 
@@ -415,7 +436,7 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_VILLAGER], false, 1.f);
+		//RenderMesh(meshList[GEO_VILLAGER], false, 1.f);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_BUILDING:
@@ -486,6 +507,12 @@ void SceneSP::Render()
 	//modelStack.Rotate(-90, 1, 0, 0);
 	modelStack.Scale(10, 1, 10);
 	RenderMesh(meshList[GEO_GRASS], false);
+	modelStack.PopMatrix();
+
+	modelStack.PushMatrix();
+	modelStack.Translate(0, 0.001f, 0);
+	modelStack.Scale(1, 1, 1);
+	RenderMesh(meshList[GEO_GRID], false);
 	modelStack.PopMatrix();
 
 	modelStack.PushMatrix();

@@ -103,6 +103,8 @@ public:
 		GEO_BUILDING,
 		GEO_BACKGROUND,
 
+		GEO_GRID,
+
 		NUM_GEOMETRY,
 	};
 public:

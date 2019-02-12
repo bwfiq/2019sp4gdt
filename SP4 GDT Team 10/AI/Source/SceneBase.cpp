@@ -194,6 +194,8 @@ void SceneBase::Init()
 	meshList[GEO_VILLAGER] = MeshBuilder::GenerateCube("villager", Color(1, 0, 0), 1.f);
 	meshList[GEO_BUILDING] = MeshBuilder::GenerateCube("building", Color(0, 0, 1), 1.f);
 
+	meshList[GEO_GRID] = MeshBuilder::GenerateGrid("grid", Color(1, 0, 0), 10, 10, 1.f);
+
 	meshList[GEO_LINE] = MeshBuilder::GenerateLine("line", Color(1, 0, 0));
 
 	meshList[GEO_TEXT]->material.kAmbient.Set(1, 0, 0);

@@ -8,6 +8,7 @@
 #include <queue>
 #include "Graph.h"
 
+
 class SceneSP : public SceneBase
 {
 public:
@@ -47,6 +48,10 @@ protected:
 	GAME_STATE game_state;
 
 	GameObject* selected; //Gameobject selected by mouse click, can do actions from UI choices that pop up
+	GameObject* goChiefHut;
+
+	//Temporary
+	GameObject* goVillager;
 };
 
 #endif

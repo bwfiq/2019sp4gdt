@@ -51,6 +51,7 @@ struct GameObject : public ObjectBase
 	State *m_nextState;
 
 	virtual bool Handle(Message* msg);
+	virtual void TheFunction(GameObject* go);
 
 	int currFrame; //For rendering model animation probs testing
 

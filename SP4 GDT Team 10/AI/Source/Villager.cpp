@@ -7,9 +7,9 @@ Villager::Villager(GAMEOBJECT_TYPE typeValue)
 	eCurrState(HEALTHY)
 {
 	//GameObject(typeValue);
-	for (auto stat : iStats)
+	for (int i = 0; i < STAT_TOTAL; ++i)
 	{
-		stat = 100;
+		iStats[i] = 100;
 	}
 	std::cout << "Villager Constructor" << std::endl;
 }
@@ -33,4 +33,10 @@ bool Villager::Handle(Message* msg)
 	}
 	delete msg;
 	return false;
+}
+
+void Villager::DoFunction()
+{
+	if(this->goTarget != NULL)
+		this->goTarget->TheFunction(this);
 }

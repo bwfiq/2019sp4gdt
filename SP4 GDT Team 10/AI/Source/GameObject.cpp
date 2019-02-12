@@ -62,3 +62,8 @@ bool GameObject::Handle(Message* msg)
 	delete msg;
 	return false;
 }
+
+void GameObject::TheFunction(GameObject * go)
+{
+	std::cout << "GameObject Function" << std::endl;
+}

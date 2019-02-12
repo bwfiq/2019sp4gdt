@@ -509,3 +509,45 @@ Mesh * MeshBuilder::GenerateTriangle(const std::string & meshName, Color color, 
 
 	return mesh;
 }
+
+Mesh * MeshBuilder::GenerateGrid(const std::string & meshName, Color color, int numX, int numZ, float length)
+{
+	Vertex v;
+	std::vector<Vertex> vertex_buffer_data;
+	std::vector<GLuint> index_buffer_data;
+
+	for (int x = 0; x < numX + 1; ++x)
+	{
+		v.color = color;
+		v.pos.Set(x * length, 0, 0);
+		vertex_buffer_data.push_back(v);
+		v.pos.Set(x * length, 0, numZ * length);
+		vertex_buffer_data.push_back(v);
+	}
+
+	for (int z = 0; z < numZ + 1; ++z)
+	{
+		v.color = color;
+		v.pos.Set(0, 0, z * length);
+		vertex_buffer_data.push_back(v);
+		v.pos.Set(numX * length, 0, z * length);
+		vertex_buffer_data.push_back(v);
+	}
+
+	int indexBuffer = 0;
+	for (indexBuffer; indexBuffer < numX * 2 + numZ * 2 + 4; ++indexBuffer) //+4 for the grid for 2 lines at the end of the grid
+	{
+		index_buffer_data.push_back(indexBuffer);
+	}
+	Mesh *mesh = new Mesh(meshName);
+
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, vertex_buffer_data.size() * sizeof(Vertex), &vertex_buffer_data[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_buffer_data.size() * sizeof(GLuint), &index_buffer_data[0], GL_STATIC_DRAW);
+
+	mesh->indexSize = index_buffer_data.size();
+	mesh->mode = Mesh::DRAW_LINES;
+
+	return mesh;
+}

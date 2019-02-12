@@ -28,3 +28,8 @@ bool ChiefHut::Handle(Message* msg)
 	delete msg;
 	return false;
 }
+
+void ChiefHut::TheFunction(GameObject * go)
+{
+	std::cout << "Chief Hut Function" << std::endl;
+}
