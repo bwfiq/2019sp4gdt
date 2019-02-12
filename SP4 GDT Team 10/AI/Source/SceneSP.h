@@ -9,6 +9,8 @@
 #include "Graph.h"
 #include "MousePicker.h"
 
+#include "Grid.h"
+
 
 class SceneSP : public SceneBase
 {
@@ -47,6 +49,9 @@ protected:
 	float fSeaDeltaY = 0;
 	bool bSeaYDir = false;
 	GAME_STATE game_state;
+
+	//Grid
+	std::vector<Grid::TILE_CONTENT> m_grid;
 
 	GameObject* selected; //Gameobject selected by mouse click, can do actions from UI choices that pop up
 	GameObject* goChiefHut;

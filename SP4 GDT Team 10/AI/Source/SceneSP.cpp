@@ -27,10 +27,35 @@ SceneSP::~SceneSP()
 {
 }
 
+int GetGridIndex(int gridX, int gridZ)
+{
+	return gridZ * SceneData::GetInstance()->GetNoGrid() + gridX;
+}
+
+int GetGridIndex(GridPt pt)
+{
+	return pt.z * SceneData::GetInstance()->GetNoGrid() + pt.x;
+}
+
+bool isPointInGrid(GridPt pt)
+{
+	return pt.x < SceneData::GetInstance()->GetNoGrid() && pt.x >= 0 && pt.z < SceneData::GetInstance()->GetNoGrid() && pt.z >= 0;
+}
+
+std::pair<int, int> GetPoint(int index)
+{
+	return std::pair<int, int>(index % SceneData::GetInstance()->GetNoGrid(), index / SceneData::GetInstance()->GetNoGrid());
+}
+
 void SceneSP::Init()
 {
+	SceneData::GetInstance()->SetNoGrid(10);
+	SceneData::GetInstance()->SetGridSize(1.f);
+	SceneData::GetInstance()->SetGridOffset(0.5f);
 	SceneBase::Init();
 
+	m_grid.resize(SceneData::GetInstance()->GetNoGrid() * SceneData::GetInstance()->GetNoGrid());
+	std::fill(m_grid.begin(), m_grid.end(), Grid::TILE_EMPTY);
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
@@ -284,18 +309,37 @@ void SceneSP::Update(double dt)
 		bPState = false;
 		std::cout << "P UP" << std::endl;
 	}
+
 	static bool bFState = false;
 	if (!bFState && Application::IsKeyPressed('F'))
 	{
 		bFState = true;
-
-		//static_cast<Villager*>(goVillager)->DoFunction();
 		goVillager->goTarget = goChiefHut;
 	}
 	else if (bFState && !Application::IsKeyPressed('F'))
 	{
 		bFState = false;
 		std::cout << "F UP" << std::endl;
+	}
+
+	static bool bGState = false;
+	if (!bGState && Application::IsKeyPressed('G'))
+	{
+		bGState = true;
+		switch (m_grid[50])
+		{
+		case Grid::TILE_EMPTY:
+			m_grid[50] = Grid::TILE_USED;
+			break;
+		case Grid::TILE_USED:
+			m_grid[50] = Grid::TILE_EMPTY;
+			break;
+		}
+	}
+	else if (bGState && !Application::IsKeyPressed('G'))
+	{
+		bGState = false;
+		std::cout << "G UP" << std::endl;
 	}
 
 	/*
@@ -505,10 +549,36 @@ void SceneSP::Render()
 	RenderMesh(meshList[GEO_GRASS], false);
 	modelStack.PopMatrix();
 
+
+	SceneData* SD = SceneData::GetInstance();
 	modelStack.PushMatrix();
-	modelStack.Translate(0, 0.001f, 0);
+	modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), 0.001f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
 	modelStack.Scale(1, 1, 1);
+	glLineWidth(2.f);
 	RenderMesh(meshList[GEO_GRID], false);
+	glLineWidth(1.f);
+	modelStack.PopMatrix();
+
+	modelStack.PushMatrix();
+	modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), 0.001f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
+	modelStack.Scale(1, 1, 1);
+	for (int i = 0; i < SD->GetNoGrid() * SD->GetNoGrid(); ++i)
+	{
+		std::pair<int, int> pt = GetPoint(i);
+		modelStack.PushMatrix();
+		modelStack.Translate(pt.first + SceneData::GetInstance()->GetGridOffset(), 0, pt.second + SceneData::GetInstance()->GetGridOffset());
+		modelStack.Rotate(-90, 1, 0, 0);
+		switch (m_grid[i])
+		{
+		case Grid::TILE_EMPTY:
+			RenderMesh(meshList[GEO_GREENQUAD], false, 0.3f);
+			break;
+		case Grid::TILE_USED:
+			RenderMesh(meshList[GEO_REDQUAD], false, 0.3f);
+			break;
+		}
+		modelStack.PopMatrix();
+	}
 	modelStack.PopMatrix();
 
 	modelStack.PushMatrix();
