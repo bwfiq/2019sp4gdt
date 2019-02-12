@@ -29,3 +29,8 @@ bool Building::Handle(Message* msg)
 	delete msg;
 	return false;
 }
+
+void Building::TheFunction(GameObject* go)
+{
+	std::cout << "Building Function" << std::endl;
+}

@@ -8,6 +8,8 @@ struct ChiefHut : public Building
 
 	virtual bool Handle(Message* msg);
 
+	virtual void TheFunction
+
 	ChiefHut(GAMEOBJECT_TYPE typeValue = GO_NONE);
 	~ChiefHut();
 };

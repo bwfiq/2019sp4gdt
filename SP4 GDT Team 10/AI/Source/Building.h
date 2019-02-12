@@ -5,11 +5,6 @@
 
 struct Building : public GameObject
 {
-	/*
-	bool moveLeft;
-	bool moveRight;
-	bool moveUp;
-	bool moveDown;*/
 
 	enum STATES
 	{
@@ -23,6 +18,8 @@ struct Building : public GameObject
 	STATES eCurrState;
 
 	virtual bool Handle(Message* msg);
+
+	virtual void TheFunction(GameObject* go);
 
 	Building(GAMEOBJECT_TYPE typeValue = GO_NONE);
 	~Building();

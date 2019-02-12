@@ -274,6 +274,7 @@ void SceneSP::Update(double dt)
 		std::cout << "P UP" << std::endl;
 	}
 
+	/*
 	static bool bLButtonState = false;
 	if (!bLButtonState && Application::IsMousePressed(0))
 	{
@@ -295,6 +296,7 @@ void SceneSP::Update(double dt)
 		bLButtonState = false;
 		std::cout << "LBUTTON UP" << std::endl;
 	}
+	*/
 	Vector3 clickTarget = NULL;
 	static bool bRButtonState = false;
 	if (!bRButtonState && Application::IsMousePressed(1))
@@ -482,7 +484,7 @@ void SceneSP::Render()
 	//modelStack.Translate(0, 0.5f + cosf(asd) * 0.15f, 0);
 	modelStack.Translate(0, -0.5f, 0);
 	//modelStack.Rotate(-90, 1, 0, 0);
-	modelStack.Scale(5, 1, 5);
+	modelStack.Scale(10, 1, 10);
 	RenderMesh(meshList[GEO_GRASS], false);
 	modelStack.PopMatrix();
 

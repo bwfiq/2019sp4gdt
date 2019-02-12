@@ -13,11 +13,12 @@ GameObject::GameObject(GAMEOBJECT_TYPE typeValue)
 	goTarget(NULL),
 	m_currState(NULL),
 	m_nextState(NULL),
+	timer(0),
+	currFrame(0)
 	//NTarget(NULL),
 	//steps(0),
 	//countDown(0),
 	//side(Node::TOP_LEFT),
-	timer(0)
 	//curr(0, 0),
 	//mapRead(false),
 	//moving(false),

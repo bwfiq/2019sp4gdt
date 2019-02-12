@@ -20,6 +20,7 @@ struct GameObject : public ObjectBase
 
 		GO_VILLAGER,
 		GO_BUILDING,
+		GO_CHIEFHUT,
 
 		GO_TOTAL, //must be last
 	};
@@ -50,6 +51,8 @@ struct GameObject : public ObjectBase
 	State *m_nextState;
 
 	virtual bool Handle(Message* msg);
+
+	int currFrame; //For rendering model animation probs testing
 
 	/*
 	//Pathfinding
