@@ -1,6 +1,8 @@
 #include "MousePicker.h"
 #include "MouseController.h"
 #include "Application.h"
+
+
 MousePicker::MousePicker() :
 	projectionStack(NULL),
 	viewStack(NULL),
@@ -36,4 +38,11 @@ void MousePicker::Update(float dt)
 		ray = viewStack->Top().GetInverse() * ray;
 		this->mouseRay = ray.Normalized();
 	}
+}
+
+Vector3 MousePicker::GetIntersectionWithPlane(Vector3 rayPos, Vector3 planePos, Vector3 planeNormal)
+{
+	float d = planePos.Dot(-planeNormal);
+	float t = -(rayPos.Dot(planePos) + d) / (mouseRay.Dot(planeNormal));
+	return rayPos + t * mouseRay;
 }

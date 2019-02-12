@@ -17,6 +17,7 @@ public:
 	void SetViewStack(MS &vS) { this->viewStack = &vS; }
 
 	Vector3 GetMouseRay() const { return this->mouseRay; }
+	Vector3 GetIntersectionWithPlane(Vector3 rayPos, Vector3 planePos, Vector3 planeNormal);
 private:
 	MousePicker();
 	~MousePicker();
