@@ -27,6 +27,9 @@
     <Filter Include="MousePicker">
       <UniqueIdentifier>{1cd3ac04-e60b-4d78-9708-b14e62501c6d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{db2a3b77-fd41-4a5d-a8f3-7ee3e070880a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -109,6 +112,12 @@
     </ClCompile>
     <ClCompile Include="Source\Grid.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UIManager.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UIBase.cpp">
+      <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -216,6 +225,12 @@
     </ClInclude>
     <ClInclude Include="Source\Grid.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UIManager.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UIBase.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

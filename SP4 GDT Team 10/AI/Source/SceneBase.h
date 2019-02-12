@@ -12,6 +12,7 @@
 
 class SceneBase : public Scene
 {
+public:
 	enum UNIFORM_TYPE
 	{
 		U_MVP = 0,
@@ -43,7 +44,6 @@ class SceneBase : public Scene
 
 		U_TOTAL,
 	};
-public:
 	enum GEOMETRY_TYPE
 	{
 		GEO_AXES,
@@ -120,17 +120,17 @@ public:
 	void RenderText(Mesh* mesh, std::string text, Color color);
 	void RenderTextOnScreen(Mesh* mesh, std::string text, Color color, float size, float x, float y);
 	void RenderMesh(Mesh *mesh, bool enableLight, float alpha = 1.0f);
-protected:
-	unsigned m_vertexArrayID;
-	Mesh* meshList[NUM_GEOMETRY];
-	unsigned m_programID;
-	unsigned m_parameters[U_TOTAL];
-
-	Camera camera;
 
 	MS modelStack;
 	MS viewStack;
 	MS projectionStack;
+	unsigned m_parameters[U_TOTAL];
+protected:
+	unsigned m_vertexArrayID;
+	Mesh* meshList[NUM_GEOMETRY];
+	unsigned m_programID;
+
+	Camera camera;
 
 	Light lights[1];
 
