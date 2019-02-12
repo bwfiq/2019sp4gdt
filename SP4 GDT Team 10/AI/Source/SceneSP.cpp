@@ -15,6 +15,7 @@
 #include "Villager.h"
 #include "Building.h"
 #include "ChiefHut.h"
+#include "Bush.h"
 
 #define START_PLAYER false
 #define SEA_WIDTH	50.f
@@ -50,12 +51,23 @@ void SceneSP::Init()
 	Math::InitRNG();
 
 	goVillager = FetchGO(GameObject::GO_VILLAGER);
-	goVillager->pos.Set(0, goVillager->scale.y * 0.5f, 0);
+	goVillager->pos = GetGridPos(GridPt(5, 5));
+	goVillager->pos.y = goVillager->scale.y * 0.5f;
 
 	goChiefHut = FetchGO(GameObject::GO_CHIEFHUT);
 	goChiefHut->scale.y = 1.5f;
 	goChiefHut->pos.Set(1.5f, goChiefHut->scale.y * 0.5f, 0);
 
+	GameObject* go = FetchGO(GameObject::GO_BUSH);
+	go->pos = GetGridPos(GridPt(1, 1));
+	go->pos.y = go->scale.y * 0.5f;
+	Bush* bGo = static_cast<Bush*>(go);
+	bGo->eCurrState = Bush::LUSH;
+
+	iFood = 0;
+	iFoodLimit = 100;
+	iPopulation = 0;
+	iPopulationLimit = 10;
 
 	//go->vel.Set(1, 0, 0);
 	MousePicker::GetInstance()->Init();
@@ -98,7 +110,10 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			switch (type)
 			{
 			case GameObject::GO_VILLAGER:
-				go->scale.Set(1.f, 1.f, 1.f);
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 0.5f, 0.5f, SceneData::GetInstance()->GetGridSize() * 0.5f);
+				break;
+			case GameObject::GO_BUSH:
+				go->scale.Set(SceneData::GetInstance()->GetGridSize(), 0.5f, SceneData::GetInstance()->GetGridSize());
 				break;
 			}
 
@@ -121,6 +136,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			break;
 		case GameObject::GO_CHIEFHUT:
 			go = new ChiefHut(type);
+			break;
+		case GameObject::GO_BUSH:
+			go = new Bush(type);
 			break;
 		default:
 			go = new GameObject(type);
@@ -885,8 +903,6 @@ void SceneSP::Update(double dt)
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
 
-	
-
 	SD->SetWorldHeight(m_worldHeight);
 	SD->SetWorldWidth(m_worldWidth);
 	SD->SetElapsedTime(SD->GetElapsedTime() + (float)dt);
@@ -1108,17 +1124,6 @@ void SceneSP::Update(double dt)
 	}
 
 	// sea movement
-	/*if (Application::IsKeyPressed('I'))
-		fSeaDeltaZ += 0.5f * dt;
-	if (Application::IsKeyPressed('K'))
-		fSeaDeltaZ -= 0.5f * dt;
-	if (Application::IsKeyPressed('J'))
-		fSeaDeltaX += 0.5f * dt;
-	if (Application::IsKeyPressed('L'))
-		fSeaDeltaX -= 0.5f * dt;
-
-
-	fSeaDeltaX += (5.f - fSeaDeltaX) *0.1f * dt;*/
 	if (fSeaDeltaX >= SEA_WIDTH / 4)
 		fSeaDeltaX = -SEA_WIDTH / 4;
 	fSeaDeltaX += dt;
@@ -1130,10 +1135,39 @@ void SceneSP::Update(double dt)
 
 	ProjectileManager::GetInstance()->Update(dt * m_speed);
 	static const float NPC_VELOCITY = 10.f;
+	iPopulation = 0;
+	iPopulationLimit = 0;
 	for (auto go : m_goList)
 	{
 		if (!go->active)
 			continue;
+		go->currentPt = GetPoint(go->pos);
+		// updating population and population limit
+		switch (go->type)
+		{
+		case GameObject::GO_VILLAGER:
+			iPopulation++;
+			// collision (?)
+			for (auto go2 : m_goList)
+			{
+				if (go->currentPt == go2->currentPt && go != go2)
+				{
+					if (go2->type == GameObject::GO_BUSH && static_cast<Bush*>(go2)->eCurrState == Bush::LUSH)
+					{
+						static_cast<Bush*>(go2)->eCurrState = Bush::DEPLETED;
+						iFood += 10;
+					}
+				}
+			}
+			break;
+		case GameObject::GO_CHIEFHUT:
+			iPopulationLimit += 10;
+			break;
+		default:
+			break;
+		}
+
+
 		/*if (go->type == GameObject::GO_NPC)
 		{
 			if (go->target == NULL)
@@ -1185,8 +1219,7 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_VILLAGER], false, 1.f);
-		GridPt temp = GetPoint(go->pos);
-		std::cout << temp.x << " " << temp.z << std::endl;
+		std::cout << "V: " << go->currentPt.x << " " << go->currentPt.z << std::endl;
 		modelStack.PopMatrix();
 	}
 	break; 
@@ -1206,6 +1239,30 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_BUILDING], false, 1.f);
 		modelStack.PopMatrix();
+	}
+		break;
+	case GameObject::GO_BUSH:
+	{	
+		switch (static_cast<Bush*>(go)->eCurrState)
+		{
+		case Bush::LUSH:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_BUSH_LUSH], false, 1.f);
+		modelStack.PopMatrix();
+			break;
+		case Bush::DEPLETED:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_BUSH_DEPLETED], false, 1.f);
+		modelStack.PopMatrix();
+			break;
+		default:
+			break;
+		}
+		std::cout << "B: " << go->currentPt.x << " " << go->currentPt.z << std::endl;
 	}
 		break;
 	default:
@@ -1315,6 +1372,16 @@ void SceneSP::Render()
 	ss.str("");
 	ss << "Graph " << 0;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 50, 0);
+
+	// resources
+	ss.str("");
+	ss.precision(5);
+	ss << "Food:" << iFood << "/" << iFoodLimit;
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 3);
+
+	ss.str("");
+	ss << "Population:" << iPopulation << "/" << iPopulationLimit;
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 0);
 }
 
 void SceneSP::Exit()

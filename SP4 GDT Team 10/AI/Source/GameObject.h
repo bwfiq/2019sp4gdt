@@ -19,8 +19,11 @@ struct GameObject : public ObjectBase
 		GO_CIRCLE,
 
 		GO_VILLAGER,
+
 		GO_BUILDING,
 		GO_CHIEFHUT,
+
+		GO_BUSH,
 
 		GO_TOTAL, //must be last
 	};
@@ -58,6 +61,8 @@ struct GameObject : public ObjectBase
 	//For Pathfinding
 	std::vector<bool> m_visited;
 	std::vector<GridPt> path;
+
+	GridPt currentPt;
 
 	/*
 	//Pathfinding

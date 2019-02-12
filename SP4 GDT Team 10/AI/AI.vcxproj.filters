@@ -119,6 +119,9 @@
     <ClCompile Include="Source\UIBase.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Bush.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -231,6 +234,9 @@
     </ClInclude>
     <ClInclude Include="Source\UIBase.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Bush.h">
+      <Filter>GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
