@@ -2,6 +2,8 @@
 #include <iostream>
 #include "MyMath.h"
 #include "Application.h"
+#include "SceneData.h"
+
 #define SLEEPTIME 10
 
 bool GridPt::operator==(const GridPt& rhs) const
@@ -19,6 +21,41 @@ Grid::Grid()
 Grid::~Grid()
 {
 }
+
+int GetGridIndex(int gridX, int gridZ)
+{
+	return gridZ * SceneData::GetInstance()->GetNoGrid() + gridX;
+}
+
+int GetGridIndex(GridPt pt)
+{
+	return pt.z * SceneData::GetInstance()->GetNoGrid() + pt.x;
+}
+
+bool isPointInGrid(GridPt pt)
+{
+	return pt.x < SceneData::GetInstance()->GetNoGrid() && pt.x >= 0 && pt.z < SceneData::GetInstance()->GetNoGrid() && pt.z >= 0;
+}
+
+std::pair<int, int> GetPoint(int index)
+{
+	return std::pair<int, int>(index % SceneData::GetInstance()->GetNoGrid(), index / SceneData::GetInstance()->GetNoGrid());
+}
+
+Vector3 GetGridPos(GridPt pt)
+{
+	SceneData* SD = SceneData::GetInstance();
+	Vector3 gridOrigin(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), 0, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
+	return gridOrigin + Vector3(pt.x * SD->GetGridSize() + SD->GetGridOffset(), 0, pt.z * SD->GetGridSize() + SD->GetGridOffset());
+}
+GridPt GetPoint(Vector3 pos)
+{
+	Vector3 gridOrigin(-0.5f * SceneData::GetInstance()->GetNoGrid() * SceneData::GetInstance()->GetGridSize(), 0, -0.5f * SceneData::GetInstance()->GetNoGrid() * SceneData::GetInstance()->GetGridSize());
+	Vector3 gridPos = pos - gridOrigin;
+	gridPos.Set(gridPos.x / SceneData::GetInstance()->GetGridSize(), 0, gridPos.z / SceneData::GetInstance()->GetGridSize());
+	return GridPt((int)gridPos.x, (int)gridPos.z);
+}
+
 
 Grid::TILE_CONTENT Grid::See(GridPt tile)
 {

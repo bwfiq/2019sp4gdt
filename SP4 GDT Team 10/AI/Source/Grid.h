@@ -1,7 +1,8 @@
-#ifndef GRID
+#ifndef GRID_H
 #define GRID_H
 
 #include <vector>
+#include "Vector3.h"
 
 struct GridPt
 {
@@ -58,4 +59,15 @@ private:
 	int m_numMove;
 };
 
+int GetGridIndex(int gridX, int gridZ);
+
+int GetGridIndex(GridPt pt);
+
+bool isPointInGrid(GridPt pt);
+
+std::pair<int, int> GetPoint(int index);
+
+Vector3 GetGridPos(GridPt pt);
+
+GridPt GetPoint(Vector3 pos);
 #endif

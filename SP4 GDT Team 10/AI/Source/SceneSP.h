@@ -4,13 +4,11 @@
 #include "GameObject.h"
 #include <vector>
 #include "SceneBase.h"
-#include "Maze.h"
 #include <queue>
 #include "Graph.h"
 #include "MousePicker.h"
 
 #include "Grid.h"
-
 
 class SceneSP : public SceneBase
 {
@@ -27,7 +25,8 @@ public:
 	void RenderGO(GameObject *go);
 	GameObject* FetchGO(GameObject::GAMEOBJECT_TYPE type);
 
-	//void AStar(GameObject* go, Vector3 target);
+	//void AStar(GameObject* go, Vector3 target); //For Graph Pathfinding
+	void AStarGrid(GameObject* go, GridPt target); //For Grid Pathfinding
 	//void DFSOnce(GameObject* go);
 
 	void Reset();
@@ -52,6 +51,8 @@ protected:
 
 	//Grid
 	std::vector<Grid::TILE_CONTENT> m_grid;
+	std::vector<GridPt> m_shortestPath; //Used for temporary storage of path in AStar
+	std::vector<GridPt> m_previous; //Used for storing the previous point in AStar
 
 	GameObject* selected; //Gameobject selected by mouse click, can do actions from UI choices that pop up
 	GameObject* goChiefHut;

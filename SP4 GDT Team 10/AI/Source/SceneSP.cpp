@@ -27,31 +27,11 @@ SceneSP::~SceneSP()
 {
 }
 
-int GetGridIndex(int gridX, int gridZ)
-{
-	return gridZ * SceneData::GetInstance()->GetNoGrid() + gridX;
-}
-
-int GetGridIndex(GridPt pt)
-{
-	return pt.z * SceneData::GetInstance()->GetNoGrid() + pt.x;
-}
-
-bool isPointInGrid(GridPt pt)
-{
-	return pt.x < SceneData::GetInstance()->GetNoGrid() && pt.x >= 0 && pt.z < SceneData::GetInstance()->GetNoGrid() && pt.z >= 0;
-}
-
-std::pair<int, int> GetPoint(int index)
-{
-	return std::pair<int, int>(index % SceneData::GetInstance()->GetNoGrid(), index / SceneData::GetInstance()->GetNoGrid());
-}
-
 void SceneSP::Init()
 {
 	SceneData::GetInstance()->SetNoGrid(10);
-	SceneData::GetInstance()->SetGridSize(1.f);
-	SceneData::GetInstance()->SetGridOffset(0.5f);
+	SceneData::GetInstance()->SetGridSize(0.5f);
+	SceneData::GetInstance()->SetGridOffset(0.25f);
 	SceneBase::Init();
 
 	m_grid.resize(SceneData::GetInstance()->GetNoGrid() * SceneData::GetInstance()->GetNoGrid());
@@ -92,6 +72,9 @@ bool SceneSP::Handle(Message* message)
 	{
 		switch (messageWRU->type)
 		{
+		case MessageWRU::PATH_TO_TARGET:
+			AStarGrid(messageWRU->go, GetPoint(messageWRU->go->goTarget->pos));
+			break;
 		default:
 			break;
 		}
@@ -147,6 +130,636 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			m_goList.push_back(go);
 	}
 	return FetchGO(type);
+}
+struct Compare2
+{
+	bool operator()(std::pair<GridPt, std::pair<int, int>> pair1, std::pair<GridPt, std::pair<int, int>> pair2)
+	{
+		return pair1.second.second < pair2.second.second;
+	}
+};
+
+void SceneSP::AStarGrid(GameObject * go, GridPt target)
+{
+
+	//first = curr point, second.first = tile cost, second.second = total cost(tile cost + distance to final destination)
+	std::vector<std::pair<GridPt, std::pair<int, int>>>priority_Queue;
+	std::sort(priority_Queue.begin(), priority_Queue.end(), Compare2());
+	while (!m_shortestPath.empty())
+	{
+		m_shortestPath.pop_back();
+	}
+	SceneData* SD = SceneData::GetInstance();
+	go->m_visited.resize(SD->GetNoGrid() * SD->GetNoGrid());
+	std::fill(go->m_visited.begin(), go->m_visited.end(), false);
+	//keeping track of the parent node
+	m_previous.resize(SD->GetNoGrid() * SD->GetNoGrid());
+	std::fill(m_previous.begin(), m_previous.end(), NULL);
+
+	GridPt curr = GetPoint(go->pos);
+	if (!isPointInGrid(curr))
+		return;
+
+	GridPt bestStart = curr; //Closest gridPt to start from
+	float fDistanceToTarget = (target.x - curr.x) * (target.x - curr.x) + (target.z - curr.z) * (target.z - curr.z);
+	Vector3 ptPos = GetGridPos(curr); //Position of gridPt in world space
+
+	//Check if goPos is left of or right of gridPt
+	if (go->pos.x < ptPos.x)
+	{
+		//Check left of gridPt
+		GridPt temp = GridPt(curr.x - 1, curr.z);
+		if (isPointInGrid(temp))
+		{
+			float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
+			if (distance < fDistanceToTarget)
+			{
+				fDistanceToTarget = distance;
+				bestStart = temp;
+			}
+		}
+		//Check if goPos is above or below center of gridPt
+		if (go->pos.z < ptPos.z)
+		{
+			//Check above of gridPt
+			temp = GridPt(curr.x, curr.z - 1);
+			if (isPointInGrid(temp))
+			{
+				float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
+				if (distance < fDistanceToTarget)
+				{
+					fDistanceToTarget = distance;
+					bestStart = temp;
+				}
+			}
+			//Check diagonal
+			temp = GridPt(curr.x - 1, curr.z - 1);
+			if (isPointInGrid(temp))
+			{
+				float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
+				if (distance < fDistanceToTarget)
+				{
+					fDistanceToTarget = distance;
+					bestStart = temp;
+				}
+			}
+		}
+		else
+		{
+			//Check below of gridPt
+			temp = GridPt(curr.x, curr.z + 1);
+			if (isPointInGrid(temp))
+			{
+				float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
+				if (distance < fDistanceToTarget)
+				{
+					fDistanceToTarget = distance;
+					bestStart = temp;
+				}
+			}
+			//Check diagonal
+			temp = GridPt(curr.x - 1, curr.z + 1);
+			if (isPointInGrid(temp))
+			{
+				float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
+				if (distance < fDistanceToTarget)
+				{
+					fDistanceToTarget = distance;
+					bestStart = temp;
+				}
+			}
+		}
+	}
+	else
+	{
+		//Check right of gridPt
+		GridPt temp = GridPt(curr.x + 1, curr.z);
+		if (isPointInGrid(temp))
+		{
+			float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
+			if (distance < fDistanceToTarget)
+			{
+				fDistanceToTarget = distance;
+				bestStart = temp;
+			}
+		}
+		//Check if goPos is above or below center of gridPt
+		if (go->pos.z < ptPos.z)
+		{
+			//Check above of gridPt
+			temp = GridPt(curr.x, curr.z - 1);
+			if (isPointInGrid(temp))
+			{
+				float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
+				if (distance < fDistanceToTarget)
+				{
+					fDistanceToTarget = distance;
+					bestStart = temp;
+				}
+			}
+			//Check diagonal
+			temp = GridPt(curr.x + 1, curr.z - 1);
+			if (isPointInGrid(temp))
+			{
+				float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
+				if (distance < fDistanceToTarget)
+				{
+					fDistanceToTarget = distance;
+					bestStart = temp;
+				}
+			}
+		}
+		else
+		{
+			//Check below of gridPt
+			temp = GridPt(curr.x, curr.z + 1);
+			if (isPointInGrid(temp))
+			{
+				float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
+				if (distance < fDistanceToTarget)
+				{
+					fDistanceToTarget = distance;
+					bestStart = temp;
+				}
+			}
+			//Check diagonal
+			temp = GridPt(curr.x + 1, curr.z + 1);
+			if (isPointInGrid(temp))
+			{
+				float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
+				if (distance < fDistanceToTarget)
+				{
+					fDistanceToTarget = distance;
+					bestStart = temp;
+				}
+			}
+		}
+	}
+
+	int G = 0;
+	priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(bestStart, std::pair<int, int>(G, 0)));
+	go->m_visited[GetGridIndex(bestStart)] = true;
+	float nearestDistance = FLT_MAX;
+	GridPt nearestTile = bestStart;
+	GridPt next = bestStart;
+	int currIndex = 0;
+
+	for (int loop = 0; loop < SD->GetNoGrid() * SD->GetNoGrid() && !priority_Queue.empty(); ++loop)
+	{
+		//std::cout << "One Round of Loop" << std::endl;
+		curr = priority_Queue.begin()->first;
+		//m_queue.pop();
+
+		if (curr == target)
+		{
+			break;
+		}
+
+		//Check Up
+		G = priority_Queue.begin()->second.first;
+		next.Set(curr.x, curr.z - 1);
+		currIndex = GetGridIndex(next);
+		if (isPointInGrid(next))
+		{
+			float distanceSquared = NULL;
+			if (m_grid[currIndex] == Grid::TILE_EMPTY)
+			{
+				//Cost of Empty Tile
+				G += 1;
+				//Calculate distance to end
+				distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
+			}
+			if (!go->m_visited[currIndex])
+			{
+				//Update node cost
+				m_previous[currIndex] = curr;
+				priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+				go->m_visited[currIndex] = true;
+
+				//Check if it is the nearest Tile
+				if (distanceSquared < nearestDistance)
+				{
+					nearestDistance = distanceSquared;
+					nearestTile = next;
+				}
+			}
+			else if (distanceSquared != NULL)
+			{
+				//Checks if visited node is in queue
+				for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
+				{
+					std::pair<GridPt, std::pair<int, int>> path = *it;
+					if (path.first == next)
+					{
+						//If in queue, check if new path is shorter thn old path
+						if (path.second.second > G + distanceSquared)
+						{
+							//Update if new path is shorter
+							priority_Queue.erase(it);
+							priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+							m_previous[currIndex] = curr;
+						}
+						break;
+					}
+				}
+				//If not in queue, node is already in optimal path
+			}
+		}
+
+		//Check Down
+		G = priority_Queue.begin()->second.first;
+		next.Set(curr.x, curr.z + 1);
+		currIndex = GetGridIndex(next);
+		if (isPointInGrid(next))
+		{
+			float distanceSquared = NULL;
+			if (m_grid[currIndex] == Grid::TILE_EMPTY)
+			{
+				//Cost of Empty Tile
+				G += 1;
+				//Calculate distance to end
+				distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
+			}
+			if (!go->m_visited[currIndex])
+			{
+				//Update node cost
+				m_previous[currIndex] = curr;
+				priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+				go->m_visited[currIndex] = true;
+
+				//Check if it is the nearest Tile
+				if (distanceSquared < nearestDistance)
+				{
+					nearestDistance = distanceSquared;
+					nearestTile = next;
+				}
+			}
+			else if (distanceSquared != NULL)
+			{
+				//Checks if visited node is in queue
+				for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
+				{
+					std::pair<GridPt, std::pair<int, int>> path = *it;
+					if (path.first == next)
+					{
+						//If in queue, check if new path is shorter thn old path
+						if (path.second.second > G + distanceSquared)
+						{
+							//Update if new path is shorter
+							priority_Queue.erase(it);
+							priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+							m_previous[currIndex] = curr;
+						}
+						break;
+					}
+				}
+				//If not in queue, node is already in optimal path
+			}
+		}
+
+		//Check Left
+		G = priority_Queue.begin()->second.first;
+		next.Set(curr.x - 1, curr.z);
+		currIndex = GetGridIndex(next);
+		if (isPointInGrid(next))
+		{
+			float distanceSquared = NULL;
+			if (m_grid[currIndex] == Grid::TILE_EMPTY)
+			{
+				//Cost of Empty Tile
+				G += 1;
+				//Calculate distance to end
+				distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
+			}
+			if (!go->m_visited[currIndex])
+			{
+				//Update node cost
+				m_previous[currIndex] = curr;
+				priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+				go->m_visited[currIndex] = true;
+
+				//Check if it is the nearest Tile
+				if (distanceSquared < nearestDistance)
+				{
+					nearestDistance = distanceSquared;
+					nearestTile = next;
+				}
+			}
+			else if (distanceSquared != NULL)
+			{
+				//Checks if visited node is in queue
+				for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
+				{
+					std::pair<GridPt, std::pair<int, int>> path = *it;
+					if (path.first == next)
+					{
+						//If in queue, check if new path is shorter thn old path
+						if (path.second.second > G + distanceSquared)
+						{
+							//Update if new path is shorter
+							priority_Queue.erase(it);
+							priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+							m_previous[currIndex] = curr;
+						}
+						break;
+					}
+				}
+				//If not in queue, node is already in optimal path
+			}
+		}
+
+		//Check Right
+		G = priority_Queue.begin()->second.first;
+		next.Set(curr.x + 1, curr.z);
+		currIndex = GetGridIndex(next);
+		if (isPointInGrid(next))
+		{
+			float distanceSquared = NULL;
+			if (m_grid[currIndex] == Grid::TILE_EMPTY)
+			{
+				//Cost of Empty Tile
+				G += 1;
+				//Calculate distance to end
+				distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
+			}
+			if (!go->m_visited[currIndex])
+			{
+				//Update node cost
+				m_previous[currIndex] = curr;
+				priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+				go->m_visited[currIndex] = true;
+
+				//Check if it is the nearest Tile
+				if (distanceSquared < nearestDistance)
+				{
+					nearestDistance = distanceSquared;
+					nearestTile = next;
+				}
+			}
+			else if (distanceSquared != NULL)
+			{
+				//Checks if visited node is in queue
+				for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
+				{
+					std::pair<GridPt, std::pair<int, int>> path = *it;
+					if (path.first == next)
+					{
+						//If in queue, check if new path is shorter thn old path
+						if (path.second.second > G + distanceSquared)
+						{
+							//Update if new path is shorter
+							priority_Queue.erase(it);
+							priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+							m_previous[currIndex] = curr;
+						}
+						break;
+					}
+				}
+				//If not in queue, node is already in optimal path
+			}
+		}
+
+		//Check Up Left
+		G = priority_Queue.begin()->second.first;
+		next.Set(curr.x - 1, curr.z - 1);
+		currIndex = GetGridIndex(next);
+		if (isPointInGrid(next))
+		{
+			float distanceSquared = NULL;
+			if (m_grid[currIndex] == Grid::TILE_EMPTY)
+			{
+				//Cost of Empty Tile
+				G += 1;
+				//Calculate distance to end
+				distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
+			}
+			if (!go->m_visited[currIndex])
+			{
+				//Update node cost
+				m_previous[currIndex] = curr;
+				priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+				go->m_visited[currIndex] = true;
+
+				//Check if it is the nearest Tile
+				if (distanceSquared < nearestDistance)
+				{
+					nearestDistance = distanceSquared;
+					nearestTile = next;
+				}
+			}
+			else if (distanceSquared != NULL)
+			{
+				//Checks if visited node is in queue
+				for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
+				{
+					std::pair<GridPt, std::pair<int, int>> path = *it;
+					if (path.first == next)
+					{
+						//If in queue, check if new path is shorter thn old path
+						if (path.second.second > G + distanceSquared)
+						{
+							//Update if new path is shorter
+							priority_Queue.erase(it);
+							priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+							m_previous[currIndex] = curr;
+						}
+						break;
+					}
+				}
+				//If not in queue, node is already in optimal path
+			}
+		}
+
+		//Check Up Right
+		G = priority_Queue.begin()->second.first;
+		next.Set(curr.x + 1, curr.z - 1);
+		currIndex = GetGridIndex(next);
+		if (isPointInGrid(next))
+		{
+			float distanceSquared = NULL;
+			if (m_grid[currIndex] == Grid::TILE_EMPTY)
+			{
+				//Cost of Empty Tile
+				G += 1;
+				//Calculate distance to end
+				distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
+			}
+			if (!go->m_visited[currIndex])
+			{
+				//Update node cost
+				m_previous[currIndex] = curr;
+				priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+				go->m_visited[currIndex] = true;
+
+				//Check if it is the nearest Tile
+				if (distanceSquared < nearestDistance)
+				{
+					nearestDistance = distanceSquared;
+					nearestTile = next;
+				}
+			}
+			else if (distanceSquared != NULL)
+			{
+				//Checks if visited node is in queue
+				for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
+				{
+					std::pair<GridPt, std::pair<int, int>> path = *it;
+					if (path.first == next)
+					{
+						//If in queue, check if new path is shorter thn old path
+						if (path.second.second > G + distanceSquared)
+						{
+							//Update if new path is shorter
+							priority_Queue.erase(it);
+							priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+							m_previous[currIndex] = curr;
+						}
+						break;
+					}
+				}
+				//If not in queue, node is already in optimal path
+			}
+		}
+
+		//Check Down Left
+		G = priority_Queue.begin()->second.first;
+		next.Set(curr.x - 1, curr.z + 1);
+		currIndex = GetGridIndex(next);
+		if (isPointInGrid(next))
+		{
+			float distanceSquared = NULL;
+			if (m_grid[currIndex] == Grid::TILE_EMPTY)
+			{
+				//Cost of Empty Tile
+				G += 1;
+				//Calculate distance to end
+				distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
+			}
+			if (!go->m_visited[currIndex])
+			{
+				//Update node cost
+				m_previous[currIndex] = curr;
+				priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+				go->m_visited[currIndex] = true;
+
+				//Check if it is the nearest Tile
+				if (distanceSquared < nearestDistance)
+				{
+					nearestDistance = distanceSquared;
+					nearestTile = next;
+				}
+			}
+			else if (distanceSquared != NULL)
+			{
+				//Checks if visited node is in queue
+				for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
+				{
+					std::pair<GridPt, std::pair<int, int>> path = *it;
+					if (path.first == next)
+					{
+						//If in queue, check if new path is shorter thn old path
+						if (path.second.second > G + distanceSquared)
+						{
+							//Update if new path is shorter
+							priority_Queue.erase(it);
+							priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+							m_previous[currIndex] = curr;
+						}
+						break;
+					}
+				}
+				//If not in queue, node is already in optimal path
+			}
+		}
+
+		//Check Down Right
+		G = priority_Queue.begin()->second.first;
+		next.Set(curr.x + 1, curr.z + 1);
+		currIndex = GetGridIndex(next);
+		if (isPointInGrid(next))
+		{
+			float distanceSquared = NULL;
+			if (m_grid[currIndex] == Grid::TILE_EMPTY)
+			{
+				//Cost of Empty Tile
+				G += 1;
+				//Calculate distance to end
+				distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
+			}
+			if (!go->m_visited[currIndex])
+			{
+				//Update node cost
+				m_previous[currIndex] = curr;
+				priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+				go->m_visited[currIndex] = true;
+
+				//Check if it is the nearest Tile
+				if (distanceSquared < nearestDistance)
+				{
+					nearestDistance = distanceSquared;
+					nearestTile = next;
+				}
+			}
+			else if (distanceSquared != NULL)
+			{
+				//Checks if visited node is in queue
+				for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
+				{
+					std::pair<GridPt, std::pair<int, int>> path = *it;
+					if (path.first == next)
+					{
+						//If in queue, check if new path is shorter thn old path
+						if (path.second.second > G + distanceSquared)
+						{
+							//Update if new path is shorter
+							priority_Queue.erase(it);
+							priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+							m_previous[currIndex] = curr;
+						}
+						break;
+					}
+				}
+				//If not in queue, node is already in optimal path
+			}
+		}
+
+		priority_Queue.erase(priority_Queue.begin());
+		std::sort(priority_Queue.begin(), priority_Queue.end(), Compare2());
+	}
+
+	if (priority_Queue.begin()->first == target)
+	{
+		//If manage to reach target
+		curr = target;
+		while (curr != NULL)
+		{
+			m_shortestPath.push_back(curr);
+			curr = m_previous[GetGridIndex(curr)];
+		}
+	}
+	else
+	{
+		//If unable to reach target
+		curr = nearestTile;
+		while (curr != NULL)
+		{
+			m_shortestPath.push_back(curr);
+			curr = m_previous[GetGridIndex(curr)];
+		}
+	}
+
+	//Just take based on range of movement 
+	while (!m_shortestPath.empty())
+	{
+		go->path.push_back(m_shortestPath.back());
+		m_shortestPath.pop_back();
+	}
+	if (go->path.size() > 1)
+	{
+		std::reverse(go->path.begin(), go->path.end());
+	}
+	//std::cout << priority_Queue.begin()->second.first << std::endl;
+	//return priority_Queue.begin()->second.first;
 }
 
 //void SceneSP::AStar(GameObject * go, Vector3 target)
@@ -342,6 +955,89 @@ void SceneSP::Update(double dt)
 		std::cout << "G UP" << std::endl;
 	}
 
+	//Temporary Movement
+	GridPt currPos = GetPoint(goVillager->pos);
+	static bool bWState = false;
+	if (!bWState && Application::IsKeyPressed('W'))
+	{
+		bWState = true;
+		if (goVillager->m_currState == SMManager::GetInstance()->GetSM(goVillager->smID)->GetState("Idle"))
+		{
+			GridPt UP(currPos.x, currPos.z - 1);
+			if (isPointInGrid(UP))
+			{
+				float y = goVillager->pos.y;
+				goVillager->target = GetGridPos(UP);
+				goVillager->target.y = y;
+			}
+		}
+	}
+	else if (bWState && !Application::IsKeyPressed('W'))
+	{
+		bWState = false;
+		std::cout << "W UP" << std::endl;
+	}
+	static bool bSState = false;
+	if (!bSState && Application::IsKeyPressed('S'))
+	{
+		bSState = true;
+		if (goVillager->m_currState == SMManager::GetInstance()->GetSM(goVillager->smID)->GetState("Idle"))
+		{
+			GridPt DOWN(currPos.x, currPos.z + 1);
+			if (isPointInGrid(DOWN))
+			{
+				float y = goVillager->pos.y;
+				goVillager->target = GetGridPos(DOWN);
+				goVillager->target.y = y;
+			}
+		}
+	}
+	else if (bSState && !Application::IsKeyPressed('S'))
+	{
+		bSState = false;
+		std::cout << "S UP" << std::endl;
+	}
+	static bool bAState = false;
+	if (!bAState && Application::IsKeyPressed('A'))
+	{
+		bAState = true;
+		if (goVillager->m_currState == SMManager::GetInstance()->GetSM(goVillager->smID)->GetState("Idle"))
+		{
+			GridPt LEFT(currPos.x - 1, currPos.z);
+			if (isPointInGrid(LEFT))
+			{
+				float y = goVillager->pos.y;
+				goVillager->target = GetGridPos(LEFT);
+				goVillager->target.y = y;
+			}
+		}
+	}
+	else if (bAState && !Application::IsKeyPressed('A'))
+	{
+		bAState = false;
+		std::cout << "A UP" << std::endl;
+	}
+	static bool bDState = false;
+	if (!bDState && Application::IsKeyPressed('D'))
+	{
+		bDState = true;
+		if (goVillager->m_currState == SMManager::GetInstance()->GetSM(goVillager->smID)->GetState("Idle"))
+		{
+			GridPt RIGHT(currPos.x + 1, currPos.z);
+			if (isPointInGrid(RIGHT))
+			{
+				float y = goVillager->pos.y;
+				goVillager->target = GetGridPos(RIGHT);
+				goVillager->target.y = y;
+			}
+		}
+	}
+	else if (bDState && !Application::IsKeyPressed('D'))
+	{
+		bDState = false;
+		std::cout << "D UP" << std::endl;
+	}
+
 	/*
 	static bool bLButtonState = false;
 	if (!bLButtonState && Application::IsMousePressed(0))
@@ -484,25 +1180,33 @@ void SceneSP::RenderGO(GameObject *go)
 	switch (go->type)
 	{
 	case GameObject::GO_VILLAGER:
+	{
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		//RenderMesh(meshList[GEO_VILLAGER], false, 1.f);
+		RenderMesh(meshList[GEO_VILLAGER], false, 1.f);
+		GridPt temp = GetPoint(go->pos);
+		std::cout << temp.x << " " << temp.z << std::endl;
 		modelStack.PopMatrix();
-		break;
+	}
+	break; 
 	case GameObject::GO_BUILDING:
+	{	
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_BUILDING], false, 1.f);
 		modelStack.PopMatrix();
+	}
 		break;
 	case GameObject::GO_CHIEFHUT:
+	{	
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_BUILDING], false, 1.f);
 		modelStack.PopMatrix();
+	}
 		break;
 	default:
 		break;
@@ -561,13 +1265,13 @@ void SceneSP::Render()
 
 	modelStack.PushMatrix();
 	modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), 0.001f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
-	modelStack.Scale(1, 1, 1);
 	for (int i = 0; i < SD->GetNoGrid() * SD->GetNoGrid(); ++i)
 	{
 		std::pair<int, int> pt = GetPoint(i);
 		modelStack.PushMatrix();
-		modelStack.Translate(pt.first + SceneData::GetInstance()->GetGridOffset(), 0, pt.second + SceneData::GetInstance()->GetGridOffset());
+		modelStack.Translate(pt.first * SD->GetGridSize() + SD->GetGridOffset(), 0, pt.second * SD->GetGridSize() + SD->GetGridOffset());
 		modelStack.Rotate(-90, 1, 0, 0);
+		modelStack.Scale(SD->GetGridSize(), SD->GetGridSize(), SD->GetGridSize());
 		switch (m_grid[i])
 		{
 		case Grid::TILE_EMPTY:

@@ -6,7 +6,7 @@
 #include "ObjectBase.h"
 #include "Node.h"
 #include <stack>
-#include "Maze.h"
+#include "Grid.h"
 #include "Graph.h"
 
 struct GameObject : public ObjectBase
@@ -54,6 +54,10 @@ struct GameObject : public ObjectBase
 	virtual void TheFunction(GameObject* go);
 
 	int currFrame; //For rendering model animation probs testing
+
+	//For Pathfinding
+	std::vector<bool> m_visited;
+	std::vector<GridPt> path;
 
 	/*
 	//Pathfinding

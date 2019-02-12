@@ -13,6 +13,7 @@ GameObject::GameObject(GAMEOBJECT_TYPE typeValue)
 	goTarget(NULL),
 	m_currState(NULL),
 	m_nextState(NULL),
+	target(NULL),
 	timer(0),
 	currFrame(0)
 	//NTarget(NULL),
