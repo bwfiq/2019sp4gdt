@@ -102,7 +102,6 @@ void Camera::Update(double dt)
 		position_goal += position_velocity * dt;
 		Vector3 origVel(position_velocity.Normalized());
 		position_velocity += -position_velocity.Normalized() * 5 * dt;
-		std::cout << position_velocity << std::endl;
 		if (position_velocity.IsZero() || origVel.Dot(position_velocity.Normalized()) < -0.9f)
 			position_velocity.SetZero();
 	}
