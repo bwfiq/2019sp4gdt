@@ -155,6 +155,7 @@
     <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="Source\Building.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
+    <ClCompile Include="Source\ChiefHut.cpp" />
     <ClCompile Include="Source\GameObject.cpp" />
     <ClCompile Include="Source\Graph.cpp" />
     <ClCompile Include="Source\LoadOBJ.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\Building.h" />
     <ClInclude Include="Source\Camera.h" />
+    <ClInclude Include="Source\ChiefHut.h" />
     <ClInclude Include="Source\ConcreteMessages.h" />
     <ClInclude Include="Source\GameObject.h" />
     <ClInclude Include="Source\Geometry.h" />

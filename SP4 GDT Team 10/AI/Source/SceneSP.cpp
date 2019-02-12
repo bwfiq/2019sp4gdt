@@ -14,6 +14,7 @@
 
 #include "Villager.h"
 #include "Building.h"
+#include "ChiefHut.h"
 
 #define START_PLAYER false
 #define SEA_WIDTH	50.f
@@ -46,7 +47,7 @@ void SceneSP::Init()
 	GameObject* go = FetchGO(GameObject::GO_VILLAGER);
 	go->pos.Set(0, go->scale.y * 0.5f, 0);
 
-	go = FetchGO(GameObject::GO_BUILDING);
+	go = FetchGO(GameObject::GO_CHIEFHUT);
 	go->scale.y = 1.5f;
 	go->pos.Set(1.5f, go->scale.y * 0.5f, 0);
 	//go->vel.Set(1, 0, 0);
@@ -102,6 +103,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			break;
 		case GameObject::GO_BUILDING:
 			go = new Building(type);
+			break;
+		case GameObject::GO_CHIEFHUT:
+			go = new ChiefHut(type);
 			break;
 		default:
 			go = new GameObject(type);
@@ -409,10 +413,17 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_VILLAGER], false, 0.5f);
+		RenderMesh(meshList[GEO_VILLAGER], false, 1.f);
 		modelStack.PopMatrix();
 		break;
 	case GameObject::GO_BUILDING:
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_BUILDING], false, 1.f);
+		modelStack.PopMatrix();
+		break;
+	case GameObject::GO_CHIEFHUT:
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);

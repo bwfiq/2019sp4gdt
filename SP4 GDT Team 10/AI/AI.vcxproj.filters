@@ -95,6 +95,9 @@
     <ClCompile Include="Source\Building.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Source\ChiefHut.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -188,6 +191,9 @@
       <Filter>GameObjects</Filter>
     </ClInclude>
     <ClInclude Include="Source\Building.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ChiefHut.h">
       <Filter>GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
