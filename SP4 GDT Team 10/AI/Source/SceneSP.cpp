@@ -53,6 +53,9 @@ void SceneSP::Init()
 
 
 	//go->vel.Set(1, 0, 0);
+	MousePicker::GetInstance()->Init();
+	MousePicker::GetInstance()->SetProjectionStack(projectionStack);
+	MousePicker::GetInstance()->SetViewStack(viewStack);
 }
 
 
@@ -232,19 +235,23 @@ void SceneSP::Update(double dt)
 		Sleep(100);
 		return;
 	}
+	SceneData* SD = SceneData::GetInstance();
+	MousePicker* MP = MousePicker::GetInstance();
+	MouseController* MC = MouseController::GetInstance();
 
 	SceneBase::Update(dt);
+	MP->Update(dt);
+	camera.Update(dt);
 
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
 
-	SceneData* SD = SceneData::GetInstance();
+	
 
 	SD->SetWorldHeight(m_worldHeight);
 	SD->SetWorldWidth(m_worldWidth);
 	SD->SetElapsedTime(SD->GetElapsedTime() + (float)dt);
-	MouseController* MC = MouseController::GetInstance();
 
 	if (Application::IsKeyPressed(VK_OEM_MINUS))
 	{
@@ -465,7 +472,8 @@ void SceneSP::Render()
 	// Projection matrix : Orthographic Projection
 	Mtx44 projection;
 	//projection.SetToOrtho(0, m_worldWidth, 0, m_worldHeight, -1000, 1000);
-	projection.SetToPerspective(70, m_worldWidth / m_worldHeight, 0.01f, 2000);
+	float aspect = (float)Application::GetInstance().GetWindowWidth() / (float)Application::GetInstance().GetWindowHeight();
+	projection.SetToPerspective(70.f, aspect, 0.01f, 2000);
 	projectionStack.LoadMatrix(projection);
 
 	// Camera matrix
@@ -478,20 +486,8 @@ void SceneSP::Render()
 	// Model matrix : an identity matrix (model will be at the origin)
 	modelStack.LoadIdentity();
 
-	float mX, mY;
-	MouseController::GetInstance()->GetMousePosition(mX, mY);
-	//normalizedDeviceCoords
-	mX = 0.5f*(2.35f) - (2.35f * mX) / Application::GetInstance().GetWindowWidth();
-	mY = 0.5f*(1.425f) - (1.425f * mY) / Application::GetInstance().GetWindowHeight();
-
-	
-	//std::cout << mX << " - " << mY << std::endl;
-	Vector3 ray(-mX, mY, -1);
-	ray.Normalize();
-	ray = viewStack.Top().GetInverse() * ray;
-	//std::cout << ray << std::endl;
 	modelStack.PushMatrix();
-	Vector3 adsada = camera.position + ray * 1;
+	Vector3 adsada = MousePicker::GetInstance()->GetIntersectionWithPlane(camera.position, Vector3(0, 0.6f, 0), Vector3(0, 1, 0));
 	modelStack.Translate(adsada.x, adsada.y, adsada.z);
 	modelStack.Scale(0.025, 0.025, 0.025);
 	RenderMesh(meshList[GEO_VILLAGER], false);

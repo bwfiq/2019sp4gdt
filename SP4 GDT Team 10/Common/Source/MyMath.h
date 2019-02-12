@@ -172,6 +172,24 @@ namespace Math
 		return x * x;
 	}
 /******************************************************************************/
+	/*!
+	\brief
+	Returns the interpolated value at alpha
+
+	\param a the start value
+	\param b the goal value
+	\param alpha the rate?
+
+	\exception None
+	\return The interpolated value
+	*/
+	/******************************************************************************/
+	template<typename T>
+	T lerp(T a, T b, float alpha)
+	{
+		return fma(alpha, b, fma(-alpha, a, a));
+	}
+/******************************************************************************/
 /*!
 \brief
 Initialize Random Number Generator

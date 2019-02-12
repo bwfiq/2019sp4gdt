@@ -68,6 +68,8 @@ struct Vector3
 	friend std::ostream& operator<<( std::ostream& os, Vector3& rhs); //print to ostream
 
 	friend Vector3 operator*( float scalar, const Vector3& rhs ); //what is this for?
+
+	Vector3& lerp(const Vector3& rhs, float alpha);
 };
 
 #endif //VECTOR3_H

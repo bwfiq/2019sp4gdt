@@ -7,6 +7,7 @@
 #include "Maze.h"
 #include <queue>
 #include "Graph.h"
+#include "MousePicker.h"
 
 
 class SceneSP : public SceneBase
