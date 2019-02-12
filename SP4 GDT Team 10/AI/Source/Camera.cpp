@@ -17,6 +17,7 @@ void Camera::Init(const Vector3& pos, const Vector3& target, const Vector3& up)
 	this->position = this->position_goal = this->default_position = pos;
 	this->target = this->target_goal = this->default_target = target;
 	this->up = this->default_up = up;
+	fCameraBorderMovespeed = 4.f;
 }
 
 void Camera::Reset()
@@ -32,9 +33,46 @@ void Camera::Reset()
 void Camera::Update(double dt)
 {
 	MouseController* MS = MouseController::GetInstance();
-	Vector3 mouseDelta;
+	Vector3 mousePos,mouseDelta;
+	MS->GetMousePosition(mousePos.x, mousePos.y);
 	MS->GetMouseDelta(mouseDelta.x, mouseDelta.z);
+	int windowWidth = Application::GetInstance().GetWindowWidth();
+	int windowHeight = Application::GetInstance().GetWindowHeight();
 	//Input stuff
+	if (MS->IsButtonUp(MouseController::RMB) &&
+		mousePos.x > 0 && mousePos.x < windowWidth &&
+		mousePos.y > 0 && mousePos.y < windowHeight)
+	{
+		float diff;//this gon be used to calculate the difference, basically done to avoid using Math::Min twice
+		if (mousePos.x > windowWidth * 0.95f)
+		{
+			diff = position_velocity.x;
+			position_velocity.x = Math::Min(position_velocity.x + 20 * (float)dt, fCameraBorderMovespeed);
+			diff = position_velocity.x - diff;
+			target_velocity.x += diff;
+		}
+		else if (mousePos.x < windowWidth * 0.05f)
+		{
+			diff = position_velocity.x;
+			position_velocity.x = Math::Max(position_velocity.x - 20 * (float)dt, -fCameraBorderMovespeed);
+			diff = position_velocity.x - diff;
+			target_velocity.x += diff;
+		}
+		if (mousePos.y > windowHeight * 0.95f)
+		{
+			diff = position_velocity.z;
+			position_velocity.z = Math::Min(position_velocity.z + 20 * (float)dt, fCameraBorderMovespeed);
+			diff = position_velocity.z - diff;
+			target_velocity.z += diff;
+		}
+		else if (mousePos.y < windowHeight * 0.05f)
+		{
+			diff = position_velocity.z;
+			position_velocity.z = Math::Max(position_velocity.z - 20 * (float)dt, -fCameraBorderMovespeed);
+			diff = position_velocity.z - diff;
+			target_velocity.z += diff;
+		}
+	}
 	if (MS->IsButtonPressed(MouseController::RMB))
 	{
 		position_velocity.SetZero();
@@ -63,7 +101,7 @@ void Camera::Update(double dt)
 		//std::cout << "asd" << std::endl;
 		position_goal += position_velocity * dt;
 		Vector3 origVel(position_velocity.Normalized());
-		position_velocity += -position_velocity.Normalized() * 4 * dt;
+		position_velocity += -position_velocity.Normalized() * 5 * dt;
 		std::cout << position_velocity << std::endl;
 		if (position_velocity.IsZero() || origVel.Dot(position_velocity.Normalized()) < -0.9f)
 			position_velocity.SetZero();
@@ -72,7 +110,7 @@ void Camera::Update(double dt)
 	{
 		target_goal += target_velocity * dt;
 		Vector3 origVel(target_velocity.Normalized());
-		target_velocity += -target_velocity.Normalized() * 4 * dt;
+		target_velocity += -target_velocity.Normalized() * 5 * dt;
 		if (target_velocity.IsZero() || origVel.Dot(target_velocity.Normalized()) < -0.9f)
 			target_velocity.SetZero();
 	}
