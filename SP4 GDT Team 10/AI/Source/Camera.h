@@ -29,6 +29,8 @@ private:
 	Vector3 default_up;
 
 	float fCameraBorderMovespeed;
+
+	void CalculateUp();
 };
 
 #endif

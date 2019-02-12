@@ -14,6 +14,7 @@
 #include "SceneSP.h"
 
 #include "MouseController.h"
+#include "KeyboardController.h"
 
 GLFWwindow* m_window;
 const unsigned char FPS = 60; // FPS of this game
@@ -81,6 +82,9 @@ void Application::UpdateInput()
 	double mouse_currX, mouse_currY;
 	glfwGetCursorPos(m_window, &mouse_currX, &mouse_currY);
 	MouseController::GetInstance()->UpdateMousePosition(mouse_currX, mouse_currY);
+
+	for (int i = 0; i < KeyboardController::MAX_KEYS; ++i)
+		KeyboardController::GetInstance()->UpdateKeyboardStatus(i, IsKeyPressed(i));
 }
 
 void Application::PostInputUpdate()
@@ -96,6 +100,7 @@ void Application::PostInputUpdate()
 
 	// Call input systems to update at end of frame
 	MouseController::GetInstance()->EndFrameUpdate();
+	KeyboardController::GetInstance()->EndFrameUpdate();
 }
 
 Application::Application()

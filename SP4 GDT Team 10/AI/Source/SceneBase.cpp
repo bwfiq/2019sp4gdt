@@ -227,10 +227,10 @@ void SceneBase::Update(double dt)
 	if (Application::IsKeyPressed('L'))
 		camera.position.x += 1 * dt;
 
-	Vector3 right(1, 0, 0);
-	Vector3 dir = camera.up.Cross(right);
-	dir.Normalize();
-	camera.target = camera.position + dir * camera.fDistance;
+	//Vector3 right(1, 0, 0);
+	//Vector3 dir = camera.up.Cross(right);
+	//dir.Normalize();
+	//camera.target = camera.position + dir * camera.fDistance;
 
 
 	//camera.up = right.Cross(dir);

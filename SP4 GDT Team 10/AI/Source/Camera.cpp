@@ -2,6 +2,8 @@
 #include "Application.h"
 #include "Mtx44.h"
 #include "MouseController.h"
+#include "KeyboardController.h"
+#include "Mtx44.h"
 
 Camera::Camera()
 {
@@ -33,6 +35,7 @@ void Camera::Reset()
 void Camera::Update(double dt)
 {
 	MouseController* MS = MouseController::GetInstance();
+	KeyboardController* KC = KeyboardController::GetInstance();
 	Vector3 mousePos,mouseDelta;
 	MS->GetMousePosition(mousePos.x, mousePos.y);
 	MS->GetMouseDelta(mouseDelta.x, mouseDelta.z);
@@ -93,7 +96,20 @@ void Camera::Update(double dt)
 			target_velocity = mouseDelta * speed;
 		}
 	}
-	
+	//if (KC->IsKeyPressed('Q'))
+	//{
+	//	Vector3 view = (target_goal - position_goal).Normalized();
+	//	float yaw = 90;
+	//	Mtx44 rotation;
+	//	rotation.SetToRotation(yaw, 0, 1, 0);
+	//	view = rotation * view;
+	//	target_goal = position_goal + view;
+	//	CalculateUp();
+	//}
+	//else if (KC->IsKeyPressed('E'))
+	//{
+
+	//}
 	
 	//Updat stuff
 	if (!position_velocity.IsZero())
@@ -121,4 +137,13 @@ void Camera::Update(double dt)
 	{
 		target.lerp(target_goal, Math::Min((float)dt*12.5f, 1.f));
 	}
+}
+
+void Camera::CalculateUp()
+{
+	Vector3 lookVector = (target_goal - position_goal).Normalized();
+	Vector3 right = lookVector.Cross(up);
+	right.y = 0;
+	right.Normalize();
+	up = right.Cross(lookVector).Normalized();
 }
