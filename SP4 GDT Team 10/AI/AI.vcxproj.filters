@@ -100,8 +100,12 @@
     </ClCompile>
     <ClCompile Include="Source\ChiefHut.cpp">
       <Filter>GameObjects</Filter>
+    </ClCompile>
     <ClCompile Include="Source\MousePicker.cpp">
       <Filter>MousePicker</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StateVillager.cpp">
+      <Filter>FSM</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -200,8 +204,12 @@
     </ClInclude>
     <ClInclude Include="Source\ChiefHut.h">
       <Filter>GameObjects</Filter>
+    </ClInclude>
     <ClInclude Include="Source\MousePicker.h">
       <Filter>MousePicker</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StateVillager.h">
+      <Filter>FSM</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
