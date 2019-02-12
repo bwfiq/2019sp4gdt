@@ -237,6 +237,7 @@ void SceneSP::Update(double dt)
 
 	SceneBase::Update(dt);
 	MP->Update(dt);
+	camera.Update(dt);
 
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;

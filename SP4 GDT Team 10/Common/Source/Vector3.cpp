@@ -366,6 +366,15 @@ Vector3& Vector3::Normalize( void ) throw( DivideByZero )
 	return *this;
 }
 
+Vector3 & Vector3::lerp(const Vector3 & rhs, float alpha)
+{
+	// TODO: insert return statement here
+	this->x = Math::lerp(x, rhs.x, alpha);
+	this->y = Math::lerp(y, rhs.y, alpha);
+	this->z = Math::lerp(z, rhs.z, alpha);
+	return *this;
+}
+
 std::ostream& operator<< (std::ostream& os, Vector3& rhs)
 {
 	os << "[ " << rhs.x << ", " << rhs.y << ", " << rhs.z << " ]";

@@ -9,7 +9,17 @@ public:
 	Vector3 position;
 	Vector3 target;
 	Vector3 up;
+
+	Vector3 position_goal;
+	Vector3 target_goal;
+
+	Vector3 position_velocity;
+	Vector3 target_velocity;
 	float fDistance;
+
+	Vector3 default_position;
+	Vector3 default_target;
+	Vector3 default_up;
 
 	Camera();
 	~Camera();
