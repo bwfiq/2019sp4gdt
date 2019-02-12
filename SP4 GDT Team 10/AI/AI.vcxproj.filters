@@ -24,6 +24,9 @@
     <Filter Include="GameObjects">
       <UniqueIdentifier>{d4065c97-5426-4698-b511-bd373995b920}</UniqueIdentifier>
     </Filter>
+    <Filter Include="MousePicker">
+      <UniqueIdentifier>{1cd3ac04-e60b-4d78-9708-b14e62501c6d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -97,6 +100,8 @@
     </ClCompile>
     <ClCompile Include="Source\ChiefHut.cpp">
       <Filter>GameObjects</Filter>
+    <ClCompile Include="Source\MousePicker.cpp">
+      <Filter>MousePicker</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -195,6 +200,8 @@
     </ClInclude>
     <ClInclude Include="Source\ChiefHut.h">
       <Filter>GameObjects</Filter>
+    <ClInclude Include="Source\MousePicker.h">
+      <Filter>MousePicker</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
