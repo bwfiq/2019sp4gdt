@@ -29,6 +29,7 @@ private:
 	~SceneData();
 	int m_objectCount;
 	int m_fishCount;
+
 	int m_noGrid;
 	float m_gridSize;
 	float m_gridOffset;
