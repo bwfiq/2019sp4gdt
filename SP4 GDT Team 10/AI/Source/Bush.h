@@ -20,6 +20,8 @@ struct Bush : public GameObject
 
 	void DoFunction();
 
+	float fTimer;
+
 	//virtual void TheFunction(GameObject* go);
 
 	Bush(GAMEOBJECT_TYPE typeValue = GO_NONE);

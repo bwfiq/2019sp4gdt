@@ -195,7 +195,7 @@ void SceneBase::Init()
 	meshList[GEO_VILLAGER] = MeshBuilder::GenerateCube("villager", Color(1, 0, 0), 1.f);
 	meshList[GEO_BUILDING] = MeshBuilder::GenerateCube("building", Color(0, 0, 1), 1.f);
 	meshList[GEO_BUSH_LUSH] = MeshBuilder::GenerateCube("bush_lush", Color(0, 1, 0), 1.f);
-	meshList[GEO_BUSH_DEPLETED] = MeshBuilder::GenerateCube("bush_depleted", Color(0, 0.9, 0), 1.f);
+	meshList[GEO_BUSH_DEPLETED] = MeshBuilder::GenerateCube("bush_depleted", Color(0, 0.5, 0), 1.f);
 
 	meshList[GEO_GRID] = MeshBuilder::GenerateGrid("grid", Color(1, 0, 0), SceneData::GetInstance()->GetNoGrid(), SceneData::GetInstance()->GetNoGrid(), SceneData::GetInstance()->GetGridSize());
 

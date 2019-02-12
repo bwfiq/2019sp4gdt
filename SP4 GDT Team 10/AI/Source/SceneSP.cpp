@@ -55,14 +55,15 @@ void SceneSP::Init()
 	goVillager->pos.y = goVillager->scale.y * 0.5f;
 
 	goChiefHut = FetchGO(GameObject::GO_CHIEFHUT);
-	goChiefHut->scale.y = 1.5f;
-	goChiefHut->pos.Set(1.5f, goChiefHut->scale.y * 0.5f, 0);
+	goChiefHut->pos = GetGridPos(GridPt(8, 5));
+	goChiefHut->pos.y = goChiefHut->scale.y * 0.5f;
 
 	GameObject* go = FetchGO(GameObject::GO_BUSH);
 	go->pos = GetGridPos(GridPt(1, 1));
 	go->pos.y = go->scale.y * 0.5f;
 	Bush* bGo = static_cast<Bush*>(go);
 	bGo->eCurrState = Bush::LUSH;
+	bGo->fTimer = 0;
 
 	iFood = 0;
 	iFoodLimit = 100;
@@ -110,10 +111,13 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			switch (type)
 			{
 			case GameObject::GO_VILLAGER:
-				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 0.5f, 0.5f, SceneData::GetInstance()->GetGridSize() * 0.5f);
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 0.5f, 0.25f, SceneData::GetInstance()->GetGridSize() * 0.5f);
 				break;
 			case GameObject::GO_BUSH:
-				go->scale.Set(SceneData::GetInstance()->GetGridSize(), 0.5f, SceneData::GetInstance()->GetGridSize());
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 0.75f, 0.1f, SceneData::GetInstance()->GetGridSize() * 0.75f);
+				break;
+			case GameObject::GO_CHIEFHUT:
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 0.5f, SceneData::GetInstance()->GetGridSize() * 1.f);
 				break;
 			}
 
@@ -1142,7 +1146,7 @@ void SceneSP::Update(double dt)
 		if (!go->active)
 			continue;
 		go->currentPt = GetPoint(go->pos);
-		// updating population and population limit
+		// updating GameObjects
 		switch (go->type)
 		{
 		case GameObject::GO_VILLAGER:
@@ -1155,6 +1159,7 @@ void SceneSP::Update(double dt)
 					if (go2->type == GameObject::GO_BUSH && static_cast<Bush*>(go2)->eCurrState == Bush::LUSH)
 					{
 						static_cast<Bush*>(go2)->eCurrState = Bush::DEPLETED;
+						static_cast<Bush*>(go2)->fTimer = 10.f;
 						iFood += 10;
 					}
 				}
@@ -1163,6 +1168,17 @@ void SceneSP::Update(double dt)
 		case GameObject::GO_CHIEFHUT:
 			iPopulationLimit += 10;
 			break;
+		case GameObject::GO_BUSH:
+			if (static_cast<Bush*>(go)->eCurrState == Bush::DEPLETED)
+			{
+				static_cast<Bush*>(go)->fTimer -= dt;
+				if (static_cast<Bush*>(go)->fTimer <= 0.f)
+				{
+					static_cast<Bush*>(go)->fTimer = 0.f;
+						static_cast<Bush*>(go)->eCurrState = Bush::LUSH;
+				}
+			}
+
 		default:
 			break;
 		}
@@ -1219,7 +1235,6 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_VILLAGER], false, 1.f);
-		std::cout << "V: " << go->currentPt.x << " " << go->currentPt.z << std::endl;
 		modelStack.PopMatrix();
 	}
 	break; 
@@ -1243,26 +1258,19 @@ void SceneSP::RenderGO(GameObject *go)
 		break;
 	case GameObject::GO_BUSH:
 	{	
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		switch (static_cast<Bush*>(go)->eCurrState)
 		{
 		case Bush::LUSH:
-		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
-		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_BUSH_LUSH], false, 1.f);
-		modelStack.PopMatrix();
 			break;
 		case Bush::DEPLETED:
-		modelStack.PushMatrix();
-		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
-		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_BUSH_DEPLETED], false, 1.f);
-		modelStack.PopMatrix();
-			break;
-		default:
 			break;
 		}
-		std::cout << "B: " << go->currentPt.x << " " << go->currentPt.z << std::endl;
+		modelStack.PopMatrix();
 	}
 		break;
 	default:
@@ -1309,7 +1317,6 @@ void SceneSP::Render()
 	modelStack.Scale(10, 1, 10);
 	RenderMesh(meshList[GEO_GRASS], false);
 	modelStack.PopMatrix();
-
 
 	SceneData* SD = SceneData::GetInstance();
 	modelStack.PushMatrix();
