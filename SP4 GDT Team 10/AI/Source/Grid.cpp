@@ -22,32 +22,39 @@ Grid::~Grid()
 {
 }
 
+//Returns Index of the point in the Grid
 int GetGridIndex(int gridX, int gridZ)
 {
 	return gridZ * SceneData::GetInstance()->GetNoGrid() + gridX;
 }
 
+//Returns Index of the point in the Grid
 int GetGridIndex(GridPt pt)
 {
 	return pt.z * SceneData::GetInstance()->GetNoGrid() + pt.x;
 }
 
+//Returns if point is within the existing Grid
 bool isPointInGrid(GridPt pt)
 {
 	return pt.x < SceneData::GetInstance()->GetNoGrid() && pt.x >= 0 && pt.z < SceneData::GetInstance()->GetNoGrid() && pt.z >= 0;
 }
 
+//Returns x and z values of GridPt using Index of GridPt
 std::pair<int, int> GetPoint(int index)
 {
 	return std::pair<int, int>(index % SceneData::GetInstance()->GetNoGrid(), index / SceneData::GetInstance()->GetNoGrid());
 }
 
+//Returns position of GridPt in worldspace
 Vector3 GetGridPos(GridPt pt)
 {
 	SceneData* SD = SceneData::GetInstance();
 	Vector3 gridOrigin(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), 0, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
 	return gridOrigin + Vector3(pt.x * SD->GetGridSize() + SD->GetGridOffset(), 0, pt.z * SD->GetGridSize() + SD->GetGridOffset());
 }
+
+//Returns GridPt that the position is part off
 GridPt GetPoint(Vector3 pos)
 {
 	Vector3 gridOrigin(-0.5f * SceneData::GetInstance()->GetNoGrid() * SceneData::GetInstance()->GetGridSize(), 0, -0.5f * SceneData::GetInstance()->GetNoGrid() * SceneData::GetInstance()->GetGridSize());

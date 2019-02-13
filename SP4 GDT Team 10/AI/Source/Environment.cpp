@@ -1,18 +1,18 @@
-#include "Bush.h"
+#include "Environment.h"
 #include "ConcreteMessages.h"
 
-Bush::Bush(GAMEOBJECT_TYPE typeValue)
-	: Environment(typeValue)
+Environment::Environment(GAMEOBJECT_TYPE typeValue)
+	: GameObject(typeValue)
 {
 	//GameObject(typeValue);
-	std::cout << "Bush Constructor" << std::endl;
+	std::cout << "Environment Constructor" << std::endl;
 }
 
-Bush::~Bush()
+Environment::~Environment()
 {
 }
 
-bool Bush::Handle(Message* msg)
+bool Environment::Handle(Message* msg)
 {
 	MessageObject* messageObject = dynamic_cast<MessageObject*>(msg);
 	switch (messageObject->type)

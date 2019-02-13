@@ -408,6 +408,9 @@ bool SceneSP::Handle(Message* message)
 		case MessageWRU::PATH_TO_TARGET:
 			AStarGrid(messageWRU->go, GetPoint(messageWRU->go->goTarget->pos));
 			break;
+		case MessageWRU::PATH_TO_POINT:
+			AStarGrid(messageWRU->go, GetPoint(messageWRU->go->target));
+			break;
 		default:
 			break;
 		}
@@ -1452,6 +1455,7 @@ void SceneSP::Update(double dt)
 		//std::cout << mousePos << std::endl;
 		GridPt selectedPt = GetPoint(mousePos);
 		//std::cout << "Selected Grid: " << selectedPt.x << ", " << selectedPt.z << std::endl;
+		bool objectFound = false;
 		for (auto go : m_goList)
 		{
 			if (!go->active)
@@ -1459,9 +1463,19 @@ void SceneSP::Update(double dt)
 			if (selectedPt == go->currentPt)
 			{
 				selected = go;
-				if(selected != goVillager)
+				if (selected != goVillager)
+				{
+					objectFound = true;
+					goVillager->m_nextState = SMManager::GetInstance()->GetSM(goVillager->smID)->GetState("Idle");
 					goVillager->goTarget = selected;
+				}
 			}
+		}
+		if (!objectFound)
+		{
+			goVillager->goTarget = NULL;
+			goVillager->target = GetGridPos(selectedPt);
+			goVillager->m_nextState = SMManager::GetInstance()->GetSM(goVillager->smID)->GetState("Idle");
 		}
 	}
 	else if (bLButtonState && !Application::IsMousePressed(0))

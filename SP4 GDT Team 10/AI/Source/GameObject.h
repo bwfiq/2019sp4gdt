@@ -20,10 +20,15 @@ struct GameObject : public ObjectBase
 
 		GO_VILLAGER,
 
+		GO_ENEMY, //Later
+
 		GO_BUILDING,
 		GO_CHIEFHUT,
+		GO_HOUSE,
 
+		GO_ENVIRONMENT,
 		GO_BUSH,
+		GO_TREE,
 
 		GO_TOTAL, //must be last
 	};

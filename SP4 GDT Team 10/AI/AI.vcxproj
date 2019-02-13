@@ -157,6 +157,7 @@
     <ClCompile Include="Source\Bush.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\ChiefHut.cpp" />
+    <ClCompile Include="Source\Environment.cpp" />
     <ClCompile Include="Source\GameObject.cpp" />
     <ClCompile Include="Source\Graph.cpp" />
     <ClCompile Include="Source\Grid.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\ChiefHut.h" />
     <ClInclude Include="Source\ConcreteMessages.h" />
+    <ClInclude Include="Source\Environment.h" />
     <ClInclude Include="Source\GameObject.h" />
     <ClInclude Include="Source\Geometry.h" />
     <ClInclude Include="Source\Graph.h" />
