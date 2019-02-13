@@ -66,7 +66,7 @@ void SceneSP::Init()
 
 	GameObject* go = FetchGO(GameObject::GO_BUSH);
 	go->pos = GetGridPos(GridPt(1, 1));
-	go->pos.y = go->scale.y;
+	go->pos.y = go->scale.y * 0.5f;
 	Bush* bGo = static_cast<Bush*>(go);
 	bGo->eCurrState = Bush::LUSH;
 	bGo->fTimer = 0;
@@ -120,7 +120,7 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 0.5f, 0.25f, SceneData::GetInstance()->GetGridSize() * 0.5f);
 				break;
 			case GameObject::GO_BUSH:
-				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 0.75f, 0.1f, SceneData::GetInstance()->GetGridSize() * 0.75f);
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 0.75f, 1.f, SceneData::GetInstance()->GetGridSize() * 0.75f);
 				break;
 			case GameObject::GO_CHIEFHUT:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 0.5f, SceneData::GetInstance()->GetGridSize() * 1.f);
@@ -947,6 +947,8 @@ void SceneSP::Update(double dt)
 	SD->SetWorldWidth(m_worldWidth);
 	SD->SetElapsedTime(SD->GetElapsedTime() + (float)dt);
 
+	mousePos = MP->GetIntersectionWithPlane(camera.position, Vector3(0, 0, 0), Vector3(0, 1, 0));
+
 	if (Application::IsKeyPressed(VK_OEM_MINUS))
 	{
 		m_speed = Math::Max(0.f, m_speed - 0.1f);
@@ -964,8 +966,8 @@ void SceneSP::Update(double dt)
 	if (Application::IsKeyPressed(VK_RETURN))
 	{
 	}
-	if (MC->IsButtonPressed(MouseController::LMB))
-		std::cout << "asd" << std::endl;
+	//if (MC->IsButtonPressed(MouseController::LMB))
+		//std::cout << "asd" << std::endl;
 
 	//Input Section
 	static bool bPState = false;
@@ -1101,6 +1103,36 @@ void SceneSP::Update(double dt)
 	}
 	*/
 	Vector3 clickTarget = NULL;
+	static bool bLButtonState = false;
+	if (!bLButtonState && Application::IsMousePressed(0))
+	{
+		bLButtonState = true;
+		//std::cout << "LBUTTON DOWN" << std::endl;
+
+		double x, y;
+		Application::GetCursorPos(&x, &y);
+		int w = Application::GetWindowWidth();
+		int h = Application::GetWindowHeight();
+		float posX = static_cast<float>(x) / w * m_worldWidth;
+		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
+		std::cout << mousePos << std::endl;
+		GridPt selectedPt = GetPoint(mousePos);
+		std::cout << "Selected Grid: " << selectedPt.x << ", " << selectedPt.z << std::endl;
+		for (auto go : m_goList)
+		{
+			if (!go->active)
+				continue;
+			if (selectedPt == go->currentPt)
+			{
+				selected = go;
+			}
+		}
+	}
+	else if (bLButtonState && !Application::IsMousePressed(0))
+	{
+		bLButtonState = false;
+		//std::cout << "LBUTTON UP" << std::endl;
+	}
 	static bool bRButtonState = false;
 	if (!bRButtonState && Application::IsMousePressed(1))
 	{
@@ -1115,7 +1147,7 @@ void SceneSP::Update(double dt)
 		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 		if (posX < m_worldHeight && posY < m_worldHeight)
 		{
-			clickTarget.Set(posX, posY, 0);
+			
 		}
 
 	}
@@ -1576,9 +1608,8 @@ void SceneSP::Render()
 	modelStack.LoadIdentity();
 
 	modelStack.PushMatrix();
-	Vector3 adsada = MousePicker::GetInstance()->GetIntersectionWithPlane(camera.position, Vector3(0, 0.6f, 0), Vector3(0, 1, 0));
-	modelStack.Translate(adsada.x, adsada.y, adsada.z);
-	modelStack.Scale(0.025, 0.025, 0.025);
+	modelStack.Translate(mousePos.x, mousePos.y, mousePos.z);
+	modelStack.Scale(0.1, 0.1, 0.1);
 	RenderMesh(meshList[GEO_VILLAGER], false);
 	modelStack.PopMatrix();
 
@@ -1644,6 +1675,14 @@ void SceneSP::Render()
 	{
 		if (!go->active)
 			continue;
+		if (go == selected)
+		{
+			modelStack.PushMatrix();
+			modelStack.Translate(selected->pos.x, selected->pos.y + 1.0f, selected->pos.z);
+			modelStack.Scale(0.1, 0.1, 0.1);
+			RenderMesh(meshList[GEO_VILLAGER], false); // renders a red cube above GO if it is currently selected
+			modelStack.PopMatrix();
+		}
 		RenderGO(go);
 	}
 

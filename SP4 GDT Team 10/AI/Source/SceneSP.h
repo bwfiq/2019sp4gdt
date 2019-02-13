@@ -56,6 +56,8 @@ protected:
 	std::vector<GridPt> m_shortestPath; //Used for temporary storage of path in AStar
 	std::vector<GridPt> m_previous; //Used for storing the previous point in AStar
 
+	Vector3 mousePos;
+
 	GameObject* selected; //Gameobject selected by mouse click, can do actions from UI choices that pop up
 	GameObject* goChiefHut;
 
