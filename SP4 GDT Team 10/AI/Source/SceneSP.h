@@ -47,6 +47,7 @@ protected:
 	float fSeaDeltaZ = 0;
 	float fSeaDeltaY = 0;
 	bool bSeaYDir = false;
+	int iFood, iFoodLimit, iPopulation, iPopulationLimit;
 	GAME_STATE game_state;
 
 	//Grid

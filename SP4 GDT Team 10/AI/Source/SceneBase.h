@@ -99,8 +99,12 @@ public:
 
 		GEO_GRASS,
 		GEO_SEA,
+
 		GEO_VILLAGER,
+
 		GEO_BUILDING,
+
+
 		GEO_BACKGROUND,
 		GEO_TREE,
 		GEO_BUSH,

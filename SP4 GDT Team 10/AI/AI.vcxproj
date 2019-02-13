@@ -154,6 +154,7 @@
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="Source\Building.cpp" />
+    <ClCompile Include="Source\Bush.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\ChiefHut.cpp" />
     <ClCompile Include="Source\GameObject.cpp" />
@@ -185,6 +186,7 @@
   <ItemGroup>
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\Building.h" />
+    <ClInclude Include="Source\Bush.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\ChiefHut.h" />
     <ClInclude Include="Source\ConcreteMessages.h" />
