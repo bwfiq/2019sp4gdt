@@ -8,6 +8,8 @@
 #include "PostOffice.h"
 #include "ConcreteMessages.h"
 #include "ProjectileManager.h"
+#include "UIManager.h"
+#include "UIReligionBar.h"
 
 #include "SMManager.h"
 #include "MouseController.h"
@@ -80,6 +82,9 @@ void SceneSP::Init()
 	MousePicker::GetInstance()->Init();
 	MousePicker::GetInstance()->SetProjectionStack(projectionStack);
 	MousePicker::GetInstance()->SetViewStack(viewStack);
+
+	UIManager::GetInstance()->Init();
+	UIManager::GetInstance()->AddUI(new UIReligionBar());
 }
 
 
@@ -934,10 +939,12 @@ void SceneSP::Update(double dt)
 	MousePicker* MP = MousePicker::GetInstance();
 	MouseController* MC = MouseController::GetInstance();
 	KeyboardController* KC = KeyboardController::GetInstance();
+	UIManager* UIM = UIManager::GetInstance();
 
 	SceneBase::Update(dt);
 	MP->Update(dt);
 	camera.Update(dt);
+	UIM->Update(dt);
 
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
@@ -1685,6 +1692,8 @@ void SceneSP::Render()
 		}
 		RenderGO(go);
 	}
+
+	UIManager::GetInstance()->Render(this);
 
 	ss.str("");
 	ss.precision(3);

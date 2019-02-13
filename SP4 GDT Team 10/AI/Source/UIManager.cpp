@@ -13,7 +13,7 @@ void UIManager::Update(float dt)
 
 void UIManager::Render(SceneBase * scene)
 {
-	/*Mtx44 ortho;
+	Mtx44 ortho;
 	ortho.SetToOrtho(-80, 80, -60, 60, -10, 10);
 	scene->projectionStack.PushMatrix();
 	scene->projectionStack.LoadMatrix(ortho);
@@ -21,28 +21,36 @@ void UIManager::Render(SceneBase * scene)
 	scene->viewStack.LoadIdentity();
 	scene->modelStack.PushMatrix();
 	scene->modelStack.LoadIdentity();
-	int count = 0;
+	float count = 0;
 	for (auto UI : ui_list)
 	{
-		count++;
-	scene->modelStack.PushMatrix();
-		scene->modelStack.Translate(UI->pos.x, UI->pos.y, UI->pos.z + (count << 5));
-		scene->modelStack.Scale(UI->scale.x, UI->scale.y, 1);
-		for (auto UImesh : UI->meshes)
-			r
-		
-	scene->modelStack.PopMatrix();
+		count += 0.01f;
+		scene->modelStack.PushMatrix();
+			scene->modelStack.Translate(UI->pos.x, UI->pos.y, UI->pos.z + count);
+			scene->modelStack.Scale(UI->scale.x * 5, UI->scale.y * 5, 1);
+			float count2 = 0;
+			for (auto UIC : UI->uiComponents_list)
+			{
+				count2 += 0.01f;
+				scene->modelStack.PushMatrix();
+				scene->modelStack.Translate(UIC.pos.x, UIC.pos.y, UIC.pos.z + count2);
+				scene->modelStack.Scale(UIC.scale.x, UIC.scale.y, 1);
+				rendermesh(scene, UIC.mesh, false);
+				scene->modelStack.PopMatrix();
+			}
+		scene->modelStack.PopMatrix();
 	}
 	
 
 	scene->modelStack.PopMatrix();
 	scene->viewStack.PopMatrix();
-	scene->projectionStack.PopMatrix();*/
+	scene->projectionStack.PopMatrix();
 }
 
 bool UIManager::AddUI(UIBase * ui)
 {
-	return false;
+	ui_list.push_back(ui);
+	return true;
 }
 
 UIManager::UIManager()
