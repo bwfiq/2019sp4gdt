@@ -20,8 +20,8 @@
 #include "ChiefHut.h"
 #include "Bush.h"
 
-#define SEA_WIDTH	50.f
-#define SEA_HEIGHT	50.f
+#define SEA_WIDTH	100.f
+#define SEA_HEIGHT	100.f
 
 SceneSP::SceneSP()
 {
@@ -335,9 +335,10 @@ bool SceneSP::isTheCoastClear(GameObject* go, GridPt next, Grid::DIRECTION dir)
 	}
 	return true;
 }
+
 void SceneSP::Init()
 {
-	SceneData::GetInstance()->SetNoGrid(10);
+	SceneData::GetInstance()->SetNoGrid(15);
 	SceneData::GetInstance()->SetGridSize(1.f);
 	SceneData::GetInstance()->SetGridOffset(0.5f);
 	SceneBase::Init();
@@ -1993,7 +1994,7 @@ void SceneSP::Render()
 	//modelStack.Translate(0, 0.5f + cosf(asd) * 0.15f, 0);
 	modelStack.Translate(0, -0.5f, 0);
 	//modelStack.Rotate(-90, 1, 0, 0);
-	modelStack.Scale(10, 1, 10);
+	modelStack.Scale(15, 1, 15);
 	RenderMesh(meshList[GEO_GRASS], bGodlights);
 	modelStack.PopMatrix();
 
@@ -2032,11 +2033,10 @@ void SceneSP::Render()
 		modelStack.PopMatrix();
 	}
 
-
 	modelStack.PushMatrix();
 	modelStack.Translate(fSeaDeltaX, fSeaDeltaY - 0.51f, fSeaDeltaZ);
 	modelStack.Rotate(-90, 1, 0, 0);
-	modelStack.Scale(SEA_WIDTH, 50, 50);
+	modelStack.Scale(SEA_WIDTH, SEA_HEIGHT, SEA_HEIGHT);
 	RenderMesh(meshList[GEO_SEA], bGodlights);
 	modelStack.PopMatrix();
 
