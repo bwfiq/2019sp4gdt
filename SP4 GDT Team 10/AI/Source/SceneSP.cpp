@@ -62,6 +62,7 @@ void SceneSP::Init()
 	goVillager->iGridZ = 3;
 	goVillager->pos = GetGridPos(GridPt(5, 5));
 	goVillager->pos.y = goVillager->scale.y * 0.5f;
+
 	goChiefHut = FetchGO(GameObject::GO_CHIEFHUT);
 	goChiefHut->pos = GetGridPos(GridPt(8, 5));
 	goChiefHut->pos.y = goChiefHut->scale.y * 0.5f;
@@ -77,6 +78,7 @@ void SceneSP::Init()
 	iFoodLimit = 100;
 	iPopulation = 0;
 	iPopulationLimit = 10;
+	fTimeOfDay = 0.f;
 
 	//go->vel.Set(1, 0, 0);
 	MousePicker::GetInstance()->Init();
@@ -973,6 +975,10 @@ void SceneSP::Update(double dt)
 	if (Application::IsKeyPressed(VK_RETURN))
 	{
 	}
+	if (Application::IsKeyPressed('5'))
+		bGodlights = true; // lights off
+	if (Application::IsKeyPressed('6'))
+		bGodlights = false; // lights on
 	//if (MC->IsButtonPressed(MouseController::LMB))
 		//std::cout << "asd" << std::endl;
 
@@ -1086,29 +1092,7 @@ void SceneSP::Update(double dt)
 			}
 		}
 	}
-	/*
-	static bool bLButtonState = false;
-	if (!bLButtonState && Application::IsMousePressed(0))
-	{
-		bLButtonState = true;
-		std::cout << "LBUTTON DOWN" << std::endl;
-		double x, y;
-		Application::GetCursorPos(&x, &y);
-		int w = Application::GetWindowWidth();
-		int h = Application::GetWindowHeight();
-		float posX = static_cast<float>(x) / w * m_worldWidth;
-		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
-		if (posX < m_worldHeight && posY < m_worldHeight)
-		{
-		//	m_graph.CreateNode(Vector3(posX, posY));
-		}
-	}
-	else if (bLButtonState && !Application::IsMousePressed(0))
-	{
-		bLButtonState = false;
-		std::cout << "LBUTTON UP" << std::endl;
-	}
-	*/
+	
 	Vector3 clickTarget = NULL;
 	static bool bLButtonState = false;
 	if (!bLButtonState && Application::IsMousePressed(0))
@@ -1122,9 +1106,9 @@ void SceneSP::Update(double dt)
 		int h = Application::GetWindowHeight();
 		float posX = static_cast<float>(x) / w * m_worldWidth;
 		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
-		std::cout << mousePos << std::endl;
+		//std::cout << mousePos << std::endl;
 		GridPt selectedPt = GetPoint(mousePos);
-		std::cout << "Selected Grid: " << selectedPt.x << ", " << selectedPt.z << std::endl;
+		//std::cout << "Selected Grid: " << selectedPt.x << ", " << selectedPt.z << std::endl;
 		for (auto go : m_goList)
 		{
 			if (!go->active)
@@ -1140,7 +1124,8 @@ void SceneSP::Update(double dt)
 		bLButtonState = false;
 		//std::cout << "LBUTTON UP" << std::endl;
 	}
-	static bool bRButtonState = false;
+
+	/*static bool bRButtonState = false;
 	if (!bRButtonState && Application::IsMousePressed(1))
 	{
 		bRButtonState = true;
@@ -1162,8 +1147,9 @@ void SceneSP::Update(double dt)
 	{
 		bRButtonState = false;
 		std::cout << "RBUTTON UP" << std::endl;
-	}
-	static bool bSpaceState = false;
+	}*/
+
+	/*static bool bSpaceState = false;
 	if (!bSpaceState && Application::IsKeyPressed(VK_SPACE))
 	{
 		bSpaceState = true;
@@ -1176,13 +1162,20 @@ void SceneSP::Update(double dt)
 		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 		if (posX < m_worldHeight && posY < m_worldHeight)
 		{
-			//GameObject* go = FetchGO(GameObject::GO_NPC);
-			//go->pos.Set(posX, posY);
+			GameObject* go = FetchGO(GameObject::GO_NPC);
+			go->pos.Set(posX, posY);
 		}
 	}
 	else if (bSpaceState && !Application::IsKeyPressed(VK_SPACE))
 	{
 		bSpaceState = false;
+	}*/
+
+	// day/night cycle
+	fTimeOfDay += dt * 0.05;
+	if (fTimeOfDay >= 24.f)
+	{
+		fTimeOfDay = 0;
 	}
 
 	// sea movement
@@ -1211,6 +1204,8 @@ void SceneSP::Update(double dt)
 		{
 		case GameObject::GO_VILLAGER:
 			iPopulation++;
+			//if (selected != NULL && selected->type == GameObject::GO_BUSH)
+				//goVillager->goTarget = selected;
 			// collision (?)
 			for (auto go2 : m_goList)
 			{
@@ -1551,7 +1546,7 @@ void SceneSP::RenderGO(GameObject *go)
 		//RenderMesh(meshList[GEO_TREE], false, 1.f);
 		//RenderMesh(meshList[GEO_BERRIES], false, 1.f);
 		//RenderMesh(meshList[GEO_BUSH], false, 1.f);
-		RenderMesh(meshList[GEO_VILLAGER], false, 1.f);
+		RenderMesh(meshList[GEO_VILLAGER], bGodlights, 1.f);
 		modelStack.PopMatrix();
 	}
 	break; 
@@ -1560,7 +1555,7 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BUILDING], false, 1.f);
+		RenderMesh(meshList[GEO_BUILDING], bGodlights, 1.f);
 		modelStack.PopMatrix();
 	}
 		break;
@@ -1569,7 +1564,7 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BUILDING], false, 1.f);
+		RenderMesh(meshList[GEO_BUILDING], bGodlights, 1.f);
 		modelStack.PopMatrix();
 	}
 		break;
@@ -1578,11 +1573,11 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);			
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BUSH], false, 1.f);
+		RenderMesh(meshList[GEO_BUSH], bGodlights, 1.f);
 		switch (static_cast<Bush*>(go)->eCurrState)
 		{
 		case Bush::LUSH:
-			RenderMesh(meshList[GEO_BERRIES], false, 1.f);
+			RenderMesh(meshList[GEO_BERRIES], bGodlights, 1.f);
 			break;
 		}
 		modelStack.PopMatrix();
@@ -1629,7 +1624,7 @@ void SceneSP::Render()
 	modelStack.Translate(0, -0.5f, 0);
 	//modelStack.Rotate(-90, 1, 0, 0);
 	modelStack.Scale(10, 1, 10);
-	RenderMesh(meshList[GEO_GRASS], false);
+	RenderMesh(meshList[GEO_GRASS], bGodlights);
 	modelStack.PopMatrix();
 
 	SceneData* SD = SceneData::GetInstance();
@@ -1672,7 +1667,7 @@ void SceneSP::Render()
 	modelStack.Translate(fSeaDeltaX, fSeaDeltaY - 0.51f, fSeaDeltaZ);
 	modelStack.Rotate(-90, 1, 0, 0);
 	modelStack.Scale(SEA_WIDTH, 50, 50);
-	RenderMesh(meshList[GEO_SEA], false);
+	RenderMesh(meshList[GEO_SEA], bGodlights);
 	modelStack.PopMatrix();
 
 	//On screen text
@@ -1711,13 +1706,28 @@ void SceneSP::Render()
 
 	// resources
 	ss.str("");
-	ss.precision(5);
+	//ss.precision(5);
 	ss << "Food:" << iFood << "/" << iFoodLimit;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 3);
 
 	ss.str("");
 	ss << "Population:" << iPopulation << "/" << iPopulationLimit;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 0);
+
+	ss.str("");
+	ss << "Time: ";
+	float fractpart, intpart;
+	fractpart = modf(fTimeOfDay, &intpart);
+	if (intpart < 10)
+		ss << "0" << intpart;
+	else
+		ss << intpart;
+	ss << ":"; 
+	if ((int)(60 * fractpart) < 10)
+		ss << "0" << (int)(60 * fractpart);
+	else
+		ss << (int)(60 * fractpart);
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 30, 0);
 }
 
 void SceneSP::Exit()
