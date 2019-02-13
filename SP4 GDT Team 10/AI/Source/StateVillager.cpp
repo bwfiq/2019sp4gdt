@@ -219,7 +219,7 @@ void StateChopTree::Update(double dt, GameObject * m_go)
 	{
 		//Insert gathering time here
 		vGo->iFoodStored = treeGo->iWoodAmount;
-		treeGo->eCurrState = Tree::DEPLETED;
+		treeGo->active = false;
 
 		MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_CHIEFHUT, 1);
 		PostOffice::GetInstance()->Send("Scene", messagewru);

@@ -1326,10 +1326,13 @@ void SceneSP::ChangeTimeOfDay()
 		bGodlights = false;
 		for (auto go : m_goList)
 		{
-			if (!go->active || go->type != GameObject::GO_BUSH)
+			if (!go->active)
 				continue;
-			if (static_cast<Bush*>(go)->eCurrState == Bush::DEPLETED)
-				static_cast<Bush*>(go)->eCurrState = Bush::LUSH;
+			if (go->type == GameObject::GO_BUSH)
+			{
+				if (static_cast<Bush*>(go)->eCurrState == Bush::DEPLETED)
+					static_cast<Bush*>(go)->eCurrState = Bush::LUSH;
+			}
 		}
 	}
 	else // nighttime reset
@@ -1517,8 +1520,11 @@ void SceneSP::Update(double dt)
 		if (!objectFound)
 		{
 			goVillager->goTarget = NULL;
-			goVillager->target = GetGridPos(selectedPt);
-			goVillager->m_nextState = SMManager::GetInstance()->GetSM(goVillager->smID)->GetState("Idle");
+			if (m_grid[GetGridIndex(selectedPt)] == Grid::TILE_EMPTY)
+			{
+				goVillager->target = GetGridPos(selectedPt);
+				goVillager->m_nextState = SMManager::GetInstance()->GetSM(goVillager->smID)->GetState("Idle");
+			}
 		}
 	}
 	else if (bLButtonState && !Application::IsMousePressed(0))
@@ -1610,6 +1616,10 @@ void SceneSP::Update(double dt)
 	m_grid[15] = Grid::TILE_USED;
 	m_grid[25] = Grid::TILE_USED;
 	m_grid[35] = Grid::TILE_USED;
+	m_grid[4] = Grid::TILE_USED;
+	m_grid[14] = Grid::TILE_USED;
+	m_grid[24] = Grid::TILE_USED;
+	m_grid[34] = Grid::TILE_USED;
 	for (auto go : m_goList)
 	{
 		if (!go->active)
