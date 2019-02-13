@@ -27,6 +27,7 @@ public:
 
 	//void AStar(GameObject* go, Vector3 target); //For Graph Pathfinding
 	void AStarGrid(GameObject* go, GridPt target); //For Grid Pathfinding
+	bool isTheCoastClear(GameObject* go, GridPt next, Grid::DIRECTION dir); //For making it neat
 	//void DFSOnce(GameObject* go);
 
 	void Reset();
@@ -61,6 +62,7 @@ protected:
 
 	//Temporary
 	GameObject* goVillager;
+	GameObject* goBush;
 };
 
 #endif
