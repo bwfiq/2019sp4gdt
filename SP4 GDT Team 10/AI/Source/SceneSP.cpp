@@ -485,6 +485,8 @@ void SceneSP::AStarGrid(GameObject * go, GridPt target)
 {
 
 	//first = curr point, second.first = tile cost, second.second = total cost(tile cost + distance to final destination)
+	if (go->currentPt == target)
+		return;
 	std::vector<std::pair<GridPt, std::pair<int, int>>>priority_Queue;
 	std::sort(priority_Queue.begin(), priority_Queue.end(), Compare2());
 	while (!m_shortestPath.empty())
@@ -1457,6 +1459,8 @@ void SceneSP::Update(double dt)
 			if (selectedPt == go->currentPt)
 			{
 				selected = go;
+				if(selected != goVillager)
+					goVillager->goTarget = selected;
 			}
 		}
 	}
