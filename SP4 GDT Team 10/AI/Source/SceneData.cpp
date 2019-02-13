@@ -1,4 +1,5 @@
 #include "SceneData.h"
+#include "Mesh.h"
 
 int SceneData::GetObjectCount()
 {
@@ -78,6 +79,32 @@ float SceneData::GetElapsedTime()
 void SceneData::SetElapsedTime(float elapsedTime)
 {
 	this->f_elapsedTime = elapsedTime;
+}
+void SceneData::AddMesh(Mesh * mesh)
+{
+	if (mesh == nullptr || mesh == NULL)
+		return;
+
+	RemoveMesh(mesh->name);
+
+	meshList[mesh->name] = mesh;
+}
+void SceneData::RemoveMesh(const std::string & meshName)
+{
+	Mesh* currMesh = GetMesh(meshName);
+	if (currMesh != nullptr && currMesh != NULL)
+	{
+		delete currMesh;
+		meshList.erase(meshName);
+	}
+}
+
+Mesh * SceneData::GetMesh(const std::string & meshName)
+{
+	if (meshList.count(meshName) != 0)
+		return meshList[meshName];
+
+	return NULL;
 }
 
 SceneData::SceneData()

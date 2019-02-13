@@ -49,13 +49,19 @@ protected:
 	float fSeaDeltaY = 0;
 	bool bSeaYDir = false;
 	int iFood, iFoodLimit, iPopulation, iPopulationLimit;
+	float fTimeOfDay; // 0 to 24
+	bool bDay;
 	GAME_STATE game_state;
+
+	bool bGodlights = true;
 
 	//Grid
 	bool bShowGrid;
 	std::vector<Grid::TILE_CONTENT> m_grid;
 	std::vector<GridPt> m_shortestPath; //Used for temporary storage of path in AStar
 	std::vector<GridPt> m_previous; //Used for storing the previous point in AStar
+
+	Vector3 mousePos;
 
 	GameObject* selected; //Gameobject selected by mouse click, can do actions from UI choices that pop up
 	GameObject* goChiefHut;

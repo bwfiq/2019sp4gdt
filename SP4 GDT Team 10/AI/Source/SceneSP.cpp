@@ -8,6 +8,8 @@
 #include "PostOffice.h"
 #include "ConcreteMessages.h"
 #include "ProjectileManager.h"
+#include "UIManager.h"
+#include "UIReligionBar.h"
 
 #include "SMManager.h"
 #include "MouseController.h"
@@ -380,11 +382,15 @@ void SceneSP::Init()
 	iFoodLimit = 100;
 	iPopulation = 0;
 	iPopulationLimit = 10;
+	fTimeOfDay = 0.f;
 
 	//go->vel.Set(1, 0, 0);
 	MousePicker::GetInstance()->Init();
 	MousePicker::GetInstance()->SetProjectionStack(projectionStack);
 	MousePicker::GetInstance()->SetViewStack(viewStack);
+
+	UIManager::GetInstance()->Init();
+	UIManager::GetInstance()->AddUI(new UIReligionBar());
 }
 
 
@@ -425,7 +431,7 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 0.5f, 0.25f, SceneData::GetInstance()->GetGridSize() * 0.5f);
 				break;
 			case GameObject::GO_BUSH:
-				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 0.75f, 0.1f, SceneData::GetInstance()->GetGridSize() * 0.75f);
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 0.75f, 1.f, SceneData::GetInstance()->GetGridSize() * 0.75f);
 				break;
 			case GameObject::GO_CHIEFHUT:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 0.5f, SceneData::GetInstance()->GetGridSize() * 1.f);
@@ -1278,10 +1284,12 @@ void SceneSP::Update(double dt)
 	MousePicker* MP = MousePicker::GetInstance();
 	MouseController* MC = MouseController::GetInstance();
 	KeyboardController* KC = KeyboardController::GetInstance();
+	UIManager* UIM = UIManager::GetInstance();
 
 	SceneBase::Update(dt);
 	MP->Update(dt);
 	camera.Update(dt);
+	UIM->Update(dt);
 
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
@@ -1290,6 +1298,8 @@ void SceneSP::Update(double dt)
 	SD->SetWorldHeight(m_worldHeight);
 	SD->SetWorldWidth(m_worldWidth);
 	SD->SetElapsedTime(SD->GetElapsedTime() + (float)dt);
+
+	mousePos = MP->GetIntersectionWithPlane(camera.position, Vector3(0, 0, 0), Vector3(0, 1, 0));
 
 	if (Application::IsKeyPressed(VK_OEM_MINUS))
 	{
@@ -1308,8 +1318,12 @@ void SceneSP::Update(double dt)
 	if (Application::IsKeyPressed(VK_RETURN))
 	{
 	}
-	if (MC->IsButtonPressed(MouseController::LMB))
-		std::cout << "asd" << std::endl;
+	if (Application::IsKeyPressed('5'))
+		bGodlights = true; // lights off
+	if (Application::IsKeyPressed('6'))
+		bGodlights = false; // lights on
+	//if (MC->IsButtonPressed(MouseController::LMB))
+		//std::cout << "asd" << std::endl;
 
 	//Input Section
 	static bool bPState = false;
@@ -1395,31 +1409,40 @@ void SceneSP::Update(double dt)
 			}
 		}
 	}
-	/*
+	
+	Vector3 clickTarget = NULL;
 	static bool bLButtonState = false;
 	if (!bLButtonState && Application::IsMousePressed(0))
 	{
 		bLButtonState = true;
-		std::cout << "LBUTTON DOWN" << std::endl;
+		//std::cout << "LBUTTON DOWN" << std::endl;
+
 		double x, y;
 		Application::GetCursorPos(&x, &y);
 		int w = Application::GetWindowWidth();
 		int h = Application::GetWindowHeight();
 		float posX = static_cast<float>(x) / w * m_worldWidth;
 		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
-		if (posX < m_worldHeight && posY < m_worldHeight)
+		//std::cout << mousePos << std::endl;
+		GridPt selectedPt = GetPoint(mousePos);
+		//std::cout << "Selected Grid: " << selectedPt.x << ", " << selectedPt.z << std::endl;
+		for (auto go : m_goList)
 		{
-		//	m_graph.CreateNode(Vector3(posX, posY));
+			if (!go->active)
+				continue;
+			if (selectedPt == go->currentPt)
+			{
+				selected = go;
+			}
 		}
 	}
 	else if (bLButtonState && !Application::IsMousePressed(0))
 	{
 		bLButtonState = false;
-		std::cout << "LBUTTON UP" << std::endl;
+		//std::cout << "LBUTTON UP" << std::endl;
 	}
-	*/
-	Vector3 clickTarget = NULL;
-	static bool bRButtonState = false;
+
+	/*static bool bRButtonState = false;
 	if (!bRButtonState && Application::IsMousePressed(1))
 	{
 		bRButtonState = true;
@@ -1433,7 +1456,7 @@ void SceneSP::Update(double dt)
 		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 		if (posX < m_worldHeight && posY < m_worldHeight)
 		{
-			clickTarget.Set(posX, posY, 0);
+			
 		}
 
 	}
@@ -1441,8 +1464,9 @@ void SceneSP::Update(double dt)
 	{
 		bRButtonState = false;
 		std::cout << "RBUTTON UP" << std::endl;
-	}
-	static bool bSpaceState = false;
+	}*/
+
+	/*static bool bSpaceState = false;
 	if (!bSpaceState && Application::IsKeyPressed(VK_SPACE))
 	{
 		bSpaceState = true;
@@ -1455,13 +1479,20 @@ void SceneSP::Update(double dt)
 		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 		if (posX < m_worldHeight && posY < m_worldHeight)
 		{
-			//GameObject* go = FetchGO(GameObject::GO_NPC);
-			//go->pos.Set(posX, posY);
+			GameObject* go = FetchGO(GameObject::GO_NPC);
+			go->pos.Set(posX, posY);
 		}
 	}
 	else if (bSpaceState && !Application::IsKeyPressed(VK_SPACE))
 	{
 		bSpaceState = false;
+	}*/
+
+	// day/night cycle
+	fTimeOfDay += dt * 0.05;
+	if (fTimeOfDay >= 24.f)
+	{
+		fTimeOfDay = 0;
 	}
 
 	// sea movement
@@ -1479,6 +1510,57 @@ void SceneSP::Update(double dt)
 
 	iPopulation = 0;
 	iPopulationLimit = 0;
+
+	for (auto go : m_goList)
+	{
+		if (!go->active)
+			continue;
+		go->currentPt = GetPoint(go->pos);
+		// updating GameObjects
+		switch (go->type)
+		{
+		case GameObject::GO_VILLAGER:
+			iPopulation++;
+			//if (selected != NULL && selected->type == GameObject::GO_BUSH)
+				//goVillager->goTarget = selected;
+			// collision (?)
+			for (auto go2 : m_goList)
+			{
+				if (go->currentPt == go2->currentPt && go != go2)
+				{
+					if (go2->type == GameObject::GO_BUSH && static_cast<Bush*>(go2)->eCurrState == Bush::LUSH)
+					{
+						static_cast<Bush*>(go2)->eCurrState = Bush::DEPLETED;
+						static_cast<Bush*>(go2)->fTimer = 10.f;
+						iFood += 10;
+					}
+				}
+			}
+			break;
+		case GameObject::GO_CHIEFHUT:
+			iPopulationLimit += 10;
+			break;
+		case GameObject::GO_BUSH:
+			if (static_cast<Bush*>(go)->eCurrState == Bush::DEPLETED)
+			{
+				static_cast<Bush*>(go)->fTimer -= dt;
+				if (static_cast<Bush*>(go)->fTimer <= 0.f)
+				{
+					static_cast<Bush*>(go)->fTimer = 0.f;
+						static_cast<Bush*>(go)->eCurrState = Bush::LUSH;
+				}
+			}
+
+		default:
+			break;
+		}
+
+		//go->pos += go->vel * dt * m_speed;
+		if (go->smID != "")
+		{
+			SMManager::GetInstance()->GetSM(go->smID)->Update(dt * m_speed, go);
+		}
+	}
 
 	//Update the Grid
 	std::fill(m_grid.begin(), m_grid.end(), Grid::TILE_EMPTY);
@@ -1835,7 +1917,7 @@ void SceneSP::RenderGO(GameObject *go)
 		//RenderMesh(meshList[GEO_TREE], false, 1.f);
 		//RenderMesh(meshList[GEO_BERRIES], false, 1.f);
 		//RenderMesh(meshList[GEO_BUSH], false, 1.f);
-		RenderMesh(meshList[GEO_VILLAGER], false, 1.f);
+		RenderMesh(meshList[GEO_VILLAGER], bGodlights, 1.f);
 		modelStack.PopMatrix();
 	}
 	break;
@@ -1844,7 +1926,7 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BUILDING], false, 1.f);
+		RenderMesh(meshList[GEO_BUILDING], bGodlights, 1.f);
 		modelStack.PopMatrix();
 	}
 	break;
@@ -1853,7 +1935,7 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BUILDING], false, 1.f);
+		RenderMesh(meshList[GEO_BUILDING], bGodlights, 1.f);
 		modelStack.PopMatrix();
 	}
 	break;
@@ -1862,11 +1944,11 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BUSH], false, 1.f);
+		RenderMesh(meshList[GEO_BUSH], bGodlights, 1.f);
 		switch (static_cast<Bush*>(go)->eCurrState)
 		{
 		case Bush::LUSH:
-			RenderMesh(meshList[GEO_BERRIES], false, 1.f);
+			RenderMesh(meshList[GEO_BERRIES], bGodlights, 1.f);
 			break;
 		}
 		modelStack.PopMatrix();
@@ -1898,10 +1980,9 @@ void SceneSP::Render()
 	// Model matrix : an identity matrix (model will be at the origin)
 	modelStack.LoadIdentity();
 
-	modelStack.PushMatrix();
-	Vector3 adsada = MousePicker::GetInstance()->GetIntersectionWithPlane(camera.position, Vector3(0, 0.6f, 0), Vector3(0, 1, 0));
-	modelStack.Translate(adsada.x, adsada.y, adsada.z);
-	modelStack.Scale(0.025, 0.025, 0.025);
+	modelStack.PushMatrix(); 
+	modelStack.Translate(mousePos.x, mousePos.y, mousePos.z);
+	modelStack.Scale(0.1, 0.1, 0.1);
 	RenderMesh(meshList[GEO_VILLAGER], false);
 	modelStack.PopMatrix();
 
@@ -1914,7 +1995,7 @@ void SceneSP::Render()
 	modelStack.Translate(0, -0.5f, 0);
 	//modelStack.Rotate(-90, 1, 0, 0);
 	modelStack.Scale(10, 1, 10);
-	RenderMesh(meshList[GEO_GRASS], false);
+	RenderMesh(meshList[GEO_GRASS], bGodlights);
 	modelStack.PopMatrix();
 
 	SceneData* SD = SceneData::GetInstance();
@@ -1957,7 +2038,7 @@ void SceneSP::Render()
 	modelStack.Translate(fSeaDeltaX, fSeaDeltaY - 0.51f, fSeaDeltaZ);
 	modelStack.Rotate(-90, 1, 0, 0);
 	modelStack.Scale(SEA_WIDTH, 50, 50);
-	RenderMesh(meshList[GEO_SEA], false);
+	RenderMesh(meshList[GEO_SEA], bGodlights);
 	modelStack.PopMatrix();
 
 	//On screen text
@@ -1967,8 +2048,18 @@ void SceneSP::Render()
 	{
 		if (!go->active)
 			continue;
+		if (go == selected)
+		{
+			modelStack.PushMatrix();
+			modelStack.Translate(selected->pos.x, selected->pos.y + 1.0f, selected->pos.z);
+			modelStack.Scale(0.1, 0.1, 0.1);
+			RenderMesh(meshList[GEO_VILLAGER], false); // renders a red cube above GO if it is currently selected
+			modelStack.PopMatrix();
+		}
 		RenderGO(go);
 	}
+
+	UIManager::GetInstance()->Render(this);
 
 	ss.str("");
 	ss.precision(3);
@@ -1986,13 +2077,28 @@ void SceneSP::Render()
 
 	// resources
 	ss.str("");
-	ss.precision(5);
+	//ss.precision(5);
 	ss << "Food:" << iFood << "/" << iFoodLimit;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 3);
 
 	ss.str("");
 	ss << "Population:" << iPopulation << "/" << iPopulationLimit;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 0);
+
+	ss.str("");
+	ss << "Time: ";
+	float fractpart, intpart;
+	fractpart = modf(fTimeOfDay, &intpart);
+	if (intpart < 10)
+		ss << "0" << intpart;
+	else
+		ss << intpart;
+	ss << ":"; 
+	if ((int)(60 * fractpart) < 10)
+		ss << "0" << (int)(60 * fractpart);
+	else
+		ss << (int)(60 * fractpart);
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 30, 0);
 }
 
 void SceneSP::Exit()

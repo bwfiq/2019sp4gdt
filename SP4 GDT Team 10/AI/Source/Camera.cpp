@@ -41,6 +41,7 @@ void Camera::Update(double dt)
 	MS->GetMouseDelta(mouseDelta.x, mouseDelta.z);
 	int windowWidth = Application::GetInstance().GetWindowWidth();
 	int windowHeight = Application::GetInstance().GetWindowHeight();
+	float mouseScroll = (-MS->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) + 4) * 0.5f;
 	//Input stuff
 	if (MS->IsButtonUp(MouseController::RMB) &&
 		mousePos.x > 0 && mousePos.x < windowWidth &&
@@ -129,9 +130,10 @@ void Camera::Update(double dt)
 		if (target_velocity.IsZero() || origVel.Dot(target_velocity.Normalized()) < -0.9f)
 			target_velocity.SetZero();
 	}
-	if (position != position_goal)
+	Vector3 position_goal_with_zoom = position_goal + Vector3(0, position_goal.y, 0) * mouseScroll;
+	if (position != position_goal_with_zoom)
 	{
-		position.lerp(position_goal, Math::Min((float)dt*20.f, 1.f));
+		position.lerp(position_goal_with_zoom, Math::Min((float)dt*20.f, 1.f));
 	}
 	if (target != target_goal)
 	{
