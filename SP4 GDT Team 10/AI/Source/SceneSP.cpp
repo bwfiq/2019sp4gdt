@@ -358,6 +358,8 @@ void SceneSP::Init()
 
 	Math::InitRNG();
 
+	selected = NULL;
+
 	//Objects from maya, bottom of object to be translated down
 	goVillager = FetchGO(GameObject::GO_VILLAGER);
 	goVillager->scale.y = 1.f;
@@ -2070,18 +2072,18 @@ void SceneSP::Render()
 	//On screen text
 	std::ostringstream ss;
 
+	if (selected != NULL)
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(selected->pos.x, selected->pos.y + 1.0f, selected->pos.z);
+		modelStack.Scale(0.1, 0.1, 0.1);
+		RenderMesh(meshList[GEO_VILLAGER], false); // renders a red cube above GO if it is currently selected
+		modelStack.PopMatrix();
+	}
 	for (auto go : m_goList)
 	{
 		if (!go->active)
 			continue;
-		if (go == selected)
-		{
-			modelStack.PushMatrix();
-			modelStack.Translate(selected->pos.x, selected->pos.y + 1.0f, selected->pos.z);
-			modelStack.Scale(0.1, 0.1, 0.1);
-			RenderMesh(meshList[GEO_VILLAGER], false); // renders a red cube above GO if it is currently selected
-			modelStack.PopMatrix();
-		}
 		RenderGO(go);
 	}
 
