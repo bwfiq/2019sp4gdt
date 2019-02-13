@@ -1561,57 +1561,6 @@ void SceneSP::Update(double dt)
 	iPopulation = 0;
 	iPopulationLimit = 0;
 
-	for (auto go : m_goList)
-	{
-		if (!go->active)
-			continue;
-		go->currentPt = GetPoint(go->pos);
-		// updating GameObjects
-		switch (go->type)
-		{
-		case GameObject::GO_VILLAGER:
-			iPopulation++;
-			//if (selected != NULL && selected->type == GameObject::GO_BUSH)
-				//goVillager->goTarget = selected;
-			// collision (?)
-			for (auto go2 : m_goList)
-			{
-				if (go->currentPt == go2->currentPt && go != go2)
-				{
-					if (go2->type == GameObject::GO_BUSH && static_cast<Bush*>(go2)->eCurrState == Bush::LUSH)
-					{
-						static_cast<Bush*>(go2)->eCurrState = Bush::DEPLETED;
-						static_cast<Bush*>(go2)->fTimer = 10.f;
-						iFood += 10;
-					}
-				}
-			}
-			break;
-		case GameObject::GO_CHIEFHUT:
-			iPopulationLimit += 10;
-			break;
-		case GameObject::GO_BUSH:
-			if (static_cast<Bush*>(go)->eCurrState == Bush::DEPLETED)
-			{
-				static_cast<Bush*>(go)->fTimer -= dt;
-				if (static_cast<Bush*>(go)->fTimer <= 0.f)
-				{
-					static_cast<Bush*>(go)->fTimer = 0.f;
-						static_cast<Bush*>(go)->eCurrState = Bush::LUSH;
-				}
-			}
-
-		default:
-			break;
-		}
-
-		//go->pos += go->vel * dt * m_speed;
-		if (go->smID != "")
-		{
-			SMManager::GetInstance()->GetSM(go->smID)->Update(dt * m_speed, go);
-		}
-	}
-
 	//Update the Grid
 	std::fill(m_grid.begin(), m_grid.end(), Grid::TILE_EMPTY);
 	m_grid[5] = Grid::TILE_USED;
