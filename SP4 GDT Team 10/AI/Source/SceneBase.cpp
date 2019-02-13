@@ -193,6 +193,8 @@ void SceneBase::Init()
 	meshList[GEO_GRASS]->textureID = LoadTGA("Image//grass.tga");
 	meshList[GEO_TREE] = MeshBuilder::GenerateOBJ("tree", "Obj//Tree.obj");
 	meshList[GEO_TREE]->textureID = LoadTGA("Image//tree.tga");
+	meshList[GEO_HALFTREE] = MeshBuilder::GenerateOBJ("halftree", "Obj//HalfTree.obj");
+	meshList[GEO_HALFTREE]->textureID = LoadTGA("Image//halftree.tga");
 	meshList[GEO_BUSH] = MeshBuilder::GenerateOBJ("tree", "Obj//bushes.obj");
 	meshList[GEO_BUSH]->textureID = LoadTGA("Image//bushes_and_berries_texture.tga");
 	meshList[GEO_BERRIES] = MeshBuilder::GenerateOBJ("tree", "Obj//berries.obj");

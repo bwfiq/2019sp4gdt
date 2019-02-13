@@ -218,7 +218,18 @@ void StateChopTree::Update(double dt, GameObject * m_go)
 	if (treeGo->eCurrState == Tree::FULL)
 	{
 		//Insert gathering time here
-		vGo->iFoodStored = treeGo->iWoodAmount;
+		vGo->iWoodStored = treeGo->iWoodAmount;
+		treeGo->eCurrState = Tree::HALFCHOPPED;
+
+		MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_CHIEFHUT, 1);
+		PostOffice::GetInstance()->Send("Scene", messagewru);
+		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+		return;
+	}
+	if (treeGo->eCurrState == Tree::HALFCHOPPED)
+	{
+		//Insert gathering time here
+		vGo->iWoodStored = treeGo->iWoodAmount;
 		treeGo->active = false;
 
 		MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_CHIEFHUT, 1);

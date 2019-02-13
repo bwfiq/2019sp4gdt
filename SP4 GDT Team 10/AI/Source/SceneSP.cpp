@@ -2003,7 +2003,19 @@ void SceneSP::RenderGO(GameObject *go)
 			modelStack.Translate(0, 0, SceneData::GetInstance()->GetGridSize() * 0.5f);
 		}
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_TREE], bGodlights, 1.f);
+		Tree* goTree = static_cast<Tree*>(go);
+		switch (goTree->eCurrState)
+		{
+		case Tree::FULL:
+			RenderMesh(meshList[GEO_TREE], bGodlights, 1.f);
+			break;
+		case Tree::HALFCHOPPED:
+			RenderMesh(meshList[GEO_HALFTREE], bGodlights, 1.f);
+			break;
+		default:
+			RenderMesh(meshList[GEO_TREE], bGodlights, 1.f);
+			break;
+		}
 		modelStack.PopMatrix();
 	}
 	break;
