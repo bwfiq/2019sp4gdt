@@ -240,7 +240,6 @@ void SceneBase::Update(double dt)
 	//dir.Normalize();
 	//camera.target = camera.position + dir * camera.fDistance;
 
-
 	//camera.up = right.Cross(dir);
 	fps = (float)(1.f / dt);
 }
