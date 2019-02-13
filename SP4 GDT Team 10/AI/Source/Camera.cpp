@@ -51,28 +51,28 @@ void Camera::Update(double dt)
 		if (mousePos.x > windowWidth * 0.95f)
 		{
 			diff = position_velocity.x;
-			position_velocity.x = Math::Min(position_velocity.x + 20 * (float)dt, fCameraBorderMovespeed);
+			position_velocity.x = Math::Min(position_velocity.x + 20 * (float)dt, fCameraBorderMovespeed * mouseScroll);
 			diff = position_velocity.x - diff;
 			target_velocity.x += diff;
 		}
 		else if (mousePos.x < windowWidth * 0.05f)
 		{
 			diff = position_velocity.x;
-			position_velocity.x = Math::Max(position_velocity.x - 20 * (float)dt, -fCameraBorderMovespeed);
+			position_velocity.x = Math::Max(position_velocity.x - 20 * (float)dt, -fCameraBorderMovespeed * mouseScroll);
 			diff = position_velocity.x - diff;
 			target_velocity.x += diff;
 		}
 		if (mousePos.y > windowHeight * 0.95f)
 		{
 			diff = position_velocity.z;
-			position_velocity.z = Math::Min(position_velocity.z + 20 * (float)dt, fCameraBorderMovespeed);
+			position_velocity.z = Math::Min(position_velocity.z + 20 * (float)dt, fCameraBorderMovespeed * mouseScroll);
 			diff = position_velocity.z - diff;
 			target_velocity.z += diff;
 		}
 		else if (mousePos.y < windowHeight * 0.05f)
 		{
 			diff = position_velocity.z;
-			position_velocity.z = Math::Max(position_velocity.z - 20 * (float)dt, -fCameraBorderMovespeed);
+			position_velocity.z = Math::Max(position_velocity.z - 20 * (float)dt, -fCameraBorderMovespeed * mouseScroll);
 			diff = position_velocity.z - diff;
 			target_velocity.z += diff;
 		}
@@ -84,7 +84,7 @@ void Camera::Update(double dt)
 	}
 	if (!mouseDelta.IsZero())
 	{
-		mouseDelta *= -0.005f;
+		mouseDelta *= -0.005f * mouseScroll;
 		if (MS->IsButtonDown(MouseController::RMB))
 		{
 			position_goal += mouseDelta;
