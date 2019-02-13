@@ -704,7 +704,8 @@ void SceneSP::AStarGrid(GameObject * go, GridPt target)
 		{
 			if ((target.x - curr.x) * (target.x - curr.x) <= (go->iGridX - iHalfGridX + 1) * (go->iGridX - iHalfGridX + 1) && (target.z - curr.z) * (target.z - curr.z) <= (go->iGridZ - iHalfGridZ + 1) * (go->iGridZ - iHalfGridZ + 1))
 			{
-				m_previous[GetGridIndex(target)] = curr;
+				if(target != curr)
+					m_previous[GetGridIndex(target)] = curr;
 				priority_Queue.begin()->first = target;
 				break;
 			}
@@ -1139,6 +1140,7 @@ void SceneSP::AStarGrid(GameObject * go, GridPt target)
 			{
 				m_shortestPath.push_back(curr);
 				curr = m_previous[GetGridIndex(curr)];
+				std::cout << "hi" << std::endl;
 			}
 		}
 		else
@@ -1149,6 +1151,7 @@ void SceneSP::AStarGrid(GameObject * go, GridPt target)
 			{
 				m_shortestPath.push_back(curr);
 				curr = m_previous[GetGridIndex(curr)];
+				std::cout << "hi" << std::endl;
 			}
 		}
 	}
@@ -1160,6 +1163,7 @@ void SceneSP::AStarGrid(GameObject * go, GridPt target)
 		{
 			m_shortestPath.push_back(curr);
 			curr = m_previous[GetGridIndex(curr)];
+			std::cout << "hi" << std::endl;
 		}
 	}
 

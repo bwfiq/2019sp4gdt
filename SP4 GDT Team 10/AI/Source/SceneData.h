@@ -45,6 +45,10 @@ private:
 	float m_worldHeight;
 	float m_worldWidth;
 	float f_elapsedTime;
+
+	int iFood, iFoodLimit, iPopulation, iPopulationLimit;
+
+
 	std::map<std::string, Mesh*> meshList;//these meshes delete themselves via the scene
 };
 
