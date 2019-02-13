@@ -31,6 +31,19 @@ public:
 	float GetReligionValue();
 	void SetReligionValue(float religionValue);
 
+	void SetFood(int food);
+	int GetFood();
+	void SetWood(int wood);
+	int GetWood();
+	void SetFoodLimit(int foodLimit);
+	int GetFoodLimit();
+	void SetWoodLimit(int woodLimit);
+	int GetWoodLimit();
+	void SetPopulation(int population);
+	int GetPopulation();
+	void SetPopulationLimit(int populationLimit);
+	int GetPopulationLimit();
+
 	void AddMesh(Mesh* mesh);
 	void RemoveMesh(const std::string& meshName);
 	Mesh* GetMesh(const std::string& meshName);
@@ -50,6 +63,7 @@ private:
 	std::map<std::string, Mesh*> meshList;//these meshes delete themselves via the scene
 
 	float f_religionValue;
+	int iFood, iFoodLimit, iPopulation, iPopulationLimit, iWood, iWoodLimit;
 };
 
 #endif

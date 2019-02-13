@@ -1,9 +1,9 @@
 #ifndef GAME_BUSH_H
 #define GAME_BUSH_H
 
-#include "GameObject.h"
+#include "Environment.h"
 
-struct Bush : public GameObject
+struct Bush : public Environment
 {
 
 	enum STATES
@@ -18,9 +18,9 @@ struct Bush : public GameObject
 
 	virtual bool Handle(Message* msg);
 
-	void DoFunction();
-
 	float fTimer;
+
+	int iFoodAmount;
 
 	//virtual void TheFunction(GameObject* go);
 

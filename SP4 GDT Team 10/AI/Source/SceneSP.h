@@ -27,9 +27,11 @@ public:
 
 	//void AStar(GameObject* go, Vector3 target); //For Graph Pathfinding
 	void AStarGrid(GameObject* go, GridPt target); //For Grid Pathfinding
+	bool isTheCoastClear(GameObject* go, GridPt next, Grid::DIRECTION dir); //For making it neat
 	//void DFSOnce(GameObject* go);
 
 	void Reset();
+	void ChangeTimeOfDay();
 
 	enum GAME_STATE
 	{
@@ -47,8 +49,12 @@ protected:
 	float fSeaDeltaZ = 0;
 	float fSeaDeltaY = 0;
 	bool bSeaYDir = false;
-	int iFood, iFoodLimit, iPopulation, iPopulationLimit;
+
+	float fTimeOfDay; // 0 to 24
+	bool bDay;
 	GAME_STATE game_state;
+
+	bool bGodlights = false;
 
 	//Grid
 	bool bShowGrid;
@@ -63,6 +69,7 @@ protected:
 
 	//Temporary
 	GameObject* goVillager;
+	GameObject* goBush;
 };
 
 #endif

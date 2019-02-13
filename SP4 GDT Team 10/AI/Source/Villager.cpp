@@ -4,12 +4,14 @@
 Villager::Villager(GAMEOBJECT_TYPE typeValue)
 	: GameObject(typeValue),
 	fEfficiency(1.f),
-	eCurrState(HEALTHY)
+	eCurrState(HEALTHY),
+	iFoodStored(0),
+	iWoodStored(0)
 {
 	//GameObject(typeValue);
 	for (int i = 0; i < STAT_TOTAL; ++i)
 	{
-		iStats[i] = 100;
+		fStats[i] = 1.f;
 	}
 	std::cout << "Villager Constructor" << std::endl;
 }

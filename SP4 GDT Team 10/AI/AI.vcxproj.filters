@@ -128,6 +128,9 @@
     <ClCompile Include="Source\UIReligionBar.cpp">
       <Filter>UI\UIObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Environment.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -246,6 +249,9 @@
     </ClInclude>
     <ClInclude Include="Source\UIReligionBar.h">
       <Filter>UI\UIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Environment.h">
+      <Filter>GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
