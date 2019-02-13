@@ -26,7 +26,9 @@ public:
 	GameObject* FetchGO(GameObject::GAMEOBJECT_TYPE type);
 
 	//void AStar(GameObject* go, Vector3 target); //For Graph Pathfinding
-	void AStarGrid(GameObject* go, GridPt target); //For Grid Pathfinding
+
+	void AStarSingleGrid(GameObject* go, GridPt target); //For Grid Pathfinding with objects that have only 1 grids
+	void AStarMultiGrid(GameObject* go, GridPt target); //For Grid Pathfinding with objects that have multiple grids
 	bool isTheCoastClear(GameObject* go, GridPt next, Grid::DIRECTION dir); //For making it neat
 	//void DFSOnce(GameObject* go);
 
