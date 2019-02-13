@@ -9,6 +9,7 @@
 
 #include "Villager.h"
 #include "Bush.h"
+#include "Tree.h"
 //State::State(const std::string & stateID)
 //	: m_stateID(stateID)
 //{
@@ -201,6 +202,31 @@ void StateChopTree::Enter(GameObject * m_go)
 
 void StateChopTree::Update(double dt, GameObject * m_go)
 {
+	//In StateChopTree, the goTarget must be a Tree class
+	if (m_go->goTarget->type != GameObject::GO_TREE)
+	{
+		std::cout << "Wrong State : ChopTree" << std::endl;
+		return;
+	}
+	if (!m_go->goTarget->active)
+	{
+		m_go->goTarget = NULL;
+		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+	}
+	Tree* treeGo = static_cast<Tree*>(m_go->goTarget);
+	Villager* vGo = static_cast<Villager*>(m_go);
+	if (treeGo->eCurrState == Tree::FULL)
+	{
+		//Insert gathering time here
+		vGo->iFoodStored = treeGo->iWoodAmount;
+		treeGo->eCurrState = Tree::DEPLETED;
+
+		MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_CHIEFHUT, 1);
+		PostOffice::GetInstance()->Send("Scene", messagewru);
+		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+		return;
+	}
+	m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 }
 
 void StateChopTree::Exit(GameObject * m_go)

@@ -19,6 +19,7 @@
 #include "Building.h"
 #include "ChiefHut.h"
 #include "Bush.h"
+#include "Tree.h"
 
 #define SEA_WIDTH	50.f
 #define SEA_HEIGHT	50.f
@@ -364,8 +365,8 @@ void SceneSP::Init()
 	goVillager = FetchGO(GameObject::GO_VILLAGER);
 	goVillager->scale.y = 1.f;
 	goVillager->pos.Set(0, goVillager->scale.y * 0.5f, 0);
-	goVillager->iGridX = 3;
-	goVillager->iGridZ = 3;
+	goVillager->iGridX = 1;
+	goVillager->iGridZ = 1;
 	goVillager->pos = GetGridPos(GridPt(5, 5));
 	goVillager->pos.y = goVillager->scale.y * 0.5f;
 
@@ -379,7 +380,18 @@ void SceneSP::Init()
 	Bush* bGo = static_cast<Bush*>(goBush);
 	bGo->eCurrState = Bush::LUSH;
 	bGo->fTimer = 0;
-	
+	bGo->iFoodAmount = 10;
+
+	goTree = FetchGO(GameObject::GO_TREE);
+	goTree->pos = GetGridPos(GridPt(2, 8));
+	goTree->pos.y = goTree->scale.y * 0.5f;
+	goTree->iGridX = 2;
+	goTree->iGridZ = 2;
+	Tree* tGo = static_cast<Tree*>(goBush);
+	tGo->eCurrState = Tree::FULL;
+	tGo->fTimer = 0;
+	tGo->iWoodAmount = 10;
+
 	SceneData* SD = SceneData::GetInstance();
 	SD->SetFood(0);
 	SD->SetFoodLimit(100);
@@ -450,6 +462,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			case GameObject::GO_CHIEFHUT:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 0.5f, SceneData::GetInstance()->GetGridSize() * 1.f);
 				break;
+			case GameObject::GO_TREE:
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.2f, SceneData::GetInstance()->GetGridSize() * 1.f);
+				break;
 			}
 
 			go->goTarget = NULL;
@@ -474,6 +489,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			break;
 		case GameObject::GO_BUSH:
 			go = new Bush(type);
+			break;
+		case GameObject::GO_TREE:
+			go = new Tree(type);
 			break;
 		default:
 			go = new GameObject(type);
@@ -705,7 +723,7 @@ void SceneSP::AStarGrid(GameObject * go, GridPt target)
 	for (int loop = 0; loop < SD->GetNoGrid() * SD->GetNoGrid() && !priority_Queue.empty(); ++loop)
 	{
 		//std::cout << "One Round of Loop" << std::endl;
-		curr = priority_Queue.begin()->first;
+ 		curr = priority_Queue.begin()->first;
 		//m_queue.pop();
 
 
@@ -1145,6 +1163,8 @@ void SceneSP::AStarGrid(GameObject * go, GridPt target)
 		{
 			//If manage to reach target
 			curr = target;
+			m_shortestPath.push_back(curr);
+			curr = m_previous[GetGridIndex(curr)];
 			while (curr != NULL)
 			{
 				m_shortestPath.push_back(curr);
@@ -1156,6 +1176,8 @@ void SceneSP::AStarGrid(GameObject * go, GridPt target)
 		{
 			//If unable to reach target
 			curr = nearestTile;
+			m_shortestPath.push_back(curr);
+			curr = m_previous[GetGridIndex(curr)];
 			while (curr != NULL)
 			{
 				m_shortestPath.push_back(curr);
@@ -1168,6 +1190,8 @@ void SceneSP::AStarGrid(GameObject * go, GridPt target)
 	{
 		//If something happened
 		curr = nearestTile;
+		m_shortestPath.push_back(curr);
+		curr = m_previous[GetGridIndex(curr)];
 		while (curr != NULL)
 		{
 			m_shortestPath.push_back(curr);
@@ -1903,6 +1927,15 @@ void SceneSP::RenderGO(GameObject *go)
 	{
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		//Offset to center to middle of used grids
+		if (go->iGridX % 2 == 0)
+		{
+			modelStack.Translate(SceneData::GetInstance()->GetGridSize() * 0.5f, 0, 0);
+		}
+		if (go->iGridZ % 2 == 0)
+		{
+			modelStack.Translate(0, 0, SceneData::GetInstance()->GetGridSize() * 0.5f);
+		}
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		//RenderMesh(meshList[GEO_VILLAGER], false, 1.f);
 		//RenderMesh(meshList[GEO_TREE], false, 1.f);
@@ -1938,6 +1971,24 @@ void SceneSP::RenderGO(GameObject *go)
 		RenderMesh(meshList[GEO_BUSH], bGodlights, 1.f);
 		if (static_cast<Bush*>(go)->eCurrState == Bush::LUSH)
 			RenderMesh(meshList[GEO_BERRIES], bGodlights, 1.f);
+		modelStack.PopMatrix();
+	}
+	break;
+	case GameObject::GO_TREE:
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		//Offset to center to middle of used grids
+		if (go->iGridX % 2 == 0)
+		{
+			modelStack.Translate(SceneData::GetInstance()->GetGridSize() * 0.5f, 0, 0);
+		}
+		if (go->iGridZ % 2 == 0)
+		{
+			modelStack.Translate(0, 0, SceneData::GetInstance()->GetGridSize() * 0.5f);
+		}
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_TREE], bGodlights, 1.f);
 		modelStack.PopMatrix();
 	}
 	break;

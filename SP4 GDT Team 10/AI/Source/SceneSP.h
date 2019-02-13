@@ -70,6 +70,7 @@ protected:
 	//Temporary
 	GameObject* goVillager;
 	GameObject* goBush;
+	GameObject* goTree;
 };
 
 #endif
