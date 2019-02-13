@@ -78,7 +78,8 @@ void SceneSP::Init()
 	iFoodLimit = 100;
 	iPopulation = 0;
 	iPopulationLimit = 10;
-	fTimeOfDay = 0.f;
+	bDay = true; // day
+	fTimeOfDay = 8.f;
 
 	//go->vel.Set(1, 0, 0);
 	MousePicker::GetInstance()->Init();
@@ -929,6 +930,27 @@ void SceneSP::Reset()
 	//game_state = NEUTRAL;
 }
 
+void SceneSP::ChangeTimeOfDay()
+{
+	bDay = !bDay;
+	if (bDay) // daytime reset
+	{
+		bGodlights = false;
+		for (auto go : m_goList)
+		{
+			if (!go->active || go->type != GameObject::GO_BUSH)
+				continue;
+			if (static_cast<Bush*>(go)->eCurrState == Bush::DEPLETED)
+				static_cast<Bush*>(go)->eCurrState = Bush::LUSH;
+		}
+	}
+	else // nighttime reset
+	{
+		bGodlights = true;
+		iFood -= iPopulation*5; // 5 food is eaten per Villager
+	}
+}
+
 void SceneSP::Update(double dt)
 {
 	if (Application::IsKeyPressed('R'))
@@ -1172,10 +1194,18 @@ void SceneSP::Update(double dt)
 	}*/
 
 	// day/night cycle
-	fTimeOfDay += dt * 0.05;
+	fTimeOfDay += dt ;
 	if (fTimeOfDay >= 24.f)
 	{
 		fTimeOfDay = 0;
+	}
+	else if (fTimeOfDay >= 8.f && fTimeOfDay <= 20.f && !bDay) // 0800 to 2000 day
+	{
+		ChangeTimeOfDay();
+	}
+	else if ((fTimeOfDay <= 8.f || fTimeOfDay >= 20.f) && bDay) // 2000 to 0800 night
+	{
+		ChangeTimeOfDay();
 	}
 
 	// sea movement
@@ -1574,12 +1604,8 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);			
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_BUSH], bGodlights, 1.f);
-		switch (static_cast<Bush*>(go)->eCurrState)
-		{
-		case Bush::LUSH:
+		if (static_cast<Bush*>(go)->eCurrState == Bush::LUSH)
 			RenderMesh(meshList[GEO_BERRIES], bGodlights, 1.f);
-			break;
-		}
 		modelStack.PopMatrix();
 	}
 		break;

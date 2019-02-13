@@ -30,6 +30,7 @@ public:
 	//void DFSOnce(GameObject* go);
 
 	void Reset();
+	void ChangeTimeOfDay();
 
 	enum GAME_STATE
 	{
@@ -52,7 +53,7 @@ protected:
 	bool bDay;
 	GAME_STATE game_state;
 
-	bool bGodlights = true;
+	bool bGodlights = false;
 
 	//Grid
 	bool bShowGrid;
