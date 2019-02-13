@@ -15,7 +15,9 @@ GameObject::GameObject(GAMEOBJECT_TYPE typeValue)
 	m_nextState(NULL),
 	target(NULL),
 	timer(0),
-	currFrame(0)
+	currFrame(0),
+	iGridX(1),
+	iGridZ(1)
 	//NTarget(NULL),
 	//steps(0),
 	//countDown(0),

@@ -51,6 +51,7 @@ protected:
 	GAME_STATE game_state;
 
 	//Grid
+	bool bShowGrid;
 	std::vector<Grid::TILE_CONTENT> m_grid;
 	std::vector<GridPt> m_shortestPath; //Used for temporary storage of path in AStar
 	std::vector<GridPt> m_previous; //Used for storing the previous point in AStar

@@ -135,7 +135,7 @@ void Camera::Update(double dt)
 	}
 	if (target != target_goal)
 	{
-		target.lerp(target_goal, Math::Min((float)dt*12.5f, 1.f));
+		target.lerp(target_goal, Math::Min((float)dt*15.5f, 1.f));
 	}
 }
 

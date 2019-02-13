@@ -39,6 +39,10 @@ struct GameObject : public ObjectBase
 	float moveSpeed;
 	GameObject * goTarget;
 
+	//To represent the grids used by the obj
+	int iGridX;
+	int iGridZ;
+
 	bool bHovered, bSelected;
 
 	/*
