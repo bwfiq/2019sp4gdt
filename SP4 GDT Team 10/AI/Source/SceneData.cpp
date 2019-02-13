@@ -80,6 +80,65 @@ void SceneData::SetElapsedTime(float elapsedTime)
 {
 	this->f_elapsedTime = elapsedTime;
 }
+
+float SceneData::GetReligionValue()
+{
+	return this->f_religionValue;
+}
+void SceneData::SetReligionValue(float religionValue)
+{
+	this->f_religionValue = religionValue;
+}
+
+void SceneData::SetFood(int food)
+{
+	this->iFood = food;
+}
+int SceneData::GetFood()
+{
+	return iFood;
+}
+void SceneData::SetWood(int wood)
+{
+	this->iWood = wood;
+}
+int SceneData::GetWood()
+{
+	return iWood;
+}
+void SceneData::SetFoodLimit(int foodLimit)
+{
+	this->iFoodLimit = foodLimit;
+}
+int SceneData::GetFoodLimit()
+{
+	return iFoodLimit;
+}
+void SceneData::SetWoodLimit(int woodLimit)
+{
+	this->iWoodLimit = woodLimit;
+}
+int SceneData::GetWoodLimit()
+{
+	return iWoodLimit;
+}
+void SceneData::SetPopulation(int population)
+{
+	this->iPopulation = population;
+}
+int SceneData::GetPopulation()
+{
+	return iPopulation;
+}
+void SceneData::SetPopulationLimit(int populationLimit)
+{
+	this->iPopulationLimit = populationLimit;
+}
+int SceneData::GetPopulationLimit()
+{
+	return iPopulationLimit;
+}
+
 void SceneData::AddMesh(Mesh * mesh)
 {
 	if (mesh == nullptr || mesh == NULL)

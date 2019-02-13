@@ -1,20 +1,21 @@
-#include "Bush.h"
+#include "Tree.h"
 #include "ConcreteMessages.h"
 
-Bush::Bush(GAMEOBJECT_TYPE typeValue)
+Tree::Tree(GAMEOBJECT_TYPE typeValue)
 	: Environment(typeValue),
 	fTimer(1.f),
-	iFoodAmount(10)
+	iWoodAmount(10),
+	eCurrState(FULL)
 {
 	//GameObject(typeValue);
-	std::cout << "Bush Constructor" << std::endl;
+	std::cout << "Tree Constructor" << std::endl;
 }
 
-Bush::~Bush()
+Tree::~Tree()
 {
 }
 
-bool Bush::Handle(Message* msg)
+bool Tree::Handle(Message* msg)
 {
 	MessageObject* messageObject = dynamic_cast<MessageObject*>(msg);
 	switch (messageObject->type)

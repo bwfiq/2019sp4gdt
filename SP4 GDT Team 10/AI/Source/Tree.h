@@ -1,16 +1,16 @@
-#ifndef GAME_BUSH_H
-#define GAME_BUSH_H
+#ifndef GAME_WOOD_H
+#define GAME_WOOD_H
 
 #include "Environment.h"
 
-struct Bush : public Environment
+struct Tree : public Environment
 {
 
 	enum STATES
 	{
-		LUSH = 0,
+		FULL = 0,
+		HALFCHOPPED,
 		DEPLETED,
-
 		STATES_TOTAL //Should not have any enums below this
 	};
 
@@ -20,12 +20,12 @@ struct Bush : public Environment
 
 	float fTimer;
 
-	int iFoodAmount;
+	int iWoodAmount;
 
 	//virtual void TheFunction(GameObject* go);
 
-	Bush(GAMEOBJECT_TYPE typeValue = GO_NONE);
-	~Bush();
+	Tree(GAMEOBJECT_TYPE typeValue = GO_NONE);
+	~Tree();
 };
 
 #endif

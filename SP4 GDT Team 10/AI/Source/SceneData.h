@@ -28,6 +28,21 @@ public:
 	void SetWorldWidth(float worldwidth);
 	float GetElapsedTime();
 	void SetElapsedTime(float elapsedTime);
+	float GetReligionValue();
+	void SetReligionValue(float religionValue);
+
+	void SetFood(int food);
+	int GetFood();
+	void SetWood(int wood);
+	int GetWood();
+	void SetFoodLimit(int foodLimit);
+	int GetFoodLimit();
+	void SetWoodLimit(int woodLimit);
+	int GetWoodLimit();
+	void SetPopulation(int population);
+	int GetPopulation();
+	void SetPopulationLimit(int populationLimit);
+	int GetPopulationLimit();
 
 	void AddMesh(Mesh* mesh);
 	void RemoveMesh(const std::string& meshName);
@@ -45,11 +60,10 @@ private:
 	float m_worldHeight;
 	float m_worldWidth;
 	float f_elapsedTime;
-
-	int iFood, iFoodLimit, iPopulation, iPopulationLimit;
-
-
 	std::map<std::string, Mesh*> meshList;//these meshes delete themselves via the scene
+
+	float f_religionValue;
+	int iFood, iFoodLimit, iPopulation, iPopulationLimit, iWood, iWoodLimit;
 };
 
 #endif

@@ -19,6 +19,7 @@
 #include "Building.h"
 #include "ChiefHut.h"
 #include "Bush.h"
+#include "Tree.h"
 
 #define SEA_WIDTH	100.f
 #define SEA_HEIGHT	100.f
@@ -352,6 +353,7 @@ void SceneSP::Init()
 	SceneData::GetInstance()->SetWorldHeight(m_worldHeight);
 	SceneData::GetInstance()->SetWorldWidth(m_worldWidth);
 	SceneData::GetInstance()->SetElapsedTime(0);
+	SceneData::GetInstance()->SetReligionValue(0);
 	PostOffice::GetInstance()->Register("Scene", this);
 
 	//Physics code here
@@ -365,8 +367,8 @@ void SceneSP::Init()
 	goVillager = FetchGO(GameObject::GO_VILLAGER);
 	goVillager->scale.y = 1.f;
 	goVillager->pos.Set(0, goVillager->scale.y * 0.5f, 0);
-	goVillager->iGridX = 3;
-	goVillager->iGridZ = 3;
+	goVillager->iGridX = 1;
+	goVillager->iGridZ = 1;
 	goVillager->pos = GetGridPos(GridPt(5, 5));
 	goVillager->pos.y = goVillager->scale.y * 0.5f;
 
@@ -380,11 +382,26 @@ void SceneSP::Init()
 	Bush* bGo = static_cast<Bush*>(goBush);
 	bGo->eCurrState = Bush::LUSH;
 	bGo->fTimer = 0;
+	bGo->iFoodAmount = 10;
 
-	iFood = 0;
-	iFoodLimit = 100;
-	iPopulation = 0;
-	iPopulationLimit = 10;
+	goTree = FetchGO(GameObject::GO_TREE);
+	goTree->pos = GetGridPos(GridPt(2, 8));
+	goTree->pos.y = goTree->scale.y * 0.5f;
+	goTree->iGridX = 2;
+	goTree->iGridZ = 2;
+	Tree* tGo = static_cast<Tree*>(goBush);
+	tGo->eCurrState = Tree::FULL;
+	tGo->fTimer = 0;
+	tGo->iWoodAmount = 10;
+
+	SceneData* SD = SceneData::GetInstance();
+	SD->SetFood(0);
+	SD->SetFoodLimit(100);
+	SD->SetPopulation(0);
+	SD->SetPopulationLimit(10);
+	SD->SetWood(0);
+	SD->SetWoodLimit(100);
+
 	bDay = true; // day
 	fTimeOfDay = 8.f;
 
@@ -406,6 +423,9 @@ bool SceneSP::Handle(Message* message)
 	{
 		switch (messageWRU->type)
 		{
+		case MessageWRU::FIND_CHIEFHUT:
+			messageWRU->go->goTarget = goChiefHut;
+			break;
 		case MessageWRU::PATH_TO_TARGET:
 			AStarGrid(messageWRU->go, GetPoint(messageWRU->go->goTarget->pos));
 			break;
@@ -418,6 +438,7 @@ bool SceneSP::Handle(Message* message)
 		delete message;
 		return true;
 	}
+
 	delete message;
 	return false;
 }
@@ -442,6 +463,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 				break;
 			case GameObject::GO_CHIEFHUT:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 0.5f, SceneData::GetInstance()->GetGridSize() * 1.f);
+				break;
+			case GameObject::GO_TREE:
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.2f, SceneData::GetInstance()->GetGridSize() * 1.f);
 				break;
 			}
 
@@ -468,6 +492,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 		case GameObject::GO_BUSH:
 			go = new Bush(type);
 			break;
+		case GameObject::GO_TREE:
+			go = new Tree(type);
+			break;
 		default:
 			go = new GameObject(type);
 			break;
@@ -477,6 +504,7 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 	}
 	return FetchGO(type);
 }
+
 struct Compare2
 {
 	bool operator()(std::pair<GridPt, std::pair<int, int>> pair1, std::pair<GridPt, std::pair<int, int>> pair2)
@@ -697,7 +725,7 @@ void SceneSP::AStarGrid(GameObject * go, GridPt target)
 	for (int loop = 0; loop < SD->GetNoGrid() * SD->GetNoGrid() && !priority_Queue.empty(); ++loop)
 	{
 		//std::cout << "One Round of Loop" << std::endl;
-		curr = priority_Queue.begin()->first;
+ 		curr = priority_Queue.begin()->first;
 		//m_queue.pop();
 
 
@@ -1137,6 +1165,8 @@ void SceneSP::AStarGrid(GameObject * go, GridPt target)
 		{
 			//If manage to reach target
 			curr = target;
+			m_shortestPath.push_back(curr);
+			curr = m_previous[GetGridIndex(curr)];
 			while (curr != NULL)
 			{
 				m_shortestPath.push_back(curr);
@@ -1148,6 +1178,8 @@ void SceneSP::AStarGrid(GameObject * go, GridPt target)
 		{
 			//If unable to reach target
 			curr = nearestTile;
+			m_shortestPath.push_back(curr);
+			curr = m_previous[GetGridIndex(curr)];
 			while (curr != NULL)
 			{
 				m_shortestPath.push_back(curr);
@@ -1160,6 +1192,8 @@ void SceneSP::AStarGrid(GameObject * go, GridPt target)
 	{
 		//If something happened
 		curr = nearestTile;
+		m_shortestPath.push_back(curr);
+		curr = m_previous[GetGridIndex(curr)];
 		while (curr != NULL)
 		{
 			m_shortestPath.push_back(curr);
@@ -1293,16 +1327,20 @@ void SceneSP::ChangeTimeOfDay()
 		bGodlights = false;
 		for (auto go : m_goList)
 		{
-			if (!go->active || go->type != GameObject::GO_BUSH)
+			if (!go->active)
 				continue;
-			if (static_cast<Bush*>(go)->eCurrState == Bush::DEPLETED)
-				static_cast<Bush*>(go)->eCurrState = Bush::LUSH;
+			if (go->type == GameObject::GO_BUSH)
+			{
+				if (static_cast<Bush*>(go)->eCurrState == Bush::DEPLETED)
+					static_cast<Bush*>(go)->eCurrState = Bush::LUSH;
+			}
 		}
 	}
 	else // nighttime reset
 	{
 		bGodlights = true;
-		iFood -= iPopulation*5; // 5 food is eaten per Villager
+		SceneData* SD = SceneData::GetInstance();
+		SD->SetFood(Math::Max(0, SD->GetFood() - SD->GetPopulation() * 5));// 5 food is eaten per Villager
 	}
 }
 
@@ -1324,6 +1362,10 @@ void SceneSP::Update(double dt)
 	MP->Update(dt);
 	camera.Update(dt);
 	UIM->Update(dt);
+
+	if (KC->IsKeyPressed('P')) {//A TEST TO CHANGE RELIGION VALUE DIS WONT BE IN DA FNIAL GAME
+		SD->SetReligionValue(((int)SD->GetReligionValue() % 100) + 25);
+	}
 
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
@@ -1479,8 +1521,11 @@ void SceneSP::Update(double dt)
 		if (!objectFound)
 		{
 			goVillager->goTarget = NULL;
-			goVillager->target = GetGridPos(selectedPt);
-			goVillager->m_nextState = SMManager::GetInstance()->GetSM(goVillager->smID)->GetState("Idle");
+			if (m_grid[GetGridIndex(selectedPt)] == Grid::TILE_EMPTY)
+			{
+				goVillager->target = GetGridPos(selectedPt);
+				goVillager->m_nextState = SMManager::GetInstance()->GetSM(goVillager->smID)->GetState("Idle");
+			}
 		}
 	}
 	else if (bLButtonState && !Application::IsMousePressed(0))
@@ -1563,8 +1608,8 @@ void SceneSP::Update(double dt)
 	ProjectileManager::GetInstance()->Update(dt * m_speed);
 	static const float NPC_VELOCITY = 10.f;
 
-	iPopulation = 0;
-	iPopulationLimit = 0;
+	SD->SetPopulation(0);
+	SD->SetPopulationLimit(0);
 
 	//Update the Grid
 	std::fill(m_grid.begin(), m_grid.end(), Grid::TILE_EMPTY);
@@ -1572,6 +1617,10 @@ void SceneSP::Update(double dt)
 	m_grid[15] = Grid::TILE_USED;
 	m_grid[25] = Grid::TILE_USED;
 	m_grid[35] = Grid::TILE_USED;
+	m_grid[4] = Grid::TILE_USED;
+	m_grid[14] = Grid::TILE_USED;
+	m_grid[24] = Grid::TILE_USED;
+	m_grid[34] = Grid::TILE_USED;
 	for (auto go : m_goList)
 	{
 		if (!go->active)
@@ -1834,35 +1883,13 @@ void SceneSP::Update(double dt)
 		switch (go->type)
 		{
 		case GameObject::GO_VILLAGER:
-			iPopulation++;
-			// collision (?)
-			for (auto go2 : m_goList)
-			{
-				if (go->currentPt == go2->currentPt && go != go2)
-				{
-					if (go2->type == GameObject::GO_BUSH && static_cast<Bush*>(go2)->eCurrState == Bush::LUSH)
-					{
-						static_cast<Bush*>(go2)->eCurrState = Bush::DEPLETED;
-						static_cast<Bush*>(go2)->fTimer = 10.f;
-						iFood += 10;
-					}
-				}
-			}
+			SD->SetPopulation(SD->GetPopulation() + 1);
 			break;
 		case GameObject::GO_CHIEFHUT:
-			iPopulationLimit += 10;
+			SD->SetPopulationLimit(SD->GetPopulationLimit() + 10);
 			break;
 		case GameObject::GO_BUSH:
-			if (static_cast<Bush*>(go)->eCurrState == Bush::DEPLETED)
-			{
-				static_cast<Bush*>(go)->fTimer -= dt;
-				if (static_cast<Bush*>(go)->fTimer <= 0.f)
-				{
-					static_cast<Bush*>(go)->fTimer = 0.f;
-					static_cast<Bush*>(go)->eCurrState = Bush::LUSH;
-				}
-			}
-
+			break;
 		default:
 			break;
 		}
@@ -1916,6 +1943,15 @@ void SceneSP::RenderGO(GameObject *go)
 	{
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		//Offset to center to middle of used grids
+		if (go->iGridX % 2 == 0)
+		{
+			modelStack.Translate(SceneData::GetInstance()->GetGridSize() * 0.5f, 0, 0);
+		}
+		if (go->iGridZ % 2 == 0)
+		{
+			modelStack.Translate(0, 0, SceneData::GetInstance()->GetGridSize() * 0.5f);
+		}
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		//RenderMesh(meshList[GEO_VILLAGER], false, 1.f);
 		//RenderMesh(meshList[GEO_TREE], false, 1.f);
@@ -1951,6 +1987,24 @@ void SceneSP::RenderGO(GameObject *go)
 		RenderMesh(meshList[GEO_BUSH], bGodlights, 1.f);
 		if (static_cast<Bush*>(go)->eCurrState == Bush::LUSH)
 			RenderMesh(meshList[GEO_BERRIES], bGodlights, 1.f);
+		modelStack.PopMatrix();
+	}
+	break;
+	case GameObject::GO_TREE:
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		//Offset to center to middle of used grids
+		if (go->iGridX % 2 == 0)
+		{
+			modelStack.Translate(SceneData::GetInstance()->GetGridSize() * 0.5f, 0, 0);
+		}
+		if (go->iGridZ % 2 == 0)
+		{
+			modelStack.Translate(0, 0, SceneData::GetInstance()->GetGridSize() * 0.5f);
+		}
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_TREE], bGodlights, 1.f);
 		modelStack.PopMatrix();
 	}
 	break;
@@ -2077,11 +2131,11 @@ void SceneSP::Render()
 	// resources
 	ss.str("");
 	//ss.precision(5);
-	ss << "Food:" << iFood << "/" << iFoodLimit;
+	ss << "Food:" << SD->GetFood() << "/" << SD->GetFoodLimit();
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 3);
 
 	ss.str("");
-	ss << "Population:" << iPopulation << "/" << iPopulationLimit;
+	ss << "Population:" << SD->GetPopulation() << "/" << SD->GetPopulationLimit();
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 0);
 
 	ss.str("");
