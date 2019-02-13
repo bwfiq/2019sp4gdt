@@ -47,6 +47,7 @@ void SceneSP::Init()
 	SceneData::GetInstance()->SetWorldHeight(m_worldHeight);
 	SceneData::GetInstance()->SetWorldWidth(m_worldWidth);
 	SceneData::GetInstance()->SetElapsedTime(0);
+	SceneData::GetInstance()->SetReligionValue(0);
 	PostOffice::GetInstance()->Register("Scene", this);
 
 	//Physics code here
@@ -945,6 +946,10 @@ void SceneSP::Update(double dt)
 	MP->Update(dt);
 	camera.Update(dt);
 	UIM->Update(dt);
+
+	if (KC->IsKeyPressed('P')) {//A TEST TO CHANGE RELIGION VALUE DIS WONT BE IN DA FNIAL GAME
+		SD->SetReligionValue(((int)SD->GetReligionValue() % 100) + 25);
+	}
 
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;

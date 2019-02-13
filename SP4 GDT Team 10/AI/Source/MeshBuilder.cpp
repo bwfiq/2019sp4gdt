@@ -510,6 +510,8 @@ Mesh * MeshBuilder::GenerateTriangle(const std::string & meshName, Color color, 
 	mesh->indexSize = index_buffer_data.size();
 	mesh->mode = Mesh::DRAW_TRIANGLES;
 
+	SceneData::GetInstance()->AddMesh(mesh);
+
 	return mesh;
 }
 

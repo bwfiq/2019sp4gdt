@@ -29,8 +29,9 @@ public:
 	float fRotation;
 	bool bActive;
 	bool bLightEnabled;
+
+	virtual void Update(float dt) = 0;
 protected:
 private:
 	//virtual void Render() = 0;
-	virtual void Update(float dt) = 0;
 };

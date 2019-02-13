@@ -28,6 +28,8 @@ public:
 	void SetWorldWidth(float worldwidth);
 	float GetElapsedTime();
 	void SetElapsedTime(float elapsedTime);
+	float GetReligionValue();
+	void SetReligionValue(float religionValue);
 
 	void AddMesh(Mesh* mesh);
 	void RemoveMesh(const std::string& meshName);
@@ -46,6 +48,8 @@ private:
 	float m_worldWidth;
 	float f_elapsedTime;
 	std::map<std::string, Mesh*> meshList;//these meshes delete themselves via the scene
+
+	float f_religionValue;
 };
 
 #endif
