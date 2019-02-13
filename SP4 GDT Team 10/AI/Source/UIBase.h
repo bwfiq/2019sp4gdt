@@ -12,7 +12,7 @@ public:
 	float fRotation;
 	Vector3 anchorPoint;
 
-	UIComponent() : fRotation(0), bActive(true), mesh(NULL) {};
+	UIComponent() : fRotation(0), bActive(true), mesh(NULL), scale(1, 1, 1) {};
 	~UIComponent() {};
 };
 
@@ -21,7 +21,7 @@ public:
 	UIBase();
 	virtual ~UIBase();
 
-	std::vector<UIComponent> uiComponents;
+	std::vector<UIComponent> uiComponents_list;
 
 	Vector3 pos;
 	Vector3 scale;
