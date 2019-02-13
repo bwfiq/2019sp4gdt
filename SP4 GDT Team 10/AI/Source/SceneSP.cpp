@@ -1607,7 +1607,7 @@ void SceneSP::Render()
 	// Model matrix : an identity matrix (model will be at the origin)
 	modelStack.LoadIdentity();
 
-	modelStack.PushMatrix();
+	modelStack.PushMatrix(); 
 	modelStack.Translate(mousePos.x, mousePos.y, mousePos.z);
 	modelStack.Scale(0.1, 0.1, 0.1);
 	RenderMesh(meshList[GEO_VILLAGER], false);

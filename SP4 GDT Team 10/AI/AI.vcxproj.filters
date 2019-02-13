@@ -30,6 +30,9 @@
     <Filter Include="UI">
       <UniqueIdentifier>{db2a3b77-fd41-4a5d-a8f3-7ee3e070880a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI\UIObjects">
+      <UniqueIdentifier>{2bb30c8f-efa6-4d58-ba71-db33898e39e8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -121,6 +124,9 @@
     </ClCompile>
     <ClCompile Include="Source\Bush.cpp">
       <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UIReligionBar.cpp">
+      <Filter>UI\UIObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -237,6 +243,9 @@
     </ClInclude>
     <ClInclude Include="Source\Bush.h">
       <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UIReligionBar.h">
+      <Filter>UI\UIObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -42,7 +42,7 @@ void MousePicker::Update(float dt)
 
 Vector3 MousePicker::GetIntersectionWithPlane(Vector3 rayPos, Vector3 planePos, Vector3 planeNormal)
 {
-	float d = -planePos.Dot(planeNormal);
+	float d = -(planePos.Dot(planeNormal));
 	float t = -(rayPos.Dot(planeNormal) + d) / (mouseRay.Dot(planeNormal));
 	return rayPos + t * mouseRay;
 }
