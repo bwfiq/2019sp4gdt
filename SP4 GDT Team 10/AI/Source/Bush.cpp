@@ -2,7 +2,9 @@
 #include "ConcreteMessages.h"
 
 Bush::Bush(GAMEOBJECT_TYPE typeValue)
-	: Environment(typeValue)
+	: Environment(typeValue),
+	fTimer(1.f),
+	iFoodAmount(10)
 {
 	//GameObject(typeValue);
 	std::cout << "Bush Constructor" << std::endl;

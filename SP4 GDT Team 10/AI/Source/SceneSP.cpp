@@ -379,11 +379,15 @@ void SceneSP::Init()
 	Bush* bGo = static_cast<Bush*>(goBush);
 	bGo->eCurrState = Bush::LUSH;
 	bGo->fTimer = 0;
+	
+	SceneData* SD = SceneData::GetInstance();
+	SD->SetFood(0);
+	SD->SetFoodLimit(100);
+	SD->SetPopulation(0);
+	SD->SetPopulationLimit(10);
+	SD->SetWood(0);
+	SD->SetWoodLimit(100);
 
-	iFood = 0;
-	iFoodLimit = 100;
-	iPopulation = 0;
-	iPopulationLimit = 10;
 	bDay = true; // day
 	fTimeOfDay = 8.f;
 
@@ -405,6 +409,9 @@ bool SceneSP::Handle(Message* message)
 	{
 		switch (messageWRU->type)
 		{
+		case MessageWRU::FIND_CHIEFHUT:
+			messageWRU->go->goTarget = goChiefHut;
+			break;
 		case MessageWRU::PATH_TO_TARGET:
 			AStarGrid(messageWRU->go, GetPoint(messageWRU->go->goTarget->pos));
 			break;
@@ -417,6 +424,7 @@ bool SceneSP::Handle(Message* message)
 		delete message;
 		return true;
 	}
+
 	delete message;
 	return false;
 }
@@ -476,6 +484,7 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 	}
 	return FetchGO(type);
 }
+
 struct Compare2
 {
 	bool operator()(std::pair<GridPt, std::pair<int, int>> pair1, std::pair<GridPt, std::pair<int, int>> pair2)
@@ -1301,7 +1310,8 @@ void SceneSP::ChangeTimeOfDay()
 	else // nighttime reset
 	{
 		bGodlights = true;
-		iFood -= iPopulation*5; // 5 food is eaten per Villager
+		SceneData* SD = SceneData::GetInstance();
+		SD->SetFood(Math::Max(0, SD->GetFood() - SD->GetPopulation() * 5));// 5 food is eaten per Villager
 	}
 }
 
@@ -1562,8 +1572,8 @@ void SceneSP::Update(double dt)
 	ProjectileManager::GetInstance()->Update(dt * m_speed);
 	static const float NPC_VELOCITY = 10.f;
 
-	iPopulation = 0;
-	iPopulationLimit = 0;
+	SD->SetPopulation(0);
+	SD->SetPopulationLimit(0);
 
 	//Update the Grid
 	std::fill(m_grid.begin(), m_grid.end(), Grid::TILE_EMPTY);
@@ -1833,35 +1843,13 @@ void SceneSP::Update(double dt)
 		switch (go->type)
 		{
 		case GameObject::GO_VILLAGER:
-			iPopulation++;
-			// collision (?)
-			for (auto go2 : m_goList)
-			{
-				if (go->currentPt == go2->currentPt && go != go2)
-				{
-					if (go2->type == GameObject::GO_BUSH && static_cast<Bush*>(go2)->eCurrState == Bush::LUSH)
-					{
-						static_cast<Bush*>(go2)->eCurrState = Bush::DEPLETED;
-						static_cast<Bush*>(go2)->fTimer = 10.f;
-						iFood += 10;
-					}
-				}
-			}
+			SD->SetPopulation(SD->GetPopulation() + 1);
 			break;
 		case GameObject::GO_CHIEFHUT:
-			iPopulationLimit += 10;
+			SD->SetPopulationLimit(SD->GetPopulationLimit() + 10);
 			break;
 		case GameObject::GO_BUSH:
-			if (static_cast<Bush*>(go)->eCurrState == Bush::DEPLETED)
-			{
-				static_cast<Bush*>(go)->fTimer -= dt;
-				if (static_cast<Bush*>(go)->fTimer <= 0.f)
-				{
-					static_cast<Bush*>(go)->fTimer = 0.f;
-					static_cast<Bush*>(go)->eCurrState = Bush::LUSH;
-				}
-			}
-
+			break;
 		default:
 			break;
 		}
@@ -2077,11 +2065,11 @@ void SceneSP::Render()
 	// resources
 	ss.str("");
 	//ss.precision(5);
-	ss << "Food:" << iFood << "/" << iFoodLimit;
+	ss << "Food:" << SD->GetFood() << "/" << SD->GetFoodLimit();
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 3);
 
 	ss.str("");
-	ss << "Population:" << iPopulation << "/" << iPopulationLimit;
+	ss << "Population:" << SD->GetPopulation() << "/" << SD->GetPopulationLimit();
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 0);
 
 	ss.str("");

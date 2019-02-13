@@ -50,8 +50,6 @@ protected:
 	float fSeaDeltaY = 0;
 	bool bSeaYDir = false;
 
-	int iFood, iFoodLimit, iPopulation, iPopulationLimit;
-
 	float fTimeOfDay; // 0 to 24
 	bool bDay;
 	GAME_STATE game_state;

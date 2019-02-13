@@ -20,7 +20,7 @@ struct Bush : public Environment
 
 	float fTimer;
 
-	int foodAmount;
+	int iFoodAmount;
 
 	//virtual void TheFunction(GameObject* go);
 

@@ -12,6 +12,7 @@ struct MessageWRU : public Message
 		NEAREST_ENEMY,
 		PATH_TO_TARGET,
 		PATH_TO_POINT,
+		FIND_CHIEFHUT,
 	};
 	MessageWRU(GameObject *goValue, SEARCH_TYPE typeValue, float thresholdValue) : go(goValue), type(typeValue), threshold(thresholdValue) {}
 	virtual ~MessageWRU() {}

@@ -7,6 +7,7 @@
 #include "ProjectileManager.h"
 #include <iostream>
 
+#include "Villager.h"
 #include "Bush.h"
 //State::State(const std::string & stateID)
 //	: m_stateID(stateID)
@@ -148,7 +149,15 @@ void StatePath::Update(double dt, GameObject * m_go)
 					m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("ChopTree");
 					break;
 				case GameObject::GO_CHIEFHUT:
-					m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
+					//m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
+					SD->SetFood(Math::Min(SD->GetFoodLimit(), SD->GetFood() + static_cast<Villager*>(m_go)->iFoodStored));
+					SD->SetWood(Math::Min(SD->GetWoodLimit(), SD->GetWood() + static_cast<Villager*>(m_go)->iWoodStored));
+
+					static_cast<Villager*>(m_go)->iWoodStored = 0;
+					static_cast<Villager*>(m_go)->iFoodStored = 0;
+
+					m_go->goTarget = NULL;
+					m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 					break;
 				case GameObject::GO_HOUSE:
 					m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
@@ -227,7 +236,19 @@ void StateForaging::Update(double dt, GameObject * m_go)
 		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 	}
 	Bush* bushGo = static_cast<Bush*>(m_go->goTarget);
+	Villager* vGo = static_cast<Villager*>(m_go);
+	if (bushGo->eCurrState == Bush::LUSH)
+	{
+		//Insert gathering time here
+		vGo->iFoodStored = bushGo->iFoodAmount;
+		bushGo->eCurrState = Bush::DEPLETED;
 
+		MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_CHIEFHUT, 1);
+		PostOffice::GetInstance()->Send("Scene", messagewru);
+		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+		return;
+	}
+	m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 }
 
 void StateForaging::Exit(GameObject * m_go)
