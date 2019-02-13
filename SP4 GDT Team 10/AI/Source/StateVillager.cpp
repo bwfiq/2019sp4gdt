@@ -76,7 +76,19 @@ void StatePath::Update(double dt, GameObject * m_go)
 	SceneData* SD = SceneData::GetInstance();
 	if (m_go->target != NULL || m_go->goTarget != NULL)
 	{
-		if (m_go->goTarget != NULL)
+		
+		if (m_go->target != NULL)
+		{
+			if ((m_go->pos - m_go->target).LengthSquared() < 0.05f)
+			{
+				m_go->pos = m_go->target;
+				m_go->target = NULL;
+				m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+				return;
+			}
+			m_go->pos += (m_go->target - m_go->pos).Normalized() * dt * MOVE_SPEED;
+		}
+		else if (m_go->goTarget != NULL)
 		{
 			if (!m_go->path.empty())
 			{
@@ -97,17 +109,6 @@ void StatePath::Update(double dt, GameObject * m_go)
 				m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 				return;
 			}
-		}
-		if (m_go->target != NULL)
-		{
-			if ((m_go->pos - m_go->target).LengthSquared() < 0.05f)
-			{
-				m_go->pos = m_go->target;
-				m_go->target = NULL;
-				m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
-				return;
-			}
-			m_go->pos += (m_go->target - m_go->pos).Normalized() * dt * MOVE_SPEED;
 		}
 	}
 	else

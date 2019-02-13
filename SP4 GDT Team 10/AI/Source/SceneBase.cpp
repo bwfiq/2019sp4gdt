@@ -191,6 +191,12 @@ void SceneBase::Init()
 	//meshList[GEO_GRASS] = MeshBuilder::GenerateCube("cube", Color(1, 1, 1), 1.f);
 	meshList[GEO_GRASS] = MeshBuilder::GenerateOBJ("grass", "Obj//Ground.obj");
 	meshList[GEO_GRASS]->textureID = LoadTGA("Image//grass.tga");
+	meshList[GEO_TREE] = MeshBuilder::GenerateOBJ("tree", "Obj//Tree.obj");
+	meshList[GEO_TREE]->textureID = LoadTGA("Image//tree.tga");
+	meshList[GEO_BUSH] = MeshBuilder::GenerateOBJ("tree", "Obj//bushes.obj");
+	meshList[GEO_BUSH]->textureID = LoadTGA("Image//bushes_and_berries_texture.tga");
+	meshList[GEO_BERRIES] = MeshBuilder::GenerateOBJ("tree", "Obj//berries.obj");
+	meshList[GEO_BERRIES]->textureID = LoadTGA("Image//bushes_and_berries_texture.tga");
 
 	meshList[GEO_VILLAGER] = MeshBuilder::GenerateCube("villager", Color(1, 0, 0), 1.f);
 	meshList[GEO_BUILDING] = MeshBuilder::GenerateCube("building", Color(0, 0, 1), 1.f);
