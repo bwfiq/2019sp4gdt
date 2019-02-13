@@ -4,6 +4,7 @@
 #include "Vertex.h"
 #include "MyMath.h"
 #include "LoadOBJ.h"
+#include "SceneData.h"
 /******************************************************************************/
 /*!
 \brief
@@ -118,6 +119,8 @@ Mesh* MeshBuilder::GenerateQuad(const std::string &meshName, Color color, float 
 
 	mesh->indexSize = index_buffer_data.size();
 	mesh->mode = Mesh::DRAW_TRIANGLES;
+
+	SceneData::GetInstance()->AddMesh(mesh);
 
 	return mesh;
 }

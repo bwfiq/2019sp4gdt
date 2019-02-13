@@ -1300,7 +1300,7 @@ void SceneSP::Render()
 	modelStack.LoadIdentity();
 
 	modelStack.PushMatrix();
-	Vector3 adsada = MousePicker::GetInstance()->GetIntersectionWithPlane(camera.position, Vector3(0, 0.6f, 0), Vector3(0, 1, 0));
+	Vector3 adsada = MousePicker::GetInstance()->GetIntersectionWithPlane(camera.position, Vector3(0, 0, 0), Vector3(0, 1, 0));
 	modelStack.Translate(adsada.x, adsada.y, adsada.z);
 	modelStack.Scale(0.025, 0.025, 0.025);
 	RenderMesh(meshList[GEO_VILLAGER], false);

@@ -2,7 +2,9 @@
 #include "Mesh.h"
 
 UIBase::UIBase() : 
-	bLightEnabled(false)
+	bLightEnabled(false),
+	bActive(true),
+	fRotation(0)
 {
 }
 

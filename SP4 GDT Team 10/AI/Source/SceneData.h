@@ -2,6 +2,10 @@
 #define SCENE_DATA
 
 #include "SingletonTemplate.h"
+#include <map>
+#include <string>
+
+class Mesh;
 
 class SceneData : public Singleton<SceneData>
 {
@@ -24,6 +28,10 @@ public:
 	void SetWorldWidth(float worldwidth);
 	float GetElapsedTime();
 	void SetElapsedTime(float elapsedTime);
+
+	void AddMesh(Mesh* mesh);
+	void RemoveMesh(const std::string& meshName);
+	Mesh* GetMesh(const std::string& meshName);
 private:
 	SceneData();
 	~SceneData();
@@ -37,6 +45,7 @@ private:
 	float m_worldHeight;
 	float m_worldWidth;
 	float f_elapsedTime;
+	std::map<std::string, Mesh*> meshList;//these meshes delete themselves via the scene
 };
 
 #endif
