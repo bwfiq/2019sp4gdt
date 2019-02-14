@@ -227,6 +227,10 @@ void SceneBase::Update(double dt)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	if(Application::IsKeyPressed('4'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	if (Application::IsKeyPressed('5'))
+		bLightEnabled = true; // lights on
+	if (Application::IsKeyPressed('6'))
+		bLightEnabled = false; // lights off
 	static float asd = 0;
 	asd += (float)dt;
 //	camera.position = Vector3(0, 1 + cosf(asd), 1);

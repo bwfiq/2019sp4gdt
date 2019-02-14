@@ -2063,10 +2063,6 @@ void SceneSP::Update(double dt)
 	if (Application::IsKeyPressed(VK_RETURN))
 	{
 	}
-	if (Application::IsKeyPressed('5'))
-		bGodlights = true; // lights off
-	if (Application::IsKeyPressed('6'))
-		bGodlights = false; // lights on
 	//if (MC->IsButtonPressed(MouseController::LMB))
 		//std::cout << "asd" << std::endl;
 
