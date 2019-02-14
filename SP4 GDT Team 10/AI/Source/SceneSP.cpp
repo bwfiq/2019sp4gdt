@@ -10,6 +10,8 @@
 #include "ProjectileManager.h"
 #include "UIManager.h"
 #include "UIReligionBar.h"
+#include "EffectManager.h"
+#include "EffectTrail.h"
 
 #include "SMManager.h"
 #include "MouseController.h"
@@ -412,6 +414,9 @@ void SceneSP::Init()
 
 	UIManager::GetInstance()->Init();
 	UIManager::GetInstance()->AddUI(new UIReligionBar());
+
+	EffectManager::GetInstance()->Init();
+	EffectManager::GetInstance()->AddEffect(new EffectTrail(&camera));
 }
 
 
@@ -2026,11 +2031,13 @@ void SceneSP::Update(double dt)
 	MouseController* MC = MouseController::GetInstance();
 	KeyboardController* KC = KeyboardController::GetInstance();
 	UIManager* UIM = UIManager::GetInstance();
+	EffectManager* EM = EffectManager::GetInstance();
 
 	SceneBase::Update(dt);
 	MP->Update(dt);
 	camera.Update(dt);
 	UIM->Update(dt);
+	EM->Update(dt);
 
 	if (KC->IsKeyPressed('P')) {//A TEST TO CHANGE RELIGION VALUE DIS WONT BE IN DA FNIAL GAME
 		SD->SetReligionValue(((int)SD->GetReligionValue() % 100) + 25);
@@ -2789,6 +2796,8 @@ void SceneSP::Render()
 			continue;
 		RenderGO(go);
 	}
+
+	EffectManager::GetInstance()->Render(this);
 
 	UIManager::GetInstance()->Render(this);
 

@@ -208,6 +208,7 @@ void SceneBase::Init()
 	meshList[GEO_GRID] = MeshBuilder::GenerateGrid("grid", Color(1, 0, 0), SceneData::GetInstance()->GetNoGrid(), SceneData::GetInstance()->GetNoGrid(), SceneData::GetInstance()->GetGridSize());
 
 	meshList[GEO_LINE] = MeshBuilder::GenerateLine("line", Color(1, 0, 0));
+	meshList[GEO_RAY_WHITE] = MeshBuilder::GenerateRay("whiteray", Color(1, 1, 1));
 
 	meshList[GEO_TEXT]->material.kAmbient.Set(1, 0, 0);
 
