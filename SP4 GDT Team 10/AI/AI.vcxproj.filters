@@ -33,6 +33,12 @@
     <Filter Include="UI\UIObjects">
       <UniqueIdentifier>{2bb30c8f-efa6-4d58-ba71-db33898e39e8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="VisualEffects">
+      <UniqueIdentifier>{8c93193b-7c04-493d-b9a0-6bcf5501bf4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="VisualEffects\EffectObjects">
+      <UniqueIdentifier>{dd28bf5a-0711-4aa8-a666-e68a973a9ee6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -136,6 +142,15 @@
     </ClCompile>
     <ClCompile Include="Source\DepthFBO.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EffectManager.cpp">
+      <Filter>VisualEffects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EffectBase.cpp">
+      <Filter>VisualEffects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EffectTrail.cpp">
+      <Filter>VisualEffects\EffectObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -264,6 +279,15 @@
     </ClInclude>
     <ClInclude Include="Source\DepthFBO.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EffectManager.h">
+      <Filter>VisualEffects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EffectBase.h">
+      <Filter>VisualEffects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EffectTrail.h">
+      <Filter>VisualEffects\EffectObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

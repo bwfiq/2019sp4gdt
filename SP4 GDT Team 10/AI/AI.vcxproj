@@ -158,6 +158,9 @@
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\ChiefHut.cpp" />
     <ClCompile Include="Source\DepthFBO.cpp" />
+    <ClCompile Include="Source\EffectBase.cpp" />
+    <ClCompile Include="Source\EffectManager.cpp" />
+    <ClCompile Include="Source\EffectTrail.cpp" />
     <ClCompile Include="Source\Environment.cpp" />
     <ClCompile Include="Source\GameObject.cpp" />
     <ClCompile Include="Source\Graph.cpp" />
@@ -195,6 +198,9 @@
     <ClInclude Include="Source\ChiefHut.h" />
     <ClInclude Include="Source\ConcreteMessages.h" />
     <ClInclude Include="Source\DepthFBO.h" />
+    <ClInclude Include="Source\EffectBase.h" />
+    <ClInclude Include="Source\EffectManager.h" />
+    <ClInclude Include="Source\EffectTrail.h" />
     <ClInclude Include="Source\Environment.h" />
     <ClInclude Include="Source\GameObject.h" />
     <ClInclude Include="Source\Geometry.h" />
