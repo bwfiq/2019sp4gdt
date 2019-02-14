@@ -52,6 +52,8 @@ void StateIdle::Enter(GameObject* m_go)
 
 void StateIdle::Update(double dt, GameObject* m_go)
 {
+	Villager* goVillager = static_cast<Villager*>(m_go);
+
 	if (m_go->goTarget != NULL || m_go->target != NULL)
 	{
 		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Path");
@@ -66,6 +68,13 @@ void StateIdle::Update(double dt, GameObject* m_go)
 			PostOffice::GetInstance()->Send("Scene", messagewru);
 		}
 		return;
+	}
+	goVillager->fIdleTimer -= dt;
+	if (goVillager->fIdleTimer <= 0.f)
+	{
+		goVillager->fIdleTimer = Math::RandFloatMinMax(1.f, 7.f);
+		MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::RANDOM_TARGET, 2 * 2 + 2 * 2);
+		PostOffice::GetInstance()->Send("Scene", messagewru);
 	}
 }
 
@@ -109,6 +118,41 @@ void StatePath::Update(double dt, GameObject * m_go)
 				else
 				{
 					m_go->pos += (direction).Normalized() * dt * MOVE_SPEED;
+
+					//float currentAngle = acos(m_go->direction.Normalized().Dot(Vector3(1, 0, 0)));
+					//Vector3 godirNormalized = m_go->direction.Normalized();
+					//float currentAngletheSequel = atan2f(godirNormalized.x, godirNormalized.z);
+					//std::cout << Math::RadianToDegree(currentAngletheSequel) - 90 << std::endl;
+					//Vector3 dirNormalized = direction.Normalized();
+					//std::cout << Math::RadianToDegree(atan2f(dirNormalized.x, dirNormalized.z)) << std::endl;
+					//float deltaAngleSequel = Math::lerp(currentAngletheSequel, atan2f(dirNormalized.x, dirNormalized.z),Math::Min(1.f,(float)dt*10.5f));
+					////std::cout << Math::RadianToDegree(deltaAngleSequel) << std::endl;
+					////float alphaAngleSequel = currentAngletheSequel + deltaAngleSequel * Math::Min(1.f, (float)dt*10.5f);
+					//m_go->direction.x = sinf(deltaAngleSequel);
+					//m_go->direction.z = cosf(deltaAngleSequel);
+
+					float currentAngle = acos(m_go->direction.Normalized().Dot(Vector3(1, 0, 0)));
+
+					if ((m_go->direction).Cross(Vector3(1, 0, 0)).y > 0)
+					{
+						currentAngle = -currentAngle;
+					}
+					Vector3 goDirNormalised = m_go->direction.Normalized();
+					Vector3 dirNormalised = direction.Normalized();
+					float dotProduct = goDirNormalised.Dot(dirNormalised);
+					float deltaAngle = acos(Math::Clamp(dotProduct, -0.999999f, 0.999999f));
+					if (isnan(deltaAngle))
+					{
+						std::cout << "Infinity" << std::endl;
+					}
+					if (m_go->direction.Cross(direction).y < 0)
+					{
+						deltaAngle = -deltaAngle;
+					}
+					float alpha = 10.5f;
+					float alphaAngle = Math::lerp(currentAngle, currentAngle + deltaAngle, Math::Min(1.f, (float)dt * alpha));/*currentAngle + deltaAngle * Math::Min(1.f, (float)dt * alpha);*/
+					m_go->direction.x = cosf(alphaAngle);
+					m_go->direction.z = -sinf(alphaAngle);
 				}
 			}
 			else
@@ -139,6 +183,26 @@ void StatePath::Update(double dt, GameObject * m_go)
 				else
 				{
 					m_go->pos += (direction).Normalized() * dt * MOVE_SPEED;
+
+					float currentAngle = acos(m_go->direction.Normalized().Dot(Vector3(1, 0, 0)));
+
+					if ((m_go->direction).Cross(Vector3(1, 0, 0)).y > 0)
+					{
+						currentAngle = -currentAngle;
+					}
+					float deltaAngle = acos(m_go->direction.Normalized().Dot(direction.Normalized()));
+					if (m_go->direction.Cross(direction).y < 0)
+					{
+						deltaAngle = -deltaAngle;
+					}
+					float alpha = 10.5f;
+					float alphaAngle = Math::lerp(currentAngle, currentAngle + deltaAngle, Math::Min(1.f, (float)dt * alpha));/*currentAngle + deltaAngle * Math::Min(1.f, (float)dt * alpha);*/
+					if (alphaAngle == INFINITY)
+					{
+						std::cout << "Infinity" << std::endl;
+					}
+					m_go->direction.x = cosf(alphaAngle);
+					m_go->direction.z = -sinf(alphaAngle);
 				}
 			}
 			else //Reached Destination
@@ -147,6 +211,8 @@ void StatePath::Update(double dt, GameObject * m_go)
 				if (goVillager)
 				{
 					//If its another villager
+					m_go->goTarget = NULL;
+					m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 					return;
 				}
 				Building* goBuilding = dynamic_cast<Building*>(m_go->goTarget);

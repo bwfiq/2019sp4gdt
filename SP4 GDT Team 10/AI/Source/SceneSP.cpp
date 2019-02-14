@@ -432,6 +432,24 @@ bool SceneSP::Handle(Message* message)
 		case MessageWRU::PATH_TO_POINT:
 			AStarSingleGrid(messageWRU->go, GetPoint(messageWRU->go->target));
 			break;
+		case MessageWRU::RANDOM_TARGET:
+		{
+			float fLengthAway = 0;
+			int iRandIndex;
+			GridPt currGrid = GetPoint(messageWRU->go->pos);
+			while (fLengthAway < messageWRU->threshold)
+			{
+				iRandIndex = Math::RandIntMinMax(0, SceneData::GetInstance()->GetNoGrid() * SceneData::GetInstance()->GetNoGrid() - 1);
+				if (m_grid[iRandIndex] == Grid::TILE_EMPTY)
+				{
+					std::pair<int, int> randPoint = GetPoint(iRandIndex);
+					fLengthAway = (randPoint.first - currGrid.x) * (randPoint.first - currGrid.x) + (randPoint.second - currGrid.z) * (randPoint.second - currGrid.z);
+				}
+			}
+			std::pair<int, int> randPoint = GetPoint(iRandIndex);
+			messageWRU->go->target = GetGridPos(GridPt(randPoint.first,randPoint.second));
+		}
+			break;
 		default:
 			break;
 		}
@@ -2180,76 +2198,79 @@ void SceneSP::Update(double dt)
 		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 		//std::cout << mousePos << std::endl;
 		GridPt selectedPt = GetPoint(mousePos);
-		//std::cout << "Selected Grid: " << selectedPt.x << ", " << selectedPt.z << std::endl;
-		bool objectFound = false;
-		for (auto go : m_goList)
+		if (isPointInGrid(selectedPt))
+			//std::cout << "Selected Grid: " << selectedPt.x << ", " << selectedPt.z << std::endl;
 		{
-			if (!go->active)
-				continue;
-			if (selectedPt == go->currentPt)
+			bool objectFound = false;
+			for (auto go : m_goList)
 			{
-				//Supposed to implement priority here
-				if (selected == NULL)
+				if (!go->active)
+					continue;
+				if (selectedPt == go->currentPt)
 				{
-					selected = go;
-					objectFound = true;
+					//Supposed to implement priority here
+					if (selected == NULL)
+					{
+						selected = go;
+						objectFound = true;
+						break;
+					}
+					else if (selected != go)
+					{
+						objectFound = true;
+						switch (selected->type)
+						{
+						case GameObject::GO_VILLAGER:
+						{
+							selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
+							selected->goTarget = go;
+							selected = NULL;
+							objectFound = true;
+						}
+						break;
+						default:
+							break;
+						}
+					}
+				}
+				if (objectFound)
+				{
 					break;
 				}
-				else if (selected != go)
+			}
+			if (!objectFound)
+			{
+				if (selected != NULL)
 				{
-					objectFound = true;
 					switch (selected->type)
 					{
 					case GameObject::GO_VILLAGER:
-					{	
-						selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
-						selected->goTarget = go;
-						selected = NULL;
-						objectFound = true;
+					{
+						selected->goTarget = NULL;
+						if (m_grid[GetGridIndex(selectedPt)] == Grid::TILE_EMPTY)
+						{
+							selected->target = GetGridPos(selectedPt);
+							selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
+						}
 					}
 					break;
-					default:
-						break;
-					}
-				}
-			}
-			if (objectFound)
-			{
-				break;
-			}
-		}
-		if (!objectFound)
-		{
-			if (selected != NULL)
-			{
-				switch (selected->type)
-				{
-				case GameObject::GO_VILLAGER:
-				{
-					selected->goTarget = NULL;
-					if (m_grid[GetGridIndex(selectedPt)] == Grid::TILE_EMPTY)
-					{
-						selected->target = GetGridPos(selectedPt);
-						selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
-					}
-				}
-				break;
 
-				//Test with just GO_BUILDING first
-				case GameObject::GO_BUILDING:
-				{
-					Building* goBuilding = static_cast<Building*>(selected);
-					if (goBuilding->eCurrState == Building::BLUEPRINT)
+					//Test with just GO_BUILDING first
+					case GameObject::GO_BUILDING:
 					{
-						//Should be trying to contruct now
-						goBuilding->eCurrState = Building::CONSTRUCTING;
-						bShowGrid = false;
+						Building* goBuilding = static_cast<Building*>(selected);
+						if (goBuilding->eCurrState == Building::BLUEPRINT)
+						{
+							//Should be trying to contruct now
+							goBuilding->eCurrState = Building::CONSTRUCTING;
+							bShowGrid = false;
+						}
 					}
+					break;
+					}
+					selected = NULL;
+					goVillager->goTarget = NULL;
 				}
-				break;
-				}
-				selected = NULL;
-				goVillager->goTarget = NULL;
 			}
 		}
 	}
@@ -2693,11 +2714,16 @@ void SceneSP::RenderGO(GameObject *go)
 			modelStack.Translate(0, 0, SceneData::GetInstance()->GetGridSize() * 0.5f);
 		}
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		float angle = Math::RadianToDegree(atan2(-go->direction.z, go->direction.x));
+		modelStack.Rotate(angle, 0, 1, 0);
+		//std::cout << angle << std::endl;
 		//RenderMesh(meshList[GEO_VILLAGER], false, 1.f);
 		//RenderMesh(meshList[GEO_TREE], false, 1.f);
 		//RenderMesh(meshList[GEO_BERRIES], false, 1.f);
 		//RenderMesh(meshList[GEO_BUSH], false, 1.f);
-		RenderMesh(meshList[GEO_VILLAGER], bGodlights, 1.f);
+		//RenderMesh(meshList[GEO_VILLAGER], bGodlights, 1.f);
+		modelStack.Rotate(-90, 1, 0, 0);
+		RenderMesh(meshList[GEO_RED_CASTER], bGodlights, 1.f);
 		modelStack.PopMatrix();
 	}
 	break;

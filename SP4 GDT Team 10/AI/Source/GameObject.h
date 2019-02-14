@@ -38,6 +38,7 @@ struct GameObject : public ObjectBase
 	Vector3 pos;
 	Vector3 vel;
 	Vector3 scale;
+	Vector3 direction;
 	bool active;
 	float mass;
 	Vector3 target;

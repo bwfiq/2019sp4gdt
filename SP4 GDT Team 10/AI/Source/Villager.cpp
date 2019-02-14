@@ -6,7 +6,8 @@ Villager::Villager(GAMEOBJECT_TYPE typeValue)
 	fEfficiency(1.f),
 	eCurrState(HEALTHY),
 	iFoodStored(0),
-	iWoodStored(0)
+	iWoodStored(0),
+	fIdleTimer(3)
 {
 	//GameObject(typeValue);
 	for (int i = 0; i < STAT_TOTAL; ++i)
