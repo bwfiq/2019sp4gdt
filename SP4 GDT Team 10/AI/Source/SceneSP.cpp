@@ -2272,7 +2272,7 @@ void SceneSP::Update(double dt)
 		fSeaDeltaZ = -SEA_HEIGHT / 4;
 	fSeaDeltaZ += dt;
 
-	fSeaDeltaY = 0.25f + 0.25f * cosf(SD->GetElapsedTime());
+	fSeaDeltaY = 0.0625f + 0.0625f * cosf(SD->GetElapsedTime());
 
 	ProjectileManager::GetInstance()->Update(dt * m_speed);
 	static const float NPC_VELOCITY = 10.f;
@@ -2724,10 +2724,10 @@ void SceneSP::Render()
 	asd += 0.01;
 	modelStack.PushMatrix();
 	//modelStack.Translate(0, 0.5f + cosf(asd) * 0.15f, 0);
-	modelStack.Translate(0, -0.5f, 0);
+	modelStack.Translate(0, -1.f, 0);
 	//modelStack.Rotate(-90, 1, 0, 0);
-	modelStack.Scale(15, 1, 15);
-	RenderMesh(meshList[GEO_GRASS], bGodlights);
+	modelStack.Scale(5, 1, 5);
+	RenderMesh(meshList[GEO_ISLAND], bGodlights);
 	modelStack.PopMatrix();
 
 	SceneData* SD = SceneData::GetInstance();
@@ -2769,7 +2769,7 @@ void SceneSP::Render()
 	modelStack.Translate(fSeaDeltaX, fSeaDeltaY - 0.51f, fSeaDeltaZ);
 	modelStack.Rotate(-90, 1, 0, 0);
 	modelStack.Scale(SEA_WIDTH, SEA_HEIGHT, SEA_HEIGHT);
-	RenderMesh(meshList[GEO_SEA], bGodlights);
+	RenderMesh(meshList[GEO_SEA], bGodlights, 0.75f);
 	modelStack.PopMatrix();
 
 	//On screen text

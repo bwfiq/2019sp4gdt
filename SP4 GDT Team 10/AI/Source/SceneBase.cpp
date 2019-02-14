@@ -189,6 +189,8 @@ void SceneBase::Init()
 	meshList[GEO_SEA]->textureID = LoadTGA("Image//sea.tga");
 
 	//meshList[GEO_GRASS] = MeshBuilder::GenerateCube("cube", Color(1, 1, 1), 1.f);
+	meshList[GEO_ISLAND] = MeshBuilder::GenerateOBJ("island", "Obj//island.obj");
+	meshList[GEO_ISLAND]->textureID = LoadTGA("Image//grass.tga");
 	meshList[GEO_GRASS] = MeshBuilder::GenerateOBJ("grass", "Obj//Ground.obj");
 	meshList[GEO_GRASS]->textureID = LoadTGA("Image//grass.tga");
 	meshList[GEO_TREE] = MeshBuilder::GenerateOBJ("tree", "Obj//Tree.obj");

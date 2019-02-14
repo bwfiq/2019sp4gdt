@@ -97,6 +97,7 @@ public:
 		GEO_BLUE_CASTER,
 		GEO_BLUE_TOWER,
 
+		GEO_ISLAND,
 		GEO_GRASS,
 		GEO_SEA,
 
