@@ -10,6 +10,7 @@ struct MessageWRU : public Message
 	{
 		SEARCH_NONE = 0,
 		NEAREST_ENEMY,
+		RANDOM_TARGET,
 		PATH_TO_TARGET,
 		PATH_TO_POINT,
 		FIND_CHIEFHUT,

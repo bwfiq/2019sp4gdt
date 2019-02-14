@@ -38,6 +38,8 @@ struct Villager : public GameObject
 	int iWoodStored;
 
 	float fEfficiency; //All states are to be multiplied by this float when used. 1.0f is normal efficiency
+	float fIdleTimer;
+
 
 	virtual bool Handle(Message* msg);
 
