@@ -134,6 +134,9 @@
     <ClCompile Include="Source\Tree.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Source\DepthFBO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -258,6 +261,9 @@
     </ClInclude>
     <ClInclude Include="Source\Tree.h">
       <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DepthFBO.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

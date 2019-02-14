@@ -389,7 +389,17 @@ void SceneSP::Init()
 	goTree->pos.y = goTree->scale.y * 0.5f;
 	goTree->iGridX = 1;
 	goTree->iGridZ = 1;
-	Tree* tGo = static_cast<Tree*>(goBush);
+	Tree* tGo = static_cast<Tree*>(goTree);
+	tGo->eCurrState = Tree::FULL;
+	tGo->fTimer = 0;
+	tGo->iWoodAmount = 10;
+
+	goTree2 = FetchGO(GameObject::GO_TREE);
+	goTree2->pos = GetGridPos(GridPt(2, 9));
+	goTree2->pos.y = goTree2->scale.y * 0.5f;
+	goTree2->iGridX = 1;
+	goTree2->iGridZ = 1;
+	tGo = static_cast<Tree*>(goTree2);
 	tGo->eCurrState = Tree::FULL;
 	tGo->fTimer = 0;
 	tGo->iWoodAmount = 10;
@@ -403,7 +413,7 @@ void SceneSP::Init()
 	SD->SetWoodLimit(100);
 
 	bDay = true; // day
-	fTimeOfDay = 8.f;
+	fTimeOfDay = 21.f;
 
 	//go->vel.Set(1, 0, 0);
 	MousePicker::GetInstance()->Init();
@@ -442,6 +452,8 @@ bool SceneSP::Handle(Message* message)
 	delete message;
 	return false;
 }
+
+
 
 
 GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
@@ -2054,17 +2066,27 @@ void SceneSP::Update(double dt)
 	{
 		m_speed += 0.1f;
 	}
+
+	float LSPEED = 10.0f;
+	if (Application::IsKeyPressed('I'))
+		lights[0].position.z -= (float)(LSPEED * dt);
+	if (Application::IsKeyPressed('K'))
+		lights[0].position.z += (float)(LSPEED * dt);
+	if (Application::IsKeyPressed('J'))
+		lights[0].position.x -= (float)(LSPEED * dt);
+	if (Application::IsKeyPressed('L'))
+		lights[0].position.x += (float)(LSPEED * dt);
 	if (Application::IsKeyPressed('N'))
-	{
-	}
+		lights[0].position.y -= (float)(LSPEED * dt);
 	if (Application::IsKeyPressed('M'))
-	{
-	}
-	if (Application::IsKeyPressed(VK_RETURN))
-	{
-	}
-	//if (MC->IsButtonPressed(MouseController::LMB))
-		//std::cout << "asd" << std::endl;
+		lights[0].position.y += (float)(LSPEED * dt);
+
+	if (Application::IsKeyPressed('Z'))
+		lights[0].type = Light::LIGHT_POINT;
+	else if (Application::IsKeyPressed('X'))
+		lights[0].type = Light::LIGHT_DIRECTIONAL;
+	else if (Application::IsKeyPressed('C'))
+		lights[0].type = Light::LIGHT_SPOT;
 
 	//Input Section
 	static bool bPState = false;
@@ -2259,54 +2281,8 @@ void SceneSP::Update(double dt)
 		//std::cout << "LBUTTON UP" << std::endl;
 	}
 
-	/*static bool bRButtonState = false;
-	if (!bRButtonState && Application::IsMousePressed(1))
-	{
-		bRButtonState = true;
-		std::cout << "RBUTTON DOWN" << std::endl;
-
-		double x, y;
-		Application::GetCursorPos(&x, &y);
-		int w = Application::GetWindowWidth();
-		int h = Application::GetWindowHeight();
-		float posX = static_cast<float>(x) / w * m_worldWidth;
-		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
-		if (posX < m_worldHeight && posY < m_worldHeight)
-		{
-			
-		}
-
-	}
-	else if (bRButtonState && !Application::IsMousePressed(1))
-	{
-		bRButtonState = false;
-		std::cout << "RBUTTON UP" << std::endl;
-	}*/
-
-	/*static bool bSpaceState = false;
-	if (!bSpaceState && Application::IsKeyPressed(VK_SPACE))
-	{
-		bSpaceState = true;
-
-		double x, y;
-		Application::GetCursorPos(&x, &y);
-		int w = Application::GetWindowWidth();
-		int h = Application::GetWindowHeight();
-		float posX = static_cast<float>(x) / w * m_worldWidth;
-		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
-		if (posX < m_worldHeight && posY < m_worldHeight)
-		{
-			GameObject* go = FetchGO(GameObject::GO_NPC);
-			go->pos.Set(posX, posY);
-		}
-	}
-	else if (bSpaceState && !Application::IsKeyPressed(VK_SPACE))
-	{
-		bSpaceState = false;
-	}*/
-
 	// day/night cycle
-	fTimeOfDay += dt ;
+	//fTimeOfDay += dt ;
 	if (fTimeOfDay >= 24.f)
 	{
 		fTimeOfDay = 0;
@@ -2778,10 +2754,36 @@ void SceneSP::RenderGO(GameObject *go)
 		break;
 	}
 }
-
-void SceneSP::Render()
+void SceneSP::RenderPassGPass()
 {
+	m_renderPass = RENDER_PASS_PRE;
+	m_lightDepthFBO.BindForWriting();
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glUseProgram(m_gPassShaderID);
+	if (lights[0].type == Light::LIGHT_DIRECTIONAL)
+		m_lightDepthProj.SetToOrtho(-64, 64, -64, 64, -64, 64);
+	else
+		m_lightDepthProj.SetToPerspective(90, 1.f, 0.1, 1000);
+	m_lightDepthView.SetToLookAt(lights[0].position.x,
+		lights[0].position.y, lights[0].position.z, 0, 0, 0, 0, 1, 0);
+	RenderWorld();
+}
+
+void SceneSP::RenderPassMain()
+{
+	m_renderPass = RENDER_PASS_MAIN;
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, Application::GetWindowWidth(),
+		Application::GetWindowHeight());
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glUseProgram(m_programID);
+	//pass light depth texture
+	m_lightDepthFBO.BindForReading(GL_TEXTURE8);
+	glUniform1i(m_parameters[U_SHADOW_MAP], 8);
 
 	// Projection matrix : Orthographic Projection
 	Mtx44 projection;
@@ -2800,7 +2802,31 @@ void SceneSP::Render()
 	// Model matrix : an identity matrix (model will be at the origin)
 	modelStack.LoadIdentity();
 
-	modelStack.PushMatrix(); 
+	if (lights[0].type == Light::LIGHT_DIRECTIONAL)
+	{
+		Vector3 lightDir(lights[0].position.x, lights[0].position.y, lights[0].position.z);
+		Vector3 lightDirection_cameraspace = viewStack.Top() * lightDir;
+		glUniform3fv(m_parameters[U_LIGHT0_POSITION], 1, &lightDirection_cameraspace.x);
+	}
+	else if (lights[0].type == Light::LIGHT_SPOT)
+	{
+		Position lightPosition_cameraspace = viewStack.Top() * lights[0].position;
+		glUniform3fv(m_parameters[U_LIGHT0_POSITION], 1, &lightPosition_cameraspace.x);
+		Vector3 spotDirection_cameraspace = viewStack.Top() * lights[0].spotDirection;
+		glUniform3fv(m_parameters[U_LIGHT0_SPOTDIRECTION], 1, &spotDirection_cameraspace.x);
+	}
+	else
+	{
+		Position lightPosition_cameraspace = viewStack.Top() * lights[0].position;
+		glUniform3fv(m_parameters[U_LIGHT0_POSITION], 1, &lightPosition_cameraspace.x);
+	}
+
+	modelStack.PushMatrix();
+	modelStack.Translate(lights[0].position.x, lights[0].position.y, lights[0].position.z);
+	RenderMesh(meshList[GEO_BALL], false);
+	modelStack.PopMatrix();
+
+	modelStack.PushMatrix();
 	modelStack.Translate(mousePos.x, mousePos.y, mousePos.z);
 	modelStack.Scale(0.1, 0.1, 0.1);
 	RenderMesh(meshList[GEO_VILLAGER], false);
@@ -2808,14 +2834,30 @@ void SceneSP::Render()
 
 	RenderMesh(meshList[GEO_AXES], false);
 
-	static float asd = 0;
-	asd += 0.01;
 	modelStack.PushMatrix();
 	//modelStack.Translate(0, 0.5f + cosf(asd) * 0.15f, 0);
 	modelStack.Translate(0, -1.f, 0);
+	//modelStack.Translate(0, 0, 0);
+	//modelStack.Translate(0, -0.5f, 0);
 	//modelStack.Rotate(-90, 1, 0, 0);
+	//modelStack.Scale(15, 15, 15);
 	modelStack.Scale(5, 1, 5);
 	RenderMesh(meshList[GEO_ISLAND], bGodlights);
+	modelStack.PopMatrix();
+
+	modelStack.PushMatrix();
+	modelStack.Translate(fSeaDeltaX, fSeaDeltaY - 0.51f, fSeaDeltaZ);
+	modelStack.Rotate(-90, 1, 0, 0);
+	modelStack.Scale(SEA_WIDTH, SEA_HEIGHT, SEA_HEIGHT);
+	RenderMesh(meshList[GEO_SEA], bGodlights, 0.75f);
+	modelStack.PopMatrix();
+
+	RenderWorld();
+
+	modelStack.PushMatrix();
+	modelStack.Translate(0, 2, 0);
+	modelStack.Scale(5, 5, 5);
+	RenderMesh(meshList[GEO_LIGHT_DEPTH_QUAD], false);
 	modelStack.PopMatrix();
 
 	SceneData* SD = SceneData::GetInstance();
@@ -2866,16 +2908,6 @@ void SceneSP::Render()
 		}
 	}
 
-	modelStack.PushMatrix();
-	modelStack.Translate(fSeaDeltaX, fSeaDeltaY - 0.51f, fSeaDeltaZ);
-	modelStack.Rotate(-90, 1, 0, 0);
-	modelStack.Scale(SEA_WIDTH, SEA_HEIGHT, SEA_HEIGHT);
-	RenderMesh(meshList[GEO_SEA], bGodlights, 0.75f);
-	modelStack.PopMatrix();
-
-	//On screen text
-	std::ostringstream ss;
-
 	if (selected != NULL)
 	{
 		modelStack.PushMatrix();
@@ -2884,14 +2916,11 @@ void SceneSP::Render()
 		RenderMesh(meshList[GEO_VILLAGER], false); // renders a red cube above GO if it is currently selected
 		modelStack.PopMatrix();
 	}
-	for (auto go : m_goList)
-	{
-		if (!go->active)
-			continue;
-		RenderGO(go);
-	}
 
 	UIManager::GetInstance()->Render(this);
+
+	//On screen text
+	std::ostringstream ss;
 
 	ss.str("");
 	ss.precision(3);
@@ -2925,12 +2954,31 @@ void SceneSP::Render()
 		ss << "0" << intpart;
 	else
 		ss << intpart;
-	ss << ":"; 
+	ss << ":";
 	if ((int)(60 * fractpart) < 10)
 		ss << "0" << (int)(60 * fractpart);
 	else
 		ss << (int)(60 * fractpart);
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 30, 0);
+}
+
+void SceneSP::RenderWorld()
+{
+	for (auto go : m_goList)
+	{
+		if (!go->active)
+			continue;
+		RenderGO(go);
+	}
+
+}
+void SceneSP::Render()
+{
+	//SceneBase::Render();
+	//******************************* PRE RENDER PASS *************************************
+	RenderPassGPass();
+	//******************************* MAIN RENDER PASS ************************************
+	RenderPassMain();
 }
 
 void SceneSP::Exit()

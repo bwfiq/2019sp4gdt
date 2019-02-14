@@ -105,17 +105,21 @@ void UIManager::rendermesh(SceneBase* scene,Mesh * mesh,bool bLightEnabled)
 	{
 		glUniform1i(scene->m_parameters[SceneBase::U_LIGHTENABLED], 0);
 	}
-	if (mesh->textureID > 0)
+
+	for (int i = 0; i < MAX_TEXTURES; ++i)
 	{
-		glUniform1i(scene->m_parameters[SceneBase::U_COLOR_TEXTURE_ENABLED], 1);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, mesh->textureID);
-		glUniform1i(scene->m_parameters[SceneBase::U_COLOR_TEXTURE], 0);
+		if (mesh->textureArray[i] > 0)
+		{
+			glUniform1i(scene->m_parameters[SceneBase::U_COLOR_TEXTURE_ENABLED + i], 1);
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, mesh->textureArray[i]);
+			glUniform1i(scene->m_parameters[SceneBase::U_COLOR_TEXTURE + i], i);
+		}
+		else
+			glUniform1i(scene->m_parameters[SceneBase::U_COLOR_TEXTURE_ENABLED + i], 0);
+
 	}
-	else
-	{
-		glUniform1i(scene->m_parameters[SceneBase::U_COLOR_TEXTURE_ENABLED], 0);
-	}
+	glUniform1f(scene->m_parameters[SceneBase::U_ALPHA], 1.f);
 	mesh->Render();
 	if (mesh->textureID > 0)
 	{
