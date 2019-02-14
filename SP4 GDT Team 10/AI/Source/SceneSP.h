@@ -22,6 +22,10 @@ public:
 	virtual void Exit();
 	virtual bool Handle(Message* message);
 
+	void RenderPassGPass();
+	void RenderPassMain();
+	void RenderWorld();
+
 	void RenderGO(GameObject *go);
 	GameObject* FetchGO(GameObject::GAMEOBJECT_TYPE type);
 
@@ -73,6 +77,7 @@ protected:
 	GameObject* goVillager;
 	GameObject* goBush;
 	GameObject* goTree;
+	GameObject* goTree2;
 };
 
 #endif

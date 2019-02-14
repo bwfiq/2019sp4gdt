@@ -11,12 +11,14 @@ out vec3 vertexPosition_cameraspace;
 out vec3 fragmentColor;
 out vec3 vertexNormal_cameraspace;
 out vec2 texCoord;
+out vec4 shadowCoord;
 
 // Values that stay constant for the whole mesh.
 uniform mat4 MVP;
 uniform mat4 MV;
 uniform mat4 MV_inverse_transpose;
 uniform bool lightEnabled;
+uniform mat4 lightDepthMVP;
 
 void main(){
 	// Output position of the vertex, in clip space : MVP * position
@@ -30,6 +32,11 @@ void main(){
 		// Vertex normal, in camera space
 		// Use MV if ModelMatrix does not scale the model ! Use its inverse transpose otherwise.
 		vertexNormal_cameraspace = ( MV_inverse_transpose * vec4(vertexNormal_modelspace, 0) ).xyz;
+
+		// Output position of the vertex, in light space : lightDepthMVP * position
+		shadowCoord = lightDepthMVP * vec4(vertexPosition_modelspace, 1);
+		shadowCoord = shadowCoord / shadowCoord.w;
+		shadowCoord.xyz = shadowCoord.xyz * 0.5 + 0.5;
 	}
 	// The color of each vertex will be interpolated to produce the color of each fragment
 	fragmentColor = vertexColor;

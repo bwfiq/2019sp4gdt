@@ -1,0 +1,18 @@
+#version 330 core
+ 
+// Ouput data
+layout(location = 0) out float fragmentdepth;
+in vec2 texCoord;
+uniform bool colorTextureEnabled[8];
+uniform sampler2D colorTexture[8];
+ 
+void main(){
+	float alpha = 1.0;
+	if (colorTextureEnabled[0] == true)
+	{
+		alpha = texture2D( colorTexture[0], texCoord ).a;
+	}
+	if (alpha < 0.3)
+		discard;
+    fragmentdepth = gl_FragCoord.z;
+}

@@ -15,6 +15,7 @@
 
 #include "MouseController.h"
 #include "KeyboardController.h"
+#include "SceneManager.h"
 
 GLFWwindow* m_window;
 const unsigned char FPS = 60; // FPS of this game
@@ -133,7 +134,7 @@ void Application::Init()
 	//Create a window and create its OpenGL context
 	m_width = 1000;
 	m_height = 600;
-	m_window = glfwCreateWindow(m_width, m_height, "Physics", NULL, NULL);
+	m_window = glfwCreateWindow(m_width, m_height, "God Complex", NULL, NULL);
 
 	//If the window couldn't be created
 	if (!m_window)
@@ -161,10 +162,15 @@ void Application::Init()
 		//return -1;
 	}
 
+	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 	glfwSetMouseButtonCallback(m_window, &Application::MouseButtonCallbacks);
 	glfwSetScrollCallback(m_window, &Application::MouseScrollCallbacks);
 
-	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+	// Create the Game States
+	SceneManager::GetInstance()->AddScene("GameState", new SceneSP());
+
+	// Set the active scene
+	SceneManager::GetInstance()->SetActiveScene("GameState");
 
 	temp = NULL;
 }
@@ -172,9 +178,9 @@ Scene *scene = NULL;
 void Application::Run()
 {
 	//Main Loop
-	scene = new SceneSP();
+	/*scene = new SceneSP();
 	scene->Init();
-	temp = scene;
+	temp = scene;*/
 
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
 	while (!glfwWindowShouldClose(m_window) && !IsKeyPressed(VK_ESCAPE))
@@ -183,8 +189,9 @@ void Application::Run()
 		glfwPollEvents();
 		UpdateInput();
 
-		scene->Update(m_timer.getElapsedTime());
-		scene->Render();
+		SceneManager::GetInstance()->Update(m_timer.getElapsedTime());
+		SceneManager::GetInstance()->Render();
+
 		//Swap buffers
 		glfwSwapBuffers(m_window);
 		
@@ -192,8 +199,8 @@ void Application::Run()
 		PostInputUpdate();
 
 	} //Check if the ESC key had been pressed or if the window had been closed
-	scene->Exit();
-	delete scene;
+	SceneManager::GetInstance()->Exit();
+	//delete scene;
 }
 
 

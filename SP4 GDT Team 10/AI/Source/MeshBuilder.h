@@ -25,6 +25,7 @@ public:
 	static Mesh* GenerateTriangle(const std::string &meshName, Color color, float length = 1.f);
 
 	static Mesh* GenerateGrid(const std::string &meshName, Color color, int numX, int numZ, float length = 1.f);
+	static Mesh* GenerateRay(const std::string &meshName, Color color, const float length = 1.f);
 };
 
 #endif
