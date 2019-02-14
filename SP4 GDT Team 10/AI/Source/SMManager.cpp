@@ -41,6 +41,8 @@ StateMachine* SMManager::GetSM(const std::string& smID)
 		SMVillager->AddState(new StateForaging("Foraging"));
 		SMVillager->AddState(new StatePickedUp("PickedUp"));
 		SMVillager->AddState(new StateInHut("InHut"));
+		SMVillager->AddState(new StateConstructing("Constructing"));
+		SMVillager->AddState(new StateMining("Mining"));
 		this->AddSM(SMVillager);
 		return SMVillager;
 	}

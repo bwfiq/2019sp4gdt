@@ -134,4 +134,29 @@ public:
 	virtual void Exit(GameObject* m_go);
 };
 
+class StateConstructing : public State
+{
+public:
+	StateConstructing(const std::string &stateID);
+	virtual ~StateConstructing();
+
+
+	//To be implemented by concrete states
+	virtual void Enter(GameObject* m_go);
+	virtual void Update(double dt, GameObject* m_go);
+	virtual void Exit(GameObject* m_go);
+};
+
+class StateMining : public State
+{
+public:
+	StateMining(const std::string &stateID);
+	virtual ~StateMining();
+
+
+	//To be implemented by concrete states
+	virtual void Enter(GameObject* m_go);
+	virtual void Update(double dt, GameObject* m_go);
+	virtual void Exit(GameObject* m_go);
+};
 #endif

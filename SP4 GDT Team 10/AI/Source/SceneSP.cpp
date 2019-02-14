@@ -2155,6 +2155,20 @@ void SceneSP::Update(double dt)
 		}
 	}
 	
+	if (KC->IsKeyPressed('B'))
+	{
+		if (selected == NULL)
+		{
+			selected = FetchGO(GameObject::GO_BUILDING);
+			GridPt currentGrid = GetPoint(mousePos);
+			selected->pos = GetGridPos(currentGrid);
+			selected->pos.y += selected->scale.y * 0.5f;
+			static_cast<Building*>(selected)->eCurrState = Building::BLUEPRINT;
+
+			bShowGrid = true;
+		}
+	}
+
 	Vector3 clickTarget = NULL;
 	static bool bLButtonState = false;
 	if (!bLButtonState && Application::IsMousePressed(0))
@@ -2178,22 +2192,68 @@ void SceneSP::Update(double dt)
 				continue;
 			if (selectedPt == go->currentPt)
 			{
-				selected = go;
-				if (selected != goVillager)
+				//Supposed to implement priority here
+				if (selected == NULL)
+				{
+					selected = go;
+					objectFound = true;
+					break;
+				}
+				else if (selected != go)
 				{
 					objectFound = true;
-					goVillager->m_nextState = SMManager::GetInstance()->GetSM(goVillager->smID)->GetState("Idle");
-					goVillager->goTarget = selected;
+					switch (selected->type)
+					{
+					case GameObject::GO_VILLAGER:
+					{	
+						selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
+						selected->goTarget = go;
+						selected = NULL;
+						objectFound = true;
+					}
+					break;
+					default:
+						break;
+					}
 				}
+			}
+			if (objectFound)
+			{
+				break;
 			}
 		}
 		if (!objectFound)
 		{
-			goVillager->goTarget = NULL;
-			if (m_grid[GetGridIndex(selectedPt)] == Grid::TILE_EMPTY)
+			if (selected != NULL)
 			{
-				goVillager->target = GetGridPos(selectedPt);
-				goVillager->m_nextState = SMManager::GetInstance()->GetSM(goVillager->smID)->GetState("Idle");
+				switch (selected->type)
+				{
+				case GameObject::GO_VILLAGER:
+				{
+					selected->goTarget = NULL;
+					if (m_grid[GetGridIndex(selectedPt)] == Grid::TILE_EMPTY)
+					{
+						selected->target = GetGridPos(selectedPt);
+						selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
+					}
+				}
+				break;
+
+				//Test with just GO_BUILDING first
+				case GameObject::GO_BUILDING:
+				{
+					Building* goBuilding = static_cast<Building*>(selected);
+					if (goBuilding->eCurrState == Building::BLUEPRINT)
+					{
+						//Should be trying to contruct now
+						goBuilding->eCurrState = Building::CONSTRUCTING;
+						bShowGrid = false;
+					}
+				}
+				break;
+				}
+				selected = NULL;
+				goVillager->goTarget = NULL;
 			}
 		}
 	}
@@ -2280,6 +2340,24 @@ void SceneSP::Update(double dt)
 	SD->SetPopulation(0);
 	SD->SetPopulationLimit(0);
 
+	//There is a currently selected object
+	if (selected != NULL)
+	{
+		Building* goBuilding = dynamic_cast<Building*>(selected);
+		if (goBuilding) //selected is of a building class
+		{
+			if (goBuilding->eCurrState == Building::BLUEPRINT) //Building editor mode
+			{
+				GridPt currentGrid = GetPoint(mousePos);
+				selected->pos = GetGridPos(currentGrid);
+				selected->pos.y += selected->scale.y * 0.5f;
+			}
+			else if(goBuilding->eCurrState != Building::CONSTRUCTING)//The building is either completed / half broken
+			{
+				//Pop up some ui or something, maybe somewhere else
+			}
+		}
+	}
 	//Update the Grid
 	std::fill(m_grid.begin(), m_grid.end(), Grid::TILE_EMPTY);
 	m_grid[5] = Grid::TILE_USED;
@@ -2632,7 +2710,21 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BUILDING], bGodlights, 1.f);
+		//Current state of the building
+		switch (static_cast<Building*>(go)->eCurrState)
+		{
+		case Building::COMPLETED:
+			RenderMesh(meshList[GEO_BUILDING], bGodlights, 1.f);
+			break;
+		case Building::BLUEPRINT:
+			RenderMesh(meshList[GEO_BUILDING], bGodlights, 0.2f);
+			break;
+		case Building::CONSTRUCTING:
+			RenderMesh(meshList[GEO_BUILDING], bGodlights, 0.6f);
+			break;
+		case Building ::BROKEN:
+			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
+		}
 		modelStack.PopMatrix();
 	}
 	break;
@@ -2732,6 +2824,7 @@ void SceneSP::Render()
 
 	SceneData* SD = SceneData::GetInstance();
 
+	//Render Grid
 	if (bShowGrid)
 	{
 		modelStack.PushMatrix();
@@ -2763,6 +2856,18 @@ void SceneSP::Render()
 			modelStack.PopMatrix();
 		}
 		modelStack.PopMatrix();
+
+		GridPt selectedGrid = GetPoint(mousePos);
+		if (isPointInGrid(selectedGrid))
+		{
+			Vector3 gridPos = GetGridPos(selectedGrid);
+			modelStack.PushMatrix();
+			modelStack.Translate(gridPos.x, gridPos.y + 0.1f, gridPos.z);
+			modelStack.Rotate(-90, 1, 0, 0);
+			modelStack.Scale(SD->GetGridSize(), SD->GetGridSize(), SD->GetGridSize());
+			RenderMesh(meshList[GEO_YELLOWQUAD], false, 0.4f);
+			modelStack.PopMatrix();
+		}
 	}
 
 	modelStack.PushMatrix();
