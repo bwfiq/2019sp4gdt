@@ -162,6 +162,7 @@ void SceneBase::Init()
 	meshList[GEO_BLACKQUAD] = MeshBuilder::GenerateQuad("blackquad", Color(0, 0, 0));
 	meshList[GEO_REDQUAD] = MeshBuilder::GenerateQuad("redquad", Color(1, 0, 0));
 	meshList[GEO_GREENQUAD] = MeshBuilder::GenerateQuad("greenquad", Color(0, 1, 0));
+	meshList[GEO_YELLOWQUAD] = MeshBuilder::GenerateQuad("yellowquad", Color(1, 1, 0));
 
 	meshList[GEO_WHITEHEX] = MeshBuilder::GenerateRing("whitequad", Color(1, 1, 1), 6, 0.5f);
 	meshList[GEO_GREYHEX] = MeshBuilder::GenerateRing("whitequad", Color(0.5, 0.5, 0.5), 6, 0.5f);
@@ -204,6 +205,7 @@ void SceneBase::Init()
 
 	meshList[GEO_VILLAGER] = MeshBuilder::GenerateCube("villager", Color(1, 0, 0), 1.f);
 	meshList[GEO_BUILDING] = MeshBuilder::GenerateCube("building", Color(0, 0, 1), 1.f);
+	meshList[GEO_BROKEN_BUILDING] = MeshBuilder::GenerateCube("broken_building", Color(1, 0, 1), 1.f);
 
 	meshList[GEO_GRID] = MeshBuilder::GenerateGrid("grid", Color(1, 0, 0), SceneData::GetInstance()->GetNoGrid(), SceneData::GetInstance()->GetNoGrid(), SceneData::GetInstance()->GetGridSize());
 
@@ -226,6 +228,10 @@ void SceneBase::Update(double dt)
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	if(Application::IsKeyPressed('4'))
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	if (Application::IsKeyPressed('5'))
+		bLightEnabled = true; // lights on
+	if (Application::IsKeyPressed('6'))
+		bLightEnabled = false; // lights off
 	static float asd = 0;
 	asd += (float)dt;
 //	camera.position = Vector3(0, 1 + cosf(asd), 1);

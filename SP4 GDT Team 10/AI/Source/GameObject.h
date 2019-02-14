@@ -29,6 +29,7 @@ struct GameObject : public ObjectBase
 		GO_ENVIRONMENT,
 		GO_BUSH,
 		GO_TREE,
+		GO_ROCK,
 
 		GO_TOTAL, //must be last
 	};

@@ -8,6 +8,7 @@
 #include <iostream>
 
 #include "Villager.h"
+#include "Building.h"
 #include "Bush.h"
 #include "Tree.h"
 //State::State(const std::string & stateID)
@@ -124,6 +125,7 @@ void StatePath::Update(double dt, GameObject * m_go)
 				m_go->goTarget = NULL;
 				m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 			}
+			//Movement
 			if (!m_go->path.empty())
 			{
 				Vector3 ptPos = GetGridPos(m_go->path.back()); //Position of gridPt in world space
@@ -139,38 +141,81 @@ void StatePath::Update(double dt, GameObject * m_go)
 					m_go->pos += (direction).Normalized() * dt * MOVE_SPEED;
 				}
 			}
-			else
+			else //Reached Destination
 			{
-				switch (m_go->goTarget->type)
+				Villager* goVillager = dynamic_cast<Villager*>(m_go->goTarget);
+				if (goVillager)
 				{
-				case GameObject::GO_BUSH:
-					m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Foraging");
-					break;
-				case GameObject::GO_TREE:
-					m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("ChopTree");
-					break;
-				case GameObject::GO_CHIEFHUT:
-					//m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
-					SD->SetFood(Math::Min(SD->GetFoodLimit(), SD->GetFood() + static_cast<Villager*>(m_go)->iFoodStored));
-					SD->SetWood(Math::Min(SD->GetWoodLimit(), SD->GetWood() + static_cast<Villager*>(m_go)->iWoodStored));
+					//If its another villager
+					return;
+				}
+				Building* goBuilding = dynamic_cast<Building*>(m_go->goTarget);
+				if (goBuilding)
+				{
+					//If its a building class
+					switch (goBuilding->eCurrState)
+					{
+					case Building::COMPLETED:
+					{
+						switch (goBuilding->type)
+						{
+						case GameObject::GO_BUILDING:
+							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
+							break;
+						case GameObject::GO_CHIEFHUT:
+							//m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
+							SD->SetFood(Math::Min(SD->GetFoodLimit(), SD->GetFood() + static_cast<Villager*>(m_go)->iFoodStored));
+							SD->SetWood(Math::Min(SD->GetWoodLimit(), SD->GetWood() + static_cast<Villager*>(m_go)->iWoodStored));
 
-					static_cast<Villager*>(m_go)->iWoodStored = 0;
-					static_cast<Villager*>(m_go)->iFoodStored = 0;
+							static_cast<Villager*>(m_go)->iWoodStored = 0;
+							static_cast<Villager*>(m_go)->iFoodStored = 0;
 
-					m_go->goTarget = NULL;
-					m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+							m_go->goTarget = NULL;
+							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+							break;
+						case GameObject::GO_HOUSE:
+							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
+							break;
+						}
+					}
 					break;
-				case GameObject::GO_HOUSE:
-					m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
+					case Building::CONSTRUCTING:
+					{
+						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Constructing");
+					}
 					break;
+					case Building::BROKEN:
+					{
+						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Constructing");
+					}
+					break;
+					}
+					return;
+				}
+				Environment* goEnvironment = dynamic_cast<Environment*>(m_go->goTarget);
+				if (goEnvironment)
+				{
+					switch (goEnvironment->type)
+					{
+					case GameObject::GO_BUSH:
+						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Foraging");
+						break;
+					case GameObject::GO_TREE:
+						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("ChopTree");
+						break;
+					case GameObject::GO_ROCK:
+						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Mining");
+						break;
+					}
+					return;
+				}
+				/* //For Enemies
 				case GameObject::GO_ENEMY:
 					m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Attack");
 					break;
-				default:
-					m_go->goTarget = NULL;
-					m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
-					break;
-				}
+				*/
+				m_go->goTarget = NULL;
+				m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 				return;
 			}
 		}
@@ -279,6 +324,7 @@ void StateForaging::Update(double dt, GameObject * m_go)
 		//Insert gathering time here
 		vGo->iFoodStored = bushGo->iFoodAmount;
 		bushGo->eCurrState = Bush::DEPLETED;
+		m_go->goTarget = NULL;
 
 		MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_CHIEFHUT, 1);
 		PostOffice::GetInstance()->Send("Scene", messagewru);
@@ -379,8 +425,98 @@ void StateInHut::Enter(GameObject* m_go)
 
 void StateInHut::Update(double dt, GameObject* m_go)
 {
+	//In StateInHut, the goTarget must be a Building class
+	Building* goBuilding = dynamic_cast<Building*>(m_go->goTarget);
+	Villager* vGo = static_cast<Villager*>(m_go);
+	if (goBuilding)
+	{
+		//IMPORTANT!! MUST BE CHANGED, TEMPORARY CODE FOR CHANING BUILDING'S STATE
+		if (!goBuilding->active)
+		{
+			m_go->goTarget = NULL;
+			m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+			return;
+		}
+		m_go->goTarget = NULL;
+		goBuilding->eCurrState = Building::BROKEN;
+		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+	}
+	else
+	{
+		std::cout << "Wrong State : InHut" << std::endl;
+		return;
+	}
 }
 
 void StateInHut::Exit(GameObject* m_go)
+{
+}
+
+//StateConstructing
+StateConstructing::StateConstructing(const std::string & stateID)
+	: State(stateID)
+{
+}
+
+StateConstructing::~StateConstructing()
+{
+}
+
+
+void StateConstructing::Enter(GameObject* m_go)
+{
+	std::cout << "Enter Constructing State" << std::endl;
+}
+
+void StateConstructing::Update(double dt, GameObject* m_go)
+{
+	//In StateConstructing, the goTarget must be a Building class
+	Building* goBuilding = dynamic_cast<Building*>(m_go->goTarget);
+	Villager* vGo = static_cast<Villager*>(m_go);
+	if (goBuilding)
+	{
+		if (!goBuilding->active)
+		{
+			m_go->goTarget = NULL;
+			m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+			return;
+		}
+		//Construction and Repair code here, maybe some timer idk
+		m_go->goTarget = NULL;
+		goBuilding->eCurrState = Building::COMPLETED;
+		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+	}
+	else
+	{
+		std::cout << "Wrong State : Constructing" << std::endl;
+		return;
+	}
+}
+
+void StateConstructing::Exit(GameObject* m_go)
+{
+}
+
+//StateMining
+StateMining::StateMining(const std::string & stateID)
+	: State(stateID)
+{
+}
+
+StateMining::~StateMining()
+{
+}
+
+
+void StateMining::Enter(GameObject* m_go)
+{
+	std::cout << "Enter Mining State" << std::endl;
+}
+
+void StateMining::Update(double dt, GameObject* m_go)
+{
+}
+
+void StateMining::Exit(GameObject* m_go)
 {
 }
