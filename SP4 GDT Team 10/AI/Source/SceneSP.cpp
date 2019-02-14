@@ -2864,7 +2864,7 @@ void SceneSP::RenderPassMain()
 	modelStack.PushMatrix();
 	modelStack.Translate(0, 2, 0);
 	modelStack.Scale(5, 5, 5);
-	RenderMesh(meshList[GEO_LIGHT_DEPTH_QUAD], false);
+	//RenderMesh(meshList[GEO_LIGHT_DEPTH_QUAD], false);
 	modelStack.PopMatrix();
 
 	SceneData* SD = SceneData::GetInstance();
