@@ -23,6 +23,7 @@
     <ClCompile Include="Source\MatrixStack.cpp" />
     <ClCompile Include="Source\MouseController.cpp" />
     <ClCompile Include="Source\Mtx44.cpp" />
+    <ClCompile Include="Source\SceneManager.cpp" />
     <ClCompile Include="Source\timer.cpp" />
     <ClCompile Include="Source\Vector3.cpp" />
   </ItemGroup>
@@ -32,6 +33,7 @@
     <ClInclude Include="Source\MouseController.h" />
     <ClInclude Include="Source\Mtx44.h" />
     <ClInclude Include="Source\MyMath.h" />
+    <ClInclude Include="Source\SceneManager.h" />
     <ClInclude Include="Source\SingletonTemplate.h" />
     <ClInclude Include="Source\timer.h" />
     <ClInclude Include="Source\Vector3.h" />
