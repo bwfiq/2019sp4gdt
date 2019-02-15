@@ -3059,8 +3059,6 @@ void SceneSP::RenderPassMain()
 		modelStack.PopMatrix();
 	}
 
-	EffectManager::GetInstance()->Render(this);
-
 	UIManager::GetInstance()->Render(this);
 
 	//On screen text
@@ -3219,7 +3217,7 @@ void SceneSP::RenderWorld()
 			continue;
 		RenderGO(go);
 	}
-
+	EffectManager::GetInstance()->Render(this);
 }
 
 void SceneSP::Render()

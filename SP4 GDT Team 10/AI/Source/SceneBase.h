@@ -200,15 +200,15 @@ public:
 	MS viewStack;
 	MS projectionStack;
 	unsigned m_parameters[U_TOTAL];
+	Mtx44 m_lightDepthProj;
+	Mtx44 m_lightDepthView;
+	RENDER_PASS m_renderPass;
 protected:
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];
 	unsigned m_programID;
 	unsigned m_gPassShaderID;
 	DepthFBO m_lightDepthFBO;
-	Mtx44 m_lightDepthProj;
-	Mtx44 m_lightDepthView;
-	RENDER_PASS m_renderPass;
 
 	Camera camera;
 
