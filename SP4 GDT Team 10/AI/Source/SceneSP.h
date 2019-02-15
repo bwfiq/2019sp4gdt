@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include <vector>
 #include "SceneBase.h"
+#include "SceneManager.h"
 #include <queue>
 #include "Graph.h"
 #include "MousePicker.h"
