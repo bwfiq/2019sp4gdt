@@ -164,12 +164,6 @@
     <ClCompile Include="Source\Maze.cpp">
       <Filter>Structures</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Altar.cpp">
-      <Filter>GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ResearchLab.cpp">
-      <Filter>GameObjects</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -309,12 +303,6 @@
     </ClInclude>
     <ClInclude Include="Source\Message.h">
       <Filter>Utilities</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Altar.h">
-      <Filter>GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ResearchLab.h">
-      <Filter>GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
