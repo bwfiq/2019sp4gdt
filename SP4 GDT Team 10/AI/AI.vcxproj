@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Altar.cpp" />
     <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="Source\Building.cpp" />
     <ClCompile Include="Source\Bush.cpp" />
@@ -175,6 +176,7 @@
     <ClCompile Include="Source\PostOffice.cpp" />
     <ClCompile Include="Source\ProjectileManager.cpp" />
     <ClCompile Include="Source\Projectiles.cpp" />
+    <ClCompile Include="Source\ResearchLab.cpp" />
     <ClCompile Include="Source\SceneBase.cpp" />
     <ClCompile Include="Source\SceneData.cpp" />
     <ClCompile Include="Source\SceneSP.cpp" />
@@ -192,6 +194,7 @@
     <ClCompile Include="Source\Villager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Altar.h" />
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\Building.h" />
     <ClInclude Include="Source\Bush.h" />
@@ -221,6 +224,7 @@
     <ClInclude Include="Source\PostOffice.h" />
     <ClInclude Include="Source\ProjectileManager.h" />
     <ClInclude Include="Source\Projectiles.h" />
+    <ClInclude Include="Source\ResearchLab.h" />
     <ClInclude Include="Source\Scene.h" />
     <ClInclude Include="Source\SceneData.h" />
     <ClInclude Include="Source\SceneBase.h" />

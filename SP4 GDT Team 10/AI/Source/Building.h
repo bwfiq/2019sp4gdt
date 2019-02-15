@@ -17,6 +17,8 @@ struct Building : public GameObject
 
 	STATES eCurrState;
 
+	bool bBuilt;
+
 	virtual bool Handle(Message* msg);
 
 	virtual void TheFunction(GameObject* go);

@@ -377,6 +377,7 @@ void SceneSP::Init()
 	goChiefHut = FetchGO(GameObject::GO_CHIEFHUT);
 	goChiefHut->pos = GetGridPos(GridPt(8, 7));
 	goChiefHut->pos.y = goChiefHut->scale.y * 0.5f;
+	static_cast<Building*>(goChiefHut)->bBuilt = true;
 
 	goBush = FetchGO(GameObject::GO_BUSH);
 	goBush->pos = GetGridPos(GridPt(1, 1));
@@ -2211,6 +2212,33 @@ void SceneSP::Update(double dt)
 
 			bShowGrid = true;
 		}
+		else
+		{
+			Building* goBuilding = dynamic_cast<Building*>(selected);
+			if (goBuilding)
+			{
+				//Only Completed and non broken buildings can be moved again
+				if (goBuilding->eCurrState == Building::COMPLETED)
+				{
+					goBuilding->eCurrState = Building::BLUEPRINT;
+					GridPt currentGrid = GetPoint(mousePos);
+					selected->pos = GetGridPos(currentGrid);
+					selected->pos.y += selected->scale.y * 0.5f;
+
+					bShowGrid = true;
+				}
+				//Only non broken buildings can be moved again
+				/*if (goBuilding->eCurrState != Building::BROKEN)
+				{
+					goBuilding->eCurrState = Building::BLUEPRINT;
+					GridPt currentGrid = GetPoint(mousePos);
+					selected->pos = GetGridPos(currentGrid);
+					selected->pos.y += selected->scale.y * 0.5f;
+
+					bShowGrid = true;
+				}*/
+			}
+		}
 	}
 
 	Vector3 clickTarget = NULL;
@@ -2292,7 +2320,21 @@ void SceneSP::Update(double dt)
 						if (goBuilding->eCurrState == Building::BLUEPRINT)
 						{
 							//Should be trying to contruct now
-							goBuilding->eCurrState = Building::CONSTRUCTING;
+							if(!goBuilding->bBuilt)
+								goBuilding->eCurrState = Building::CONSTRUCTING;
+							else
+								goBuilding->eCurrState = Building::COMPLETED;
+							bShowGrid = false;
+						}
+					}
+					break;
+					case GameObject::GO_CHIEFHUT:
+					{
+						//Chief Hut should be built in init
+						Building* goBuilding = static_cast<Building*>(selected);
+						if (goBuilding->eCurrState == Building::BLUEPRINT)
+						{
+							goBuilding->eCurrState = Building::COMPLETED;
 							bShowGrid = false;
 						}
 					}
