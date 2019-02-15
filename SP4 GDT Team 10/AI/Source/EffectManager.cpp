@@ -4,6 +4,7 @@
 #include "SceneBase.h"
 #include "Application.h"
 #include "EffectTrail.h"
+#include "EffectHand.h"
 
 void EffectManager::Init()
 {
@@ -25,6 +26,7 @@ void EffectManager::Render(SceneBase * scene)
 		count += 0.01f;
 		scene->modelStack.PushMatrix();
 		EffectTrail* EffTrail = dynamic_cast<EffectTrail*>(Effect);
+		EffectHand* EffHand = dynamic_cast<EffectHand*>(Effect);
 		if (EffTrail)
 		{
 			int i = 0;
@@ -74,9 +76,33 @@ void EffectManager::Render(SceneBase * scene)
 			}
 			glLineWidth(1.f);
 		}
+		else if (EffHand)
+		{
+			scene->modelStack.Translate(Effect->pos.x, Effect->pos.y, Effect->pos.z);
+			if (!Effect->rotation.IsZero())
+			{
+				scene->modelStack.Rotate(Effect->rotation.x, 1, 0, 0);
+				scene->modelStack.Rotate(Effect->rotation.y, 0, 1, 0);
+				scene->modelStack.Rotate(Effect->rotation.z, 0, 0, 1);
+
+			}
+			scene->modelStack.Scale(Effect->scale.x, Effect->scale.y, Effect->scale.z);
+			//glDepthFunc(GL_ALWAYS);
+			rendermesh(scene, Effect);
+			//glDepthFunc(GL_LESS);
+		}
 		else
 		{
+			scene->modelStack.Translate(Effect->pos.x, Effect->pos.y, Effect->pos.z);
+			if (!Effect->rotation.IsZero())
+			{
+				scene->modelStack.Rotate(Effect->rotation.x, 1, 0, 0);
+				scene->modelStack.Rotate(Effect->rotation.y, 0, 1, 0);
+				scene->modelStack.Rotate(Effect->rotation.z, 0, 0, 1);
 
+			}
+			scene->modelStack.Scale(Effect->scale.x, Effect->scale.y, Effect->scale.z);
+			rendermesh(scene, Effect);
 		}
 		scene->modelStack.PopMatrix();
 	}

@@ -12,6 +12,7 @@
 #include "UIReligionBar.h"
 #include "EffectManager.h"
 #include "EffectTrail.h"
+#include "EffectHand.h"
 
 #include "SMManager.h"
 #include "MouseController.h"
@@ -468,6 +469,7 @@ void SceneSP::Init()
 
 	EffectManager::GetInstance()->Init();
 	EffectManager::GetInstance()->AddEffect(new EffectTrail(&camera));
+	EffectManager::GetInstance()->AddEffect(new EffectHand());
 
 	ChangeState(G_SPLASHSCREEN);
 }
@@ -2120,10 +2122,12 @@ void SceneSP::Update(double dt)
 	SD->SetWorldWidth(m_worldWidth);
 	SD->SetElapsedTime(SD->GetElapsedTime() + (float)dt);
 
-	mousePos = MP->GetIntersectionWithPlane(camera.position, Vector3(0, 0, 0), Vector3(0, 1, 0));
-
 	SceneBase::Update(dt);
 	MP->Update(dt);
+
+	mousePos = MP->GetIntersectionWithPlane(camera.position, Vector3(0, 0, 0), Vector3(0, 1, 0));
+	SD->SetMousePos_World(mousePos);
+
 	UIM->Update(dt);
 	EM->Update(dt);
 
@@ -2964,13 +2968,13 @@ void SceneSP::RenderPassMain()
 	RenderMesh(meshList[GEO_BALL], false);
 	modelStack.PopMatrix();
 
-	modelStack.PushMatrix();
-	modelStack.Translate(mousePos.x, mousePos.y, mousePos.z);
-	modelStack.Scale(0.1, 0.1, 0.1);
-	RenderMesh(meshList[GEO_VILLAGER], false);
-	modelStack.PopMatrix();
+	//modelStack.PushMatrix();
+	//modelStack.Translate(mousePos.x, mousePos.y, mousePos.z);
+	////modelStack.Scale(0.1, 0.1, 0.1);
+	//RenderMesh(meshList[GEO_HAND_DEFAULT], true);
+	//modelStack.PopMatrix();
 
-	RenderMesh(meshList[GEO_AXES], false);
+	//RenderMesh(meshList[GEO_AXES], false);
 
 	modelStack.PushMatrix();
 	//modelStack.Translate(0, 0.5f + cosf(asd) * 0.15f, 0);

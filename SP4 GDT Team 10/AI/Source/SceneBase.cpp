@@ -252,6 +252,10 @@ void SceneBase::Init()
 	meshList[GEO_LINE] = MeshBuilder::GenerateLine("line", Color(1, 0, 0));
 	meshList[GEO_RAY_WHITE] = MeshBuilder::GenerateRay("whiteray", Color(1, 1, 1));
 
+	meshList[GEO_HAND_DEFAULT] = MeshBuilder::GenerateOBJ("hand_default", "Obj//hand_default.obj");
+	meshList[GEO_HAND_GRAB] = MeshBuilder::GenerateOBJ("hand_grab", "Obj//hand_grab.obj");
+	meshList[GEO_HAND_POINT] = MeshBuilder::GenerateOBJ("hand_point", "Obj//hand_point.obj");
+
 	meshList[GEO_TEXT]->material.kAmbient.Set(1, 0, 0);
 
 	bLightEnabled = true;

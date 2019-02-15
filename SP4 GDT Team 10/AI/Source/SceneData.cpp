@@ -139,6 +139,16 @@ int SceneData::GetPopulationLimit()
 	return iPopulationLimit;
 }
 
+void SceneData::SetMousePos_World(Vector3 mousePos_world)
+{
+	this->mousePos_World = mousePos_world;
+}
+
+Vector3 SceneData::GetMousePos_World()
+{
+	return this->mousePos_World;
+}
+
 void SceneData::AddMesh(Mesh * mesh)
 {
 	if (mesh == nullptr || mesh == NULL)
