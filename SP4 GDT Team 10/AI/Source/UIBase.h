@@ -1,6 +1,8 @@
 #pragma once
 #include "Vector3.h"
 #include <vector>
+#include <string>
+//#include "UIComponent.h"
 class Mesh;
 
 struct UIComponent {//yeaaaaaaaaaahhh this is garbo but wutevz
@@ -33,6 +35,10 @@ public:
 	bool bLightEnabled;
 
 	virtual void Update(float dt) = 0;
+
+	//!!!!!! THIS THING ONLY CALCULATES THE MOUSE IN THE UIBASE, NOT THE INDIVIDUAL COMPONENT !!!!!!
+	bool IsMouseHovered();
+	bool IsMousePressed();
 protected:
 private:
 	//virtual void Render() = 0;
