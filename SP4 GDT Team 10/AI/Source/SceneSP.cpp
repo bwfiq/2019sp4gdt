@@ -2118,6 +2118,7 @@ void SceneSP::Update(double dt)
 	if (!bPState && Application::IsKeyPressed('P'))
 	{
 		bPState = true;
+		SceneManager::GetInstance()->SetActiveScene("SplashScreen");
 	}
 	else if (bPState && !Application::IsKeyPressed('P'))
 	{

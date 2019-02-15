@@ -12,9 +12,6 @@
     <Filter Include="FSM">
       <UniqueIdentifier>{30c188d0-1daf-4280-a4db-5a608eaedc21}</UniqueIdentifier>
     </Filter>
-    <Filter Include="SceneSP">
-      <UniqueIdentifier>{94c0f1e9-62ab-4ec6-866a-2f858257b69c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Camera">
       <UniqueIdentifier>{d5532570-7ef4-4f13-899a-6f12d9494798}</UniqueIdentifier>
     </Filter>
@@ -39,55 +36,31 @@
     <Filter Include="VisualEffects\EffectObjects">
       <UniqueIdentifier>{dd28bf5a-0711-4aa8-a666-e68a973a9ee6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scenes">
+      <UniqueIdentifier>{94c0f1e9-62ab-4ec6-866a-2f858257b69c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{32bf7f61-9536-41af-8007-edbcfa64efd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Projectiles">
+      <UniqueIdentifier>{178fe942-5751-45cc-968a-83e25fc828ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Structures">
+      <UniqueIdentifier>{17538703-6c13-498a-b470-11e680fb3233}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\LoadOBJ.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\LoadTGA.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\MeshBuilder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SceneBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Utility.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\SceneData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Maze.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Graph.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ProjectileManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Projectiles.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\SMManager.cpp">
       <Filter>FSM</Filter>
     </ClCompile>
     <ClCompile Include="Source\SceneSP.cpp">
-      <Filter>SceneSP</Filter>
+      <Filter>Scenes</Filter>
     </ClCompile>
     <ClCompile Include="Source\Camera.cpp">
       <Filter>Camera</Filter>
@@ -119,9 +92,6 @@
     <ClCompile Include="Source\StateVillager.cpp">
       <Filter>FSM</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Grid.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\UIManager.cpp">
       <Filter>UI</Filter>
     </ClCompile>
@@ -140,9 +110,6 @@
     <ClCompile Include="Source\Tree.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="Source\DepthFBO.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\EffectManager.cpp">
       <Filter>VisualEffects</Filter>
     </ClCompile>
@@ -152,73 +119,61 @@
     <ClCompile Include="Source\EffectTrail.cpp">
       <Filter>VisualEffects\EffectObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Source\SceneSplashscreen.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\DepthFBO.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mesh.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\MeshBuilder.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\shader.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Utility.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SceneBase.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SceneData.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Projectiles.cpp">
+      <Filter>Projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ProjectileManager.cpp">
+      <Filter>Projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LoadOBJ.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\LoadTGA.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Grid.cpp">
+      <Filter>Structures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Graph.cpp">
+      <Filter>Structures</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Maze.cpp">
+      <Filter>Structures</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Geometry.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Light.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\LoadOBJ.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\LoadTGA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\MeshBuilder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SceneBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\shader.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Utility.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Vertex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SceneData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Message.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Node.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Maze.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Graph.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ProjectileManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Projectiles.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\SMManager.h">
       <Filter>FSM</Filter>
     </ClInclude>
     <ClInclude Include="Source\SceneSP.h">
-      <Filter>SceneSP</Filter>
+      <Filter>Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Source\Camera.h">
       <Filter>Camera</Filter>
@@ -256,9 +211,6 @@
     <ClInclude Include="Source\StateVillager.h">
       <Filter>FSM</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Grid.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\UIManager.h">
       <Filter>UI</Filter>
     </ClInclude>
@@ -277,9 +229,6 @@
     <ClInclude Include="Source\Tree.h">
       <Filter>GameObjects</Filter>
     </ClInclude>
-    <ClInclude Include="Source\DepthFBO.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Source\EffectManager.h">
       <Filter>VisualEffects</Filter>
     </ClInclude>
@@ -288,6 +237,72 @@
     </ClInclude>
     <ClInclude Include="Source\EffectTrail.h">
       <Filter>VisualEffects\EffectObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneSplashscreen.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Vertex.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Utility.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\shader.hpp">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\MeshBuilder.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mesh.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Material.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Light.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\DepthFBO.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scene.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneBase.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SceneData.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ProjectileManager.h">
+      <Filter>Projectiles</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Projectiles.h">
+      <Filter>Projectiles</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\LoadOBJ.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\LoadTGA.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Graph.h">
+      <Filter>Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Grid.h">
+      <Filter>Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Maze.h">
+      <Filter>Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Node.h">
+      <Filter>Structures</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Geometry.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Message.h">
+      <Filter>Utilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
