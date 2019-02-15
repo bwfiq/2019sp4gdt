@@ -324,6 +324,8 @@ Mesh* MeshBuilder::GenerateSphere(const std::string &meshName, Color color, unsi
 
 	mesh->indexSize = index_buffer_data.size();
 
+	SceneData::GetInstance()->AddMesh(mesh);
+
 	return mesh;
 }
 
@@ -368,6 +370,8 @@ Mesh* MeshBuilder::GenerateCone(const std::string &meshName, Color color, unsign
 
 	mesh->indexSize = index_buffer_data.size();
 
+	SceneData::GetInstance()->AddMesh(mesh);
+
 	return mesh;
 }
 
@@ -395,6 +399,8 @@ Mesh* MeshBuilder::GenerateOBJ(const std::string &meshName, const std::string &f
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_buffer_data.size() * sizeof(GLuint), &index_buffer_data[0], GL_STATIC_DRAW);
 
 	mesh->indexSize = index_buffer_data.size();
+
+	SceneData::GetInstance()->AddMesh(mesh);
 
 	return mesh;
 }
@@ -450,6 +456,8 @@ Mesh* MeshBuilder::GenerateText(const std::string &meshName, unsigned numRow, un
 	mesh->indexSize = index_buffer_data.size();
 	mesh->mode = Mesh::DRAW_TRIANGLES;
 
+	SceneData::GetInstance()->AddMesh(mesh);
+
 	return mesh;
 }
 
@@ -477,6 +485,8 @@ Mesh * MeshBuilder::GenerateLine(const std::string & meshName, Color color, floa
 
 	mesh->indexSize = index_buffer_data.size();
 	mesh->mode = Mesh::DRAW_LINES;
+
+	SceneData::GetInstance()->AddMesh(mesh);
 
 	return mesh;
 }
@@ -553,6 +563,8 @@ Mesh * MeshBuilder::GenerateGrid(const std::string & meshName, Color color, int 
 
 	mesh->indexSize = index_buffer_data.size();
 	mesh->mode = Mesh::DRAW_LINES;
+
+	SceneData::GetInstance()->AddMesh(mesh);
 
 	return mesh;
 }

@@ -24,7 +24,9 @@ struct GameObject : public ObjectBase
 
 		GO_BUILDING,
 		GO_CHIEFHUT,
+		GO_ALTAR,
 		GO_HOUSE,
+		GO_RESEARCHLAB,
 
 		GO_ENVIRONMENT,
 		GO_BUSH,

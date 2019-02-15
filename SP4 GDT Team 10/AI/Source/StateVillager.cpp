@@ -550,6 +550,7 @@ void StateConstructing::Update(double dt, GameObject* m_go)
 		//Construction and Repair code here, maybe some timer idk
 		m_go->goTarget = NULL;
 		goBuilding->eCurrState = Building::COMPLETED;
+		goBuilding->bBuilt = true;
 		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 	}
 	else
