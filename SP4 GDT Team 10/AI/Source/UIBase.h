@@ -2,7 +2,7 @@
 #include "Vector3.h"
 #include <vector>
 #include <string>
-#include "UIComponent.h"
+//#include "UIComponent.h"
 class Mesh;
 
 struct UIComponent {//yeaaaaaaaaaahhh this is garbo but wutevz
