@@ -22,7 +22,7 @@ SceneBase::~SceneBase()
 void SceneBase::Init()
 {
 	// Black background
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+	glClearColor(0.13333f, 0.17254f, 0.21568f, 0.0f);
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
 	// Accept fragment if it closer to the camera than the former one
@@ -221,6 +221,8 @@ void SceneBase::Init()
 	meshList[GEO_BACKGROUND]->textureArray[0] = LoadTGA("Image//background.tga");
 	meshList[GEO_SPLASHSCREEN] = MeshBuilder::GenerateQuad("splashscreen", Color(1, 1, 1));
 	meshList[GEO_SPLASHSCREEN]->textureArray[0] = LoadTGA("Image//splashscreen.tga");
+	meshList[GEO_LOGO] = MeshBuilder::GenerateQuad("logo", Color(1, 1, 1));
+	meshList[GEO_LOGO]->textureArray[0] = LoadTGA("Image//logo1.tga");
 	meshList[GEO_SEA] = MeshBuilder::GenerateQuad("sea", Color(1, 1, 1));
 	meshList[GEO_SEA]->textureArray[0] = LoadTGA("Image//sea.tga");
 	//meshList[GEO_GRASS] = MeshBuilder::GenerateCube("cube", Color(1, 1, 1), 1.f);
