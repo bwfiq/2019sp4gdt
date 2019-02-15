@@ -2,10 +2,11 @@
 #include "ConcreteMessages.h"
 
 Altar::Altar(GAMEOBJECT_TYPE typeValue)
-	: Building(typeValue)
+	: Building(typeValue),
+	iFoodOffered(0)
 {
 	//GameObject(typeValue);
-	std::cout << "ChiefHut Constructor" << std::endl;
+	std::cout << "Altar Constructor" << std::endl;
 }
 
 Altar::~Altar()

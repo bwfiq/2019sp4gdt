@@ -22,7 +22,7 @@ SceneBase::~SceneBase()
 void SceneBase::Init()
 {
 	// Black background
-	glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+	glClearColor(0.13333f, 0.17254f, 0.21568f, 0.0f);
 	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
 	// Accept fragment if it closer to the camera than the former one
@@ -221,6 +221,8 @@ void SceneBase::Init()
 	meshList[GEO_BACKGROUND]->textureArray[0] = LoadTGA("Image//background.tga");
 	meshList[GEO_SPLASHSCREEN] = MeshBuilder::GenerateQuad("splashscreen", Color(1, 1, 1));
 	meshList[GEO_SPLASHSCREEN]->textureArray[0] = LoadTGA("Image//splashscreen.tga");
+	meshList[GEO_LOGO] = MeshBuilder::GenerateQuad("logo", Color(1, 1, 1));
+	meshList[GEO_LOGO]->textureArray[0] = LoadTGA("Image//logo1.tga");
 	meshList[GEO_SEA] = MeshBuilder::GenerateQuad("sea", Color(1, 1, 1));
 	meshList[GEO_SEA]->textureArray[0] = LoadTGA("Image//sea.tga");
 	//meshList[GEO_GRASS] = MeshBuilder::GenerateCube("cube", Color(1, 1, 1), 1.f);
@@ -238,10 +240,14 @@ void SceneBase::Init()
 	meshList[GEO_BERRIES]->textureArray[0] = LoadTGA("Image//bushes_and_berries_texture.tga");
 
 	meshList[GEO_VILLAGER] = MeshBuilder::GenerateCube("villager", Color(1, 0, 0), 1.f);
-	meshList[GEO_BUILDING] = MeshBuilder::GenerateCube("building", Color(0, 0, 1), 1.f);
+	meshList[GEO_BUILDING] = MeshBuilder::GenerateOBJ("building", "Obj//house.obj");
+	meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//tree.tga");
 	meshList[GEO_BROKEN_BUILDING] = MeshBuilder::GenerateCube("broken_building", Color(1, 0, 1), 1.f);
 
 	meshList[GEO_GRID] = MeshBuilder::GenerateGrid("grid", Color(1, 0, 0), SceneData::GetInstance()->GetNoGrid(), SceneData::GetInstance()->GetNoGrid(), SceneData::GetInstance()->GetGridSize());
+
+	meshList[GEO_OFFERING] = MeshBuilder::GenerateQuad("offering", Color(0.5, 0.5, 0.5));
+	meshList[GEO_OFFERING]->textureArray[0] = LoadTGA("Image//offeringIcon.tga");
 
 	meshList[GEO_LINE] = MeshBuilder::GenerateLine("line", Color(1, 0, 0));
 	meshList[GEO_RAY_WHITE] = MeshBuilder::GenerateRay("whiteray", Color(1, 1, 1));

@@ -164,9 +164,12 @@ public:
 		GEO_BROKEN_BUILDING,
 
 		GEO_BACKGROUND,
-		GEO_SPLASHSCREEN,
+		GEO_SPLASHSCREEN,	// opengl
+		GEO_LOGO,			// game logo
 
 		GEO_GRID,
+
+		GEO_OFFERING,
 
 		NUM_GEOMETRY,
 	};

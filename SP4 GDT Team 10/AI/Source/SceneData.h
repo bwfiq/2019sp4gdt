@@ -62,7 +62,7 @@ private:
 	float f_elapsedTime;
 	std::map<std::string, Mesh*> meshList;//these meshes delete themselves via the scene
 
-	float f_religionValue;
+	float fReligionValue;
 	int iFood, iFoodLimit, iPopulation, iPopulationLimit, iWood, iWoodLimit;
 };
 

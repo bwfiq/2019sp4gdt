@@ -5,6 +5,21 @@
 #include "UIComponent.h"
 class Mesh;
 
+struct UIComponent {//yeaaaaaaaaaahhh this is garbo but wutevz
+public:
+	Mesh* mesh;
+	bool bActive;
+	Vector3 pos;
+	Vector3 scale;
+	float fRotation;
+	Vector3 anchorPoint;
+
+	float alpha;
+
+	UIComponent() : fRotation(0), bActive(true), mesh(NULL), scale(1, 1, 1), alpha(1.f) {};
+	~UIComponent() {};
+};
+
 class UIBase {
 public:
 	UIBase();

@@ -21,7 +21,7 @@ private:
 	UIManager();
 	~UIManager();
 
-	void rendermesh(SceneBase* scene, Mesh* mesh, bool bLightEnabled);
+	void rendermesh(SceneBase* scene, Mesh* mesh, bool bLightEnabled, float alpha);
 
 	//SceneBase* scene;
 	std::vector<UIBase*> ui_list;
