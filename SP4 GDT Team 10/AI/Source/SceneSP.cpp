@@ -353,6 +353,9 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 	case G_SPLASHSCREEN:
 		camera.Init(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));	// splashscreen
 		break;
+	case G_MAINMENU:
+		camera.Init(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));	// splashscreen
+		break;
 	case G_INPLAY:
 		camera.Init(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));	// game
 		break;
@@ -2101,9 +2104,33 @@ void SceneSP::Update(double dt)
 		Sleep(100);
 		return;
 	}
+
+	SceneData* SD = SceneData::GetInstance();
+	MousePicker* MP = MousePicker::GetInstance();
+	MouseController* MC = MouseController::GetInstance();
+	KeyboardController* KC = KeyboardController::GetInstance();
+	UIManager* UIM = UIManager::GetInstance();
+	EffectManager* EM = EffectManager::GetInstance();
+
+	//Calculating aspect ratio
+	m_worldHeight = 100.f;
+	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
+
+	SD->SetWorldHeight(m_worldHeight);
+	SD->SetWorldWidth(m_worldWidth);
+	SD->SetElapsedTime(SD->GetElapsedTime() + (float)dt);
+
+	mousePos = MP->GetIntersectionWithPlane(camera.position, Vector3(0, 0, 0), Vector3(0, 1, 0));
+
+	SceneBase::Update(dt);
+	MP->Update(dt);
+	UIM->Update(dt);
+	EM->Update(dt);
+
 	switch (game_state)
 	{
 	case G_SPLASHSCREEN:
+	{
 		// made with opengl
 		if (fOpenGLInTimer < 1.f) { fOpenGLInTimer += dt; }
 		else
@@ -2118,52 +2145,50 @@ void SceneSP::Update(double dt)
 				else
 				{
 					fSplashScreenInTimer = 1.f;
-					if (fSplashScreenOutTimer > 0.f) { fSplashScreenOutTimer -= dt * 0.75f; }
-					else
+					/*if (fSplashScreenOutTimer > 0.f) { fSplashScreenOutTimer -= dt * 0.75f; }
+					else*/
 					{
-						fSplashScreenOutTimer = 0.f;
+						fSplashScreenOutTimer = 1.f;
 						fGameStartTimer -= dt;
 						if (fGameStartTimer <= 0.f)
 						{
 							fGameStartTimer = 0.f;
-							ChangeState(G_INPLAY);
+							ChangeState(G_MAINMENU);
 						}
 					}
 				}
 			}
 		}
 		return;
+	}
+		break;
+	case G_MAINMENU:
+	{
+		static bool bLButtonState = false;
+		if (!bLButtonState && Application::IsMousePressed(0))
+		{
+			bLButtonState = true;
+		}
+		else if (bLButtonState && !Application::IsMousePressed(0))
+		{
+			bLButtonState = false;
+			ChangeState(G_INPLAY);
+		}
+		return;
+	}
 		break;
 	default:
+	{
+
+	}
 		break;
 	}
-	SceneData* SD = SceneData::GetInstance();
-	MousePicker* MP = MousePicker::GetInstance();
-	MouseController* MC = MouseController::GetInstance();
-	KeyboardController* KC = KeyboardController::GetInstance();
-	UIManager* UIM = UIManager::GetInstance();
-	EffectManager* EM = EffectManager::GetInstance();
 
-	SceneBase::Update(dt);
-	MP->Update(dt);
 	camera.Update(dt);
-	UIM->Update(dt);
-	EM->Update(dt);
 
 	if (KC->IsKeyPressed('P')) {//A TEST TO CHANGE RELIGION VALUE DIS WONT BE IN DA FNIAL GAME
 		SD->SetReligionValue(((int)SD->GetReligionValue() % 100) + 25);
 	}
-
-	//Calculating aspect ratio
-	m_worldHeight = 100.f;
-	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
-
-	SD->SetWorldHeight(m_worldHeight);
-	SD->SetWorldWidth(m_worldWidth);
-	SD->SetElapsedTime(SD->GetElapsedTime() + (float)dt);
-
-	mousePos = MP->GetIntersectionWithPlane(camera.position, Vector3(0, 0, 0), Vector3(0, 1, 0));
-
 	if (Application::IsKeyPressed(VK_OEM_MINUS))
 	{
 		m_speed = Math::Max(0.f, m_speed - 0.1f);
@@ -2405,10 +2430,6 @@ void SceneSP::Update(double dt)
 	fSeaDeltaY = 0.0625f + 0.0625f * cosf(SD->GetElapsedTime());
 
 	ProjectileManager::GetInstance()->Update(dt * m_speed);
-	static const float NPC_VELOCITY = 10.f;
-
-	SD->SetPopulation(0);
-	SD->SetPopulationLimit(0);
 
 	//There is a currently selected object
 	if (selected != NULL)
@@ -2688,6 +2709,9 @@ void SceneSP::Update(double dt)
 	}
 
 	//Update the GameObjects
+	static const float NPC_VELOCITY = 10.f;
+	SD->SetPopulation(0);
+	SD->SetPopulationLimit(0);
 	for (auto go : m_goList)
 	{
 		if (!go->active)
@@ -2750,7 +2774,6 @@ void SceneSP::Update(double dt)
 		}
 	}
 }
-
 
 void SceneSP::RenderGO(GameObject *go)
 {
@@ -3117,7 +3140,7 @@ void SceneSP::RenderSplashScreen()
 	{
 		modelStack.PushMatrix();
 		modelStack.Translate(m_worldWidth * 0.5f, m_worldHeight * 0.5f, 1.f);
-		modelStack.Scale(((m_worldHeight/720)*1024), m_worldHeight, m_worldHeight);
+		modelStack.Scale(m_worldWidth, ((m_worldWidth / 1024) * 720), m_worldHeight);
 		if (fOpenGLInTimer < 1.0f)
 			RenderMesh(meshList[GEO_SPLASHSCREEN], false, fOpenGLInTimer);
 		else
@@ -3128,13 +3151,60 @@ void SceneSP::RenderSplashScreen()
 	{
 		modelStack.PushMatrix();
 		modelStack.Translate(m_worldWidth * 0.5f, m_worldHeight * 0.5f, 1.f);
-		modelStack.Scale(((m_worldHeight / 720) * 1024), m_worldHeight, m_worldHeight);
+		modelStack.Scale(m_worldWidth, ((m_worldWidth / 1024) * 720), m_worldHeight);
 		if (fSplashScreenInTimer < 1.0f)
 			RenderMesh(meshList[GEO_LOGO], false, fSplashScreenInTimer);
 		else
 			RenderMesh(meshList[GEO_LOGO], false, fSplashScreenOutTimer);
 		modelStack.PopMatrix();
 	}
+}
+
+void SceneSP::RenderMainMenu()
+{
+	m_renderPass = RENDER_PASS_MAIN;
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, Application::GetWindowWidth(),
+		Application::GetWindowHeight());
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glUseProgram(m_programID);
+	//pass light depth texture
+	m_lightDepthFBO.BindForReading(GL_TEXTURE8);
+	glUniform1i(m_parameters[U_SHADOW_MAP], 8);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Projection matrix : Orthographic Projection
+	Mtx44 projection;
+	projection.SetToOrtho(0, m_worldWidth, 0, m_worldHeight, -10, 10);
+	projectionStack.LoadMatrix(projection);
+
+	// Camera matrix
+	viewStack.LoadIdentity();
+	viewStack.LookAt(
+		camera.position.x, camera.position.y, camera.position.z,
+		camera.target.x, camera.target.y, camera.target.z,
+		camera.up.x, camera.up.y, camera.up.z
+	);
+	// Model matrix : an identity matrix (model will be at the origin)
+	modelStack.LoadIdentity();
+
+	//RenderMesh(meshList[GEO_AXES], false);
+	
+	modelStack.PushMatrix();
+	modelStack.Translate(m_worldWidth * 0.5f, m_worldHeight * 0.5f, 0.f);
+	modelStack.Scale(m_worldWidth, ((m_worldWidth / 1024) * 720), m_worldHeight);
+	RenderMesh(meshList[GEO_LOGO], false);
+	modelStack.PopMatrix();
+
+	//buttonz
+	modelStack.PushMatrix();
+	modelStack.Translate(m_worldWidth * 0.8f, m_worldHeight * 0.7f, 1.f);
+	modelStack.Scale(m_worldWidth*0.2f, m_worldHeight*0.1f, m_worldHeight);
+	RenderMesh(meshList[GEO_WHITEQUAD], false);
+	modelStack.PopMatrix();
 }
 
 void SceneSP::RenderWorld()
@@ -3153,12 +3223,15 @@ void SceneSP::Render()
 	//SceneBase::Render();
 	switch (game_state)
 	{
+	case G_SPLASHSCREEN:
+		RenderSplashScreen();
+		break;
+	case G_MAINMENU:
+		RenderMainMenu();
+		break;
 	case G_INPLAY:
 		RenderPassGPass();
 		RenderPassMain();
-		break;
-	case G_SPLASHSCREEN:
-		RenderSplashScreen();
 		break;
 	default:
 		break;

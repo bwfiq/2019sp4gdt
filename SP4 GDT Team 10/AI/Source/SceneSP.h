@@ -17,6 +17,7 @@ public:
 	enum GAME_STATE
 	{
 		G_SPLASHSCREEN = 0,
+		G_MAINMENU,
 		G_INPLAY,
 
 		G_TOTAL
@@ -33,6 +34,7 @@ public:
 	void RenderPassGPass();
 	void RenderPassMain();
 	void RenderSplashScreen();
+	void RenderMainMenu();
 	void RenderWorld();
 
 	void RenderGO(GameObject *go);
