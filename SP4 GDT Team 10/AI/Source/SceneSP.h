@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include <vector>
 #include "SceneBase.h"
+#include "SceneManager.h"
 #include <queue>
 #include "Graph.h"
 #include "MousePicker.h"
@@ -13,6 +14,13 @@
 class SceneSP : public SceneBase
 {
 public:
+	enum GAME_STATE
+	{
+		G_SPLASHSCREEN = 0,
+		G_INPLAY,
+
+		G_TOTAL
+	};
 	SceneSP();
 	~SceneSP();
 
@@ -24,6 +32,7 @@ public:
 
 	void RenderPassGPass();
 	void RenderPassMain();
+	void RenderSplashScreen();
 	void RenderWorld();
 
 	void RenderGO(GameObject *go);
@@ -34,15 +43,12 @@ public:
 	void AStarSingleGrid(GameObject* go, GridPt target); //For Grid Pathfinding with objects that have only 1 grids
 	void AStarMultiGrid(GameObject* go, GridPt target); //For Grid Pathfinding with objects that have multiple grids
 	bool isTheCoastClear(GameObject* go, GridPt next, Grid::DIRECTION dir); //For making it neat
+	void ChangeState(GAME_STATE newstate);
 	//void DFSOnce(GameObject* go);
 
 	void Reset();
 	void ChangeTimeOfDay();
 
-	enum GAME_STATE
-	{
-		G_TOTAL
-	};
 protected:
 
 	std::vector<GameObject *> m_goList;
@@ -61,6 +67,11 @@ protected:
 	GAME_STATE game_state;
 
 	bool bGodlights = false;
+	float fOpenGLInTimer = -1.f;
+	float fOpenGLOutTimer = 2.f;
+	float fSplashScreenInTimer = 0.f;
+	float fSplashScreenOutTimer = 2.f;
+	float fGameStartTimer = 0.5f;
 
 	//Grid
 	bool bShowGrid;

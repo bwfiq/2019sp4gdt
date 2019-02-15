@@ -346,6 +346,29 @@ bool SceneSP::isTheCoastClear(GameObject* go, GridPt next, Grid::DIRECTION dir)
 	return true;
 }
 
+void SceneSP::ChangeState(GAME_STATE newstate)
+{
+	switch (newstate)
+	{
+	case G_SPLASHSCREEN:
+		camera.Init(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));	// splashscreen
+		break;
+	case G_INPLAY:
+		camera.Init(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));	// game
+		break;
+	default:
+		break;
+	}
+
+	Vector3 dir = camera.target - camera.position;
+	dir.Normalize();
+	Vector3 right(1, 0, 0);
+	camera.up = right.Cross(dir);
+	camera.fDistance = (camera.target - camera.position).Length();
+
+	game_state = newstate;
+}
+
 void SceneSP::Init()
 {
 	SceneData::GetInstance()->SetNoGrid(15);
@@ -442,12 +465,13 @@ void SceneSP::Init()
 
 	EffectManager::GetInstance()->Init();
 	EffectManager::GetInstance()->AddEffect(new EffectTrail(&camera));
+
+	ChangeState(G_SPLASHSCREEN);
 }
 
 
 bool SceneSP::Handle(Message* message)
 {
-
 	MessageWRU* messageWRU = dynamic_cast<MessageWRU*>(message);
 	if (messageWRU)
 	{
@@ -2077,6 +2101,42 @@ void SceneSP::Update(double dt)
 		Sleep(100);
 		return;
 	}
+	switch (game_state)
+	{
+	case G_SPLASHSCREEN:
+		// made with opengl
+		if (fOpenGLInTimer < 1.f) { fOpenGLInTimer += dt; }
+		else
+		{
+			fOpenGLInTimer = 1.f;
+			if (fOpenGLOutTimer > 0.f) { fOpenGLOutTimer -= dt * 0.75f; }
+			else
+			{
+				fOpenGLOutTimer = 0.f;
+				// game icon
+				if (fSplashScreenInTimer < 1.f) { fSplashScreenInTimer += dt; }
+				else
+				{
+					fSplashScreenInTimer = 1.f;
+					if (fSplashScreenOutTimer > 0.f) { fSplashScreenOutTimer -= dt * 0.75f; }
+					else
+					{
+						fSplashScreenOutTimer = 0.f;
+						fGameStartTimer -= dt;
+						if (fGameStartTimer <= 0.f)
+						{
+							fGameStartTimer = 0.f;
+							ChangeState(G_INPLAY);
+						}
+					}
+				}
+			}
+		}
+		return;
+		break;
+	default:
+		break;
+	}
 	SceneData* SD = SceneData::GetInstance();
 	MousePicker* MP = MousePicker::GetInstance();
 	MouseController* MC = MouseController::GetInstance();
@@ -3019,6 +3079,64 @@ void SceneSP::RenderPassMain()
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 30, 0);
 }
 
+void SceneSP::RenderSplashScreen()
+{
+	m_renderPass = RENDER_PASS_MAIN;
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, Application::GetWindowWidth(),
+		Application::GetWindowHeight());
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glUseProgram(m_programID);
+	//pass light depth texture
+	m_lightDepthFBO.BindForReading(GL_TEXTURE8);
+	glUniform1i(m_parameters[U_SHADOW_MAP], 8);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Projection matrix : Orthographic Projection
+	Mtx44 projection;
+	projection.SetToOrtho(0, m_worldWidth, 0, m_worldHeight, -10, 10);
+	projectionStack.LoadMatrix(projection);
+
+	// Camera matrix
+	viewStack.LoadIdentity();
+	viewStack.LookAt(
+		camera.position.x, camera.position.y, camera.position.z,
+		camera.target.x, camera.target.y, camera.target.z,
+		camera.up.x, camera.up.y, camera.up.z
+	);
+	// Model matrix : an identity matrix (model will be at the origin)
+	modelStack.LoadIdentity();
+
+	//RenderMesh(meshList[GEO_AXES], false);
+
+
+	if (fOpenGLOutTimer > 0.f)
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(m_worldWidth * 0.5f, m_worldHeight * 0.5f, 1.f);
+		modelStack.Scale(((m_worldHeight/720)*1024), m_worldHeight, m_worldHeight);
+		if (fOpenGLInTimer < 1.0f)
+			RenderMesh(meshList[GEO_SPLASHSCREEN], false, fOpenGLInTimer);
+		else
+			RenderMesh(meshList[GEO_SPLASHSCREEN], false, fOpenGLOutTimer);
+		modelStack.PopMatrix();
+	}
+	else
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(m_worldWidth * 0.5f, m_worldHeight * 0.5f, 1.f);
+		modelStack.Scale(((m_worldHeight / 720) * 1024), m_worldHeight, m_worldHeight);
+		if (fSplashScreenInTimer < 1.0f)
+			RenderMesh(meshList[GEO_LOGO], false, fSplashScreenInTimer);
+		else
+			RenderMesh(meshList[GEO_LOGO], false, fSplashScreenOutTimer);
+		modelStack.PopMatrix();
+	}
+}
+
 void SceneSP::RenderWorld()
 {
 	for (auto go : m_goList)
@@ -3029,13 +3147,22 @@ void SceneSP::RenderWorld()
 	}
 
 }
+
 void SceneSP::Render()
 {
 	//SceneBase::Render();
-	//******************************* PRE RENDER PASS *************************************
-	RenderPassGPass();
-	//******************************* MAIN RENDER PASS ************************************
-	RenderPassMain();
+	switch (game_state)
+	{
+	case G_INPLAY:
+		RenderPassGPass();
+		RenderPassMain();
+		break;
+	case G_SPLASHSCREEN:
+		RenderSplashScreen();
+		break;
+	default:
+		break;
+	}
 }
 
 void SceneSP::Exit()
