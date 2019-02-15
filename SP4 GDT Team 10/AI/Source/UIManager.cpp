@@ -46,11 +46,12 @@ void UIManager::Render(SceneBase * scene)
 			{
 				count2 += 0.01f;
 				scene->modelStack.PushMatrix();
-				scene->modelStack.Translate(UIC.pos.x - UI->anchorPoint.x - UIC.anchorPoint.x + (UIC.anchorPoint.x + (UIC.anchorPoint.x - 0.5f) * -Math::Min(UIC.scale.x, 1.f))
-					, UIC.pos.y - UI->anchorPoint.y - UIC.anchorPoint.y + (UIC.anchorPoint.y + (UIC.anchorPoint.y - 0.5f) * -Math::Min(UIC.scale.y, 1.f))
+				scene->modelStack.Translate(UIC.pos.x - UI->anchorPoint.x + (UIC.anchorPoint.x - 0.5f) * -Math::Min(UIC.scale.x, 1.f)
+					, UIC.pos.y - UI->anchorPoint.y + (UIC.anchorPoint.y - 0.5f) * -Math::Min(UIC.scale.y, 1.f)
 					, UIC.pos.z + count2);
+				scene->modelStack.Rotate(UIC.fRotation,0,0,1);
 				scene->modelStack.Scale(UIC.scale.x, UIC.scale.y, 1);
-				rendermesh(scene, UIC.mesh, false);
+				rendermesh(scene, UIC.mesh, false, UIC.alpha);
 				scene->modelStack.PopMatrix();
 			}
 		scene->modelStack.PopMatrix();
@@ -81,7 +82,7 @@ UIManager::~UIManager()
 	}
 }
 
-void UIManager::rendermesh(SceneBase* scene,Mesh * mesh,bool bLightEnabled)
+void UIManager::rendermesh(SceneBase* scene,Mesh * mesh,bool bLightEnabled, float alpha)
 {
 	Mtx44 MVP, modelView, modelView_inverse_transpose;
 
@@ -119,7 +120,7 @@ void UIManager::rendermesh(SceneBase* scene,Mesh * mesh,bool bLightEnabled)
 			glUniform1i(scene->m_parameters[SceneBase::U_COLOR_TEXTURE_ENABLED + i], 0);
 
 	}
-	glUniform1f(scene->m_parameters[SceneBase::U_ALPHA], 1.f);
+	glUniform1f(scene->m_parameters[SceneBase::U_ALPHA], alpha);
 	mesh->Render();
 	if (mesh->textureID > 0)
 	{

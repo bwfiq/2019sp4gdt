@@ -83,11 +83,11 @@ void SceneData::SetElapsedTime(float elapsedTime)
 
 float SceneData::GetReligionValue()
 {
-	return this->f_religionValue;
+	return this->fReligionValue;
 }
 void SceneData::SetReligionValue(float religionValue)
 {
-	this->f_religionValue = religionValue;
+	this->fReligionValue = religionValue;
 }
 
 void SceneData::SetFood(int food)

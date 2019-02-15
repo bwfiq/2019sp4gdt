@@ -22,6 +22,7 @@
 #include "ChiefHut.h"
 #include "Bush.h"
 #include "Tree.h"
+#include "Altar.h"
 
 #define SEA_WIDTH	100.f
 #define SEA_HEIGHT	100.f
@@ -32,6 +33,12 @@ SceneSP::SceneSP()
 
 SceneSP::~SceneSP()
 {
+}
+
+float FoodToReligionPoints(int food)
+{
+	//Insert Conversion Rates
+	return (float)(food) * 1;//* some dt related converter or someth
 }
 
 bool SceneSP::isTheCoastClear(GameObject* go, GridPt next, Grid::DIRECTION dir)
@@ -355,7 +362,7 @@ void SceneSP::Init()
 	SceneData::GetInstance()->SetWorldHeight(m_worldHeight);
 	SceneData::GetInstance()->SetWorldWidth(m_worldWidth);
 	SceneData::GetInstance()->SetElapsedTime(0);
-	SceneData::GetInstance()->SetReligionValue(0);
+	SceneData::GetInstance()->SetReligionValue(0.f);
 	PostOffice::GetInstance()->Register("Scene", this);
 
 	//Physics code here
@@ -378,6 +385,13 @@ void SceneSP::Init()
 	goChiefHut->pos = GetGridPos(GridPt(8, 7));
 	goChiefHut->pos.y = goChiefHut->scale.y * 0.5f;
 	static_cast<Building*>(goChiefHut)->bBuilt = true;
+
+	goAltar = FetchGO(GameObject::GO_ALTAR);
+	goAltar->pos = GetGridPos(GridPt(6, 2));
+	goAltar->pos.y = goChiefHut->scale.y * 0.5f;
+	Altar* altar = static_cast<Altar*>(goAltar);
+	altar->bBuilt = true;
+	altar->iFoodOffered = 0;
 
 	goBush = FetchGO(GameObject::GO_BUSH);
 	goBush->pos = GetGridPos(GridPt(1, 1));
@@ -503,6 +517,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			case GameObject::GO_TREE:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.2f, SceneData::GetInstance()->GetGridSize() * 1.f);
 				break;
+			case GameObject::GO_ALTAR:
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 2.5f, SceneData::GetInstance()->GetGridSize() * 1.f);
+				break;
 			}
 
 			go->goTarget = NULL;
@@ -524,6 +541,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			break;
 		case GameObject::GO_CHIEFHUT:
 			go = new ChiefHut(type);
+			break;
+		case GameObject::GO_ALTAR:
+			go = new Altar(type);
 			break;
 		case GameObject::GO_BUSH:
 			go = new Bush(type);
@@ -2126,79 +2146,11 @@ void SceneSP::Update(double dt)
 		std::cout << "P UP" << std::endl;
 	}
 
-	static bool bFState = false;
-	if (KC->IsKeyPressed('F'))
-	{
-		bFState = true;
-		goVillager->goTarget = goBush;
-	}
-	else if (bFState && !Application::IsKeyPressed('F'))
-	{
-		bFState = false;
-		std::cout << "F UP" << std::endl;
-	}
-
 	if (KC->IsKeyPressed('G'))
 	{
 		bShowGrid = !bShowGrid;
 	}
 
-
-	//Temporary Movement
-	GridPt currPos = goVillager->currentPt;
-	if (KC->IsKeyDown('W'))
-	{
-		if (goVillager->m_currState == SMManager::GetInstance()->GetSM(goVillager->smID)->GetState("Idle"))
-		{
-			GridPt UP(currPos.x, currPos.z - 1);
-			if (isPointInGrid(UP))
-			{
-				float y = goVillager->pos.y;
-				goVillager->target = GetGridPos(UP);
-				goVillager->target.y = y;
-			}
-		}
-	}
-	if (KC->IsKeyDown('S'))
-	{
-		if (goVillager->m_currState == SMManager::GetInstance()->GetSM(goVillager->smID)->GetState("Idle"))
-		{
-			GridPt DOWN(currPos.x, currPos.z + 1);
-			if (isPointInGrid(DOWN))
-			{
-				float y = goVillager->pos.y;
-				goVillager->target = GetGridPos(DOWN);
-				goVillager->target.y = y;
-			}
-		}
-	}
-	if (KC->IsKeyDown('A'))
-	{
-		if (goVillager->m_currState == SMManager::GetInstance()->GetSM(goVillager->smID)->GetState("Idle"))
-		{
-			GridPt LEFT(currPos.x - 1, currPos.z);
-			if (isPointInGrid(LEFT))
-			{
-				float y = goVillager->pos.y;
-				goVillager->target = GetGridPos(LEFT);
-				goVillager->target.y = y;
-			}
-		}
-	}
-	if (KC->IsKeyDown('D'))
-	{
-		if (goVillager->m_currState == SMManager::GetInstance()->GetSM(goVillager->smID)->GetState("Idle"))
-		{
-			GridPt RIGHT(currPos.x + 1, currPos.z);
-			if (isPointInGrid(RIGHT))
-			{
-				float y = goVillager->pos.y;
-				goVillager->target = GetGridPos(RIGHT);
-				goVillager->target.y = y;
-			}
-		}
-	}
-	
 	if (KC->IsKeyPressed('B'))
 	{
 		if (selected == NULL)
@@ -2236,6 +2188,22 @@ void SceneSP::Update(double dt)
 
 					bShowGrid = true;
 				}*/
+			}
+		}
+	}
+
+	if (KC->IsKeyPressed('F'))
+	{
+		if (selected != NULL)
+		{
+			if (selected == goAltar)
+			{
+				if (SD->GetFood() > 0)
+				{
+					//For now 1 food 10 food offered, change to 1 to 1 later
+					static_cast<Altar*>(goAltar)->iFoodOffered += 10;
+					SD->SetFood(SD->GetFood() - 1);
+				}
 			}
 		}
 	}
@@ -2676,6 +2644,9 @@ void SceneSP::Update(double dt)
 			break;
 		case GameObject::GO_BUSH:
 			break;
+		case GameObject::GO_ALTAR:
+			SD->SetReligionValue(Math::Min(100.f, (float)(static_cast<Altar*>(go)->iFoodOffered)));
+			break;
 		default:
 			break;
 		}
@@ -2776,6 +2747,15 @@ void SceneSP::RenderGO(GameObject *go)
 	}
 	break;
 	case GameObject::GO_CHIEFHUT:
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_BUILDING], bGodlights, 1.f);
+		modelStack.PopMatrix();
+	}
+	break;
+	case GameObject::GO_ALTAR:
 	{
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
@@ -2986,7 +2966,7 @@ void SceneSP::RenderPassMain()
 	if (selected != NULL)
 	{
 		modelStack.PushMatrix();
-		modelStack.Translate(selected->pos.x, selected->pos.y + 1.0f, selected->pos.z);
+		modelStack.Translate(selected->pos.x, selected->pos.y + selected->scale.y * 0.7f, selected->pos.z);
 		modelStack.Scale(0.1, 0.1, 0.1);
 		RenderMesh(meshList[GEO_VILLAGER], false); // renders a red cube above GO if it is currently selected
 		modelStack.PopMatrix();

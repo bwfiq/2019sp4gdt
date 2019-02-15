@@ -237,10 +237,14 @@ void SceneBase::Init()
 	meshList[GEO_BERRIES]->textureArray[0] = LoadTGA("Image//bushes_and_berries_texture.tga");
 
 	meshList[GEO_VILLAGER] = MeshBuilder::GenerateCube("villager", Color(1, 0, 0), 1.f);
-	meshList[GEO_BUILDING] = MeshBuilder::GenerateCube("building", Color(0, 0, 1), 1.f);
+	meshList[GEO_BUILDING] = MeshBuilder::GenerateOBJ("building", "Obj//house.obj");
+	meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//tree.tga");
 	meshList[GEO_BROKEN_BUILDING] = MeshBuilder::GenerateCube("broken_building", Color(1, 0, 1), 1.f);
 
 	meshList[GEO_GRID] = MeshBuilder::GenerateGrid("grid", Color(1, 0, 0), SceneData::GetInstance()->GetNoGrid(), SceneData::GetInstance()->GetNoGrid(), SceneData::GetInstance()->GetGridSize());
+
+	meshList[GEO_OFFERING] = MeshBuilder::GenerateQuad("offering", Color(0.5, 0.5, 0.5));
+	meshList[GEO_OFFERING]->textureArray[0] = LoadTGA("Image//offeringIcon.tga");
 
 	meshList[GEO_LINE] = MeshBuilder::GenerateLine("line", Color(1, 0, 0));
 	meshList[GEO_RAY_WHITE] = MeshBuilder::GenerateRay("whiteray", Color(1, 1, 1));

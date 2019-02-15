@@ -72,6 +72,7 @@ protected:
 
 	GameObject* selected; //Gameobject selected by mouse click, can do actions from UI choices that pop up
 	GameObject* goChiefHut;
+	GameObject* goAltar;
 
 	//Temporary
 	GameObject* goVillager;

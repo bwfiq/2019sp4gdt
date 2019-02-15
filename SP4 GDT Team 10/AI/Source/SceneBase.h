@@ -169,6 +169,8 @@ public:
 
 		GEO_GRID,
 
+		GEO_OFFERING,
+
 		NUM_GEOMETRY,
 	};
 	enum RENDER_PASS

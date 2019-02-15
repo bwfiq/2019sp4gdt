@@ -12,7 +12,9 @@ public:
 	float fRotation;
 	Vector3 anchorPoint;
 
-	UIComponent() : fRotation(0), bActive(true), mesh(NULL), scale(1, 1, 1) {};
+	float alpha;
+
+	UIComponent() : fRotation(0), bActive(true), mesh(NULL), scale(1, 1, 1), alpha(1.f) {};
 	~UIComponent() {};
 };
 
