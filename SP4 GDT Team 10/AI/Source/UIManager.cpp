@@ -121,8 +121,8 @@ void UIManager::rendermesh(SceneBase* scene,Mesh * mesh,bool bLightEnabled)
 	}
 	glUniform1f(scene->m_parameters[SceneBase::U_ALPHA], 1.f);
 	mesh->Render();
-	if (mesh->textureID > 0)
-	{
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
+	//if (mesh->textureID > 0)
+	//{
+	//	glBindTexture(GL_TEXTURE_2D, 0);
+	//}
 }

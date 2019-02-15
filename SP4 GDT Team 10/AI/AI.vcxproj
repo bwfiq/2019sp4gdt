@@ -188,6 +188,7 @@
     <ClCompile Include="Source\StateVillager.cpp" />
     <ClCompile Include="Source\Tree.cpp" />
     <ClCompile Include="Source\UIBase.cpp" />
+    <ClCompile Include="Source\UIComponent.cpp" />
     <ClCompile Include="Source\UIManager.cpp" />
     <ClCompile Include="Source\UIReligionBar.cpp" />
     <ClCompile Include="Source\Utility.cpp" />
@@ -237,6 +238,7 @@
     <ClInclude Include="Source\StateVillager.h" />
     <ClInclude Include="Source\Tree.h" />
     <ClInclude Include="Source\UIBase.h" />
+    <ClInclude Include="Source\UIComponent.h" />
     <ClInclude Include="Source\UIManager.h" />
     <ClInclude Include="Source\UIReligionBar.h" />
     <ClInclude Include="Source\Utility.h" />

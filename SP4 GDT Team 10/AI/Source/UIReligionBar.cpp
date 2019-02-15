@@ -52,4 +52,8 @@ void UIReligionBar::Update(float dt)
 	uiComponents_list[COMPONENT_BLUETRIANGLE].pos.Set(
 		Math::lerp(uiComponents_list[COMPONENT_BLUETRIANGLE].pos.x, fReligionValue / 100.f, Math::Min((float)dt * 10.f,1.f))
 		, 0);
+	if (this->IsMousePressed())
+	{
+		std::cout << "a" << std::endl;
+	}
 }
