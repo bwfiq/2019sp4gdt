@@ -45,6 +45,8 @@ UIReligionBar::UIReligionBar() :
 	uiComponents_list[COMPONENT_GREYBAR].pos.Set(0, 0);
 	uiComponents_list[COMPONENT_GREYBAR].anchorPoint.Set(0, 0);
 	uiComponents_list[COMPONENT_GREYBAR].scale.Set(1, 1);
+	//uiComponents_list[COMPONENT_GREYBAR].text = "test";
+	//uiComponents_list[COMPONENT_GREYBAR].textSize = scale.y;
 
 	//uiComponents_list[COMPONENT_REDBAR].pos.Set(0, 0);
 	//uiComponents_list[COMPONENT_REDBAR].anchorPoint.Set(0, 0);
