@@ -179,6 +179,9 @@
     <ClCompile Include="Source\UIMenuButton.cpp">
       <Filter>UI\UIObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Date.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Source\CalamityManager.cpp">
       <Filter>Calamities</Filter>
     </ClCompile>
@@ -342,6 +345,9 @@
     </ClInclude>
     <ClInclude Include="Source\UIMenuButton.h">
       <Filter>UI\UIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Date.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\CalamityManager.h">
       <Filter>Calamities</Filter>

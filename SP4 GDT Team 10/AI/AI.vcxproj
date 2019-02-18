@@ -161,6 +161,7 @@
     <ClCompile Include="Source\CalamityManager.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\ChiefHut.cpp" />
+    <ClCompile Include="Source\Date.cpp" />
     <ClCompile Include="Source\DepthFBO.cpp" />
     <ClCompile Include="Source\EffectBase.cpp" />
     <ClCompile Include="Source\EffectHand.cpp" />
@@ -210,6 +211,7 @@
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\ChiefHut.h" />
     <ClInclude Include="Source\ConcreteMessages.h" />
+    <ClInclude Include="Source\Date.h" />
     <ClInclude Include="Source\DepthFBO.h" />
     <ClInclude Include="Source\EffectBase.h" />
     <ClInclude Include="Source\EffectHand.h" />
