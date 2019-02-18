@@ -177,6 +177,7 @@
     <ClCompile Include="Source\Maze.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\MeshBuilder.cpp" />
+    <ClCompile Include="Source\Mountain.cpp" />
     <ClCompile Include="Source\MousePicker.cpp" />
     <ClCompile Include="Source\PostOffice.cpp" />
     <ClCompile Include="Source\ProjectileManager.cpp" />
@@ -185,7 +186,6 @@
     <ClCompile Include="Source\SceneBase.cpp" />
     <ClCompile Include="Source\SceneData.cpp" />
     <ClCompile Include="Source\SceneSP.cpp" />
-    <ClCompile Include="Source\SceneSplashscreen.cpp" />
     <ClCompile Include="Source\shader.cpp" />
     <ClCompile Include="Source\SMManager.cpp" />
     <ClCompile Include="Source\State.cpp" />
@@ -230,6 +230,7 @@
     <ClInclude Include="Source\Mesh.h" />
     <ClInclude Include="Source\MeshBuilder.h" />
     <ClInclude Include="Source\Message.h" />
+    <ClInclude Include="Source\Mountain.h" />
     <ClInclude Include="Source\MousePicker.h" />
     <ClInclude Include="Source\Node.h" />
     <ClInclude Include="Source\ObjectBase.h" />
@@ -241,7 +242,6 @@
     <ClInclude Include="Source\SceneData.h" />
     <ClInclude Include="Source\SceneBase.h" />
     <ClInclude Include="Source\SceneSP.h" />
-    <ClInclude Include="Source\SceneSplashscreen.h" />
     <ClInclude Include="Source\shader.hpp" />
     <ClInclude Include="Source\SMManager.h" />
     <ClInclude Include="Source\State.h" />
