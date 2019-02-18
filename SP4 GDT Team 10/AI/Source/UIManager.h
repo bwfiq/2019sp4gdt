@@ -1,8 +1,11 @@
 #pragma once
 #include "SingletonTemplate.h"
 #include <vector>
+#include <map>
+#include <string>
+#include "UIBase.h"
 
-class UIBase;
+//class UIBase;
 class SceneBase;
 class Mesh;
 struct Color;
@@ -16,7 +19,8 @@ public:
 	void Update(float dt);
 	void Render(SceneBase* scene);
 	
-	bool AddUI(UIBase* ui);
+	bool AddUI(const std::string& uiName, UIBase* ui);
+	UIBase* GetUI(const std::string& uiName);
 
 	//void SetScene(SceneBase* scene) { this->scene = scene; }
 private:
@@ -26,7 +30,10 @@ private:
 	void rendermesh(SceneBase* scene, Mesh* mesh, bool bLightEnabled, float alpha);
 	void rendertext(SceneBase* scene, Mesh* mesh, std::string text, Color color, bool bLightEnabled, Vector3 pos, float size, float alpha);
 
+	bool RemoveUI(const std::string& uiName);
+
 	//SceneBase* scene;
-	std::vector<UIBase*> ui_list;
+	//std::vector<UIBase*> ui_list;
+	std::map<std::string, UIBase*> ui_list;
 };
 
