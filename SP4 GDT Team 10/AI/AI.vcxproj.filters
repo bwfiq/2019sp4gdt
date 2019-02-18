@@ -54,6 +54,9 @@
     <Filter Include="Calamities\CalamityObjects">
       <UniqueIdentifier>{6b57c052-e220-4a44-9fdd-9c93a682e879}</UniqueIdentifier>
     </Filter>
+    <Filter Include="VisualEffects\Animations">
+      <UniqueIdentifier>{f1d761f6-10a9-4a2d-9840-3bbdf8b49b6b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -196,6 +199,12 @@
     </ClCompile>
     <ClCompile Include="Source\Mountain.cpp">
       <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AnimationBase.cpp">
+      <Filter>VisualEffects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AnimationJump.cpp">
+      <Filter>VisualEffects\Animations</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -363,6 +372,12 @@
     </ClInclude>
     <ClInclude Include="Source\Mountain.h">
       <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AnimationBase.h">
+      <Filter>VisualEffects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AnimationJump.h">
+      <Filter>VisualEffects\Animations</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

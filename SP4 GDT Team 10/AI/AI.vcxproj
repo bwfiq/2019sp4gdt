@@ -153,6 +153,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\Altar.cpp" />
+    <ClCompile Include="Source\AnimationBase.cpp" />
+    <ClCompile Include="Source\AnimationJump.cpp" />
     <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="Source\Building.cpp" />
     <ClCompile Include="Source\Bush.cpp" />
@@ -202,6 +204,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Altar.h" />
+    <ClInclude Include="Source\AnimationBase.h" />
+    <ClInclude Include="Source\AnimationJump.h" />
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\Building.h" />
     <ClInclude Include="Source\Bush.h" />

@@ -8,6 +8,7 @@
 #include <stack>
 #include "Grid.h"
 #include "Graph.h"
+#include "AnimationBase.h"
 
 struct GameObject : public ObjectBase
 {
@@ -66,8 +67,12 @@ struct GameObject : public ObjectBase
 	State *m_currState;
 	State *m_nextState;
 
+	AnimationBase* animation;
+
 	virtual bool Handle(Message* msg);
 	virtual void TheFunction(GameObject* go);
+	virtual void GiveAnimation(AnimationBase* animation);
+	virtual void Update(float dt);
 
 	int currFrame; //For rendering model animation probs testing
 

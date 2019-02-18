@@ -18,7 +18,8 @@ GameObject::GameObject(GAMEOBJECT_TYPE typeValue)
 	timer(0),
 	currFrame(0),
 	iGridX(1),
-	iGridZ(1)
+	iGridZ(1),
+	animation(NULL)
 	//NTarget(NULL),
 	//steps(0),
 	//countDown(0),
@@ -70,4 +71,28 @@ bool GameObject::Handle(Message* msg)
 void GameObject::TheFunction(GameObject * go)
 {
 	std::cout << "GameObject Function" << std::endl;
+}
+
+void GameObject::GiveAnimation(AnimationBase * animation)
+{
+	if (this->animation != NULL)
+	{
+		delete this->animation;
+		this->animation = NULL;
+	}
+	this->animation = animation;
+}
+
+void GameObject::Update(float dt)
+{
+	//Something
+	if (animation != NULL)
+	{
+		animation->Update(dt);
+		if (!animation->active)
+		{
+			delete animation;
+			animation = NULL;
+		}
+	}
 }

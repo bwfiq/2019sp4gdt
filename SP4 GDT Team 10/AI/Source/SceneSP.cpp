@@ -30,6 +30,8 @@
 #include "Altar.h"
 #include "Mountain.h"
 
+#include "AnimationJump.h"
+
 #define SEA_WIDTH	100.f
 #define SEA_HEIGHT	100.f
 
@@ -415,6 +417,7 @@ void SceneSP::Init()
 	goVillager->iGridX = 1;
 	goVillager->iGridZ = 1;
 	goVillager->pos = GetGridPos(GridPt(5, 5));
+	goVillager->GiveAnimation(new AnimationJump());
 
 	goChiefHut = FetchGO(GameObject::GO_CHIEFHUT);
 	goChiefHut->pos = GetGridPos(GridPt(8, 7));
@@ -562,7 +565,7 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			switch (type)
 			{
 			case GameObject::GO_VILLAGER:
-				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * .7f, .5f, SceneData::GetInstance()->GetGridSize() * .7f);
 				break;
 			case GameObject::GO_BUSH:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 0.75f, 1.f, SceneData::GetInstance()->GetGridSize() * 0.75f);
@@ -2379,6 +2382,7 @@ void SceneSP::Update(double dt)
 					{
 						selected = go;
 						objectFound = true;
+						go->GiveAnimation(new AnimationJump());
 						break;
 					}
 					else if (selected != go)
@@ -2787,6 +2791,7 @@ void SceneSP::Update(double dt)
 		if (!go->active)
 			continue;
 		go->currentPt = GetPoint(go->pos);
+		go->Update(dt * m_speed);
 		// updating GameObjects
 		switch (go->type)
 		{
@@ -2884,12 +2889,15 @@ void SceneSP::Update(double dt)
 
 void SceneSP::RenderGO(GameObject *go)
 {
+	modelStack.PushMatrix();
+	//modelStack.MultMatrix(go->animation.GetCurrentTransformation());
 	switch (go->type)
 	{
 	case GameObject::GO_VILLAGER:
 	{
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+
 		//Offset to center to middle of used grids
 		if (go->iGridX % 2 == 0)
 		{
@@ -2899,9 +2907,14 @@ void SceneSP::RenderGO(GameObject *go)
 		{
 			modelStack.Translate(0, 0, SceneData::GetInstance()->GetGridSize() * 0.5f);
 		}
-		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+
+		if(go->animation != NULL)
+			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
+
 		float angle = Math::RadianToDegree(atan2(-go->direction.z, go->direction.x));
 		modelStack.Rotate(angle, 0, 1, 0);
+
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		//std::cout << angle << std::endl;
 		//RenderMesh(meshList[GEO_VILLAGER], false, 1.f);
 		//RenderMesh(meshList[GEO_TREE], false, 1.f);
@@ -2917,6 +2930,8 @@ void SceneSP::RenderGO(GameObject *go)
 	{
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		if (go->animation != NULL)
+			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		//Current state of the building
 		switch (static_cast<Building*>(go)->eCurrState)
@@ -2940,6 +2955,8 @@ void SceneSP::RenderGO(GameObject *go)
 	{
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		if (go->animation != NULL)
+			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_BUILDING], bGodlights, 1.f);
 		modelStack.PopMatrix();
@@ -2949,6 +2966,8 @@ void SceneSP::RenderGO(GameObject *go)
 	{
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		if (go->animation != NULL)
+			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_ALTAR], bGodlights, 1.f);
 		modelStack.PopMatrix();
@@ -2958,6 +2977,8 @@ void SceneSP::RenderGO(GameObject *go)
 	{
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		if (go->animation != NULL)
+			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_MOUNTAIN], bGodlights, 1.f);
 		modelStack.PopMatrix();
@@ -2967,6 +2988,8 @@ void SceneSP::RenderGO(GameObject *go)
 	{
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		if (go->animation != NULL)
+			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_BUSH], bGodlights, 1.f);
 		if (static_cast<Bush*>(go)->eCurrState == Bush::LUSH)
@@ -2987,6 +3010,8 @@ void SceneSP::RenderGO(GameObject *go)
 		{
 			modelStack.Translate(0, 0, SceneData::GetInstance()->GetGridSize() * 0.5f);
 		}
+		if (go->animation != NULL)
+			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		Tree* goTree = static_cast<Tree*>(go);
 		switch (goTree->eCurrState)
@@ -3007,6 +3032,7 @@ void SceneSP::RenderGO(GameObject *go)
 	default:
 		break;
 	}
+	modelStack.PopMatrix();
 }
 void SceneSP::RenderPassGPass()
 {
