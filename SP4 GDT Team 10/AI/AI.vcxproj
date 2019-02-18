@@ -192,6 +192,7 @@
     <ClCompile Include="Source\StateMachine.cpp" />
     <ClCompile Include="Source\StateVillager.cpp" />
     <ClCompile Include="Source\Tree.cpp" />
+    <ClCompile Include="Source\UIAltarPopup.cpp" />
     <ClCompile Include="Source\UIBase.cpp" />
     <ClCompile Include="Source\UIManager.cpp" />
     <ClCompile Include="Source\UIMessagePopup.cpp" />
@@ -248,6 +249,7 @@
     <ClInclude Include="Source\StateMachine.h" />
     <ClInclude Include="Source\StateVillager.h" />
     <ClInclude Include="Source\Tree.h" />
+    <ClInclude Include="Source\UIAltarPopup.h" />
     <ClInclude Include="Source\UIBase.h" />
     <ClInclude Include="Source\UIManager.h" />
     <ClInclude Include="Source\UIMessagePopup.h" />

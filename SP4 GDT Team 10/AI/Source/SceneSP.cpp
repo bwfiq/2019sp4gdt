@@ -8,9 +8,12 @@
 #include "PostOffice.h"
 #include "ConcreteMessages.h"
 #include "ProjectileManager.h"
+
 #include "UIManager.h"
 #include "UIReligionBar.h"
 #include "UIMenuButton.h"
+#include "UIAltarPopup.h"
+
 #include "EffectManager.h"
 #include "EffectTrail.h"
 #include "EffectHand.h"
@@ -2088,6 +2091,22 @@ void SceneSP::AStarMultiGrid(GameObject * go, GridPt target)
 //	return;
 //}
 
+void SceneSP::UpdateSelectedUI()
+{
+	for (auto UI : m_selectedUi)
+	{
+		UI->bIsDone = true;
+	}
+	m_selectedUi.clear();
+	if (selected == NULL) return;
+	if (selected->type == GameObject::GO_ALTAR)
+	{
+		UIBase* newUI = new UIAltarPopup();
+		UIManager::GetInstance()->AddUI("uiAltarPopup", newUI);
+		m_selectedUi.push_back(newUI);
+	}
+}
+
 void SceneSP::Reset()
 {
 	//Cleanup GameObjects
@@ -2163,6 +2182,8 @@ void SceneSP::Update(double dt)
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
+
+	GameObject* prevSelect = this->selected;
 
 	SD->SetWorldHeight(m_worldHeight);
 	SD->SetWorldWidth(m_worldWidth);
@@ -2885,6 +2906,11 @@ void SceneSP::Update(double dt)
 		{
 			SMManager::GetInstance()->GetSM(go->smID)->Update(dt * m_speed, go);
 		}
+	}
+
+	if (prevSelect != selected)
+	{
+		UpdateSelectedUI();
 	}
 }
 
