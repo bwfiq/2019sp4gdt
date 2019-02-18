@@ -194,6 +194,9 @@
     <ClCompile Include="Source\UIMessagePopup.cpp">
       <Filter>UI\UIObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Source\UIAltarPopup.cpp">
+      <Filter>UI\UIObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -356,6 +359,9 @@
       <Filter>Calamities\CalamityObjects</Filter>
     </ClInclude>
     <ClInclude Include="Source\UIMessagePopup.h">
+      <Filter>UI\UIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UIAltarPopup.h">
       <Filter>UI\UIObjects</Filter>
     </ClInclude>
   </ItemGroup>

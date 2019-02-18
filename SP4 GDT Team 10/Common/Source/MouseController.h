@@ -42,6 +42,9 @@ public:
 
 	inline bool GetKeepMouseCentered(){ return keepMouseCentered; };
 	inline void SetKeepMouseCentered(bool _value){ keepMouseCentered = _value; };
+	inline bool IsMouseOnUI() { return this->bMouseOnUI; };
+	inline void SetMouseOnUI(bool val) { this->bMouseOnUI = val; };
+
 
 private:
 	MouseController();
@@ -52,6 +55,7 @@ private:
 	bool prevBtnStatus[NUM_MB];
 	double xoffset, yoffset;
 	bool keepMouseCentered;
+	bool bMouseOnUI;
 };
 
 #endif // MOUSE_CONTROLLER_H

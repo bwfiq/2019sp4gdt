@@ -11,6 +11,8 @@
 
 #include "Grid.h"
 
+class UIBase;
+
 class SceneSP : public SceneBase
 {
 public:
@@ -51,10 +53,12 @@ public:
 	void ProgressMonth();
 	//void DFSOnce(GameObject* go);
 
+	void UpdateSelectedUI();
+
 	void Reset();
 
 protected:
-
+	std::vector<UIBase*> m_selectedUi;
 	std::vector<GameObject *> m_goList;
 	float m_speed;
 	float m_worldWidth;

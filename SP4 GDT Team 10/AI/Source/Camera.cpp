@@ -115,7 +115,12 @@ void Camera::Update(double dt)
 	switch (this->shakeType) 
 	{
 	case SHAKE_EARTHQUAKE:
-		position += Vector3(Math::RandFloatMinMax(-fShakeIntensity, fShakeIntensity), 0, Math::RandFloatMinMax(-fShakeIntensity, fShakeIntensity));
+	{
+		Vector3 randShake(Math::RandFloatMinMax(-fShakeIntensity, fShakeIntensity), 0, Math::RandFloatMinMax(-fShakeIntensity, fShakeIntensity));
+		position += randShake;
+		target += randShake * 0.5f;
+	}
+		
 		break;
 	case SHAKE_NONE:
 		break;

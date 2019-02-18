@@ -8,7 +8,8 @@ UIBase::UIBase() :
 	bActive(true),
 	fRotation(0),
 	scale(1, 1, 1),
-	bIsDone(false)
+	bIsDone(false),
+	bIsMouseHovered(false)
 {
 }
 

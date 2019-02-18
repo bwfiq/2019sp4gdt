@@ -39,6 +39,7 @@ public:
 	bool bActive;
 	bool bLightEnabled;
 	bool bIsDone;
+	bool bIsMouseHovered;
 
 	virtual void Update(float dt) = 0;
 

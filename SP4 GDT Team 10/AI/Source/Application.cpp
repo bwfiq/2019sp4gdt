@@ -79,6 +79,14 @@ void Application::MouseScrollCallbacks(GLFWwindow* window, double xoffset, doubl
 	MouseController::GetInstance()->UpdateMouseScroll(xoffset, yoffset);
 }
 
+void Application::SetMouseVisiblity(bool isVisible)
+{
+	if(isVisible)
+		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	else
+		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+}
+
 void Application::UpdateInput()
 {
 	double mouse_currX, mouse_currY;
