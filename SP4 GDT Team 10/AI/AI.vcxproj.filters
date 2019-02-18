@@ -119,9 +119,6 @@
     <ClCompile Include="Source\EffectTrail.cpp">
       <Filter>VisualEffects\EffectObjects</Filter>
     </ClCompile>
-    <ClCompile Include="Source\SceneSplashscreen.cpp">
-      <Filter>Scenes</Filter>
-    </ClCompile>
     <ClCompile Include="Source\DepthFBO.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
@@ -249,9 +246,6 @@
     </ClInclude>
     <ClInclude Include="Source\EffectTrail.h">
       <Filter>VisualEffects\EffectObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SceneSplashscreen.h">
-      <Filter>Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Source\Vertex.h">
       <Filter>Utilities</Filter>

@@ -72,7 +72,7 @@ void StateIdle::Update(double dt, GameObject* m_go)
 	goVillager->fIdleTimer -= dt;
 	if (goVillager->fIdleTimer <= 0.f)
 	{
-		goVillager->fIdleTimer = Math::RandFloatMinMax(1.f, 7.f);
+		goVillager->fIdleTimer = Math::RandFloatMinMax(3.f, 10.f);
 		MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::RANDOM_TARGET, 2 * 2 + 2 * 2);
 		PostOffice::GetInstance()->Send("Scene", messagewru);
 	}

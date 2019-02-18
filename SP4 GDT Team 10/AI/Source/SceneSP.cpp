@@ -410,7 +410,6 @@ void SceneSP::Init()
 	goVillager->iGridX = 1;
 	goVillager->iGridZ = 1;
 	goVillager->pos = GetGridPos(GridPt(5, 5));
-	goVillager->pos.y = goVillager->scale.y * 0.5f;
 
 	goChiefHut = FetchGO(GameObject::GO_CHIEFHUT);
 	goChiefHut->pos = GetGridPos(GridPt(8, 7));
@@ -538,7 +537,7 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			switch (type)
 			{
 			case GameObject::GO_VILLAGER:
-				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 0.5f, 0.25f, SceneData::GetInstance()->GetGridSize() * 0.5f);
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
 				break;
 			case GameObject::GO_BUSH:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 0.75f, 1.f, SceneData::GetInstance()->GetGridSize() * 0.75f);
@@ -2736,7 +2735,24 @@ void SceneSP::Update(double dt)
 		case GameObject::GO_BUSH:
 			break;
 		case GameObject::GO_ALTAR:
+		{
+			Altar* goAltar = static_cast<Altar*>(go);
+			static const float MAX_FOOD_TIMER = 1.f; //Rate for food to be decreased
+			static float fFoodtimer = MAX_FOOD_TIMER;
+			if (goAltar->iFoodOffered > 0)
+			{
+				if (fFoodtimer <= 0.f)
+				{
+					goAltar->iFoodOffered = Math::Max(0, goAltar->iFoodOffered - 1);
+					fFoodtimer = MAX_FOOD_TIMER;
+				}
+				else
+				{
+					fFoodtimer -= (float)dt;
+				}
+			}
 			SD->SetReligionValue(Math::Min(100.f, (float)(static_cast<Altar*>(go)->iFoodOffered)));
+		}
 			break;
 		default:
 			break;
@@ -2808,8 +2824,8 @@ void SceneSP::RenderGO(GameObject *go)
 		//RenderMesh(meshList[GEO_BERRIES], false, 1.f);
 		//RenderMesh(meshList[GEO_BUSH], false, 1.f);
 		//RenderMesh(meshList[GEO_VILLAGER], bGodlights, 1.f);
-		modelStack.Rotate(-90, 1, 0, 0);
-		RenderMesh(meshList[GEO_RED_CASTER], bGodlights, 1.f);
+		//modelStack.Rotate(-90, 1, 0, 0);
+		RenderMesh(meshList[GEO_VILLAGER], bGodlights, 1.f);
 		modelStack.PopMatrix();
 	}
 	break;
