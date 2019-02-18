@@ -390,6 +390,7 @@ void SceneSP::Init()
 	m_grid.resize(SceneData::GetInstance()->GetNoGrid() * SceneData::GetInstance()->GetNoGrid());
 	std::fill(m_grid.begin(), m_grid.end(), Grid::TILE_EMPTY);
 	bShowGrid = false;
+	bGodlights = true;
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
@@ -538,9 +539,6 @@ bool SceneSP::Handle(Message* message)
 	return false;
 }
 
-
-
-
 GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 {
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
@@ -623,7 +621,6 @@ struct Compare3
 		return pair1.second.second < pair2.second.second;
 	}
 };
-
 
 void SceneSP::AStarSingleGrid(GameObject * go, GridPt target)
 {
@@ -2088,7 +2085,7 @@ void SceneSP::Reset()
 
 	m_speed = 1.f;
 
-	//game_state = NEUTRAL;
+	ChangeState(G_MAINMENU);
 }
 
 void SceneSP::ChangeTimeOfDay()
@@ -2446,18 +2443,26 @@ void SceneSP::Update(double dt)
 	}
 
 	// day/night cycle
-	fTimeOfDay += dt * m_speed ;
+	fTimeOfDay += dt * m_speed;
 	if (fTimeOfDay >= 24.f)
-	{
 		fTimeOfDay = 0;
-	}
-	else if (fTimeOfDay >= 8.f && fTimeOfDay <= 20.f && !bDay) // 0800 to 2000 day
-	{
+	else if (fTimeOfDay >= 6.f && fTimeOfDay <= 18.f && !bDay) // 0600 to 1800 day
 		ChangeTimeOfDay();
-	}
-	else if ((fTimeOfDay <= 8.f || fTimeOfDay >= 20.f) && bDay) // 2000 to 0800 night
-	{
+	else if ((fTimeOfDay <= 6.f || fTimeOfDay >= 18.f) && bDay) // 1800 to 0600 night
 		ChangeTimeOfDay();
+	float SHADOW_LENGTH = 1.f;
+	if (bDay)
+	{
+		lights[0].position.x = (12.f - fTimeOfDay) * SHADOW_LENGTH;
+		lights[0].position.y = (-0.5f * pow(lights[0].position.x,2)) + 10;
+	}
+	else if(fTimeOfDay >= 18.f)
+	{
+		//lights[0].position.x = (fTimeOfDay - 24.f) * SHADOW_LENGTH;
+	}
+	else if(fTimeOfDay <= 6.f)
+	{
+		//lights[0].position.x = fTimeOfDay * SHADOW_LENGTH;
 	}
 	// month
 	if (SD->GetCurrDay() >= 31)
@@ -2483,6 +2488,7 @@ void SceneSP::Update(double dt)
 		bGoalAchieved = SD->GetReligionValue() >= SD->GetMaxReligionValue();
 		break;
 	}
+
 
 	ProjectileManager::GetInstance()->Update(dt * m_speed);
 
@@ -3016,7 +3022,7 @@ void SceneSP::RenderPassMain()
 
 	modelStack.PushMatrix();
 	modelStack.Translate(lights[0].position.x, lights[0].position.y, lights[0].position.z);
-	RenderMesh(meshList[GEO_BALL], false);
+	//RenderMesh(meshList[GEO_BALL], false);
 	modelStack.PopMatrix();
 
 	//modelStack.PushMatrix();
@@ -3029,7 +3035,7 @@ void SceneSP::RenderPassMain()
 
 	modelStack.PushMatrix();
 	//modelStack.Translate(0, 0.5f + cosf(asd) * 0.15f, 0);
-	modelStack.Translate(0, -1.f, 0);
+	modelStack.Translate(0, -0.5f, 0);
 	//modelStack.Translate(0, 0, 0);
 	//modelStack.Translate(0, -0.5f, 0);
 	//modelStack.Rotate(-90, 1, 0, 0);
@@ -3059,7 +3065,7 @@ void SceneSP::RenderPassMain()
 	if (bShowGrid)
 	{
 		modelStack.PushMatrix();
-		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), 0.001f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
+		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), 0.5f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
 		modelStack.Scale(1, 1, 1);
 		glLineWidth(2.f);
 		RenderMesh(meshList[GEO_GRID], false);
@@ -3067,7 +3073,7 @@ void SceneSP::RenderPassMain()
 		modelStack.PopMatrix();
 
 		modelStack.PushMatrix();
-		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), 0.001f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
+		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), 0.5f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
 		for (int i = 0; i < SD->GetNoGrid() * SD->GetNoGrid(); ++i)
 		{
 			std::pair<int, int> pt = GetPoint(i);
@@ -3093,7 +3099,7 @@ void SceneSP::RenderPassMain()
 		{
 			Vector3 gridPos = GetGridPos(selectedGrid);
 			modelStack.PushMatrix();
-			modelStack.Translate(gridPos.x, gridPos.y + 0.1f, gridPos.z);
+			modelStack.Translate(gridPos.x, gridPos.y + 0.5f, gridPos.z);
 			modelStack.Rotate(-90, 1, 0, 0);
 			modelStack.Scale(SD->GetGridSize(), SD->GetGridSize(), SD->GetGridSize());
 			RenderMesh(meshList[GEO_YELLOWQUAD], false, 0.4f);
