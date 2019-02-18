@@ -90,6 +90,16 @@ void SceneData::SetReligionValue(float religionValue)
 	this->fReligionValue = religionValue;
 }
 
+float SceneData::GetMaxReligionValue()
+{
+	return this->fMaxReligionValue;
+}
+
+void SceneData::SetMaxReligionValue(float maxreligionValue)
+{
+	this->fMaxReligionValue = maxreligionValue;
+}
+
 void SceneData::SetFood(int food)
 {
 	this->iFood = food;
@@ -137,6 +147,26 @@ void SceneData::SetPopulationLimit(int populationLimit)
 int SceneData::GetPopulationLimit()
 {
 	return iPopulationLimit;
+}
+
+void SceneData::SetCurrMonth(int month)
+{
+	this->iCurrMonth = month;
+}
+
+int SceneData::GetCurrMonth()
+{
+	return iCurrMonth;
+}
+
+void SceneData::SetCurrDay(int day)
+{
+	this->iCurrDay = day;
+}
+
+int SceneData::GetCurrDay()
+{
+	return iCurrDay;
 }
 
 void SceneData::SetMousePos_World(Vector3 mousePos_world)

@@ -108,7 +108,7 @@ void UIReligionBar::Update(float dt)
 	//		, 0);
 
 	uiComponents_list[COMPONENT_THEBAR].scale.Set(
-		Math::lerp(uiComponents_list[COMPONENT_THEBAR].scale.x, fReligionValue / 100.f
+		Math::lerp(uiComponents_list[COMPONENT_THEBAR].scale.x, fReligionValue / SceneData::GetInstance()->GetMaxReligionValue()
 			, Math::Min((float)dt * 10.f, 1.f))
 			, 1, 1);
 
