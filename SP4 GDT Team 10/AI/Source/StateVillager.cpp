@@ -190,7 +190,10 @@ void StatePath::Update(double dt, GameObject * m_go)
 					{
 						currentAngle = -currentAngle;
 					}
-					float deltaAngle = acos(m_go->direction.Normalized().Dot(direction.Normalized()));
+					Vector3 goDirNormalised = m_go->direction.Normalized();
+					Vector3 dirNormalised = direction.Normalized();
+					float dotProduct = goDirNormalised.Dot(dirNormalised);
+					float deltaAngle = acos(Math::Clamp(dotProduct, -0.999999f, 0.999999f));
 					if (m_go->direction.Cross(direction).y < 0)
 					{
 						deltaAngle = -deltaAngle;
