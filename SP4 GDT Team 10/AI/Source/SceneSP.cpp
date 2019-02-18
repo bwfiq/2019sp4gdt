@@ -2494,7 +2494,7 @@ void SceneSP::Update(double dt)
 	if (bDay)
 	{
 		lights[0].position.x = (12.f - fTimeOfDay) * SHADOW_LENGTH;
-		lights[0].position.y = (-0.5f * pow(lights[0].position.x,2)) + 10;
+		lights[0].position.y = (-0.25f * pow(lights[0].position.x,2)) + 9;
 	}
 	else if(fTimeOfDay >= 18.f)
 	{
@@ -3148,7 +3148,7 @@ void SceneSP::RenderPassMain()
 
 	modelStack.PushMatrix();
 	//modelStack.Translate(0, 0.5f + cosf(asd) * 0.15f, 0);
-	modelStack.Translate(0, -0.5f, 0);
+	modelStack.Translate(0, -0.75f, 0);
 	//modelStack.Translate(0, 0, 0);
 	//modelStack.Translate(0, -0.5f, 0);
 	//modelStack.Rotate(-90, 1, 0, 0);
@@ -3158,7 +3158,7 @@ void SceneSP::RenderPassMain()
 	modelStack.PopMatrix();
 
 	modelStack.PushMatrix();
-	modelStack.Translate(fSeaDeltaX, fSeaDeltaY - 0.51f, fSeaDeltaZ);
+	modelStack.Translate(fSeaDeltaX, fSeaDeltaY +(-0.75f+0.49f), fSeaDeltaZ);
 	modelStack.Rotate(-90, 1, 0, 0);
 	modelStack.Scale(SEA_WIDTH, SEA_HEIGHT, SEA_HEIGHT);
 	RenderMesh(meshList[GEO_SEA], bGodlights, 0.75f);
