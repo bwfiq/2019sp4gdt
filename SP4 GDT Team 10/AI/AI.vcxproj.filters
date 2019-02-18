@@ -125,9 +125,6 @@
     <ClCompile Include="Source\EffectTrail.cpp">
       <Filter>VisualEffects\EffectObjects</Filter>
     </ClCompile>
-    <ClCompile Include="Source\SceneSplashscreen.cpp">
-      <Filter>Scenes</Filter>
-    </ClCompile>
     <ClCompile Include="Source\DepthFBO.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
@@ -182,6 +179,9 @@
     <ClCompile Include="Source\UIMenuButton.cpp">
       <Filter>UI\UIObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Date.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="Source\CalamityManager.cpp">
       <Filter>Calamities</Filter>
     </ClCompile>
@@ -196,6 +196,9 @@
     </ClCompile>
     <ClCompile Include="Source\UIAltarPopup.cpp">
       <Filter>UI\UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mountain.cpp">
+      <Filter>GameObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -270,9 +273,6 @@
     </ClInclude>
     <ClInclude Include="Source\EffectTrail.h">
       <Filter>VisualEffects\EffectObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\SceneSplashscreen.h">
-      <Filter>Scenes</Filter>
     </ClInclude>
     <ClInclude Include="Source\Vertex.h">
       <Filter>Utilities</Filter>
@@ -349,6 +349,9 @@
     <ClInclude Include="Source\UIMenuButton.h">
       <Filter>UI\UIObjects</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Date.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Source\CalamityManager.h">
       <Filter>Calamities</Filter>
     </ClInclude>
@@ -363,6 +366,9 @@
     </ClInclude>
     <ClInclude Include="Source\UIAltarPopup.h">
       <Filter>UI\UIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mountain.h">
+      <Filter>GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

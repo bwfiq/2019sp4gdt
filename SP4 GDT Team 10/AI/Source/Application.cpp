@@ -12,7 +12,6 @@
 #include <stdlib.h>
 
 #include "SceneSP.h"
-#include "SceneSplashscreen.h"
 
 #include "MouseController.h"
 #include "KeyboardController.h"
@@ -177,7 +176,6 @@ void Application::Init()
 
 	// Create the Game States
 	SceneManager::GetInstance()->AddScene("GameState", new SceneSP());
-	SceneManager::GetInstance()->AddScene("SplashScreen", new SceneSplashscreen());
 
 	// Set the active scene
 	SceneManager::GetInstance()->SetActiveScene("GameState");

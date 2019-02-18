@@ -227,7 +227,7 @@ void SceneBase::Init()
 	meshList[GEO_SEA]->textureArray[0] = LoadTGA("Image//sea.tga");
 	//meshList[GEO_GRASS] = MeshBuilder::GenerateCube("cube", Color(1, 1, 1), 1.f);
 	meshList[GEO_ISLAND] = MeshBuilder::GenerateOBJ("island", "Obj//island.obj");
-	meshList[GEO_ISLAND]->textureArray[0] = LoadTGA("Image//grass.tga");
+	meshList[GEO_ISLAND]->textureArray[0] = LoadTGA("Image//island.tga");
 	meshList[GEO_GRASS] = MeshBuilder::GenerateOBJ("grass", "Obj//Ground.obj");
 	meshList[GEO_GRASS]->textureArray[0] = LoadTGA("Image//grass.tga");
 	meshList[GEO_TREE] = MeshBuilder::GenerateOBJ("tree", "Obj//Tree.obj");
@@ -238,11 +238,17 @@ void SceneBase::Init()
 	meshList[GEO_BUSH]->textureArray[0] = LoadTGA("Image//bushes_and_berries_texture.tga");
 	meshList[GEO_BERRIES] = MeshBuilder::GenerateOBJ("berry", "Obj//berries.obj");
 	meshList[GEO_BERRIES]->textureArray[0] = LoadTGA("Image//bushes_and_berries_texture.tga");
+	meshList[GEO_MOUNTAIN] = MeshBuilder::GenerateOBJ("mountain", "Obj//mountain.obj");
+	meshList[GEO_MOUNTAIN]->textureArray[0] = LoadTGA("Image//mountain.tga");
 
-	meshList[GEO_VILLAGER] = MeshBuilder::GenerateCube("villager", Color(1, 0, 0), 1.f);
+	meshList[GEO_VILLAGER] = MeshBuilder::GenerateOBJ("villager", "Obj//villager.obj");
+	meshList[GEO_VILLAGER]->textureArray[0] = LoadTGA("Image//villager.tga");
 	meshList[GEO_BUILDING] = MeshBuilder::GenerateOBJ("building", "Obj//house.obj");
 	meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//tree.tga");
 	meshList[GEO_BROKEN_BUILDING] = MeshBuilder::GenerateCube("broken_building", Color(1, 0, 1), 1.f);
+
+	meshList[GEO_ALTAR] = MeshBuilder::GenerateOBJ("altar", "Obj//altar.obj");
+	meshList[GEO_ALTAR]->textureArray[0] = LoadTGA("Image//Altar.tga");
 
 	meshList[GEO_GRID] = MeshBuilder::GenerateGrid("grid", Color(1, 0, 0), SceneData::GetInstance()->GetNoGrid(), SceneData::GetInstance()->GetNoGrid(), SceneData::GetInstance()->GetGridSize());
 

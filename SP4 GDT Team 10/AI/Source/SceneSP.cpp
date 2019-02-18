@@ -31,6 +31,7 @@
 #include "Bush.h"
 #include "Tree.h"
 #include "Altar.h"
+#include "Mountain.h"
 
 #define SEA_WIDTH	100.f
 #define SEA_HEIGHT	100.f
@@ -393,6 +394,7 @@ void SceneSP::Init()
 	m_grid.resize(SceneData::GetInstance()->GetNoGrid() * SceneData::GetInstance()->GetNoGrid());
 	std::fill(m_grid.begin(), m_grid.end(), Grid::TILE_EMPTY);
 	bShowGrid = false;
+	bGodlights = true;
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
@@ -417,7 +419,6 @@ void SceneSP::Init()
 	goVillager->iGridX = 1;
 	goVillager->iGridZ = 1;
 	goVillager->pos = GetGridPos(GridPt(5, 5));
-	goVillager->pos.y = goVillager->scale.y * 0.5f;
 
 	goChiefHut = FetchGO(GameObject::GO_CHIEFHUT);
 	goChiefHut->pos = GetGridPos(GridPt(8, 7));
@@ -458,6 +459,15 @@ void SceneSP::Init()
 	tGo->eCurrState = Tree::FULL;
 	tGo->fTimer = 0;
 	tGo->iWoodAmount = 10;
+
+	goMountain = FetchGO(GameObject::GO_MOUNTAIN);
+	goMountain->pos = GetGridPos(GridPt(3, 8));
+	goMountain->pos.y = goMountain->scale.y * 0.5f;
+	goMountain->iGridX = 1;
+	goMountain->iGridZ = 1;
+	Mountain* mGo = static_cast<Mountain*>(goMountain);
+	mGo->iStoneAmount = 11;
+	mGo->iStoneGain = 5;
 
 	SceneData* SD = SceneData::GetInstance();
 	SD->SetFood(0);
@@ -541,9 +551,6 @@ bool SceneSP::Handle(Message* message)
 	return false;
 }
 
-
-
-
 GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 {
 	for (std::vector<GameObject *>::iterator it = m_goList.begin(); it != m_goList.end(); ++it)
@@ -556,7 +563,7 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			switch (type)
 			{
 			case GameObject::GO_VILLAGER:
-				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 0.5f, 0.25f, SceneData::GetInstance()->GetGridSize() * 0.5f);
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
 				break;
 			case GameObject::GO_BUSH:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 0.75f, 1.f, SceneData::GetInstance()->GetGridSize() * 0.75f);
@@ -568,7 +575,10 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.2f, SceneData::GetInstance()->GetGridSize() * 1.f);
 				break;
 			case GameObject::GO_ALTAR:
-				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 2.5f, SceneData::GetInstance()->GetGridSize() * 1.f);
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
+				break;
+			case GameObject::GO_MOUNTAIN:
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
 				break;
 			}
 
@@ -601,6 +611,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 		case GameObject::GO_TREE:
 			go = new Tree(type);
 			break;
+		case GameObject::GO_MOUNTAIN:
+			go = new Mountain(type);
+			break;
 		default:
 			go = new GameObject(type);
 			break;
@@ -626,7 +639,6 @@ struct Compare3
 		return pair1.second.second < pair2.second.second;
 	}
 };
-
 
 void SceneSP::AStarSingleGrid(GameObject * go, GridPt target)
 {
@@ -2107,7 +2119,7 @@ void SceneSP::Reset()
 
 	m_speed = 1.f;
 
-	//game_state = NEUTRAL;
+	ChangeState(G_MAINMENU);
 }
 
 void SceneSP::ChangeTimeOfDay()
@@ -2467,18 +2479,26 @@ void SceneSP::Update(double dt)
 	}
 
 	// day/night cycle
-	fTimeOfDay += dt * m_speed ;
+	fTimeOfDay += dt * m_speed;
 	if (fTimeOfDay >= 24.f)
-	{
 		fTimeOfDay = 0;
-	}
-	else if (fTimeOfDay >= 8.f && fTimeOfDay <= 20.f && !bDay) // 0800 to 2000 day
-	{
+	else if (fTimeOfDay >= 6.f && fTimeOfDay <= 18.f && !bDay) // 0600 to 1800 day
 		ChangeTimeOfDay();
-	}
-	else if ((fTimeOfDay <= 8.f || fTimeOfDay >= 20.f) && bDay) // 2000 to 0800 night
-	{
+	else if ((fTimeOfDay <= 6.f || fTimeOfDay >= 18.f) && bDay) // 1800 to 0600 night
 		ChangeTimeOfDay();
+	float SHADOW_LENGTH = 1.f;
+	if (bDay)
+	{
+		lights[0].position.x = (12.f - fTimeOfDay) * SHADOW_LENGTH;
+		lights[0].position.y = (-0.5f * pow(lights[0].position.x,2)) + 10;
+	}
+	else if(fTimeOfDay >= 18.f)
+	{
+		//lights[0].position.x = (fTimeOfDay - 24.f) * SHADOW_LENGTH;
+	}
+	else if(fTimeOfDay <= 6.f)
+	{
+		//lights[0].position.x = fTimeOfDay * SHADOW_LENGTH;
 	}
 	// month
 	if (SD->GetCurrDay() >= 31)
@@ -2504,6 +2524,7 @@ void SceneSP::Update(double dt)
 		bGoalAchieved = SD->GetReligionValue() >= SD->GetMaxReligionValue();
 		break;
 	}
+
 
 	ProjectileManager::GetInstance()->Update(dt * m_speed);
 
@@ -2804,8 +2825,45 @@ void SceneSP::Update(double dt)
 			break;
 		case GameObject::GO_BUSH:
 			break;
+		case GameObject::GO_MOUNTAIN:
+		{
+			Mountain* mountainGo = static_cast<Mountain*>(go);
+			if (mountainGo->iStoneAmount > 20)
+			{
+				mountainGo->scale.y = 2;
+				mountainGo->pos.y = mountainGo->scale.y * 0.5f;
+			}
+			else if (mountainGo->iStoneAmount >= 10)
+			{
+				mountainGo->scale.y = 1.5f;
+				mountainGo->pos.y = mountainGo->scale.y * 0.5f;
+			}
+			else
+			{
+				mountainGo->scale.y = 1.f;
+				mountainGo->pos.y = mountainGo->scale.y * 0.5f;
+			}
+		}
+		break;
 		case GameObject::GO_ALTAR:
+		{
+			Altar* goAltar = static_cast<Altar*>(go);
+			static const float MAX_FOOD_TIMER = 1.f; //Rate for food to be decreased
+			static float fFoodtimer = MAX_FOOD_TIMER;
+			if (goAltar->iFoodOffered > 0)
+			{
+				if (fFoodtimer <= 0.f)
+				{
+					goAltar->iFoodOffered = Math::Max(0, goAltar->iFoodOffered - 1);
+					fFoodtimer = MAX_FOOD_TIMER;
+				}
+				else
+				{
+					fFoodtimer -= (float)dt;
+				}
+			}
 			SD->SetReligionValue(Math::Min(100.f, (float)(static_cast<Altar*>(go)->iFoodOffered)));
+		}
 			break;
 		default:
 			break;
@@ -2882,8 +2940,8 @@ void SceneSP::RenderGO(GameObject *go)
 		//RenderMesh(meshList[GEO_BERRIES], false, 1.f);
 		//RenderMesh(meshList[GEO_BUSH], false, 1.f);
 		//RenderMesh(meshList[GEO_VILLAGER], bGodlights, 1.f);
-		modelStack.Rotate(-90, 1, 0, 0);
-		RenderMesh(meshList[GEO_RED_CASTER], bGodlights, 1.f);
+		//modelStack.Rotate(-90, 1, 0, 0);
+		RenderMesh(meshList[GEO_VILLAGER], bGodlights, 1.f);
 		modelStack.PopMatrix();
 	}
 	break;
@@ -2924,7 +2982,16 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BUILDING], bGodlights, 1.f);
+		RenderMesh(meshList[GEO_ALTAR], bGodlights, 1.f);
+		modelStack.PopMatrix();
+	}
+	break;
+	case GameObject::GO_MOUNTAIN:
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_MOUNTAIN], bGodlights, 1.f);
 		modelStack.PopMatrix();
 	}
 	break;
@@ -3042,7 +3109,7 @@ void SceneSP::RenderPassMain()
 
 	modelStack.PushMatrix();
 	modelStack.Translate(lights[0].position.x, lights[0].position.y, lights[0].position.z);
-	RenderMesh(meshList[GEO_BALL], false);
+	//RenderMesh(meshList[GEO_BALL], false);
 	modelStack.PopMatrix();
 
 	//modelStack.PushMatrix();
@@ -3055,7 +3122,7 @@ void SceneSP::RenderPassMain()
 
 	modelStack.PushMatrix();
 	//modelStack.Translate(0, 0.5f + cosf(asd) * 0.15f, 0);
-	modelStack.Translate(0, -1.f, 0);
+	modelStack.Translate(0, -0.5f, 0);
 	//modelStack.Translate(0, 0, 0);
 	//modelStack.Translate(0, -0.5f, 0);
 	//modelStack.Rotate(-90, 1, 0, 0);
@@ -3085,7 +3152,7 @@ void SceneSP::RenderPassMain()
 	if (bShowGrid)
 	{
 		modelStack.PushMatrix();
-		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), 0.001f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
+		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), 0.5f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
 		modelStack.Scale(1, 1, 1);
 		glLineWidth(2.f);
 		RenderMesh(meshList[GEO_GRID], false);
@@ -3093,7 +3160,7 @@ void SceneSP::RenderPassMain()
 		modelStack.PopMatrix();
 
 		modelStack.PushMatrix();
-		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), 0.001f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
+		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), 0.5f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
 		for (int i = 0; i < SD->GetNoGrid() * SD->GetNoGrid(); ++i)
 		{
 			std::pair<int, int> pt = GetPoint(i);
@@ -3119,7 +3186,7 @@ void SceneSP::RenderPassMain()
 		{
 			Vector3 gridPos = GetGridPos(selectedGrid);
 			modelStack.PushMatrix();
-			modelStack.Translate(gridPos.x, gridPos.y + 0.1f, gridPos.z);
+			modelStack.Translate(gridPos.x, gridPos.y + 0.5f, gridPos.z);
 			modelStack.Rotate(-90, 1, 0, 0);
 			modelStack.Scale(SD->GetGridSize(), SD->GetGridSize(), SD->GetGridSize());
 			RenderMesh(meshList[GEO_YELLOWQUAD], false, 0.4f);

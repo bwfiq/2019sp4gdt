@@ -74,7 +74,7 @@ protected:
 	bool bGoalAchieved;
 	GAME_STATE game_state;
 
-	bool bGodlights = false;
+	bool bGodlights = true;
 	float fOpenGLInTimer = -1.f;
 	float fOpenGLOutTimer = 2.f;
 	float fSplashScreenInTimer = 0.f;
@@ -98,6 +98,7 @@ protected:
 	GameObject* goBush;
 	GameObject* goTree;
 	GameObject* goTree2;
+	GameObject* goMountain;
 };
 
 #endif
