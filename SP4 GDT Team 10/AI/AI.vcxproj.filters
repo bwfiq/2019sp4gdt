@@ -191,6 +191,9 @@
     <ClCompile Include="Source\UIMessagePopup.cpp">
       <Filter>UI\UIObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Mountain.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -351,6 +354,9 @@
     </ClInclude>
     <ClInclude Include="Source\UIMessagePopup.h">
       <Filter>UI\UIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mountain.h">
+      <Filter>GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

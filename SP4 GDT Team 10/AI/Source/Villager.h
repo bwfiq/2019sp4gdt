@@ -19,6 +19,7 @@ struct Villager : public GameObject
 		BUILDING,
 		BREEDING,
 		COMBAT,
+		MINING,
 		STAT_TOTAL
 	};
 
@@ -36,6 +37,7 @@ struct Villager : public GameObject
 
 	int iFoodStored;
 	int iWoodStored;
+	int iStoneStored;
 
 	float fEfficiency; //All states are to be multiplied by this float when used. 1.0f is normal efficiency
 	float fIdleTimer;

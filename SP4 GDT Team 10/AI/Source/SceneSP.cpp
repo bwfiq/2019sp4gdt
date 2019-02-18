@@ -28,6 +28,7 @@
 #include "Bush.h"
 #include "Tree.h"
 #include "Altar.h"
+#include "Mountain.h"
 
 #define SEA_WIDTH	100.f
 #define SEA_HEIGHT	100.f
@@ -455,6 +456,15 @@ void SceneSP::Init()
 	tGo->fTimer = 0;
 	tGo->iWoodAmount = 10;
 
+	goMountain = FetchGO(GameObject::GO_MOUNTAIN);
+	goMountain->pos = GetGridPos(GridPt(3, 8));
+	goMountain->pos.y = goMountain->scale.y * 0.5f;
+	goMountain->iGridX = 1;
+	goMountain->iGridZ = 1;
+	Mountain* mGo = static_cast<Mountain*>(goMountain);
+	mGo->iStoneAmount = 11;
+	mGo->iStoneGain = 5;
+
 	SceneData* SD = SceneData::GetInstance();
 	SD->SetFood(0);
 	SD->SetFoodLimit(100);
@@ -566,6 +576,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			case GameObject::GO_ALTAR:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
 				break;
+			case GameObject::GO_MOUNTAIN:
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
+				break;
 			}
 
 			go->goTarget = NULL;
@@ -596,6 +609,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			break;
 		case GameObject::GO_TREE:
 			go = new Tree(type);
+			break;
+		case GameObject::GO_MOUNTAIN:
+			go = new Mountain(type);
 			break;
 		default:
 			go = new GameObject(type);
@@ -2782,6 +2798,26 @@ void SceneSP::Update(double dt)
 			break;
 		case GameObject::GO_BUSH:
 			break;
+		case GameObject::GO_MOUNTAIN:
+		{
+			Mountain* mountainGo = static_cast<Mountain*>(go);
+			if (mountainGo->iStoneAmount > 20)
+			{
+				mountainGo->scale.y = 2;
+				mountainGo->pos.y = mountainGo->scale.y * 0.5f;
+			}
+			else if (mountainGo->iStoneAmount >= 10)
+			{
+				mountainGo->scale.y = 1.5f;
+				mountainGo->pos.y = mountainGo->scale.y * 0.5f;
+			}
+			else
+			{
+				mountainGo->scale.y = 1.f;
+				mountainGo->pos.y = mountainGo->scale.y * 0.5f;
+			}
+		}
+		break;
 		case GameObject::GO_ALTAR:
 		{
 			Altar* goAltar = static_cast<Altar*>(go);
@@ -2915,6 +2951,15 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_ALTAR], bGodlights, 1.f);
+		modelStack.PopMatrix();
+	}
+	break;
+	case GameObject::GO_MOUNTAIN:
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_MOUNTAIN], bGodlights, 1.f);
 		modelStack.PopMatrix();
 	}
 	break;

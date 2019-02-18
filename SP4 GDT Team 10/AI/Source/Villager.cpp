@@ -7,6 +7,7 @@ Villager::Villager(GAMEOBJECT_TYPE typeValue)
 	eCurrState(HEALTHY),
 	iFoodStored(0),
 	iWoodStored(0),
+	iStoneStored(0),
 	fIdleTimer(3)
 {
 	//GameObject(typeValue);

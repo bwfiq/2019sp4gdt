@@ -11,6 +11,7 @@
 #include "Building.h"
 #include "Bush.h"
 #include "Tree.h"
+#include "Mountain.h"
 //State::State(const std::string & stateID)
 //	: m_stateID(stateID)
 //{
@@ -272,7 +273,7 @@ void StatePath::Update(double dt, GameObject * m_go)
 					case GameObject::GO_TREE:
 						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("ChopTree");
 						break;
-					case GameObject::GO_ROCK:
+					case GameObject::GO_MOUNTAIN:
 						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Mining");
 						break;
 					}
@@ -585,6 +586,33 @@ void StateMining::Enter(GameObject* m_go)
 
 void StateMining::Update(double dt, GameObject* m_go)
 {
+	//In StateMining, the goTarget must be a Mountain class
+	if (m_go->goTarget->type != GameObject::GO_MOUNTAIN)
+	{
+		std::cout << "Wrong State : Mining" << std::endl;
+		return;
+	}
+	if (!m_go->goTarget->active)
+	{
+		m_go->goTarget = NULL;
+		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+	}
+	Mountain* mountainGo = static_cast<Mountain*>(m_go->goTarget);
+	Villager* vGo = static_cast<Villager*>(m_go);
+
+	//Insert gathering time here
+	vGo->iStoneStored = Math::Min(vGo->fStats[Villager::MINING] * mountainGo->iStoneGain, (float)mountainGo->iStoneAmount);
+	mountainGo->iStoneAmount -= mountainGo->iStoneGain;
+
+	if (mountainGo->iStoneAmount <= 0)
+	{
+		mountainGo->active = false;
+	}
+
+	MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_CHIEFHUT, 1);
+	PostOffice::GetInstance()->Send("Scene", messagewru);
+	m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+	return;
 }
 
 void StateMining::Exit(GameObject* m_go)
