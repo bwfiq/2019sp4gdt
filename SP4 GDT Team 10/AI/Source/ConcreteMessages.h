@@ -37,4 +37,22 @@ struct MessageObject : public Message
 	SEARCH_TYPE type;
 	float threshold;
 };
+
+struct MessageCameraShake : public Message
+{
+	enum SHAKE_TYPE
+	{
+		SHAKE_EARTHQUAKE,
+	};
+	MessageCameraShake(SHAKE_TYPE type, float intensity, float duration = 0.f) : type(type), intensity(intensity), duration(duration) {}
+	virtual ~MessageCameraShake() {}
+	SHAKE_TYPE type;
+	float intensity;
+	float duration;
+};
+
+struct MessageCalamityEarthquake : public Message
+{
+
+};
 #endif

@@ -17,7 +17,15 @@ public:
 	virtual void Init(const Vector3& pos, const Vector3& target, const Vector3& up);
 	virtual void Reset();
 	virtual void Update(double dt);
+
+	void SetCamShake(int shakeType, float intensity, float duration);
 private:
+	enum CAMERA_SHAKE_TYPE {
+		SHAKE_NONE,
+		SHAKE_EARTHQUAKE,
+
+		SHAKE_TOTAL
+	};
 	Vector3 position_goal;
 	Vector3 target_goal;
 
@@ -29,6 +37,9 @@ private:
 	Vector3 default_up;
 
 	float fCameraBorderMovespeed;
+	CAMERA_SHAKE_TYPE shakeType;
+	float fShakeIntensity;
+	float fShakeDuration;
 
 	void CalculateUp();
 };
