@@ -24,13 +24,15 @@ public:
 	void SetGridOffset(float gridOffset);
 
 	float GetWorldHeight();
-	void SetWorldHeight(float worldheight);
+	void  SetWorldHeight(float worldheight);
 	float GetWorldWidth();
-	void SetWorldWidth(float worldwidth);
+	void  SetWorldWidth(float worldwidth);
 	float GetElapsedTime();
-	void SetElapsedTime(float elapsedTime);
+	void  SetElapsedTime(float elapsedTime);
 	float GetReligionValue();
-	void SetReligionValue(float religionValue);
+	void  SetReligionValue(float religionValue);
+	float GetMaxReligionValue();
+	void  SetMaxReligionValue(float maxreligionValue);
 
 	void SetFood(int food);
 	int GetFood();
@@ -44,6 +46,10 @@ public:
 	int GetPopulation();
 	void SetPopulationLimit(int populationLimit);
 	int GetPopulationLimit();
+	void SetCurrMonth(int month);
+	int GetCurrMonth();
+	void SetCurrDay(int day);
+	int GetCurrDay();
 	void SetMousePos_World(Vector3 mousePos_world);
 	Vector3 GetMousePos_World();
 
@@ -66,8 +72,8 @@ private:
 	std::map<std::string, Mesh*> meshList;//these meshes delete themselves via the scene
 	Vector3 mousePos_World;
 
-	float fReligionValue;
-	int iFood, iFoodLimit, iPopulation, iPopulationLimit, iWood, iWoodLimit;
+	float fReligionValue, fMaxReligionValue;
+	int iFood, iFoodLimit, iPopulation, iPopulationLimit, iWood, iWoodLimit, iCurrMonth, iCurrDay;
 };
 
 #endif
