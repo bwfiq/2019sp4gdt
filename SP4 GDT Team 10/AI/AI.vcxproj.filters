@@ -48,6 +48,12 @@
     <Filter Include="Structures">
       <UniqueIdentifier>{17538703-6c13-498a-b470-11e680fb3233}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Calamities">
+      <UniqueIdentifier>{752e963b-7176-4a6d-93e3-e7ecf0db5188}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Calamities\CalamityObjects">
+      <UniqueIdentifier>{6b57c052-e220-4a44-9fdd-9c93a682e879}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -171,6 +177,18 @@
       <Filter>VisualEffects\EffectObjects</Filter>
     </ClCompile>
     <ClCompile Include="Source\UIMenuButton.cpp">
+      <Filter>UI\UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CalamityManager.cpp">
+      <Filter>Calamities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CalamityBase.cpp">
+      <Filter>Calamities</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CalamityEarthquake.cpp">
+      <Filter>Calamities\CalamityObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UIMessagePopup.cpp">
       <Filter>UI\UIObjects</Filter>
     </ClCompile>
   </ItemGroup>
@@ -320,6 +338,18 @@
       <Filter>VisualEffects\EffectObjects</Filter>
     </ClInclude>
     <ClInclude Include="Source\UIMenuButton.h">
+      <Filter>UI\UIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CalamityManager.h">
+      <Filter>Calamities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CalamityBase.h">
+      <Filter>Calamities</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CalamityEarthquake.h">
+      <Filter>Calamities\CalamityObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UIMessagePopup.h">
       <Filter>UI\UIObjects</Filter>
     </ClInclude>
   </ItemGroup>

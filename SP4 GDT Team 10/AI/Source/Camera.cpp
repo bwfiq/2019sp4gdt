@@ -111,6 +111,15 @@ void Camera::Update(double dt)
 	//{
 
 	//}
+
+	switch (this->shakeType) 
+	{
+	case SHAKE_EARTHQUAKE:
+		position += Vector3(Math::RandFloatMinMax(-fShakeIntensity, fShakeIntensity), 0, Math::RandFloatMinMax(-fShakeIntensity, fShakeIntensity));
+		break;
+	case SHAKE_NONE:
+		break;
+	}
 	
 	//Updat stuff
 	if (!position_velocity.IsZero())
@@ -139,6 +148,18 @@ void Camera::Update(double dt)
 	{
 		target.lerp(target_goal, Math::Min((float)dt*15.5f, 1.f));
 	}
+}
+
+void Camera::SetCamShake(int shakeType, float intensity, float duration)
+{
+	if (intensity <= 0)
+	{
+		this->shakeType = SHAKE_NONE;
+		return;
+	}
+	this->shakeType = (CAMERA_SHAKE_TYPE)shakeType;
+	this->fShakeIntensity = intensity;
+	this->fShakeDuration = duration;
 }
 
 void Camera::CalculateUp()

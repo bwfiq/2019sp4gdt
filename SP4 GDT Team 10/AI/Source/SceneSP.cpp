@@ -15,6 +15,9 @@
 #include "EffectTrail.h"
 #include "EffectHand.h"
 
+#include "CalamityManager.h"
+#include "CalamityEarthquake.h"
+
 #include "SMManager.h"
 #include "MouseController.h"
 #include "KeyboardController.h"
@@ -394,6 +397,7 @@ void SceneSP::Init()
 	SceneData::GetInstance()->SetWorldWidth(m_worldWidth);
 	SceneData::GetInstance()->SetElapsedTime(0);
 	SceneData::GetInstance()->SetReligionValue(0.f);
+	SceneData::GetInstance()->SetMaxReligionValue(100.f);
 	PostOffice::GetInstance()->Register("Scene", this);
 
 	//Physics code here
@@ -458,9 +462,12 @@ void SceneSP::Init()
 	SD->SetPopulationLimit(10);
 	SD->SetWood(0);
 	SD->SetWoodLimit(100);
+	SD->SetCurrMonth(1);
+	SD->SetCurrDay(1);
 
 	bDay = true; // day
-	fTimeOfDay = 21.f;
+	fTimeOfDay = 8.f;
+	bGoalAchieved = false;
 
 	//go->vel.Set(1, 0, 0);
 	MousePicker::GetInstance()->Init();
@@ -472,6 +479,8 @@ void SceneSP::Init()
 	EffectManager::GetInstance()->Init();
 	EffectManager::GetInstance()->AddEffect(new EffectTrail(&camera));
 	EffectManager::GetInstance()->AddEffect(new EffectHand());
+
+	CalamityManager::GetInstance()->Init();
 
 	ChangeState(G_SPLASHSCREEN);
 }
@@ -517,7 +526,13 @@ bool SceneSP::Handle(Message* message)
 		delete message;
 		return true;
 	}
-
+	MessageCameraShake* messageCamShake = dynamic_cast<MessageCameraShake*>(message);
+	if (messageCamShake)
+	{
+		camera.SetCamShake(messageCamShake->type + 1, messageCamShake->intensity, messageCamShake->duration);
+		delete message;
+		return true;
+	}
 	delete message;
 	return false;
 }
@@ -2080,7 +2095,9 @@ void SceneSP::ChangeTimeOfDay()
 	bDay = !bDay;
 	if (bDay) // daytime reset
 	{
-		bGodlights = false;
+		//bGodlights = false;
+		SceneData* SD = SceneData::GetInstance();
+		SD->SetCurrDay(SD->GetCurrDay() + 1);
 		for (auto go : m_goList)
 		{
 			if (!go->active)
@@ -2094,10 +2111,23 @@ void SceneSP::ChangeTimeOfDay()
 	}
 	else // nighttime reset
 	{
-		bGodlights = true;
+		//bGodlights = true;
 		SceneData* SD = SceneData::GetInstance();
 		SD->SetFood(Math::Max(0, SD->GetFood() - SD->GetPopulation() * 5));// 5 food is eaten per Villager
 	}
+}
+
+void SceneSP::ProgressMonth()
+{
+	SceneData* SD = SceneData::GetInstance();
+	SD->SetCurrMonth(SD->GetCurrMonth() + 1);
+	if (SD->GetCurrMonth() >= 31)
+	{
+		SD->SetCurrMonth(1);
+		//ChangeState(G_MAINMENU);
+	}
+	if (bGoalAchieved)
+		bGoalAchieved = false;
 }
 
 void SceneSP::Update(double dt)
@@ -2115,6 +2145,7 @@ void SceneSP::Update(double dt)
 	KeyboardController* KC = KeyboardController::GetInstance();
 	UIManager* UIM = UIManager::GetInstance();
 	EffectManager* EM = EffectManager::GetInstance();
+	CalamityManager* CM = CalamityManager::GetInstance();
 
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
@@ -2129,6 +2160,8 @@ void SceneSP::Update(double dt)
 
 	mousePos = MP->GetIntersectionWithPlane(camera.position, Vector3(0, 0, 0), Vector3(0, 1, 0));
 	SD->SetMousePos_World(mousePos);
+
+	CM->Update(dt);
 
 	UIM->Update(dt);
 	EM->Update(dt);
@@ -2193,7 +2226,8 @@ void SceneSP::Update(double dt)
 	camera.Update(dt);
 
 	if (KC->IsKeyPressed('P')) {//A TEST TO CHANGE RELIGION VALUE DIS WONT BE IN DA FNIAL GAME
-		SD->SetReligionValue(((int)SD->GetReligionValue() % 100) + 25);
+		CM->AddToCalamityQueue(new CalamityEarthquake());
+		SD->SetReligionValue(((int)SD->GetReligionValue() % (int)SD->GetMaxReligionValue()) + 25);
 	}
 	if (Application::IsKeyPressed(VK_OEM_MINUS))
 	{
@@ -2411,7 +2445,7 @@ void SceneSP::Update(double dt)
 	}
 
 	// day/night cycle
-	//fTimeOfDay += dt ;
+	fTimeOfDay += dt * m_speed ;
 	if (fTimeOfDay >= 24.f)
 	{
 		fTimeOfDay = 0;
@@ -2424,16 +2458,30 @@ void SceneSP::Update(double dt)
 	{
 		ChangeTimeOfDay();
 	}
+	// month
+	if (SD->GetCurrDay() >= 31)
+	{
+		SD->SetCurrDay(1);
+		ProgressMonth();
+	}
 
 	// sea movement
 	if (fSeaDeltaX >= SEA_WIDTH / 4)
 		fSeaDeltaX = -SEA_WIDTH / 4;
-	fSeaDeltaX += dt;
+	fSeaDeltaX += dt * m_speed;
 	if (fSeaDeltaZ >= SEA_HEIGHT / 4)
 		fSeaDeltaZ = -SEA_HEIGHT / 4;
-	fSeaDeltaZ += dt;
+	fSeaDeltaZ += dt * m_speed;
 
 	fSeaDeltaY = 0.0625f + 0.0625f * cosf(SD->GetElapsedTime());
+
+	//goals
+	switch (SD->GetCurrMonth())
+	{
+	case 1:
+		bGoalAchieved = SD->GetReligionValue() >= SD->GetMaxReligionValue();
+		break;
+	}
 
 	ProjectileManager::GetInstance()->Update(dt * m_speed);
 
@@ -3097,15 +3145,65 @@ void SceneSP::RenderPassMain()
 	ss << "Graph " << 0;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 50, 0);
 
-	// resources
+	// resources x=10
 	ss.str("");
-	//ss.precision(5);
+	ss << "Wood:" << SD->GetWood() << "/" << SD->GetWoodLimit();
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 6);
+
+	ss.str("");
 	ss << "Food:" << SD->GetFood() << "/" << SD->GetFoodLimit();
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 3);
 
 	ss.str("");
 	ss << "Population:" << SD->GetPopulation() << "/" << SD->GetPopulationLimit();
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 0);
+
+	//time and month x=30
+	ss.str("");
+	ss << "Date: ";
+	switch (SD->GetCurrMonth())
+	{
+	case 1:
+		ss << "JAN";
+		break;
+	case 2:
+		ss << "FEB";
+		break;
+	case 3:
+		ss << "MAR";
+		break;
+	case 4:
+		ss << "APR";
+		break;
+	case 5:
+		ss << "MAY";
+		break;
+	case 6:
+		ss << "JUN";
+
+		break;
+	case 7:
+		ss << "JUL";
+		break;
+	case 8:
+		ss << "AUG";
+		break;
+	case 9:
+		ss << "SEP";
+		break;
+	case 10:
+		ss << "OCT";
+		break;
+	case 11:
+		ss << "NOV";
+		break;
+	case 12:
+		ss << "DEC";
+		break;
+	}
+	ss << " ";
+	ss << SD->GetCurrDay();
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 30, 3);
 
 	ss.str("");
 	ss << "Time: ";
@@ -3121,6 +3219,17 @@ void SceneSP::RenderPassMain()
 	else
 		ss << (int)(60 * fractpart);
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 30, 0);
+
+	// objective
+	ss.str("");
+	ss << "Current Goal:";
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 0, 30);
+	ss.str("");
+	if (bGoalAchieved) 
+		ss << "ACHIEVED";
+	else
+		ss << "Fill the Religion Meter by offering food to the altar.";
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 0, 27);
 }
 
 void SceneSP::RenderSplashScreen()

@@ -45,11 +45,13 @@ public:
 	void AStarSingleGrid(GameObject* go, GridPt target); //For Grid Pathfinding with objects that have only 1 grids
 	void AStarMultiGrid(GameObject* go, GridPt target); //For Grid Pathfinding with objects that have multiple grids
 	bool isTheCoastClear(GameObject* go, GridPt next, Grid::DIRECTION dir); //For making it neat
+
 	void ChangeState(GAME_STATE newstate);
+	void ChangeTimeOfDay();
+	void ProgressMonth();
 	//void DFSOnce(GameObject* go);
 
 	void Reset();
-	void ChangeTimeOfDay();
 
 protected:
 
@@ -63,9 +65,9 @@ protected:
 	float fSeaDeltaZ = 0;
 	float fSeaDeltaY = 0;
 	bool bSeaYDir = false;
-
 	float fTimeOfDay; // 0 to 24
 	bool bDay;
+	bool bGoalAchieved;
 	GAME_STATE game_state;
 
 	bool bGodlights = false;
