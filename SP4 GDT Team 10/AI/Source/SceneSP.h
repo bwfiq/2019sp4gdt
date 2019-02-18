@@ -11,6 +11,8 @@
 
 #include "Grid.h"
 
+class UIBase;
+
 class SceneSP : public SceneBase
 {
 public:
@@ -51,10 +53,12 @@ public:
 	void ProgressMonth();
 	//void DFSOnce(GameObject* go);
 
+	void UpdateSelectedUI();
+
 	void Reset();
 
 protected:
-
+	std::vector<UIBase*> m_selectedUi;
 	std::vector<GameObject *> m_goList;
 	float m_speed;
 	float m_worldWidth;
@@ -70,7 +74,7 @@ protected:
 	bool bGoalAchieved;
 	GAME_STATE game_state;
 
-	bool bGodlights = false;
+	bool bGodlights = true;
 	float fOpenGLInTimer = -1.f;
 	float fOpenGLOutTimer = 2.f;
 	float fSplashScreenInTimer = 0.f;
