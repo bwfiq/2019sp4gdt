@@ -575,9 +575,11 @@ Mesh * MeshBuilder::GenerateRay(const std::string & meshName, Color color, const
 	std::vector<Vertex> vertex_buffer_data;
 	v.pos.Set(length, 0, 0);
 	v.color = color;
+	v.normal.Set(0, 1, 0);
 	vertex_buffer_data.push_back(v);
 	v.pos.Set(0, 0, 0);
 	v.color = color;
+	v.normal.Set(0, 1, 0);
 	vertex_buffer_data.push_back(v);
 
 	std::vector<GLuint> index_buffer_data;

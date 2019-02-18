@@ -45,6 +45,8 @@ UIReligionBar::UIReligionBar() :
 	uiComponents_list[COMPONENT_GREYBAR].pos.Set(0, 0);
 	uiComponents_list[COMPONENT_GREYBAR].anchorPoint.Set(0, 0);
 	uiComponents_list[COMPONENT_GREYBAR].scale.Set(1, 1);
+	//uiComponents_list[COMPONENT_GREYBAR].text = "test";
+	//uiComponents_list[COMPONENT_GREYBAR].textSize = scale.y;
 
 	//uiComponents_list[COMPONENT_REDBAR].pos.Set(0, 0);
 	//uiComponents_list[COMPONENT_REDBAR].anchorPoint.Set(0, 0);
@@ -95,6 +97,10 @@ void UIReligionBar::Update(float dt)
 	SceneData* SD = SceneData::GetInstance();
 
 	float fReligionValue = SceneData::GetInstance()->GetReligionValue();
+	if (this->IsMousePressed())
+	{
+		std::cout << "a" << std::endl;
+	}
 
 	//uiComponents_list[COMPONENT_BLUETRIANGLE].pos.Set(
 	//	Math::lerp(uiComponents_list[COMPONENT_BLUETRIANGLE].pos.x, fReligionValue//fReligionValue / 100.f

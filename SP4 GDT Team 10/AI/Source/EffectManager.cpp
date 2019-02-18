@@ -4,6 +4,7 @@
 #include "SceneBase.h"
 #include "Application.h"
 #include "EffectTrail.h"
+#include "EffectHand.h"
 
 void EffectManager::Init()
 {
@@ -25,6 +26,7 @@ void EffectManager::Render(SceneBase * scene)
 		count += 0.01f;
 		scene->modelStack.PushMatrix();
 		EffectTrail* EffTrail = dynamic_cast<EffectTrail*>(Effect);
+		EffectHand* EffHand = dynamic_cast<EffectHand*>(Effect);
 		if (EffTrail)
 		{
 			int i = 0;
@@ -74,9 +76,33 @@ void EffectManager::Render(SceneBase * scene)
 			}
 			glLineWidth(1.f);
 		}
+		else if (EffHand)
+		{
+			scene->modelStack.Translate(Effect->pos.x, Effect->pos.y, Effect->pos.z);
+			if (!Effect->rotation.IsZero())
+			{
+				scene->modelStack.Rotate(Effect->rotation.x, 1, 0, 0);
+				scene->modelStack.Rotate(Effect->rotation.y, 0, 1, 0);
+				scene->modelStack.Rotate(Effect->rotation.z, 0, 0, 1);
+
+			}
+			scene->modelStack.Scale(Effect->scale.x, Effect->scale.y, Effect->scale.z);
+			//glDepthFunc(GL_ALWAYS);
+			rendermesh(scene, Effect);
+			//glDepthFunc(GL_LESS);
+		}
 		else
 		{
+			scene->modelStack.Translate(Effect->pos.x, Effect->pos.y, Effect->pos.z);
+			if (!Effect->rotation.IsZero())
+			{
+				scene->modelStack.Rotate(Effect->rotation.x, 1, 0, 0);
+				scene->modelStack.Rotate(Effect->rotation.y, 0, 1, 0);
+				scene->modelStack.Rotate(Effect->rotation.z, 0, 0, 1);
 
+			}
+			scene->modelStack.Scale(Effect->scale.x, Effect->scale.y, Effect->scale.z);
+			rendermesh(scene, Effect);
 		}
 		scene->modelStack.PopMatrix();
 	}
@@ -105,15 +131,45 @@ void EffectManager::rendermesh(SceneBase* scene,EffectBase* effect)
 {
 	Mtx44 MVP, modelView, modelView_inverse_transpose;
 
+	if (scene->m_renderPass == SceneBase::RENDER_PASS_PRE)
+	{
+		Mtx44 lightDepthMVP = scene->m_lightDepthProj *
+			scene->m_lightDepthView * scene->modelStack.Top();
+		glUniformMatrix4fv(scene->m_parameters[SceneBase::U_LIGHT_DEPTH_MVP_GPASS], 1,
+			GL_FALSE, &lightDepthMVP.a[0]);
+		//effect->mesh->Render();
+		for (int i = 0; i < MAX_TEXTURES; ++i)
+		{
+			if (effect->mesh->textureArray[i] > 0)
+			{
+				glUniform1i(scene->m_parameters[SceneBase::U_SHADOW_COLOR_TEXTURE_ENABLED
+					+ i], 1);
+				glActiveTexture(GL_TEXTURE0 + i);
+				glBindTexture(GL_TEXTURE_2D, effect->mesh->textureArray[i]);
+				glUniform1i(scene->m_parameters[SceneBase::U_SHADOW_COLOR_TEXTURE + i], i);
+			}
+			else
+				glUniform1i(scene->m_parameters[SceneBase::U_SHADOW_COLOR_TEXTURE_ENABLED
+					+ i], 0);
+		}
+		effect->mesh->Render();
+		return;
+	}
 	MVP = scene->projectionStack.Top() * scene->viewStack.Top() * scene->modelStack.Top();
 	glUniformMatrix4fv(scene->m_parameters[SceneBase::U_MVP], 1, GL_FALSE, &MVP.a[0]);
+	modelView = scene->viewStack.Top() * scene->modelStack.Top();
+	glUniformMatrix4fv(scene->m_parameters[SceneBase::U_MODELVIEW], 1, GL_FALSE, &modelView.a[0]);
+
 	if (effect->bLightEnabled)
 	{
 		glUniform1i(scene->m_parameters[SceneBase::U_LIGHTENABLED], 1);
-		modelView = scene->viewStack.Top() * scene->modelStack.Top();
-		glUniformMatrix4fv(scene->m_parameters[SceneBase::U_MODELVIEW], 1, GL_FALSE, &modelView.a[0]);
 		modelView_inverse_transpose = modelView.GetInverse().GetTranspose();
-		glUniformMatrix4fv(scene->m_parameters[SceneBase::U_MODELVIEW_INVERSE_TRANSPOSE], 1, GL_FALSE, &modelView.a[0]);
+		glUniformMatrix4fv(scene->m_parameters[SceneBase::U_MODELVIEW_INVERSE_TRANSPOSE], 1, GL_FALSE, &modelView_inverse_transpose.a[0]);
+
+		Mtx44 lightDepthMVP = scene->m_lightDepthProj *
+			scene->m_lightDepthView * scene->modelStack.Top();
+		glUniformMatrix4fv(scene->m_parameters[SceneBase::U_LIGHT_DEPTH_MVP], 1,
+			GL_FALSE, &lightDepthMVP.a[0]);
 
 		//load material
 		glUniform3fv(scene->m_parameters[SceneBase::U_MATERIAL_AMBIENT], 1, &effect->mesh->material.kAmbient.r);
@@ -125,20 +181,24 @@ void EffectManager::rendermesh(SceneBase* scene,EffectBase* effect)
 	{
 		glUniform1i(scene->m_parameters[SceneBase::U_LIGHTENABLED], 0);
 	}
-	if (effect->mesh->textureID > 0)
+
+	for (int i = 0; i < MAX_TEXTURES; ++i)
 	{
-		glUniform1i(scene->m_parameters[SceneBase::U_COLOR_TEXTURE_ENABLED], 1);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, effect->mesh->textureID);
-		glUniform1i(scene->m_parameters[SceneBase::U_COLOR_TEXTURE], 0);
+		if (effect->mesh->textureArray[i] > 0)
+		{
+			glUniform1i(scene->m_parameters[SceneBase::U_COLOR_TEXTURE_ENABLED + i], 1);
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, effect->mesh->textureArray[i]);
+			glUniform1i(scene->m_parameters[SceneBase::U_COLOR_TEXTURE + i], i);
+		}
+		else
+			glUniform1i(scene->m_parameters[SceneBase::U_COLOR_TEXTURE_ENABLED + i], 0);
+
 	}
-	else
-	{
-		glUniform1i(scene->m_parameters[SceneBase::U_COLOR_TEXTURE_ENABLED], 0);
-	}
+	glUniform1f(scene->m_parameters[SceneBase::U_ALPHA], 1.f);
 	effect->mesh->Render();
-	if (effect->mesh->textureID > 0)
+	/*if (effect->mesh->textureID > 0)
 	{
 		glBindTexture(GL_TEXTURE_2D, 0);
-	}
+	}*/
 }

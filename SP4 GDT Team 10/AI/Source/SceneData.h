@@ -2,6 +2,7 @@
 #define SCENE_DATA
 
 #include "SingletonTemplate.h"
+#include "Vector3.h"
 #include <map>
 #include <string>
 
@@ -43,6 +44,8 @@ public:
 	int GetPopulation();
 	void SetPopulationLimit(int populationLimit);
 	int GetPopulationLimit();
+	void SetMousePos_World(Vector3 mousePos_world);
+	Vector3 GetMousePos_World();
 
 	void AddMesh(Mesh* mesh);
 	void RemoveMesh(const std::string& meshName);
@@ -61,6 +64,7 @@ private:
 	float m_worldWidth;
 	float f_elapsedTime;
 	std::map<std::string, Mesh*> meshList;//these meshes delete themselves via the scene
+	Vector3 mousePos_World;
 
 	float fReligionValue;
 	int iFood, iFoodLimit, iPopulation, iPopulationLimit, iWood, iWoodLimit;
