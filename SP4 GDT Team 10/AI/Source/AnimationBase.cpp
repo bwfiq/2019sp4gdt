@@ -7,6 +7,7 @@ AnimationBase::AnimationBase()
 	RevertTranslateOffset.SetToIdentity();
 	Rotate.SetToIdentity();
 	Scale.SetToIdentity();
+	CurrentTransformation.SetToIdentity();
 	active = true;
 }
 
