@@ -547,7 +547,7 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.2f, SceneData::GetInstance()->GetGridSize() * 1.f);
 				break;
 			case GameObject::GO_ALTAR:
-				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 2.5f, SceneData::GetInstance()->GetGridSize() * 1.f);
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
 				break;
 			}
 
@@ -2847,7 +2847,7 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BUILDING], bGodlights, 1.f);
+		RenderMesh(meshList[GEO_ALTAR], bGodlights, 1.f);
 		modelStack.PopMatrix();
 	}
 	break;
