@@ -81,7 +81,7 @@ void UIManager::Render(SceneBase * scene)
 				if (!UIC.text.empty())
 				{
 					count2 += 0.01f;
-					rendertext(scene, SceneData::GetInstance()->GetMesh("text"), UIC.text, Color(1, 0, 0), false, UI_pos + (UIC_Pos + Vector3(-1,0,0)) * UIC.textSize
+					rendertext(scene, SceneData::GetInstance()->GetMesh("text"), UIC.text, Color(1, 0, 0), false, UI_pos + (UIC_Pos + Vector3(-1,0,0)) * (UI->scale.x * 0.5f)
 						, UIC.textSize,  UIC.alpha);
 				}
 				scene->modelStack.PopMatrix();

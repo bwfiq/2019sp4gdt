@@ -156,6 +156,9 @@
     <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="Source\Building.cpp" />
     <ClCompile Include="Source\Bush.cpp" />
+    <ClCompile Include="Source\CalamityBase.cpp" />
+    <ClCompile Include="Source\CalamityEarthquake.cpp" />
+    <ClCompile Include="Source\CalamityManager.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\ChiefHut.cpp" />
     <ClCompile Include="Source\Date.cpp" />
@@ -191,6 +194,7 @@
     <ClCompile Include="Source\Tree.cpp" />
     <ClCompile Include="Source\UIBase.cpp" />
     <ClCompile Include="Source\UIManager.cpp" />
+    <ClCompile Include="Source\UIMessagePopup.cpp" />
     <ClCompile Include="Source\UIReligionBar.cpp" />
     <ClCompile Include="Source\UIMenuButton.cpp" />
     <ClCompile Include="Source\Utility.cpp" />
@@ -201,6 +205,9 @@
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\Building.h" />
     <ClInclude Include="Source\Bush.h" />
+    <ClInclude Include="Source\CalamityBase.h" />
+    <ClInclude Include="Source\CalamityEarthquake.h" />
+    <ClInclude Include="Source\CalamityManager.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\ChiefHut.h" />
     <ClInclude Include="Source\ConcreteMessages.h" />
@@ -243,6 +250,7 @@
     <ClInclude Include="Source\Tree.h" />
     <ClInclude Include="Source\UIBase.h" />
     <ClInclude Include="Source\UIManager.h" />
+    <ClInclude Include="Source\UIMessagePopup.h" />
     <ClInclude Include="Source\UIReligionBar.h" />
     <ClInclude Include="Source\UIMenuButton.h" />
     <ClInclude Include="Source\Utility.h" />

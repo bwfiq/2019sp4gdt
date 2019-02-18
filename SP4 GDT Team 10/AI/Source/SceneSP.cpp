@@ -15,6 +15,9 @@
 #include "EffectTrail.h"
 #include "EffectHand.h"
 
+#include "CalamityManager.h"
+#include "CalamityEarthquake.h"
+
 #include "SMManager.h"
 #include "MouseController.h"
 #include "KeyboardController.h"
@@ -478,6 +481,8 @@ void SceneSP::Init()
 	EffectManager::GetInstance()->AddEffect(new EffectTrail(&camera));
 	EffectManager::GetInstance()->AddEffect(new EffectHand());
 
+	CalamityManager::GetInstance()->Init();
+
 	ChangeState(G_SPLASHSCREEN);
 }
 
@@ -522,7 +527,13 @@ bool SceneSP::Handle(Message* message)
 		delete message;
 		return true;
 	}
-
+	MessageCameraShake* messageCamShake = dynamic_cast<MessageCameraShake*>(message);
+	if (messageCamShake)
+	{
+		camera.SetCamShake(messageCamShake->type + 1, messageCamShake->intensity, messageCamShake->duration);
+		delete message;
+		return true;
+	}
 	delete message;
 	return false;
 }
@@ -2135,6 +2146,7 @@ void SceneSP::Update(double dt)
 	KeyboardController* KC = KeyboardController::GetInstance();
 	UIManager* UIM = UIManager::GetInstance();
 	EffectManager* EM = EffectManager::GetInstance();
+	CalamityManager* CM = CalamityManager::GetInstance();
 
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
@@ -2149,6 +2161,8 @@ void SceneSP::Update(double dt)
 
 	mousePos = MP->GetIntersectionWithPlane(camera.position, Vector3(0, 0, 0), Vector3(0, 1, 0));
 	SD->SetMousePos_World(mousePos);
+
+	CM->Update(dt);
 
 	UIM->Update(dt);
 	EM->Update(dt);
@@ -2213,6 +2227,7 @@ void SceneSP::Update(double dt)
 	camera.Update(dt);
 
 	if (KC->IsKeyPressed('P')) {//A TEST TO CHANGE RELIGION VALUE DIS WONT BE IN DA FNIAL GAME
+		CM->AddToCalamityQueue(new CalamityEarthquake());
 		SD->SetReligionValue(((int)SD->GetReligionValue() % (int)SD->GetMaxReligionValue()) + 25);
 	}
 	if (Application::IsKeyPressed(VK_OEM_MINUS))
