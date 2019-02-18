@@ -191,6 +191,7 @@
     <ClCompile Include="Source\UIBase.cpp" />
     <ClCompile Include="Source\UIManager.cpp" />
     <ClCompile Include="Source\UIReligionBar.cpp" />
+    <ClCompile Include="Source\UIMenuButton.cpp" />
     <ClCompile Include="Source\Utility.cpp" />
     <ClCompile Include="Source\Villager.cpp" />
   </ItemGroup>
@@ -241,6 +242,7 @@
     <ClInclude Include="Source\UIBase.h" />
     <ClInclude Include="Source\UIManager.h" />
     <ClInclude Include="Source\UIReligionBar.h" />
+    <ClInclude Include="Source\UIMenuButton.h" />
     <ClInclude Include="Source\Utility.h" />
     <ClInclude Include="Source\Vertex.h" />
     <ClInclude Include="Source\Villager.h" />

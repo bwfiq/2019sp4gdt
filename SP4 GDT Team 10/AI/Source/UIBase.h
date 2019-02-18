@@ -28,6 +28,8 @@ public:
 	UIBase();
 	virtual ~UIBase();
 
+	std::string uiName;
+
 	std::vector<UIComponent> uiComponents_list;
 
 	Vector3 pos;
@@ -36,6 +38,7 @@ public:
 	float fRotation;
 	bool bActive;
 	bool bLightEnabled;
+	bool bIsDone;
 
 	virtual void Update(float dt) = 0;
 

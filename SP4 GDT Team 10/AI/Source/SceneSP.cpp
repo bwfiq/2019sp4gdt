@@ -10,6 +10,7 @@
 #include "ProjectileManager.h"
 #include "UIManager.h"
 #include "UIReligionBar.h"
+#include "UIMenuButton.h"
 #include "EffectManager.h"
 #include "EffectTrail.h"
 #include "EffectHand.h"
@@ -356,9 +357,12 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 		break;
 	case G_MAINMENU:
 		camera.Init(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));	// splashscreen
+		UIManager::GetInstance()->AddUI("startButton", new UIMenuButton("start"));
 		break;
 	case G_INPLAY:
 		camera.Init(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));	// game
+		UIManager::GetInstance()->GetUI("startButton")->bIsDone = true;
+		UIManager::GetInstance()->AddUI("uiReligionBar", new UIReligionBar());
 		break;
 	default:
 		break;
@@ -465,7 +469,6 @@ void SceneSP::Init()
 	MousePicker::GetInstance()->SetViewStack(viewStack);
 
 	UIManager::GetInstance()->Init();
-	UIManager::GetInstance()->AddUI(new UIReligionBar());
 
 	EffectManager::GetInstance()->Init();
 	EffectManager::GetInstance()->AddEffect(new EffectTrail(&camera));
@@ -3207,6 +3210,8 @@ void SceneSP::RenderMainMenu()
 	modelStack.Scale(m_worldWidth*0.2f, m_worldHeight*0.1f, m_worldHeight);
 	RenderMesh(meshList[GEO_WHITEQUAD], false);
 	modelStack.PopMatrix();
+
+	UIManager::GetInstance()->Render(this);
 }
 
 void SceneSP::RenderWorld()

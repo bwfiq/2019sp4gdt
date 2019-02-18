@@ -173,6 +173,9 @@
     <ClCompile Include="Source\EffectHand.cpp">
       <Filter>VisualEffects\EffectObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Source\UIMenuButton.cpp">
+      <Filter>UI\UIObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -321,6 +324,9 @@
     </ClInclude>
     <ClInclude Include="Source\EffectHand.h">
       <Filter>VisualEffects\EffectObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UIMenuButton.h">
+      <Filter>UI\UIObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
