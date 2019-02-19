@@ -150,6 +150,8 @@ void SceneBase::Init()
 	meshList[GEO_CUBE] = MeshBuilder::GenerateCube("cube", Color(1, 1, 1), 1.f);
 	meshList[GEO_TEXT] = MeshBuilder::GenerateText("text", 16, 16);
 	meshList[GEO_TEXT]->textureArray[0] = LoadTGA("Image//calibri.tga");
+	meshList[GEO_TEXT_GUNGSUH] = MeshBuilder::GenerateText("gungsuh", 16, 16);
+	meshList[GEO_TEXT_GUNGSUH]->textureArray[0] = LoadTGA("Image//gungsuh.tga");
 	meshList[GEO_BG] = MeshBuilder::GenerateQuad("bg", Color(1, 1, 1));
 	meshList[GEO_BG]->textureArray[0] = LoadTGA("Image//Village.tga");
 	meshList[GEO_CROSS] = MeshBuilder::GenerateQuad("cross", Color(1, 1, 1));

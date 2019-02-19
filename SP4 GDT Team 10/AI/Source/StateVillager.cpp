@@ -12,6 +12,9 @@
 #include "Bush.h"
 #include "Tree.h"
 #include "Mountain.h"
+
+#include "AnimationWalk.h"
+#include "MousePicker.h"
 //State::State(const std::string & stateID)
 //	: m_stateID(stateID)
 //{
@@ -26,7 +29,8 @@
 //	return m_stateID;
 //}
 
-static float MOVE_SPEED = 5.f;
+static float RUN_SPEED = 3.f;
+static float WALK_SPEED = 1.5f;
 
 //StateIdle
 StateIdle::StateIdle(const std::string & stateID)
@@ -96,6 +100,7 @@ StatePath::~StatePath()
 void StatePath::Enter(GameObject * m_go)
 {
 	std::cout << "Enter Path State" << std::endl;
+	m_go->GiveAnimation(new AnimationWalk());
 }
 
 void StatePath::Update(double dt, GameObject * m_go)
@@ -118,7 +123,7 @@ void StatePath::Update(double dt, GameObject * m_go)
 				}
 				else
 				{
-					m_go->pos += (direction).Normalized() * dt * MOVE_SPEED;
+					m_go->pos += (direction).Normalized() * dt * WALK_SPEED;
 
 					//float currentAngle = acos(m_go->direction.Normalized().Dot(Vector3(1, 0, 0)));
 					//Vector3 godirNormalized = m_go->direction.Normalized();
@@ -183,7 +188,7 @@ void StatePath::Update(double dt, GameObject * m_go)
 				}
 				else
 				{
-					m_go->pos += (direction).Normalized() * dt * MOVE_SPEED;
+					m_go->pos += (direction).Normalized() * dt * RUN_SPEED;
 
 					float currentAngle = acos(m_go->direction.Normalized().Dot(Vector3(1, 0, 0)));
 
@@ -298,6 +303,14 @@ void StatePath::Update(double dt, GameObject * m_go)
 
 void StatePath::Exit(GameObject * m_go)
 {
+	if (m_go->animation != NULL)
+	{
+		if (m_go->animation->type == AnimationBase::A_WALK)
+		{
+			delete m_go->animation;
+			m_go->animation = NULL;
+		}
+	}
 }
 
 //StateChopTree
@@ -444,10 +457,19 @@ StatePickedUp::~StatePickedUp()
 void StatePickedUp::Enter(GameObject* m_go)
 {
 	std::cout << "Enter PickedUp State" << std::endl;
+
+	std::cout << "Clearing existing m_go path" << std::endl;
+
+	while (!m_go->path.empty())
+	{
+		m_go->path.pop_back();
+	}
 }
 
 void StatePickedUp::Update(double dt, GameObject* m_go)
 {
+	SceneData* SD = SceneData::GetInstance();
+	m_go->pos = SD->GetMousePos_World() + Vector3(0, 0.5f, 0);
 }
 
 void StatePickedUp::Exit(GameObject* m_go)

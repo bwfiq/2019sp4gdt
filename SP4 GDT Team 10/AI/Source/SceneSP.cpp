@@ -34,6 +34,7 @@
 #include "Mountain.h"
 
 #include "AnimationJump.h"
+#include "AnimationWalk.h"
 
 #define SEA_WIDTH	100.f
 #define SEA_HEIGHT	100.f
@@ -365,13 +366,25 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 		camera.Init(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));	// splashscreen
 		break;
 	case G_MAINMENU:
+	{
 		camera.Init(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));	// splashscreen
-		UIManager::GetInstance()->AddUI("startButton", new UIMenuButton("start"));
+		UIBase* newUI = new UIMenuButton("Start");
+		UIManager::GetInstance()->AddUI("startButton", newUI);
+		m_coreUi.push_back(newUI);
+	}
 		break;
 	case G_INPLAY:
+	{
 		camera.Init(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));	// game
-		UIManager::GetInstance()->GetUI("startButton")->bIsDone = true;
-		UIManager::GetInstance()->AddUI("uiReligionBar", new UIReligionBar());
+		for (auto UI : m_coreUi)
+			UI->bIsDone = true;
+		m_coreUi.clear();
+		//UIManager::GetInstance()->GetUI("startButton")->bIsDone = true;
+		UIBase* newUI = new UIReligionBar();
+		UIManager::GetInstance()->AddUI("uiReligionBar", newUI);
+		m_coreUi.push_back(newUI);
+	}
+		
 		break;
 	default:
 		break;
@@ -2208,16 +2221,37 @@ void SceneSP::Update(double dt)
 	case G_SPLASHSCREEN:
 	{
 		// made with opengl
-		if (fOpenGLInTimer < 1.f) { fOpenGLInTimer += dt; }
+		if (fOpenGLInTimer < 1.f)
+		{ 
+			fOpenGLInTimer += dt; 
+			if (MC->IsButtonPressed(MouseController::LMB))//if LMB pressed, skip to logo splash
+			{
+				fOpenGLInTimer = 1;
+				fOpenGLOutTimer = 0;
+			}
+		}
 		else
 		{
 			fOpenGLInTimer = 1.f;
-			if (fOpenGLOutTimer > 0.f) { fOpenGLOutTimer -= dt * 0.75f; }
+			if (fOpenGLOutTimer > 0.f) { 
+				fOpenGLOutTimer -= dt * 0.75f; 
+				if (MC->IsButtonPressed(MouseController::LMB))//if LMB pressed, skip to logo splash
+				{
+					fOpenGLOutTimer = 0;
+				}
+			}
 			else
 			{
 				fOpenGLOutTimer = 0.f;
 				// game icon
-				if (fSplashScreenInTimer < 1.f) { fSplashScreenInTimer += dt; }
+				if (fSplashScreenInTimer < 1.f) { 
+					fSplashScreenInTimer += dt; 
+					if (MC->IsButtonPressed(MouseController::LMB))//if LMB pressed, skip to main menu
+					{
+						fSplashScreenInTimer = 1;
+						fGameStartTimer = 0;
+					}
+				}
 				else
 				{
 					fSplashScreenInTimer = 1.f;
@@ -2226,7 +2260,7 @@ void SceneSP::Update(double dt)
 					{
 						fSplashScreenOutTimer = 1.f;
 						fGameStartTimer -= dt;
-						if (fGameStartTimer <= 0.f)
+						if (fGameStartTimer <= 0.f || MC->IsButtonPressed(MouseController::LMB))//if timer has reached or LMB pressed, go to main menu
 						{
 							fGameStartTimer = 0.f;
 							ChangeState(G_MAINMENU);
@@ -2240,14 +2274,11 @@ void SceneSP::Update(double dt)
 		break;
 	case G_MAINMENU:
 	{
-		static bool bLButtonState = false;
-		if (!bLButtonState && Application::IsMousePressed(0))
+		//static bool bLButtonState = false;
+		Application::GetInstance().SetMouseVisiblity(true);
+		UIBase* startButton = UIM->GetUI("startButton");
+		if (startButton->IsMousePressed())
 		{
-			bLButtonState = true;
-		}
-		else if (bLButtonState && !Application::IsMousePressed(0))
-		{
-			bLButtonState = false;
 			ChangeState(G_INPLAY);
 		}
 		return;
@@ -2377,10 +2408,11 @@ void SceneSP::Update(double dt)
 	}
 
 	Vector3 clickTarget = NULL;
-	static bool bLButtonState = false;
-	if (!bLButtonState && Application::IsMousePressed(0))
+
+	static bool leftClick = false;
+	if (MC->IsButtonPressed(MouseController::LMB))
 	{
-		bLButtonState = true;
+		leftClick = true;
 		//std::cout << "LBUTTON DOWN" << std::endl;
 
 		double x, y;
@@ -2407,6 +2439,10 @@ void SceneSP::Update(double dt)
 						selected = go;
 						objectFound = true;
 						go->GiveAnimation(new AnimationJump());
+						if (go->type == GameObject::GO_VILLAGER)
+						{
+							go->direction = Vector3(0, 0, 1);
+						}
 						break;
 					}
 					else if (selected != go)
@@ -2482,10 +2518,70 @@ void SceneSP::Update(double dt)
 			}
 		}
 	}
-	else if (bLButtonState && !Application::IsMousePressed(0))
+
+	static float clickTimer = 0.f;
+	if (leftClick)
 	{
-		bLButtonState = false;
-		//std::cout << "LBUTTON UP" << std::endl;
+		if (selected != NULL && selected->type == GameObject::GO_VILLAGER)
+		{
+			clickTimer += dt;
+			if (clickTimer > 0.3f)
+			{
+				selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("PickedUp");
+				selected->pickupPt = selected->currentPt;
+				clickTimer = 0.f;
+				leftClick = false;
+			}
+		}
+		else
+		{
+			leftClick = false;
+		}
+	}
+
+	if (MC->IsButtonReleased(MouseController::LMB))
+	{
+		leftClick = false;
+		clickTimer = 0.f;
+		if (selected != NULL && selected->type == GameObject::GO_VILLAGER)
+		{
+			if (selected->m_currState == SMManager::GetInstance()->GetSM(selected->smID)->GetState("PickedUp"))
+			{
+				GridPt selectedPt = GetPoint(mousePos);
+				selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
+				if (isPointInGrid(selectedPt))
+				{
+					if (m_grid[GetGridIndex(selectedPt)] == Grid::TILE_USED)
+					{
+						bool targetFound = false;
+						for (auto go : m_goList)
+						{
+							if (go != selected && go->currentPt == selectedPt)
+							{
+								selected->goTarget = go;
+								targetFound = true;
+								break;
+							}
+						}
+						if (!targetFound)
+						{
+							//In grid but some barrier
+							//selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
+						}
+					}
+					selected->currentPt = selectedPt;
+					selected->pos = GetGridPos(selected->currentPt);
+				}
+				else
+				{
+					//Outside of grid
+					//goes back to previous pos
+					selected->currentPt = selected->pickupPt;
+					selected->pos = GetGridPos(selected->currentPt);
+				}
+				selected = NULL;
+			}
+		}
 	}
 
 	// day/night cycle
@@ -2946,11 +3042,19 @@ void SceneSP::RenderGO(GameObject *go)
 			modelStack.Translate(0, 0, SceneData::GetInstance()->GetGridSize() * 0.5f);
 		}
 
-		if(go->animation != NULL)
+		if (go->animation != NULL)
+		{
+			float angle = Math::RadianToDegree(atan2(-go->direction.z, go->direction.x));
+			if (go->animation != NULL)
+				go->animation->Rotate.SetToRotation((angle), 0, 1, 0);
+			go->animation->MultiplyMtx();
 			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
-
-		float angle = Math::RadianToDegree(atan2(-go->direction.z, go->direction.x));
-		modelStack.Rotate(angle, 0, 1, 0);
+		}
+		else
+		{
+			float angle = Math::RadianToDegree(atan2(-go->direction.z, go->direction.x));
+			modelStack.Rotate(angle, 0, 1, 0);
+		}
 
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		//std::cout << angle << std::endl;
@@ -3439,11 +3543,11 @@ void SceneSP::RenderMainMenu()
 	modelStack.PopMatrix();
 
 	//buttonz
-	modelStack.PushMatrix();
-	modelStack.Translate(m_worldWidth * 0.8f, m_worldHeight * 0.7f, 1.f);
-	modelStack.Scale(m_worldWidth*0.2f, m_worldHeight*0.1f, m_worldHeight);
-	RenderMesh(meshList[GEO_WHITEQUAD], false);
-	modelStack.PopMatrix();
+	//modelStack.PushMatrix();
+	//modelStack.Translate(m_worldWidth * 0.8f, m_worldHeight * 0.7f, 1.f);
+	//modelStack.Scale(m_worldWidth*0.2f, m_worldHeight*0.1f, m_worldHeight);
+	//RenderMesh(meshList[GEO_WHITEQUAD], false);
+	//modelStack.PopMatrix();
 
 	UIManager::GetInstance()->Render(this);
 }

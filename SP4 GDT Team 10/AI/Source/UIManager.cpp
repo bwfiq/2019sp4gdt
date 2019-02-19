@@ -13,6 +13,7 @@ static const int fontWidth[] = { 0,26,26,26,26,26,26,26,26,26,26,26,26,0,26,26,2
 
 void UIManager::Init()
 {
+	
 }
 
 void UIManager::Update(float dt)
@@ -92,7 +93,7 @@ void UIManager::Render(SceneBase * scene)
 				if (!UIC.text.empty())
 				{
 					count2 += 0.01f;
-					rendertext(scene, SceneData::GetInstance()->GetMesh("text"), UIC.text, Color(1, 0, 0), false, UI_pos + (UIC_Pos + Vector3(-1,0,0)) * (UI->scale.x * 0.5f)
+					rendertext(scene, SceneData::GetInstance()->GetMesh("gungsuh"), UIC.text, Color(1, 0, 0), false, UI_pos + (UIC_Pos + Vector3(-1,0,0)) * (UI->scale.x * 0.5f)
 						, UIC.textSize,  UIC.alpha);
 				}
 				scene->modelStack.PopMatrix();
@@ -252,7 +253,7 @@ void UIManager::rendertext(SceneBase * scene, Mesh * mesh, std::string text, Col
 		glUniform1f(scene->m_parameters[SceneBase::U_ALPHA], alpha);
 		mesh->Render((unsigned)text[i] * 6, 6);
 
-		accum += (float)fontWidth[(unsigned)text[i]] / 64;
+		accum += 32.f / 64.f;//(float)fontWidth[(unsigned)text[i]] / 64.f;
 	}
 	//glBindTexture(GL_TEXTURE_2D, 0);
 	glUniform1i(scene->m_parameters[SceneBase::U_TEXT_ENABLED], 0);

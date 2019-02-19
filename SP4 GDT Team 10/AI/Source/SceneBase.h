@@ -173,6 +173,8 @@ public:
 		GEO_SPLASHSCREEN,	// opengl
 		GEO_LOGO,			// game logo
 
+		GEO_TEXT_GUNGSUH,
+
 		GEO_GRID,
 
 		GEO_OFFERING,
