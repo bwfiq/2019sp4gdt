@@ -218,6 +218,12 @@
     <ClCompile Include="Source\AnimationPickUp.cpp">
       <Filter>VisualEffects\Animations</Filter>
     </ClCompile>
+    <ClCompile Include="Source\UIGameButton.cpp">
+      <Filter>UI\UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UIGameText.cpp">
+      <Filter>UI\UIObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -402,6 +408,12 @@
     </ClInclude>
     <ClInclude Include="Source\AnimationPickUp.h">
       <Filter>VisualEffects\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UIGameButton.h">
+      <Filter>UI\UIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UIGameText.h">
+      <Filter>UI\UIObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

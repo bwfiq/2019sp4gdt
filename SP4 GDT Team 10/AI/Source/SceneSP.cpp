@@ -14,6 +14,8 @@
 #include "UIMenuButton.h"
 #include "UIAltarPopup.h"
 #include "UICoreInfo.h"
+#include "UIGameButton.h"
+#include "UIGameText.h"
 
 #include "EffectManager.h"
 #include "EffectTrail.h"
@@ -411,6 +413,15 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 			newUI = new UICoreInfo(UICoreInfo::INFO_TIME, Vector3(0.5f, 0.85f));
 			UIManager::GetInstance()->AddUI("ui_Info_Time", newUI);
 			m_coreUi.push_back(newUI);
+
+			newUI = new UIGameButton(UIGameButton::BUTTON_DAILYREQUIREMENT);
+			UIManager::GetInstance()->AddUI("ui_Button_DailyRequirement", newUI);
+			m_coreUi.push_back(newUI);
+
+			newUI = new UIGameText(UIGameText::TEXT_DAILYREQUIREMENT);
+			newUI->bActive = false;
+			UIManager::GetInstance()->AddUI("ui_Text_DailyRequirement", newUI);
+			m_coreUi.push_back(newUI);
 		}
 	}
 		break;
@@ -588,6 +599,27 @@ bool SceneSP::Handle(Message* message)
 	if (messageCamShake)
 	{
 		camera.SetCamShake(messageCamShake->type + 1, messageCamShake->intensity, messageCamShake->duration);
+		delete message;
+		return true;
+	}
+	MessageDisplayDailyRequirement* messageDisplayReq = dynamic_cast<MessageDisplayDailyRequirement*>(message);
+	if (messageDisplayReq)
+	{
+		UIBase* dailyReqTextUI = UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement");
+		if (dailyReqTextUI == NULL)
+		{
+			delete message;
+			return false;
+		}
+		dailyReqTextUI->bActive = !dailyReqTextUI->bActive;
+		if (dailyReqTextUI->bActive)
+		{
+			messageDisplayReq->ui->SetText("Current Goal ^");
+		}
+		else
+		{
+			messageDisplayReq->ui->SetText("Current Goal v");
+		}
 		delete message;
 		return true;
 	}

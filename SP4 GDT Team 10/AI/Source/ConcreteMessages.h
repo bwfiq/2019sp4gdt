@@ -4,6 +4,8 @@
 #include "Message.h"
 #include "GameObject.h"
 
+class UIGameButton;
+
 struct MessageWRU : public Message
 {
 	enum SEARCH_TYPE
@@ -54,5 +56,12 @@ struct MessageCameraShake : public Message
 struct MessageCalamityEarthquake : public Message
 {
 
+};
+
+struct MessageDisplayDailyRequirement : public Message
+{
+	MessageDisplayDailyRequirement(UIGameButton* ui) : ui(ui) {}
+	virtual ~MessageDisplayDailyRequirement() {}
+	UIGameButton* ui;
 };
 #endif
