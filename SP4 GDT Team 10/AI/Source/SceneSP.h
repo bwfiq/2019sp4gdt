@@ -18,9 +18,12 @@ class SceneSP : public SceneBase
 public:
 	enum GAME_STATE
 	{
-		G_SPLASHSCREEN = 0,
-		G_MAINMENU,
+		G_SPLASHSCREEN = 0,	// pre-game
+		G_MAINMENU,			// pre-game
+		//G_OPTIONS,		// pre-game
 		G_INPLAY,
+		//G_INGAMEOPTIONS,	// rendered over game
+		G_RESEARCHTREE,		// rendered over game
 
 		G_TOTAL
 	};
@@ -37,6 +40,7 @@ public:
 	void RenderPassMain();
 	void RenderSplashScreen();
 	void RenderMainMenu();
+	void RenderResearchTree();
 	void RenderWorld();
 
 	void RenderGO(GameObject *go);

@@ -2253,6 +2253,12 @@ void SceneSP::Update(double dt)
 		return;
 	}
 		break;
+	case G_RESEARCHTREE:
+	{
+		// button pressin
+		return;
+	}
+		break;
 	default:
 	{
 
@@ -3442,6 +3448,49 @@ void SceneSP::RenderMainMenu()
 	UIManager::GetInstance()->Render(this);
 }
 
+void SceneSP::RenderResearchTree()
+{
+	m_renderPass = RENDER_PASS_MAIN;
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, Application::GetWindowWidth(),
+		Application::GetWindowHeight());
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glUseProgram(m_programID);
+	//pass light depth texture
+	m_lightDepthFBO.BindForReading(GL_TEXTURE8);
+	glUniform1i(m_parameters[U_SHADOW_MAP], 8);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	// Projection matrix : Orthographic Projection
+	Mtx44 projection;
+	projection.SetToOrtho(0, m_worldWidth, 0, m_worldHeight, -10, 10);
+	projectionStack.LoadMatrix(projection);
+
+	// Camera matrix
+	viewStack.LoadIdentity();
+	viewStack.LookAt(
+		camera.position.x, camera.position.y, camera.position.z,
+		camera.target.x, camera.target.y, camera.target.z,
+		camera.up.x, camera.up.y, camera.up.z
+	);
+	// Model matrix : an identity matrix (model will be at the origin)
+	modelStack.LoadIdentity();
+
+	//RenderMesh(meshList[GEO_AXES], false);
+
+	//buttonz
+	modelStack.PushMatrix();
+	modelStack.Translate(m_worldWidth * 0.8f, m_worldHeight * 0.7f, 1.f);
+	modelStack.Scale(m_worldWidth*0.2f, m_worldHeight*0.1f, m_worldHeight);
+	RenderMesh(meshList[GEO_WHITEQUAD], false, 0.5f);
+	modelStack.PopMatrix();
+
+	UIManager::GetInstance()->Render(this);
+}
+
 void SceneSP::RenderWorld()
 {
 	for (auto go : m_goList)
@@ -3467,6 +3516,11 @@ void SceneSP::Render()
 	case G_INPLAY:
 		RenderPassGPass();
 		RenderPassMain();
+		break;
+	case G_RESEARCHTREE:
+		RenderPassGPass();
+		RenderPassMain();
+		RenderResearchTree();
 		break;
 	default:
 		break;
