@@ -199,6 +199,8 @@
     <ClCompile Include="Source\UIAltarPopup.cpp" />
     <ClCompile Include="Source\UIBase.cpp" />
     <ClCompile Include="Source\UICoreInfo.cpp" />
+    <ClCompile Include="Source\UIGameButton.cpp" />
+    <ClCompile Include="Source\UIGameText.cpp" />
     <ClCompile Include="Source\UIManager.cpp" />
     <ClCompile Include="Source\UIMessagePopup.cpp" />
     <ClCompile Include="Source\UIReligionBar.cpp" />
@@ -262,6 +264,8 @@
     <ClInclude Include="Source\UIAltarPopup.h" />
     <ClInclude Include="Source\UIBase.h" />
     <ClInclude Include="Source\UICoreInfo.h" />
+    <ClInclude Include="Source\UIGameButton.h" />
+    <ClInclude Include="Source\UIGameText.h" />
     <ClInclude Include="Source\UIManager.h" />
     <ClInclude Include="Source\UIMessagePopup.h" />
     <ClInclude Include="Source\UIReligionBar.h" />
