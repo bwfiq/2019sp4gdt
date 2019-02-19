@@ -81,6 +81,7 @@ struct GameObject : public ObjectBase
 	std::vector<GridPt> path;
 
 	GridPt currentPt;
+	GridPt pickupPt;
 
 	/*
 	//Pathfinding

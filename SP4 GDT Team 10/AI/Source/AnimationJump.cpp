@@ -7,6 +7,7 @@ AnimationJump::AnimationJump()
 {
 	//Rotate.SetToRotation(90, 1, 0, 0);
 	currentYTranslation = 0;
+	type = A_JUMP;
 }
 
 AnimationJump::~AnimationJump()
