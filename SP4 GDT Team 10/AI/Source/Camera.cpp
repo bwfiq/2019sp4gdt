@@ -4,6 +4,7 @@
 #include "MouseController.h"
 #include "KeyboardController.h"
 #include "Mtx44.h"
+#include "SceneData.h"
 
 Camera::Camera()
 {
@@ -34,16 +35,16 @@ void Camera::Reset()
 
 void Camera::Update(double dt)
 {
-	MouseController* MS = MouseController::GetInstance();
+	MouseController* MC = MouseController::GetInstance();
 	KeyboardController* KC = KeyboardController::GetInstance();
 	Vector3 mousePos,mouseDelta;
-	MS->GetMousePosition(mousePos.x, mousePos.y);
-	MS->GetMouseDelta(mouseDelta.x, mouseDelta.z);
+	MC->GetMousePosition(mousePos.x, mousePos.y);
+	MC->GetMouseDelta(mouseDelta.x, mouseDelta.z);
 	int windowWidth = Application::GetInstance().GetWindowWidth();
 	int windowHeight = Application::GetInstance().GetWindowHeight();
-	float mouseScroll = (-MS->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) + 4) * 0.5f;
+	float mouseScroll = (-MC->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) + 4) * 0.5f;
 	//Input stuff
-	if (MS->IsButtonUp(MouseController::RMB) &&
+	if (MC->IsButtonUp(MouseController::RMB) &&
 		mousePos.x > 0 && mousePos.x < windowWidth &&
 		mousePos.y > 0 && mousePos.y < windowHeight)
 	{
@@ -77,7 +78,7 @@ void Camera::Update(double dt)
 			target_velocity.z += diff;
 		}
 	}
-	if (MS->IsButtonPressed(MouseController::RMB))
+	if (MC->IsButtonPressed(MouseController::RMB))
 	{
 		position_velocity.SetZero();
 		target_velocity.SetZero();
@@ -85,12 +86,12 @@ void Camera::Update(double dt)
 	if (!mouseDelta.IsZero())
 	{
 		mouseDelta *= -0.005f * mouseScroll;
-		if (MS->IsButtonDown(MouseController::RMB))
+		if (MC->IsButtonDown(MouseController::RMB))
 		{
 			position_goal += mouseDelta;
 			target_goal += mouseDelta;
 		}
-		else if (MS->IsButtonReleased(MouseController::RMB))
+		else if (MC->IsButtonReleased(MouseController::RMB))
 		{
 			float speed = Math::Clamp(mouseDelta.Length()*20, 40.f , 75.f);
 			position_velocity = mouseDelta * speed;
@@ -153,6 +154,8 @@ void Camera::Update(double dt)
 	{
 		target.lerp(target_goal, Math::Min((float)dt*15.5f, 1.f));
 	}
+
+	SceneData::GetInstance()->SetCamPosition(this->position);
 }
 
 void Camera::SetCamShake(int shakeType, float intensity, float duration)

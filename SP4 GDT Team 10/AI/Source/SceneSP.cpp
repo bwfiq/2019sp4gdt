@@ -361,6 +361,9 @@ bool SceneSP::isTheCoastClear(GameObject* go, GridPt next, Grid::DIRECTION dir)
 
 void SceneSP::ChangeState(GAME_STATE newstate)
 {
+	for (auto UI : m_coreUi)
+		UI->bIsDone = true;
+	m_coreUi.clear();
 	switch (newstate)
 	{
 	case G_SPLASHSCREEN:
@@ -377,39 +380,39 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 	case G_INPLAY:
 	{
 		camera.Init(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));	// game
-		for (auto UI : m_coreUi)
-			UI->bIsDone = true;
-		m_coreUi.clear();
 		//UIManager::GetInstance()->GetUI("startButton")->bIsDone = true;
-		UIBase* newUI = new UIReligionBar();
-		UIManager::GetInstance()->AddUI("uiReligionBar", newUI);
-		m_coreUi.push_back(newUI);
+		case G_RESEARCHTREE: // will not init camera for overlays but will add ui for all ingame states
+		{
+			//UIManager::GetInstance()->GetUI("startButton")->bIsDone = true;
+			UIBase* newUI = new UIReligionBar();
+			UIManager::GetInstance()->AddUI("uiReligionBar", newUI);
+			m_coreUi.push_back(newUI);
 
-		newUI = new UICoreInfo(UICoreInfo::INFO_FOOD, Vector3(0.1f, 0.9));
-		UIManager::GetInstance()->AddUI("ui_Info_Food", newUI);
-		m_coreUi.push_back(newUI);
+			newUI = new UICoreInfo(UICoreInfo::INFO_FOOD, Vector3(0.1f, 0.9));
+			UIManager::GetInstance()->AddUI("ui_Info_Food", newUI);
+			m_coreUi.push_back(newUI);
 
-		newUI = new UICoreInfo(UICoreInfo::INFO_POPULATION, Vector3(0.3f, 0.9));
-		UIManager::GetInstance()->AddUI("ui_Info_Population", newUI);
-		m_coreUi.push_back(newUI);
+			newUI = new UICoreInfo(UICoreInfo::INFO_POPULATION, Vector3(0.3f, 0.9));
+			UIManager::GetInstance()->AddUI("ui_Info_Population", newUI);
+			m_coreUi.push_back(newUI);
 
-		newUI = new UICoreInfo(UICoreInfo::INFO_STONE, Vector3(0.7f, 0.9));
-		UIManager::GetInstance()->AddUI("ui_Info_Stone", newUI);
-		m_coreUi.push_back(newUI);
+			newUI = new UICoreInfo(UICoreInfo::INFO_STONE, Vector3(0.7f, 0.9));
+			UIManager::GetInstance()->AddUI("ui_Info_Stone", newUI);
+			m_coreUi.push_back(newUI);
 
-		newUI = new UICoreInfo(UICoreInfo::INFO_WOOD, Vector3(0.9f, 0.9));
-		UIManager::GetInstance()->AddUI("ui_Info_Wood", newUI);
-		m_coreUi.push_back(newUI);
+			newUI = new UICoreInfo(UICoreInfo::INFO_WOOD, Vector3(0.9f, 0.9));
+			UIManager::GetInstance()->AddUI("ui_Info_Wood", newUI);
+			m_coreUi.push_back(newUI);
 
-		newUI = new UICoreInfo(UICoreInfo::INFO_DAY, Vector3(0.5f, 0.95f));
-		UIManager::GetInstance()->AddUI("ui_Info_Day", newUI);
-		m_coreUi.push_back(newUI);
+			newUI = new UICoreInfo(UICoreInfo::INFO_DAY, Vector3(0.5f, 0.95f));
+			UIManager::GetInstance()->AddUI("ui_Info_Day", newUI);
+			m_coreUi.push_back(newUI);
 
-		newUI = new UICoreInfo(UICoreInfo::INFO_TIME, Vector3(0.5f, 0.85f));
-		UIManager::GetInstance()->AddUI("ui_Info_Time", newUI);
-		m_coreUi.push_back(newUI);
+			newUI = new UICoreInfo(UICoreInfo::INFO_TIME, Vector3(0.5f, 0.85f));
+			UIManager::GetInstance()->AddUI("ui_Info_Time", newUI);
+			m_coreUi.push_back(newUI);
+		}
 	}
-		
 		break;
 	default:
 		break;
@@ -455,10 +458,10 @@ void SceneSP::Init()
 	//Objects from maya, bottom of object to be translated down
 	goVillager = FetchGO(GameObject::GO_VILLAGER);
 	goVillager->scale.y = 1.f;
-	goVillager->pos.Set(0, goVillager->scale.y * 0.5f, 0);
+	goVillager->pos = GetGridPos(GridPt(5, 5));
+	goVillager->pos.y = goVillager->scale.y * 0.5f;
 	goVillager->iGridX = 1;
 	goVillager->iGridZ = 1;
-	goVillager->pos = GetGridPos(GridPt(5, 5));
 	goVillager->GiveAnimation(new AnimationJump());
 
 	goChiefHut = FetchGO(GameObject::GO_CHIEFHUT);
@@ -468,7 +471,7 @@ void SceneSP::Init()
 
 	goAltar = FetchGO(GameObject::GO_ALTAR);
 	goAltar->pos = GetGridPos(GridPt(6, 2));
-	goAltar->pos.y = goChiefHut->scale.y * 0.5f;
+	goAltar->pos.y = goAltar->scale.y * 0.5f;
 	Altar* altar = static_cast<Altar*>(goAltar);
 	altar->bBuilt = true;
 	altar->iFoodOffered = 0;
@@ -533,7 +536,7 @@ void SceneSP::Init()
 
 	EffectManager::GetInstance()->Init();
 	EffectManager::GetInstance()->AddEffect(new EffectTrail(&camera));
-	EffectManager::GetInstance()->AddEffect(new EffectHand());
+	EffectManager::GetInstance()->AddEffect(new EffectHand(&camera));
 
 	CalamityManager::GetInstance()->Init();
 
@@ -2151,13 +2154,13 @@ void SceneSP::UpdateSelectedUI()
 void SceneSP::Reset()
 {
 	//Cleanup GameObjects
-	while (m_goList.size() > 0)
+	/*while (m_goList.size() > 0)
 	{
 		GameObject *go = m_goList.back();
 		delete go;
 		m_goList.pop_back();
 	}
-
+	*/
 	m_speed = 1.f;
 
 	ChangeState(G_MAINMENU);
@@ -2309,6 +2312,16 @@ void SceneSP::Update(double dt)
 		return;
 	}
 		break;
+	case G_RESEARCHTREE:
+	{
+		// button pressin
+		if (KC->IsKeyPressed('U')) {
+			ChangeState(G_INPLAY);
+			camera = tempCamera;
+		}
+		return;
+	}
+		break;
 	default:
 	{
 
@@ -2322,6 +2335,10 @@ void SceneSP::Update(double dt)
 		CM->AddToCalamityQueue(new CalamityEarthquake());
 		SD->SetReligionValue(((int)SD->GetReligionValue() % (int)SD->GetMaxReligionValue()) + 25);
 	}
+		if (KC->IsKeyPressed('U')) {
+			tempCamera = camera;
+			ChangeState(G_RESEARCHTREE);
+		}
 	if (Application::IsKeyPressed(VK_OEM_MINUS))
 	{
 		m_speed = Math::Max(0.f, m_speed - 0.1f);
@@ -2678,6 +2695,12 @@ void SceneSP::Update(double dt)
 	m_grid[5 + SD->GetNoGrid() * 2] = Grid::TILE_USED;
 	m_grid[5 + SD->GetNoGrid() * 3] = Grid::TILE_USED;
 	m_grid[5 + SD->GetNoGrid() * 4] = Grid::TILE_USED;
+	GridPt selectedGrid = GetPoint(mousePos);
+	if (isPointInGrid(selectedGrid))
+	{
+		Vector3 gridPos = GetGridPos(selectedGrid);
+		m_grid[GetGridIndex(selectedGrid)] = Grid::TILE_SELECTED;
+	}
 	for (auto go : m_goList)
 	{
 		if (!go->active)
@@ -2995,7 +3018,6 @@ void SceneSP::Update(double dt)
 			break;
 		}
 
-
 		/*if (go->type == GameObject::GO_NPC)
 		{
 			if (go->target == NULL)
@@ -3065,7 +3087,13 @@ void SceneSP::RenderGO(GameObject *go)
 		{
 			float angle = Math::RadianToDegree(atan2(-go->direction.z, go->direction.x));
 			if (go->animation != NULL)
-				go->animation->Rotate.SetToRotation((angle), 0, 1, 0);
+			{
+				Mtx44 temp;
+				temp.SetToIdentity();
+				temp.SetToRotation((angle), 0, 1, 0);
+				//go->animation->Rotate = go->animation->Rotate * temp;
+				go->animation->DirectionRotate.SetToRotation((angle), 0, 1, 0);
+			}
 			go->animation->MultiplyMtx();
 			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
 		}
@@ -3195,6 +3223,7 @@ void SceneSP::RenderGO(GameObject *go)
 	}
 	modelStack.PopMatrix();
 }
+
 void SceneSP::RenderPassGPass()
 {
 	m_renderPass = RENDER_PASS_PRE;
@@ -3307,7 +3336,7 @@ void SceneSP::RenderPassMain()
 	if (bShowGrid)
 	{
 		modelStack.PushMatrix();
-		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), 0.5f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
+		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), -0.1f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
 		modelStack.Scale(1, 1, 1);
 		glLineWidth(2.f);
 		RenderMesh(meshList[GEO_GRID], false);
@@ -3315,12 +3344,12 @@ void SceneSP::RenderPassMain()
 		modelStack.PopMatrix();
 
 		modelStack.PushMatrix();
-		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), 0.5f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
+		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), -0.1f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
 		for (int i = 0; i < SD->GetNoGrid() * SD->GetNoGrid(); ++i)
 		{
 			std::pair<int, int> pt = GetPoint(i);
 			modelStack.PushMatrix();
-			modelStack.Translate(pt.first * SD->GetGridSize() + SD->GetGridOffset(), 0, pt.second * SD->GetGridSize() + SD->GetGridOffset());
+			modelStack.Translate(pt.first * SD->GetGridSize() + SD->GetGridOffset(), 0.f, pt.second * SD->GetGridSize() + SD->GetGridOffset());
 			modelStack.Rotate(-90, 1, 0, 0);
 			modelStack.Scale(SD->GetGridSize(), SD->GetGridSize(), SD->GetGridSize());
 			switch (m_grid[i])
@@ -3331,22 +3360,14 @@ void SceneSP::RenderPassMain()
 			case Grid::TILE_USED:
 				RenderMesh(meshList[GEO_REDQUAD], false, 0.3f);
 				break;
+			case Grid::TILE_SELECTED:
+				RenderMesh(meshList[GEO_YELLOWQUAD], false, 0.3f);
+				break;
 			}
 			modelStack.PopMatrix();
 		}
 		modelStack.PopMatrix();
 
-		GridPt selectedGrid = GetPoint(mousePos);
-		if (isPointInGrid(selectedGrid))
-		{
-			Vector3 gridPos = GetGridPos(selectedGrid);
-			modelStack.PushMatrix();
-			modelStack.Translate(gridPos.x, gridPos.y + 0.5f, gridPos.z);
-			modelStack.Rotate(-90, 1, 0, 0);
-			modelStack.Scale(SD->GetGridSize(), SD->GetGridSize(), SD->GetGridSize());
-			RenderMesh(meshList[GEO_YELLOWQUAD], false, 0.4f);
-			modelStack.PopMatrix();
-		}
 	}
 
 	if (selected != NULL)
@@ -3497,7 +3518,6 @@ void SceneSP::RenderSplashScreen()
 
 	//RenderMesh(meshList[GEO_AXES], false);
 
-
 	if (fOpenGLOutTimer > 0.f)
 	{
 		modelStack.PushMatrix();
@@ -3571,6 +3591,46 @@ void SceneSP::RenderMainMenu()
 	UIManager::GetInstance()->Render(this);
 }
 
+void SceneSP::RenderOverlayResearchTree()
+{
+	// Projection matrix : Orthographic Projection
+	Mtx44 ortho;
+	int halfWindowWidth = Application::GetInstance().GetWindowWidth() * 0.5f;
+	int halfWindowHeight = Application::GetInstance().GetWindowHeight() * 0.5f;
+	//ortho.SetToOrtho(-80, 80, -60, 60, -10, 10);
+	ortho.SetToOrtho(-halfWindowWidth, halfWindowWidth, -halfWindowHeight, halfWindowHeight, -10, 10);
+	Mtx44 projection;
+	projection.SetToOrtho(0, m_worldWidth, 0, m_worldHeight, -10, 10);
+	projectionStack.PushMatrix();
+	projectionStack.LoadMatrix(projection);
+
+	// Camera matrix
+	viewStack.PushMatrix();
+	viewStack.LoadIdentity();
+	/*viewStack.LookAt(
+		camera.position.x, camera.position.y, camera.position.z,
+		camera.target.x, camera.target.y, camera.target.z,
+		camera.up.x, camera.up.y, camera.up.z
+	);*/
+
+	// Model matrix : an identity matrix (model will be at the origin)
+	modelStack.PushMatrix();
+	modelStack.LoadIdentity();
+
+	//RenderMesh(meshList[GEO_AXES], false);
+
+	modelStack.PushMatrix();
+	modelStack.Translate(m_worldWidth * 0.5f, m_worldHeight * 0.5f, 1.f);
+	modelStack.Scale(m_worldWidth*0.9f, m_worldHeight*0.9f, m_worldHeight);
+	RenderMesh(meshList[GEO_WHITEQUAD], false, 0.5f);
+	modelStack.PopMatrix();
+
+	modelStack.PopMatrix();
+	viewStack.PopMatrix();
+	projectionStack.PopMatrix();
+	//UIManager::GetInstance()->Render(this);
+}
+
 void SceneSP::RenderWorld()
 {
 	for (auto go : m_goList)
@@ -3596,6 +3656,11 @@ void SceneSP::Render()
 	case G_INPLAY:
 		RenderPassGPass();
 		RenderPassMain();
+		break;
+	case G_RESEARCHTREE:
+		RenderPassGPass();
+		RenderPassMain();
+		RenderOverlayResearchTree();
 		break;
 	default:
 		break;

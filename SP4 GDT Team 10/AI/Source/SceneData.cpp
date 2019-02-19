@@ -174,9 +174,19 @@ void SceneData::SetMousePos_World(Vector3 mousePos_world)
 	this->mousePos_World = mousePos_world;
 }
 
+void SceneData::SetCamPosition(Vector3 camPos)
+{
+	camPosition = camPos;
+}
+
 Vector3 SceneData::GetMousePos_World()
 {
 	return this->mousePos_World;
+}
+
+Vector3 SceneData::GetCamPosition()
+{
+	return camPosition;
 }
 
 void SceneData::AddMesh(Mesh * mesh)
