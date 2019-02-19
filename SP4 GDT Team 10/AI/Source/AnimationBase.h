@@ -24,6 +24,7 @@ public:
 	Mtx44 OffsetRotate;
 	Mtx44 Scale;
 	Mtx44 CurrentTransformation;
+	Mtx44 DirectionRotate;
 
 	virtual Mtx44 GetCurrentTransformation(void);
 	virtual void Update(float dt);

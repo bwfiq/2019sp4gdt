@@ -215,6 +215,9 @@
     <ClCompile Include="Source\AnimationWalk.cpp">
       <Filter>VisualEffects\Animations</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AnimationPickUp.cpp">
+      <Filter>VisualEffects\Animations</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -395,6 +398,9 @@
       <Filter>UI\UIObjects</Filter>
     </ClInclude>
     <ClInclude Include="Source\AnimationWalk.h">
+      <Filter>VisualEffects\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AnimationPickUp.h">
       <Filter>VisualEffects\Animations</Filter>
     </ClInclude>
   </ItemGroup>

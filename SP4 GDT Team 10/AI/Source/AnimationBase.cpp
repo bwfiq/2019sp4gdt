@@ -9,6 +9,7 @@ AnimationBase::AnimationBase()
 	Rotate.SetToIdentity();
 	Scale.SetToIdentity();
 	CurrentTransformation.SetToIdentity();
+	DirectionRotate.SetToIdentity();
 	active = true;
 	type = A_JUMP;
 }
@@ -25,11 +26,11 @@ Mtx44 AnimationBase::GetCurrentTransformation(void)
 void AnimationBase::Update(float dt)
 {
 	CurrentTransformation.SetToIdentity();
-	CurrentTransformation = CurrentTransformation * Translate  * Rotate * RevertTranslateOffset * OffsetRotate  * TranslateOffset * Scale;
+	CurrentTransformation = CurrentTransformation * Translate * DirectionRotate * Rotate * RevertTranslateOffset * OffsetRotate  * TranslateOffset * Scale;
 }
 
 void AnimationBase::MultiplyMtx(void)
 {
 	CurrentTransformation.SetToIdentity();
-	CurrentTransformation = CurrentTransformation * Translate  * Rotate * RevertTranslateOffset * OffsetRotate  * TranslateOffset * Scale;
+	CurrentTransformation = CurrentTransformation * Translate  * DirectionRotate * Rotate * RevertTranslateOffset * OffsetRotate  * TranslateOffset * Scale;
 }

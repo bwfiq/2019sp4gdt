@@ -51,7 +51,9 @@ public:
 	void SetCurrDay(int day);
 	int GetCurrDay();
 	void SetMousePos_World(Vector3 mousePos_world);
+	void SetCamPosition(Vector3 camPos);
 	Vector3 GetMousePos_World();
+	Vector3 GetCamPosition();
 
 	void AddMesh(Mesh* mesh);
 	void RemoveMesh(const std::string& meshName);
@@ -71,6 +73,7 @@ private:
 	float f_elapsedTime;
 	std::map<std::string, Mesh*> meshList;//these meshes delete themselves via the scene
 	Vector3 mousePos_World;
+	Vector3 camPosition;
 
 	float fReligionValue, fMaxReligionValue;
 	int iFood, iFoodLimit, iPopulation, iPopulationLimit, iWood, iWoodLimit, iCurrMonth, iCurrDay;
