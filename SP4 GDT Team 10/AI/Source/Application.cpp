@@ -140,8 +140,8 @@ void Application::Init()
 
 
 	//Create a window and create its OpenGL context
-	m_width = 1000;
-	m_height = 600;
+	m_width = 1280;
+	m_height = 720;
 	m_window = glfwCreateWindow(m_width, m_height, "God Complex", NULL, NULL);
 
 	//If the window couldn't be created

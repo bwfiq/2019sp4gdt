@@ -27,10 +27,10 @@ void UIManager::Update(float dt)
 		if (it.second->bIsMouseHovered)
 			MouseController::GetInstance()->SetMouseOnUI(true);
 	}
-	if (prevMUIBool != MouseController::GetInstance()->IsMouseOnUI())
+	/*if (prevMUIBool != MouseController::GetInstance()->IsMouseOnUI())
 	{
 		Application::GetInstance().SetMouseVisiblity(MouseController::GetInstance()->IsMouseOnUI());
-	}
+	}*/ // makes cursor visible only while cursor is over ui
 	std::map<std::string, UIBase*>::iterator it = ui_list.begin();
 	while (it != ui_list.end())
 	{

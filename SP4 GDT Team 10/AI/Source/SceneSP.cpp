@@ -364,6 +364,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 	for (auto UI : m_coreUi)
 		UI->bIsDone = true;
 	m_coreUi.clear();
+	Application::GetInstance().SetMouseVisiblity(true);
 	switch (newstate)
 	{
 	case G_SPLASHSCREEN:
@@ -380,6 +381,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 	case G_INPLAY:
 	{
 		camera.Init(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));	// game
+		Application::GetInstance().SetMouseVisiblity(false);
 		//UIManager::GetInstance()->GetUI("startButton")->bIsDone = true;
 		case G_RESEARCHTREE: // will not init camera for overlays but will add ui for all ingame states
 		{
@@ -438,6 +440,7 @@ void SceneSP::Init()
 	std::fill(m_grid.begin(), m_grid.end(), Grid::TILE_EMPTY);
 	bShowGrid = false;
 	bGodlights = true;
+	Application::GetInstance().SetMouseVisiblity(true);
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
@@ -2303,7 +2306,6 @@ void SceneSP::Update(double dt)
 	case G_MAINMENU:
 	{
 		//static bool bLButtonState = false;
-		Application::GetInstance().SetMouseVisiblity(true);
 		UIBase* startButton = UIM->GetUI("startButton");
 		if (startButton->IsMousePressed())
 		{
