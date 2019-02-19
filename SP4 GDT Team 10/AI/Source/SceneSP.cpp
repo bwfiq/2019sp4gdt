@@ -430,10 +430,10 @@ void SceneSP::Init()
 	//Objects from maya, bottom of object to be translated down
 	goVillager = FetchGO(GameObject::GO_VILLAGER);
 	goVillager->scale.y = 1.f;
-	goVillager->pos.Set(0, goVillager->scale.y * 0.5f, 0);
+	goVillager->pos = GetGridPos(GridPt(5, 5));
+	goVillager->pos.y = goVillager->scale.y * 0.5f;
 	goVillager->iGridX = 1;
 	goVillager->iGridZ = 1;
-	goVillager->pos = GetGridPos(GridPt(5, 5));
 	goVillager->GiveAnimation(new AnimationJump());
 
 	goChiefHut = FetchGO(GameObject::GO_CHIEFHUT);
@@ -443,7 +443,7 @@ void SceneSP::Init()
 
 	goAltar = FetchGO(GameObject::GO_ALTAR);
 	goAltar->pos = GetGridPos(GridPt(6, 2));
-	goAltar->pos.y = goChiefHut->scale.y * 0.5f;
+	goAltar->pos.y = goAltar->scale.y * 0.5f;
 	Altar* altar = static_cast<Altar*>(goAltar);
 	altar->bBuilt = true;
 	altar->iFoodOffered = 0;
