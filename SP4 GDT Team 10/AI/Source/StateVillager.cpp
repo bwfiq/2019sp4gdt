@@ -14,7 +14,10 @@
 #include "Mountain.h"
 
 #include "AnimationWalk.h"
+#include "AnimationPickUp.h"
+
 #include "MousePicker.h"
+#include "MouseController.h"
 //State::State(const std::string & stateID)
 //	: m_stateID(stateID)
 //{
@@ -108,7 +111,10 @@ void StatePath::Update(double dt, GameObject * m_go)
 	SceneData* SD = SceneData::GetInstance();
 	if (m_go->target != NULL || m_go->goTarget != NULL)
 	{
-		
+		if (m_go->animation == NULL)
+		{
+			m_go->GiveAnimation(new AnimationWalk());
+		}
 		if (m_go->target != NULL)
 		{
 			if (!m_go->path.empty())
@@ -464,16 +470,34 @@ void StatePickedUp::Enter(GameObject* m_go)
 	{
 		m_go->path.pop_back();
 	}
+
+	m_go->GiveAnimation(new AnimationPickUp());
 }
 
 void StatePickedUp::Update(double dt, GameObject* m_go)
 {
 	SceneData* SD = SceneData::GetInstance();
-	m_go->pos = SD->GetMousePos_World() + Vector3(0, 0.5f, 0);
+	MouseController* MC = MouseController::GetInstance();
+	Vector3 dir = SD->GetCamPosition() - SD->GetMousePos_World();
+	try
+	{
+		dir.Normalize();
+	}
+	catch (DivideByZero)
+	{
+		dir.SetZero();
+	}
+	m_go->pos = SD->GetMousePos_World() + dir * (-MC->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) + 4) * 0.4f;
+	//m_go->pos = SD->GetMousePos_World() + Vector3(0, (-MC->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) + 4) * 0.5f, 0);
 }
 
 void StatePickedUp::Exit(GameObject* m_go)
 {
+	if (m_go->animation != NULL)
+	{
+		delete m_go->animation;
+		m_go->animation = NULL;
+	}
 }
 
 //StateDead

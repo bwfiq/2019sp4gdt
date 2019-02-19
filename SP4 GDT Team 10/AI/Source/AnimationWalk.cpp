@@ -16,8 +16,13 @@ AnimationWalk::~AnimationWalk()
 
 void AnimationWalk::Update(float dt)
 {
-	////Gravity
-	//vel.y -= 9.8f * dt;
+	Translate.SetToIdentity();
+	TranslateOffset.SetToIdentity();
+	RevertTranslateOffset.SetToIdentity();
+	OffsetRotate.SetToIdentity();
+	Rotate.SetToIdentity();
+	Scale.SetToIdentity();
+
 	tempY += dt * 9.5f;
 	currentYTranslation = 0.8f * fabs(sinf(tempY));
 	currentRotation = 15.f * (cosf(tempY));

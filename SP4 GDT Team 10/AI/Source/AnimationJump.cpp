@@ -16,8 +16,13 @@ AnimationJump::~AnimationJump()
 
 void AnimationJump::Update(float dt)
 {
-	////Gravity
-	//vel.y -= 9.8f * dt;
+	Translate.SetToIdentity();
+	TranslateOffset.SetToIdentity();
+	RevertTranslateOffset.SetToIdentity();
+	OffsetRotate.SetToIdentity();
+	Rotate.SetToIdentity();
+	Scale.SetToIdentity();
+
 	tempY += dt * 10;
 	currentYTranslation = 1.f * fabs(sinf(tempY));
 	//Rotate.SetToRotation(90, 1, 0, 0);

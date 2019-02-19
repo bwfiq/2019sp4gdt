@@ -1,10 +1,14 @@
 #pragma once
 #include "EffectBase.h"
 
+class Camera;
+
 class EffectHand : public EffectBase {
 public:
-	EffectHand();
+	EffectHand(Camera* camera);
 	virtual ~EffectHand();
+
+	Camera* cameraObj;
 
 	virtual void Update(float dt);
 protected:

@@ -21,7 +21,6 @@ void MousePicker::Init()
 {
 	fWindowWidth = Application::GetInstance().GetWindowWidth();
 	fWindowHeight = Application::GetInstance().GetWindowHeight();
-
 }
 void MousePicker::Update(float dt)
 {

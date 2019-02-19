@@ -2,13 +2,15 @@
 #include "Mesh.h"
 #include "SceneData.h"
 #include "MouseController.h"
+#include "MousePicker.h"
 
-EffectHand::EffectHand() :
+EffectHand::EffectHand(Camera* cam) :
 	EffectBase()
 {
 	SceneData* SD = SceneData::GetInstance();
 	mesh = SD->GetMesh("hand_default");
 	bLightEnabled = true;
+	this->cameraObj = cam;
 }
 
 EffectHand::~EffectHand()
@@ -27,6 +29,17 @@ void EffectHand::Update(float dt)
 	{
 		mesh = SD->GetMesh("hand_default");
 	}
-	pos = SD->GetMousePos_World() + Vector3(0, 0.5f, 0);
+	
+	Vector3 dir = cameraObj->position - SD->GetMousePos_World();
+	try
+	{
+		dir.Normalize();
+	}
+	catch (DivideByZero)
+	{
+		dir.SetZero();
+	}
+	pos = SD->GetMousePos_World() + dir * (-MC->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) + 4) * 0.7f;
+	pos.z += 0.2f;
 
 }

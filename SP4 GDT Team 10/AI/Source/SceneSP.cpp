@@ -508,7 +508,7 @@ void SceneSP::Init()
 
 	EffectManager::GetInstance()->Init();
 	EffectManager::GetInstance()->AddEffect(new EffectTrail(&camera));
-	EffectManager::GetInstance()->AddEffect(new EffectHand());
+	EffectManager::GetInstance()->AddEffect(new EffectHand(&camera));
 
 	CalamityManager::GetInstance()->Init();
 
@@ -3040,7 +3040,13 @@ void SceneSP::RenderGO(GameObject *go)
 		{
 			float angle = Math::RadianToDegree(atan2(-go->direction.z, go->direction.x));
 			if (go->animation != NULL)
-				go->animation->Rotate.SetToRotation((angle), 0, 1, 0);
+			{
+				Mtx44 temp;
+				temp.SetToIdentity();
+				temp.SetToRotation((angle), 0, 1, 0);
+				//go->animation->Rotate = go->animation->Rotate * temp;
+				go->animation->DirectionRotate.SetToRotation((angle), 0, 1, 0);
+			}
 			go->animation->MultiplyMtx();
 			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
 		}
