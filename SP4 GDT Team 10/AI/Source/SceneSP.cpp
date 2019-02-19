@@ -568,7 +568,7 @@ bool SceneSP::Handle(Message* message)
 			while (fLengthAway < messageWRU->threshold)
 			{
 				iRandIndex = Math::RandIntMinMax(0, SceneData::GetInstance()->GetNoGrid() * SceneData::GetInstance()->GetNoGrid() - 1);
-				if (m_grid[iRandIndex] == Grid::TILE_EMPTY)
+				if (m_grid[iRandIndex] != Grid::TILE_USED)
 				{
 					std::pair<int, int> randPoint = GetPoint(iRandIndex);
 					fLengthAway = (randPoint.first - currGrid.x) * (randPoint.first - currGrid.x) + (randPoint.second - currGrid.z) * (randPoint.second - currGrid.z);
@@ -2513,11 +2513,9 @@ void SceneSP::Update(double dt)
 					case GameObject::GO_VILLAGER:
 					{
 						selected->goTarget = NULL;
-						if (m_grid[GetGridIndex(selectedPt)] == Grid::TILE_EMPTY)
-						{
-							selected->target = GetGridPos(selectedPt);
-							selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
-						}
+
+						selected->target = GetGridPos(selectedPt);
+						selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
 					}
 					break;
 
@@ -2690,10 +2688,7 @@ void SceneSP::Update(double dt)
 	}
 	//Update the Grid
 	std::fill(m_grid.begin(), m_grid.end(), Grid::TILE_EMPTY);
-	m_grid[5] = Grid::TILE_USED;
-	m_grid[5 + SD->GetNoGrid() * 1] = Grid::TILE_USED;
-	m_grid[5 + SD->GetNoGrid() * 2] = Grid::TILE_USED;
-	m_grid[5 + SD->GetNoGrid() * 3] = Grid::TILE_USED;
+
 	m_grid[5 + SD->GetNoGrid() * 4] = Grid::TILE_USED;
 	GridPt selectedGrid = GetPoint(mousePos);
 	if (isPointInGrid(selectedGrid))
@@ -2742,7 +2737,7 @@ void SceneSP::Update(double dt)
 								GridPt pointToChange(gridPt.x - i, gridPt.z - j);
 								if (isPointInGrid(pointToChange))
 								{
-									if (m_grid[GetGridIndex(pointToChange)] == Grid::TILE_EMPTY)
+									if (m_grid[GetGridIndex(pointToChange)] != Grid::TILE_USED)
 									{
 										m_grid[GetGridIndex(pointToChange)] = Grid::TILE_USED;
 									}
@@ -2753,7 +2748,7 @@ void SceneSP::Update(double dt)
 								GridPt pointToChange(gridPt.x - i, gridPt.z + j);
 								if (isPointInGrid(pointToChange))
 								{
-									if (m_grid[GetGridIndex(pointToChange)] == Grid::TILE_EMPTY)
+									if (m_grid[GetGridIndex(pointToChange)] != Grid::TILE_USED)
 									{
 										m_grid[GetGridIndex(pointToChange)] = Grid::TILE_USED;
 									}
@@ -2767,7 +2762,7 @@ void SceneSP::Update(double dt)
 								GridPt pointToChange(gridPt.x + i, gridPt.z - j);
 								if (isPointInGrid(pointToChange))
 								{
-									if (m_grid[GetGridIndex(pointToChange)] == Grid::TILE_EMPTY)
+									if (m_grid[GetGridIndex(pointToChange)] != Grid::TILE_USED)
 									{
 										m_grid[GetGridIndex(pointToChange)] = Grid::TILE_USED;
 									}
@@ -2778,7 +2773,7 @@ void SceneSP::Update(double dt)
 								GridPt pointToChange(gridPt.x + i, gridPt.z + j);
 								if (isPointInGrid(pointToChange))
 								{
-									if (m_grid[GetGridIndex(pointToChange)] == Grid::TILE_EMPTY)
+									if (m_grid[GetGridIndex(pointToChange)] != Grid::TILE_USED)
 									{
 										m_grid[GetGridIndex(pointToChange)] = Grid::TILE_USED;
 									}
@@ -2795,7 +2790,7 @@ void SceneSP::Update(double dt)
 								GridPt pointToChange(gridPt.x - i, gridPt.z + j);
 								if (isPointInGrid(pointToChange))
 								{
-									if (m_grid[GetGridIndex(pointToChange)] == Grid::TILE_EMPTY)
+									if (m_grid[GetGridIndex(pointToChange)] != Grid::TILE_USED)
 									{
 										m_grid[GetGridIndex(pointToChange)] = Grid::TILE_USED;
 									}
@@ -2806,7 +2801,7 @@ void SceneSP::Update(double dt)
 								GridPt pointToChange(gridPt.x - i, gridPt.z - j);
 								if (isPointInGrid(pointToChange))
 								{
-									if (m_grid[GetGridIndex(pointToChange)] == Grid::TILE_EMPTY)
+									if (m_grid[GetGridIndex(pointToChange)] != Grid::TILE_USED)
 									{
 										m_grid[GetGridIndex(pointToChange)] = Grid::TILE_USED;
 									}
@@ -2820,7 +2815,7 @@ void SceneSP::Update(double dt)
 								GridPt pointToChange(gridPt.x + i, gridPt.z + j);
 								if (isPointInGrid(pointToChange))
 								{
-									if (m_grid[GetGridIndex(pointToChange)] == Grid::TILE_EMPTY)
+									if (m_grid[GetGridIndex(pointToChange)] != Grid::TILE_USED)
 									{
 										m_grid[GetGridIndex(pointToChange)] = Grid::TILE_USED;
 									}
@@ -2831,7 +2826,7 @@ void SceneSP::Update(double dt)
 								GridPt pointToChange(gridPt.x + i, gridPt.z - j);
 								if (isPointInGrid(pointToChange))
 								{
-									if (m_grid[GetGridIndex(pointToChange)] == Grid::TILE_EMPTY)
+									if (m_grid[GetGridIndex(pointToChange)] != Grid::TILE_USED)
 									{
 										m_grid[GetGridIndex(pointToChange)] = Grid::TILE_USED;
 									}
@@ -2851,7 +2846,7 @@ void SceneSP::Update(double dt)
 								GridPt pointToChange(gridPt.x + i, gridPt.z - j);
 								if (isPointInGrid(pointToChange))
 								{
-									if (m_grid[GetGridIndex(pointToChange)] == Grid::TILE_EMPTY)
+									if (m_grid[GetGridIndex(pointToChange)] != Grid::TILE_USED)
 									{
 										m_grid[GetGridIndex(pointToChange)] = Grid::TILE_USED;
 									}
@@ -2862,7 +2857,7 @@ void SceneSP::Update(double dt)
 								GridPt pointToChange(gridPt.x + i, gridPt.z + j);
 								if (isPointInGrid(pointToChange))
 								{
-									if (m_grid[GetGridIndex(pointToChange)] == Grid::TILE_EMPTY)
+									if (m_grid[GetGridIndex(pointToChange)] != Grid::TILE_USED)
 									{
 										m_grid[GetGridIndex(pointToChange)] = Grid::TILE_USED;
 									}
@@ -2876,7 +2871,7 @@ void SceneSP::Update(double dt)
 								GridPt pointToChange(gridPt.x - i, gridPt.z - j);
 								if (isPointInGrid(pointToChange))
 								{
-									if (m_grid[GetGridIndex(pointToChange)] == Grid::TILE_EMPTY)
+									if (m_grid[GetGridIndex(pointToChange)] != Grid::TILE_USED)
 									{
 										m_grid[GetGridIndex(pointToChange)] = Grid::TILE_USED;
 									}
@@ -2887,7 +2882,7 @@ void SceneSP::Update(double dt)
 								GridPt pointToChange(gridPt.x - i, gridPt.z + j);
 								if (isPointInGrid(pointToChange))
 								{
-									if (m_grid[GetGridIndex(pointToChange)] == Grid::TILE_EMPTY)
+									if (m_grid[GetGridIndex(pointToChange)] != Grid::TILE_USED)
 									{
 										m_grid[GetGridIndex(pointToChange)] = Grid::TILE_USED;
 									}
@@ -2904,7 +2899,7 @@ void SceneSP::Update(double dt)
 								GridPt pointToChange(gridPt.x + i, gridPt.z + j);
 								if (isPointInGrid(pointToChange))
 								{
-									if (m_grid[GetGridIndex(pointToChange)] == Grid::TILE_EMPTY)
+									if (m_grid[GetGridIndex(pointToChange)] != Grid::TILE_USED)
 									{
 										m_grid[GetGridIndex(pointToChange)] = Grid::TILE_USED;
 									}
@@ -2915,7 +2910,7 @@ void SceneSP::Update(double dt)
 								GridPt pointToChange(gridPt.x + i, gridPt.z - j);
 								if (isPointInGrid(pointToChange))
 								{
-									if (m_grid[GetGridIndex(pointToChange)] == Grid::TILE_EMPTY)
+									if (m_grid[GetGridIndex(pointToChange)] != Grid::TILE_USED)
 									{
 										m_grid[GetGridIndex(pointToChange)] = Grid::TILE_USED;
 									}
@@ -2929,7 +2924,7 @@ void SceneSP::Update(double dt)
 								GridPt pointToChange(gridPt.x - i, gridPt.z + j);
 								if (isPointInGrid(pointToChange))
 								{
-									if (m_grid[GetGridIndex(pointToChange)] == Grid::TILE_EMPTY)
+									if (m_grid[GetGridIndex(pointToChange)] != Grid::TILE_USED)
 									{
 										m_grid[GetGridIndex(pointToChange)] = Grid::TILE_USED;
 									}
@@ -2940,7 +2935,7 @@ void SceneSP::Update(double dt)
 								GridPt pointToChange(gridPt.x - i, gridPt.z - j);
 								if (isPointInGrid(pointToChange))
 								{
-									if (m_grid[GetGridIndex(pointToChange)] == Grid::TILE_EMPTY)
+									if (m_grid[GetGridIndex(pointToChange)] != Grid::TILE_USED)
 									{
 										m_grid[GetGridIndex(pointToChange)] = Grid::TILE_USED;
 									}
