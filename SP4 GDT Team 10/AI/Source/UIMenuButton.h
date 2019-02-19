@@ -3,7 +3,7 @@
 class UIMenuButton : public UIBase
 {
 public:
-	UIMenuButton(const std::string& text);
+	UIMenuButton(const std::string& text, float x = 0, float y = 0);
 	~UIMenuButton();
 
 	virtual void Update(float dt);

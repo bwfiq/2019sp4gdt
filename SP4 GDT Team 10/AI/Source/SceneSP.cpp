@@ -12,6 +12,7 @@
 #include "UIManager.h"
 #include "UIReligionBar.h"
 #include "UIMenuButton.h"
+#include "UIResearchButton.h"
 #include "UIAltarPopup.h"
 #include "UICoreInfo.h"
 
@@ -373,7 +374,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 	case G_MAINMENU:
 	{
 		camera.Init(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));	// splashscreen
-		UIBase* newUI = new UIMenuButton("Start");
+		UIBase* newUI = new UIMenuButton("Start", 0.8f, 0.7f);
 		UIManager::GetInstance()->AddUI("startButton", newUI);
 		m_coreUi.push_back(newUI);
 	}
@@ -383,9 +384,9 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 		camera.Init(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));	// game
 		Application::GetInstance().SetMouseVisiblity(false);
 		//UIManager::GetInstance()->GetUI("startButton")->bIsDone = true;
+			//UIManager::GetInstance()->GetUI("startButton")->bIsDone = true;
 		case G_RESEARCHTREE: // will not init camera for overlays but will add ui for all ingame states
 		{
-			//UIManager::GetInstance()->GetUI("startButton")->bIsDone = true;
 			UIBase* newUI = new UIReligionBar();
 			UIManager::GetInstance()->AddUI("uiReligionBar", newUI);
 			m_coreUi.push_back(newUI);
@@ -413,9 +414,20 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 			newUI = new UICoreInfo(UICoreInfo::INFO_TIME, Vector3(0.5f, 0.85f));
 			UIManager::GetInstance()->AddUI("ui_Info_Time", newUI);
 			m_coreUi.push_back(newUI);
+			if (newstate == G_RESEARCHTREE)
+			{
+				newUI = new UIMenuButton("back", 0.1f, 0.9f);
+				UIManager::GetInstance()->AddUI("backButton", newUI);
+				newUI->pos.Set(newUI->pos.x, newUI->pos.y, 5);
+				m_coreUi.push_back(newUI);
+				newUI = new UIResearchButton("", 0.2f, 0.8f);
+				UIManager::GetInstance()->AddUI("WoodResearch", newUI);
+				m_coreUi.push_back(newUI);
+			}
 		}
 	}
-		break;
+	break;
+
 	default:
 		break;
 	}
@@ -2321,6 +2333,11 @@ void SceneSP::Update(double dt)
 			ChangeState(G_INPLAY);
 			camera = tempCamera;
 		}
+		UIBase* backButton = UIM->GetUI("backButton");
+		if (backButton->IsMousePressed())
+		{
+			ChangeState(G_INPLAY);
+		}
 		return;
 	}
 		break;
@@ -3614,10 +3631,16 @@ void SceneSP::RenderOverlayResearchTree()
 	RenderMesh(meshList[GEO_WHITEQUAD], false, 0.5f);
 	modelStack.PopMatrix();
 
+	modelStack.PushMatrix();
+	modelStack.Translate(m_worldWidth * 0.5f, m_worldHeight * 0.5f, 1.1f);
+	modelStack.Scale(10, 4, 1);
+	RenderMesh(meshList[GEO_BACKBUTTON], false, 1.f);
+	modelStack.PopMatrix();
+
 	modelStack.PopMatrix();
 	viewStack.PopMatrix();
 	projectionStack.PopMatrix();
-	//UIManager::GetInstance()->Render(this);
+	UIManager::GetInstance()->Render(this);
 }
 
 void SceneSP::RenderWorld()

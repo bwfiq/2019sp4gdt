@@ -1,7 +1,7 @@
 #include "UIMenuButton.h"
 #include "SceneData.h"
 
-UIMenuButton::UIMenuButton(const std::string& text) :
+UIMenuButton::UIMenuButton(const std::string& text, float x, float y) :
 	UIBase()
 {
 	SceneData* SD = SceneData::GetInstance();
@@ -9,7 +9,7 @@ UIMenuButton::UIMenuButton(const std::string& text) :
 	uiComponents_list[COMPONENT_OUTLINEBAR].mesh = SD->GetMesh("whitequad");
 	uiComponents_list[COMPONENT_GREYBAR].mesh = SD->GetMesh("greyquad");
 
-	pos.Set(0.8f, 0.7f);
+	pos.Set(x, y);
 	scale.Set(100, 40);
 	anchorPoint.Set(0.5, 0.5);
 	float ratio = scale.x / scale.y;
