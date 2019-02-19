@@ -360,6 +360,9 @@ bool SceneSP::isTheCoastClear(GameObject* go, GridPt next, Grid::DIRECTION dir)
 
 void SceneSP::ChangeState(GAME_STATE newstate)
 {
+	for (auto UI : m_coreUi)
+		UI->bIsDone = true;
+	m_coreUi.clear();
 	switch (newstate)
 	{
 	case G_SPLASHSCREEN:
@@ -376,15 +379,14 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 	case G_INPLAY:
 	{
 		camera.Init(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));	// game
-		for (auto UI : m_coreUi)
-			UI->bIsDone = true;
-		m_coreUi.clear();
-		//UIManager::GetInstance()->GetUI("startButton")->bIsDone = true;
-		UIBase* newUI = new UIReligionBar();
-		UIManager::GetInstance()->AddUI("uiReligionBar", newUI);
-		m_coreUi.push_back(newUI);
+		case G_RESEARCHTREE: // will not init camera for overlays but will add ui for all ingame states
+		{
+			//UIManager::GetInstance()->GetUI("startButton")->bIsDone = true;
+			UIBase* newUI = new UIReligionBar();
+			UIManager::GetInstance()->AddUI("uiReligionBar", newUI);
+			m_coreUi.push_back(newUI);
+		}
 	}
-		
 		break;
 	default:
 		break;
@@ -2126,13 +2128,13 @@ void SceneSP::UpdateSelectedUI()
 void SceneSP::Reset()
 {
 	//Cleanup GameObjects
-	while (m_goList.size() > 0)
+	/*while (m_goList.size() > 0)
 	{
 		GameObject *go = m_goList.back();
 		delete go;
 		m_goList.pop_back();
 	}
-
+	*/
 	m_speed = 1.f;
 
 	ChangeState(G_MAINMENU);
@@ -2287,6 +2289,10 @@ void SceneSP::Update(double dt)
 	case G_RESEARCHTREE:
 	{
 		// button pressin
+		if (KC->IsKeyPressed('U')) {
+			ChangeState(G_INPLAY);
+			camera = tempCamera;
+		}
 		return;
 	}
 		break;
@@ -2303,6 +2309,10 @@ void SceneSP::Update(double dt)
 		CM->AddToCalamityQueue(new CalamityEarthquake());
 		SD->SetReligionValue(((int)SD->GetReligionValue() % (int)SD->GetMaxReligionValue()) + 25);
 	}
+		if (KC->IsKeyPressed('U')) {
+			tempCamera = camera;
+			ChangeState(G_RESEARCHTREE);
+		}
 	if (Application::IsKeyPressed(VK_OEM_MINUS))
 	{
 		m_speed = Math::Max(0.f, m_speed - 0.1f);
@@ -2976,7 +2986,6 @@ void SceneSP::Update(double dt)
 			break;
 		}
 
-
 		/*if (go->type == GameObject::GO_NPC)
 		{
 			if (go->target == NULL)
@@ -3176,6 +3185,7 @@ void SceneSP::RenderGO(GameObject *go)
 	}
 	modelStack.PopMatrix();
 }
+
 void SceneSP::RenderPassGPass()
 {
 	m_renderPass = RENDER_PASS_PRE;
@@ -3478,7 +3488,6 @@ void SceneSP::RenderSplashScreen()
 
 	//RenderMesh(meshList[GEO_AXES], false);
 
-
 	if (fOpenGLOutTimer > 0.f)
 	{
 		modelStack.PushMatrix();
@@ -3552,47 +3561,44 @@ void SceneSP::RenderMainMenu()
 	UIManager::GetInstance()->Render(this);
 }
 
-void SceneSP::RenderResearchTree()
+void SceneSP::RenderOverlayResearchTree()
 {
-	m_renderPass = RENDER_PASS_MAIN;
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, Application::GetWindowWidth(),
-		Application::GetWindowHeight());
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glUseProgram(m_programID);
-	//pass light depth texture
-	m_lightDepthFBO.BindForReading(GL_TEXTURE8);
-	glUniform1i(m_parameters[U_SHADOW_MAP], 8);
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	// Projection matrix : Orthographic Projection
+	Mtx44 ortho;
+	int halfWindowWidth = Application::GetInstance().GetWindowWidth() * 0.5f;
+	int halfWindowHeight = Application::GetInstance().GetWindowHeight() * 0.5f;
+	//ortho.SetToOrtho(-80, 80, -60, 60, -10, 10);
+	ortho.SetToOrtho(-halfWindowWidth, halfWindowWidth, -halfWindowHeight, halfWindowHeight, -10, 10);
 	Mtx44 projection;
 	projection.SetToOrtho(0, m_worldWidth, 0, m_worldHeight, -10, 10);
+	projectionStack.PushMatrix();
 	projectionStack.LoadMatrix(projection);
 
 	// Camera matrix
+	viewStack.PushMatrix();
 	viewStack.LoadIdentity();
-	viewStack.LookAt(
+	/*viewStack.LookAt(
 		camera.position.x, camera.position.y, camera.position.z,
 		camera.target.x, camera.target.y, camera.target.z,
 		camera.up.x, camera.up.y, camera.up.z
-	);
+	);*/
+
 	// Model matrix : an identity matrix (model will be at the origin)
+	modelStack.PushMatrix();
 	modelStack.LoadIdentity();
 
 	//RenderMesh(meshList[GEO_AXES], false);
 
-	//buttonz
 	modelStack.PushMatrix();
-	modelStack.Translate(m_worldWidth * 0.8f, m_worldHeight * 0.7f, 1.f);
-	modelStack.Scale(m_worldWidth*0.2f, m_worldHeight*0.1f, m_worldHeight);
+	modelStack.Translate(m_worldWidth * 0.5f, m_worldHeight * 0.5f, 1.f);
+	modelStack.Scale(m_worldWidth*0.9f, m_worldHeight*0.9f, m_worldHeight);
 	RenderMesh(meshList[GEO_WHITEQUAD], false, 0.5f);
 	modelStack.PopMatrix();
 
-	UIManager::GetInstance()->Render(this);
+	modelStack.PopMatrix();
+	viewStack.PopMatrix();
+	projectionStack.PopMatrix();
+	//UIManager::GetInstance()->Render(this);
 }
 
 void SceneSP::RenderWorld()
@@ -3624,7 +3630,7 @@ void SceneSP::Render()
 	case G_RESEARCHTREE:
 		RenderPassGPass();
 		RenderPassMain();
-		RenderResearchTree();
+		RenderOverlayResearchTree();
 		break;
 	default:
 		break;

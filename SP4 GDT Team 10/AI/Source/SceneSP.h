@@ -40,7 +40,7 @@ public:
 	void RenderPassMain();
 	void RenderSplashScreen();
 	void RenderMainMenu();
-	void RenderResearchTree();
+	void RenderOverlayResearchTree();
 	void RenderWorld();
 
 	void RenderGO(GameObject *go);
@@ -93,6 +93,7 @@ protected:
 	std::vector<GridPt> m_previous; //Used for storing the previous point in AStar
 
 	Vector3 mousePos;
+	Camera tempCamera;
 
 	GameObject* selected; //Gameobject selected by mouse click, can do actions from UI choices that pop up
 	GameObject* goChiefHut;
