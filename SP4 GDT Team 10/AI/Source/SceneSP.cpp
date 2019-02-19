@@ -374,7 +374,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 	case G_MAINMENU:
 	{
 		camera.Init(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));	// splashscreen
-		UIBase* newUI = new UIMenuButton("Start", 0.8f, 0.7f);
+		UIBase* newUI = new UIMenuButton("Start", 0.5f, 0.7f);
 		UIManager::GetInstance()->AddUI("startButton", newUI);
 		m_coreUi.push_back(newUI);
 	}
