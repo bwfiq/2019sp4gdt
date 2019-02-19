@@ -149,6 +149,16 @@ int SceneData::GetPopulationLimit()
 	return iPopulationLimit;
 }
 
+void SceneData::SetResearchPoints(int researchPoints)
+{
+	this->iResearchPoints = researchPoints;
+}
+
+int SceneData::GetResearchPoints()
+{
+	return iResearchPoints;
+}
+
 void SceneData::SetCurrMonth(int month)
 {
 	this->iCurrMonth = month;

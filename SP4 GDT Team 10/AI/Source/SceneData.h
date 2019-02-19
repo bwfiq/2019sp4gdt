@@ -46,6 +46,8 @@ public:
 	int GetPopulation();
 	void SetPopulationLimit(int populationLimit);
 	int GetPopulationLimit();
+	void SetResearchPoints(int researchPoints);
+	int GetResearchPoints();
 	void SetCurrMonth(int month);
 	int GetCurrMonth();
 	void SetCurrDay(int day);
@@ -76,7 +78,7 @@ private:
 	Vector3 camPosition;
 
 	float fReligionValue, fMaxReligionValue;
-	int iFood, iFoodLimit, iPopulation, iPopulationLimit, iWood, iWoodLimit, iCurrMonth, iCurrDay;
+	int iFood, iFoodLimit, iPopulation, iPopulationLimit, iWood, iWoodLimit, iResearchPoints, iCurrMonth, iCurrDay;
 };
 
 #endif

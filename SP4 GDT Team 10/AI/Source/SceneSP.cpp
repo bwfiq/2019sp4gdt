@@ -2608,14 +2608,6 @@ void SceneSP::Update(double dt)
 		lights[0].position.x = (12.f - fTimeOfDay) * SHADOW_LENGTH;
 		lights[0].position.y = (-0.25f * pow(lights[0].position.x,2)) + 9;
 	}
-	else if(fTimeOfDay >= 18.f)
-	{
-		//lights[0].position.x = (fTimeOfDay - 24.f) * SHADOW_LENGTH;
-	}
-	else if(fTimeOfDay <= 6.f)
-	{
-		//lights[0].position.x = fTimeOfDay * SHADOW_LENGTH;
-	}
 	// month
 	if (SD->GetCurrDay() >= 31)
 	{
