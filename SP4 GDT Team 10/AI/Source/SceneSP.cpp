@@ -2669,6 +2669,12 @@ void SceneSP::Update(double dt)
 	m_grid[5 + SD->GetNoGrid() * 2] = Grid::TILE_USED;
 	m_grid[5 + SD->GetNoGrid() * 3] = Grid::TILE_USED;
 	m_grid[5 + SD->GetNoGrid() * 4] = Grid::TILE_USED;
+	GridPt selectedGrid = GetPoint(mousePos);
+	if (isPointInGrid(selectedGrid))
+	{
+		Vector3 gridPos = GetGridPos(selectedGrid);
+		m_grid[GetGridIndex(selectedGrid)] = Grid::TILE_SELECTED;
+	}
 	for (auto go : m_goList)
 	{
 		if (!go->active)
@@ -3304,7 +3310,7 @@ void SceneSP::RenderPassMain()
 	if (bShowGrid)
 	{
 		modelStack.PushMatrix();
-		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), 0.5f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
+		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), -0.1f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
 		modelStack.Scale(1, 1, 1);
 		glLineWidth(2.f);
 		RenderMesh(meshList[GEO_GRID], false);
@@ -3312,12 +3318,12 @@ void SceneSP::RenderPassMain()
 		modelStack.PopMatrix();
 
 		modelStack.PushMatrix();
-		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), 0.5f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
+		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), -0.1f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
 		for (int i = 0; i < SD->GetNoGrid() * SD->GetNoGrid(); ++i)
 		{
 			std::pair<int, int> pt = GetPoint(i);
 			modelStack.PushMatrix();
-			modelStack.Translate(pt.first * SD->GetGridSize() + SD->GetGridOffset(), 0, pt.second * SD->GetGridSize() + SD->GetGridOffset());
+			modelStack.Translate(pt.first * SD->GetGridSize() + SD->GetGridOffset(), 0.f, pt.second * SD->GetGridSize() + SD->GetGridOffset());
 			modelStack.Rotate(-90, 1, 0, 0);
 			modelStack.Scale(SD->GetGridSize(), SD->GetGridSize(), SD->GetGridSize());
 			switch (m_grid[i])
@@ -3328,22 +3334,14 @@ void SceneSP::RenderPassMain()
 			case Grid::TILE_USED:
 				RenderMesh(meshList[GEO_REDQUAD], false, 0.3f);
 				break;
+			case Grid::TILE_SELECTED:
+				RenderMesh(meshList[GEO_YELLOWQUAD], false, 0.3f);
+				break;
 			}
 			modelStack.PopMatrix();
 		}
 		modelStack.PopMatrix();
 
-		GridPt selectedGrid = GetPoint(mousePos);
-		if (isPointInGrid(selectedGrid))
-		{
-			Vector3 gridPos = GetGridPos(selectedGrid);
-			modelStack.PushMatrix();
-			modelStack.Translate(gridPos.x, gridPos.y + 0.5f, gridPos.z);
-			modelStack.Rotate(-90, 1, 0, 0);
-			modelStack.Scale(SD->GetGridSize(), SD->GetGridSize(), SD->GetGridSize());
-			RenderMesh(meshList[GEO_YELLOWQUAD], false, 0.4f);
-			modelStack.PopMatrix();
-		}
 	}
 
 	if (selected != NULL)

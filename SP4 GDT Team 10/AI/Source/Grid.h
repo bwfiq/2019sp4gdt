@@ -23,6 +23,7 @@ public:
 	{
 		TILE_EMPTY = 0,
 		TILE_USED,
+		TILE_SELECTED,
 
 		TILE_TOTAL //Should not have tiles below this
 	};
