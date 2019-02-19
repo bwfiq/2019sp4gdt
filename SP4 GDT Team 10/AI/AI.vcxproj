@@ -205,6 +205,7 @@
     <ClCompile Include="Source\UIMessagePopup.cpp" />
     <ClCompile Include="Source\UIReligionBar.cpp" />
     <ClCompile Include="Source\UIMenuButton.cpp" />
+    <ClCompile Include="Source\UIResearchButton.cpp" />
     <ClCompile Include="Source\Utility.cpp" />
     <ClCompile Include="Source\Villager.cpp" />
   </ItemGroup>
@@ -269,6 +270,7 @@
     <ClInclude Include="Source\UIMessagePopup.h" />
     <ClInclude Include="Source\UIReligionBar.h" />
     <ClInclude Include="Source\UIMenuButton.h" />
+    <ClInclude Include="Source\UIResearchButton.h" />
     <ClInclude Include="Source\Utility.h" />
     <ClInclude Include="Source\Vertex.h" />
     <ClInclude Include="Source\Villager.h" />

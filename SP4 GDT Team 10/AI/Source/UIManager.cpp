@@ -27,10 +27,10 @@ void UIManager::Update(float dt)
 		if (it.second->bIsMouseHovered)
 			MouseController::GetInstance()->SetMouseOnUI(true);
 	}
-	if (prevMUIBool != MouseController::GetInstance()->IsMouseOnUI())
+	/*if (prevMUIBool != MouseController::GetInstance()->IsMouseOnUI())
 	{
 		Application::GetInstance().SetMouseVisiblity(MouseController::GetInstance()->IsMouseOnUI());
-	}
+	}*/ // makes cursor visible only while cursor is over ui
 	std::map<std::string, UIBase*>::iterator it = ui_list.begin();
 	while (it != ui_list.end())
 	{
@@ -55,6 +55,9 @@ void UIManager::Render(SceneBase * scene)
 	//ortho.SetToOrtho(-80, 80, -60, 60, -10, 10);
 	ortho.SetToOrtho(-halfWindowWidth, halfWindowWidth, -halfWindowHeight, halfWindowHeight, -10, 10);
 
+	Mtx44 projection;
+	projection.SetToOrtho(0, scene->m_worldWidth, 0, scene->m_worldHeight, -10, 10);
+
 	scene->projectionStack.PushMatrix();
 	scene->projectionStack.LoadMatrix(ortho);
 	scene->viewStack.PushMatrix();
@@ -69,9 +72,9 @@ void UIManager::Render(SceneBase * scene)
 		if (!UI->bActive) continue;
 		scene->modelStack.PushMatrix();
 			float count2 = 0;
-			Vector3 UI_pos((UI->pos.x - 0.5f) * halfWindowWidth * 2,
-				(UI->pos.y - 0.5f) * halfWindowHeight * 2,
-				UI->pos.z + count);
+			Vector3 UI_pos(	(UI->pos.x - 0.5f) * halfWindowWidth * 2,
+							(UI->pos.y - 0.5f) * halfWindowHeight * 2,
+							 UI->pos.z + count);
 			scene->modelStack.Translate(UI_pos.x
 				, UI_pos.y
 				, UI_pos.z);

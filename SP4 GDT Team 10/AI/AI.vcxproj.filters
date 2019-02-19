@@ -224,6 +224,9 @@
     <ClCompile Include="Source\UIGameText.cpp">
       <Filter>UI\UIObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Source\UIResearchButton.cpp">
+      <Filter>UI\UIObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -413,6 +416,9 @@
       <Filter>UI\UIObjects</Filter>
     </ClInclude>
     <ClInclude Include="Source\UIGameText.h">
+      <Filter>UI\UIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UIResearchButton.h">
       <Filter>UI\UIObjects</Filter>
     </ClInclude>
   </ItemGroup>

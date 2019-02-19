@@ -1,1 +1,8 @@
-﻿
+﻿  UIManager.cpp
+c:\users\170264f\documents\2019sp4gdt\sp4 gdt team 10\ai\source\application.h(7): warning C4099: 'Scene': type name first seen using 'class' now seen using 'struct'
+  c:\users\170264f\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scene.h(6): note: see declaration of 'Scene'
+c:\users\170264f\documents\2019sp4gdt\sp4 gdt team 10\ai\source\uimanager.cpp(53): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\170264f\documents\2019sp4gdt\sp4 gdt team 10\ai\source\uimanager.cpp(54): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\170264f\documents\2019sp4gdt\sp4 gdt team 10\ai\source\uimanager.cpp(207): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\170264f\documents\2019sp4gdt\sp4 gdt team 10\ai\source\uimanager.cpp(208): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+  AI.vcxproj -> C:\Users\170264F\Documents\2019sp4gdt\SP4 GDT Team 10\Debug\AI.exe
