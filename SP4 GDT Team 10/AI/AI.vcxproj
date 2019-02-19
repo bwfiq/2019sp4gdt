@@ -196,6 +196,7 @@
     <ClCompile Include="Source\Tree.cpp" />
     <ClCompile Include="Source\UIAltarPopup.cpp" />
     <ClCompile Include="Source\UIBase.cpp" />
+    <ClCompile Include="Source\UICoreResources.cpp" />
     <ClCompile Include="Source\UIManager.cpp" />
     <ClCompile Include="Source\UIMessagePopup.cpp" />
     <ClCompile Include="Source\UIReligionBar.cpp" />
@@ -255,6 +256,7 @@
     <ClInclude Include="Source\Tree.h" />
     <ClInclude Include="Source\UIAltarPopup.h" />
     <ClInclude Include="Source\UIBase.h" />
+    <ClInclude Include="Source\UICoreResources.h" />
     <ClInclude Include="Source\UIManager.h" />
     <ClInclude Include="Source\UIMessagePopup.h" />
     <ClInclude Include="Source\UIReligionBar.h" />
