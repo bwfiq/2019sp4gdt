@@ -97,10 +97,6 @@ void UIReligionBar::Update(float dt)
 	SceneData* SD = SceneData::GetInstance();
 
 	float fReligionValue = SceneData::GetInstance()->GetReligionValue();
-	if (this->IsMousePressed())
-	{
-		std::cout << "a" << std::endl;
-	}
 
 	//uiComponents_list[COMPONENT_BLUETRIANGLE].pos.Set(
 	//	Math::lerp(uiComponents_list[COMPONENT_BLUETRIANGLE].pos.x, fReligionValue//fReligionValue / 100.f
