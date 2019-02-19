@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 //#include "UIComponent.h"
+#include "Vertex.h"
 class Mesh;
 
 struct UIComponent {//yeaaaaaaaaaahhh this is garbo but wutevz
@@ -16,10 +17,11 @@ public:
 
 	float textSize;
 	std::string text;
+	Color textColor;
 
 	float alpha;
 
-	UIComponent() : fRotation(0), bActive(true), mesh(NULL), scale(1, 1, 1), alpha(1.f) {};
+	UIComponent() : fRotation(0), bActive(true), mesh(NULL), scale(1, 1, 1), alpha(1.f), textColor(0, 0, 0) {};
 	~UIComponent() {};
 };
 

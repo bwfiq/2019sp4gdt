@@ -264,7 +264,25 @@ void SceneBase::Init()
 	meshList[GEO_HAND_GRAB] = MeshBuilder::GenerateOBJ("hand_grab", "Obj//hand_grab.obj");
 	meshList[GEO_HAND_POINT] = MeshBuilder::GenerateOBJ("hand_point", "Obj//hand_point.obj");
 
+	meshList[GEO_UI_BOARD_BLANK] = MeshBuilder::GenerateQuad("ui_board_blank", Color());
+	meshList[GEO_UI_BOARD_FOOD] = MeshBuilder::GenerateQuad("ui_board_food", Color());
+	meshList[GEO_UI_BOARD_DAY] = MeshBuilder::GenerateQuad("ui_board_day", Color());
+	meshList[GEO_UI_BOARD_POPULATION] = MeshBuilder::GenerateQuad("ui_board_population", Color());
+	meshList[GEO_UI_BOARD_STONE] = MeshBuilder::GenerateQuad("ui_board_stone", Color());
+	meshList[GEO_UI_BOARD_TIME] = MeshBuilder::GenerateQuad("ui_board_time", Color());
+	meshList[GEO_UI_BOARD_WOOD] = MeshBuilder::GenerateQuad("ui_board_wood", Color());
+
+	meshList[GEO_UI_BOARD_BLANK]->textureArray[0] = LoadTGA("Image//ui_board_blank.tga");
+	meshList[GEO_UI_BOARD_FOOD]->textureArray[0] = LoadTGA("Image//ui_board_food.tga");
+	meshList[GEO_UI_BOARD_DAY]->textureArray[0] = LoadTGA("Image//ui_board_day.tga");
+	meshList[GEO_UI_BOARD_POPULATION]->textureArray[0] = LoadTGA("Image//ui_board_population.tga");
+	meshList[GEO_UI_BOARD_STONE]->textureArray[0] = LoadTGA("Image//ui_board_stone.tga");
+	meshList[GEO_UI_BOARD_TIME]->textureArray[0] = LoadTGA("Image//ui_board_time.tga");
+	meshList[GEO_UI_BOARD_WOOD]->textureArray[0] = LoadTGA("Image//ui_board_wood.tga");
+
+
 	meshList[GEO_TEXT]->material.kAmbient.Set(1, 0, 0);
+	meshList[GEO_TEXT_GUNGSUH]->material.kAmbient.Set(1, 0, 0);
 
 	bLightEnabled = true;
 }
