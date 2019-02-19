@@ -209,11 +209,11 @@
     <ClCompile Include="Source\AnimationJump.cpp">
       <Filter>VisualEffects\Animations</Filter>
     </ClCompile>
-    <ClCompile Include="Source\UICoreResources.cpp">
-      <Filter>UI\UIObjects</Filter>
-    </ClCompile>
     <ClCompile Include="Source\AnimationWalk.cpp">
       <Filter>VisualEffects\Animations</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UICoreInfo.cpp">
+      <Filter>UI\UIObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -391,11 +391,11 @@
     <ClInclude Include="Source\AnimationJump.h">
       <Filter>VisualEffects\Animations</Filter>
     </ClInclude>
-    <ClInclude Include="Source\UICoreResources.h">
-      <Filter>UI\UIObjects</Filter>
-    </ClInclude>
     <ClInclude Include="Source\AnimationWalk.h">
       <Filter>VisualEffects\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UICoreInfo.h">
+      <Filter>UI\UIObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

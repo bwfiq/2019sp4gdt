@@ -30,9 +30,9 @@ UIReligionBar::UIReligionBar() :
 	uiComponents_list[COMPONENT_SECONDTOP].mesh = SD->GetMesh("blueTriangle");
 	uiComponents_list[COMPONENT_SECONDBOT].mesh = SD->GetMesh("blueTriangle");
 
-	pos.Set(0.5f, 0.9f);
+	pos.Set(0.5f, 0);
 	scale.Set(600, 40);
-	anchorPoint.Set(0.5, 0.5);
+	anchorPoint.Set(0.5, 0);
 	float ratio = scale.x / scale.y;
 	
 	uiComponents_list[COMPONENT_OUTLINEBAR].scale.Set(1 + 0.2f / ratio, 1.2f);

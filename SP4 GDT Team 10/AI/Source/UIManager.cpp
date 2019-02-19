@@ -66,6 +66,7 @@ void UIManager::Render(SceneBase * scene)
 	{
 		UIBase* UI = it.second;
 		count += 0.01f;
+		if (!UI->bActive) continue;
 		scene->modelStack.PushMatrix();
 			float count2 = 0;
 			Vector3 UI_pos((UI->pos.x - 0.5f) * halfWindowWidth * 2,
@@ -79,6 +80,7 @@ void UIManager::Render(SceneBase * scene)
 			//scene->modelStack.Translate(-UI->anchorPoint.x + 0.5f, -UI->anchorPoint.y + 0.5f, 0);
 			for (auto UIC : UI->uiComponents_list)
 			{
+				if (!UIC.bActive) continue;
 				Vector3 UIC_Pos(UIC.pos.x - UI->anchorPoint.x + (UIC.anchorPoint.x - 0.5f) * -Math::Min(UIC.scale.x, 1.f)
 					, UIC.pos.y - UI->anchorPoint.y + (UIC.anchorPoint.y - 0.5f) * -Math::Min(UIC.scale.y, 1.f)
 					, UIC.pos.z + count2);
@@ -89,11 +91,13 @@ void UIManager::Render(SceneBase * scene)
 					, UIC_Pos.z);
 				scene->modelStack.Rotate(UIC.fRotation,0,0,1);
 				scene->modelStack.Scale(UIC.scale.x, UIC.scale.y, 1);
-				rendermesh(scene, UIC.mesh, false, UIC.alpha);
+				if (UIC.mesh != NULL)
+					rendermesh(scene, UIC.mesh, false, UIC.alpha);
+
 				if (!UIC.text.empty())
 				{
 					count2 += 0.01f;
-					rendertext(scene, SceneData::GetInstance()->GetMesh("gungsuh"), UIC.text, Color(1, 0, 0), false, UI_pos + (UIC_Pos + Vector3(-1,0,0)) * (UI->scale.x * 0.5f)
+					rendertext(scene, SceneData::GetInstance()->GetMesh("gungsuh"), UIC.text, UIC.textColor, false, UI_pos + (UIC_Pos + Vector3(-1,0,0)) * (UI->scale.x * 0.5f)
 						, UIC.textSize,  UIC.alpha);
 				}
 				scene->modelStack.PopMatrix();

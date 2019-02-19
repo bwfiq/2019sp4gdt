@@ -13,6 +13,7 @@
 #include "UIReligionBar.h"
 #include "UIMenuButton.h"
 #include "UIAltarPopup.h"
+#include "UICoreInfo.h"
 
 #include "EffectManager.h"
 #include "EffectTrail.h"
@@ -382,6 +383,30 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 		//UIManager::GetInstance()->GetUI("startButton")->bIsDone = true;
 		UIBase* newUI = new UIReligionBar();
 		UIManager::GetInstance()->AddUI("uiReligionBar", newUI);
+		m_coreUi.push_back(newUI);
+
+		newUI = new UICoreInfo(UICoreInfo::INFO_FOOD, Vector3(0.1f, 0.9));
+		UIManager::GetInstance()->AddUI("ui_Info_Food", newUI);
+		m_coreUi.push_back(newUI);
+
+		newUI = new UICoreInfo(UICoreInfo::INFO_POPULATION, Vector3(0.3f, 0.9));
+		UIManager::GetInstance()->AddUI("ui_Info_Population", newUI);
+		m_coreUi.push_back(newUI);
+
+		newUI = new UICoreInfo(UICoreInfo::INFO_STONE, Vector3(0.7f, 0.9));
+		UIManager::GetInstance()->AddUI("ui_Info_Stone", newUI);
+		m_coreUi.push_back(newUI);
+
+		newUI = new UICoreInfo(UICoreInfo::INFO_WOOD, Vector3(0.9f, 0.9));
+		UIManager::GetInstance()->AddUI("ui_Info_Wood", newUI);
+		m_coreUi.push_back(newUI);
+
+		newUI = new UICoreInfo(UICoreInfo::INFO_DAY, Vector3(0.5f, 0.95f));
+		UIManager::GetInstance()->AddUI("ui_Info_Day", newUI);
+		m_coreUi.push_back(newUI);
+
+		newUI = new UICoreInfo(UICoreInfo::INFO_TIME, Vector3(0.5f, 0.85f));
+		UIManager::GetInstance()->AddUI("ui_Info_Time", newUI);
 		m_coreUi.push_back(newUI);
 	}
 		
