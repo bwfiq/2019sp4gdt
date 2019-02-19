@@ -1,5 +1,22 @@
 #include "SceneData.h"
 #include "Mesh.h"
+#include <string>
+
+static const std::string months[] = {
+	"NONE"//since it starts at 0
+	,"JAN"
+	,"FEB"
+	,"MAR"
+	,"APR"
+	,"MAY"
+	,"JUN"
+	,"JUL"
+	,"AUG"
+	,"SEP"
+	,"OCT"
+	,"NOV"
+	,"DEC"
+};
 
 int SceneData::GetObjectCount()
 {
@@ -157,6 +174,11 @@ void SceneData::SetCurrMonth(int month)
 int SceneData::GetCurrMonth()
 {
 	return iCurrMonth;
+}
+
+std::string SceneData::GetCurrMonth_string()
+{
+	return months[GetCurrMonth()];
 }
 
 void SceneData::SetCurrDay(int day)

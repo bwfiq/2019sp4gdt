@@ -52,4 +52,25 @@ UICoreInfo::~UICoreInfo()
 void UICoreInfo::Update(float dt)
 {
 	SceneData* SD = SceneData::GetInstance();
+	switch (infoType)
+	{
+	case INFO_DAY:
+
+		break;
+	case INFO_FOOD:
+		uiComponents_list[COMPONENT_TEXT].text = std::to_string(SD->GetFood()) + "/" + std::to_string(SD->GetFoodLimit());
+		break;
+	case INFO_POPULATION:
+		uiComponents_list[COMPONENT_TEXT].text = std::to_string(SD->GetPopulation()) + "/" + std::to_string(SD->GetPopulationLimit());
+		break;
+	case INFO_STONE:
+		//uiComponents_list[COMPONENT_TEXT].text = std::to_string(SD->GetSt()) + "/" + std::to_string(SD->GetWoodLimit());
+		break;
+	case INFO_TIME:
+		uiComponents_list[COMPONENT_TEXT].text = SD->GetCurrMonth_string();
+		break;
+	case INFO_WOOD:
+		uiComponents_list[COMPONENT_TEXT].text = std::to_string(SD->GetWood()) + "/" + std::to_string(SD->GetWoodLimit());
+		break;
+	}
 }

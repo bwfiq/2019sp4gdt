@@ -48,6 +48,7 @@ public:
 	int GetPopulationLimit();
 	void SetCurrMonth(int month);
 	int GetCurrMonth();
+	std::string GetCurrMonth_string();
 	void SetCurrDay(int day);
 	int GetCurrDay();
 	void SetMousePos_World(Vector3 mousePos_world);
