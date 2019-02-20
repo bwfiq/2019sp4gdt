@@ -225,6 +225,12 @@ void SceneBase::Init()
 	meshList[GEO_SPLASHSCREEN]->textureArray[0] = LoadTGA("Image//splashscreen.tga");
 	meshList[GEO_BACKBUTTON] = MeshBuilder::GenerateQuad("backbutton", Color(1, 1, 1));
 	meshList[GEO_BACKBUTTON]->textureArray[0] = LoadTGA("Image//backbutton.tga");
+	meshList[GEO_STARTBUTTON] = MeshBuilder::GenerateQuad("start", Color(1, 1, 1));
+	meshList[GEO_STARTBUTTON]->textureArray[0] = LoadTGA("Image//start.tga");
+	meshList[GEO_OPTIONSBUTTON] = MeshBuilder::GenerateQuad("optionsbutton", Color(1, 1, 1));
+	meshList[GEO_OPTIONSBUTTON]->textureArray[0] = LoadTGA("Image//optionsbutton.tga");
+	meshList[GEO_QUITBUTTON] = MeshBuilder::GenerateQuad("quitbutton", Color(1, 1, 1));
+	meshList[GEO_QUITBUTTON]->textureArray[0] = LoadTGA("Image//quitbutton.tga");
 	meshList[GEO_LOGO] = MeshBuilder::GenerateQuad("logo", Color(1, 1, 1));
 	meshList[GEO_LOGO]->textureArray[0] = LoadTGA("Image//logo1.tga");
 	meshList[GEO_SEA] = MeshBuilder::GenerateQuad("sea", Color(1, 1, 1));

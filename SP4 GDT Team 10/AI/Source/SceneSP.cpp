@@ -2,7 +2,7 @@
 #include "GL\glew.h"
 #include "Application.h"
 #include <sstream>
-#include "SceneData.h"
+#include "EasingStyle.h"
 
 #include "SceneData.h"
 #include "PostOffice.h"
@@ -383,8 +383,22 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 	case G_MAINMENU:
 	{
 		camera.Init(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));	// splashscreen
-		newUI = new UIMenuButton("Start", 0.7f, 0.7f);
-		UIManager::GetInstance()->AddUI("startButton", newUI);
+		SceneData::GetInstance()->SetMainMenuElapsedTime(0);
+		fMainMenuDelta = m_worldWidth * 0.5f;
+		newUI = new UIMenuButton("", 0.775f, 0.6f);
+		newUI->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 0.f;
+		newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("start");
+		UIManager::GetInstance()->AddUI("startbutton", newUI);
+		m_coreUi.push_back(newUI);
+		newUI = new UIMenuButton("", 0.775f, 0.45f);
+		newUI->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 0.f;
+		newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("optionsbutton");
+		UIManager::GetInstance()->AddUI("optionsbutton", newUI);
+		m_coreUi.push_back(newUI);
+		newUI = new UIMenuButton("", 0.775f, 0.3f);
+		newUI->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 0.f;
+		newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("quitbutton");
+		UIManager::GetInstance()->AddUI("quitbutton", newUI);
 		m_coreUi.push_back(newUI);
 	}
 	break;
@@ -2406,11 +2420,29 @@ void SceneSP::Update(double dt)
 	break;
 	case G_MAINMENU:
 	{
-		//static bool bLButtonState = false;
-		UIBase* startButton = UIM->GetUI("startButton");
-		if (startButton->IsMousePressed())
+		if (SD->GetMainMenuElapsedTime() < 1.f)
 		{
-			ChangeState(G_INPLAY);
+			SD->SetMainMenuElapsedTime(SD->GetMainMenuElapsedTime() + dt);
+			fMainMenuDelta = Math::lerp(m_worldWidth * 0.5f, m_worldWidth * 0.3f, Math::Min(1.f, EasingStyle::easeInOutSine(SD->GetMainMenuElapsedTime(), 0, 1.f, 1.f)));
+		}
+		else
+		{
+			// triggers
+			if (UIM->GetUI("startbutton")->IsMousePressed())// fMainMenuDelta <= m_worldWidth * 0.3f)
+				ChangeState(G_INPLAY);
+			// hover effects
+			if (UIM->GetUI("startbutton")->IsMouseHovered())
+				UIM->GetUI("startbutton")->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 1.f;
+			else
+				UIM->GetUI("startbutton")->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 0.f;
+			if (UIM->GetUI("optionsbutton")->IsMouseHovered())
+				UIM->GetUI("optionsbutton")->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 1.f;
+			else
+				UIM->GetUI("optionsbutton")->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 0.f;
+			if (UIM->GetUI("quitbutton")->IsMouseHovered())
+				UIM->GetUI("quitbutton")->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 1.f;
+			else
+				UIM->GetUI("quitbutton")->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 0.f;
 		}
 		return;
 	}
@@ -3739,65 +3771,14 @@ void SceneSP::RenderMainMenu()
 	//RenderMesh(meshList[GEO_AXES], false);
 
 	modelStack.PushMatrix();
-	modelStack.Translate(m_worldWidth * 0.5f, m_worldHeight * 0.5f, 0.f);
+	modelStack.Translate(Math::Clamp(fMainMenuDelta, m_worldWidth * 0.3f, m_worldWidth * 0.5f), m_worldHeight * 0.5f, 0.f);
 	modelStack.Scale(m_worldWidth, ((m_worldWidth / 1024) * 720), m_worldHeight);
 	RenderMesh(meshList[GEO_LOGO], false);
 	modelStack.PopMatrix();
-
-	//buttonz
-	//modelStack.PushMatrix();
-	//modelStack.Translate(m_worldWidth * 0.8f, m_worldHeight * 0.7f, 1.f);
-	//modelStack.Scale(m_worldWidth*0.2f, m_worldHeight*0.1f, m_worldHeight);
-	//RenderMesh(meshList[GEO_WHITEQUAD], false);
-	//modelStack.PopMatrix();
-
-	UIManager::GetInstance()->Render(this);
-}
-
-void SceneSP::RenderOverlayResearchTree()
-{
-	// Projection matrix : Orthographic Projection
-	Mtx44 ortho;
-	int halfWindowWidth = Application::GetInstance().GetWindowWidth() * 0.5f;
-	int halfWindowHeight = Application::GetInstance().GetWindowHeight() * 0.5f;
-	//ortho.SetToOrtho(-80, 80, -60, 60, -10, 10);
-	ortho.SetToOrtho(-halfWindowWidth, halfWindowWidth, -halfWindowHeight, halfWindowHeight, -10, 10);
-	Mtx44 projection;
-	projection.SetToOrtho(0, m_worldWidth, 0, m_worldHeight, -10, 10);
-	projectionStack.PushMatrix();
-	projectionStack.LoadMatrix(projection);
-
-	// Camera matrix
-	viewStack.PushMatrix();
-	viewStack.LoadIdentity();
-	/*viewStack.LookAt(
-		camera.position.x, camera.position.y, camera.position.z,
-		camera.target.x, camera.target.y, camera.target.z,
-		camera.up.x, camera.up.y, camera.up.z
-	);*/
-
-	// Model matrix : an identity matrix (model will be at the origin)
-	modelStack.PushMatrix();
-	modelStack.LoadIdentity();
-
-	//RenderMesh(meshList[GEO_AXES], false);
-
-	modelStack.PushMatrix();
-	modelStack.Translate(m_worldWidth * 0.5f, m_worldHeight * 0.5f, 1.f);
-	modelStack.Scale(m_worldWidth*0.9f, m_worldHeight*0.9f, m_worldHeight);
-	//RenderMesh(meshList[GEO_WHITEQUAD], false, 0.5f);
-	modelStack.PopMatrix();
-
-	modelStack.PushMatrix();
-	modelStack.Translate(m_worldWidth * 0.5f, m_worldHeight * 0.5f, 1.1f);
-	modelStack.Scale(10, 4, 1);
-	//RenderMesh(meshList[GEO_BACKBUTTON], false, 1.f);
-	modelStack.PopMatrix();
-
-	modelStack.PopMatrix();
-	viewStack.PopMatrix();
-	projectionStack.PopMatrix();
-	//UIManager::GetInstance()->Render(this);
+	
+	//if(fMainMenuDelta <= m_worldWidth * 0.3f)
+	if (SceneData::GetInstance()->GetMainMenuElapsedTime() > 1.f)
+		UIManager::GetInstance()->Render(this);
 }
 
 void SceneSP::RenderWorld()
@@ -3823,13 +3804,9 @@ void SceneSP::Render()
 		RenderMainMenu();
 		break;
 	case G_INPLAY:
-		RenderPassGPass();
-		RenderPassMain();
-		break;
 	case G_RESEARCHTREE:
 		RenderPassGPass();
 		RenderPassMain();
-		RenderOverlayResearchTree();
 		break;
 	default:
 		break;
