@@ -142,7 +142,7 @@ void SceneBase::Init()
 	{
 		meshList[i] = NULL;
 	}
-	m_lightDepthFBO.Init(2048, 2048);
+	m_lightDepthFBO.Init(2048*6, 2048*6);
 	meshList[GEO_AXES] = MeshBuilder::GenerateAxes("reference", 1000, 1000, 1000);
 	meshList[GEO_LIGHT_DEPTH_QUAD] = MeshBuilder::GenerateQuad("LIGHT_DEPTH_TEXTURE", Color(1, 1, 1), 1.f);
 	meshList[GEO_LIGHT_DEPTH_QUAD]->textureArray[0] = m_lightDepthFBO.GetTexture();

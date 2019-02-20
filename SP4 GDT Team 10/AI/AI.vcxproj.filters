@@ -456,7 +456,6 @@
     </ClInclude>
     <ClInclude Include="Source\UIOverlay.h">
       <Filter>UI\UIObjects</Filter>
->>>>>>> b524d151692e4105cc456db968ffe0b464b986d2
     </ClInclude>
   </ItemGroup>
 </Project>
