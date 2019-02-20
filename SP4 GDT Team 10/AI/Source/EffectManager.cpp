@@ -5,6 +5,7 @@
 #include "Application.h"
 #include "EffectTrail.h"
 #include "EffectHand.h"
+#include "EffectReticle.h"
 
 void EffectManager::Init()
 {
@@ -27,6 +28,7 @@ void EffectManager::Render(SceneBase * scene)
 		scene->modelStack.PushMatrix();
 		EffectTrail* EffTrail = dynamic_cast<EffectTrail*>(Effect);
 		EffectHand* EffHand = dynamic_cast<EffectHand*>(Effect);
+		EffectReticle* EffReticle = dynamic_cast<EffectReticle*>(Effect);
 		if (EffTrail)
 		{
 			int i = 0;
@@ -102,7 +104,14 @@ void EffectManager::Render(SceneBase * scene)
 
 			}
 			scene->modelStack.Scale(Effect->scale.x, Effect->scale.y, Effect->scale.z);
-			rendermesh(scene, Effect);
+			if (EffReticle)
+			{
+				glLineWidth(EffReticle->reticleThickness);
+				rendermesh(scene, Effect);
+				glLineWidth(1);
+			}
+			else
+				rendermesh(scene, Effect);
 		}
 		scene->modelStack.PopMatrix();
 	}

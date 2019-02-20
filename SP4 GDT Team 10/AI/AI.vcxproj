@@ -170,6 +170,7 @@
     <ClCompile Include="Source\EffectBase.cpp" />
     <ClCompile Include="Source\EffectHand.cpp" />
     <ClCompile Include="Source\EffectManager.cpp" />
+    <ClCompile Include="Source\EffectReticle.cpp" />
     <ClCompile Include="Source\EffectTrail.cpp" />
     <ClCompile Include="Source\Environment.cpp" />
     <ClCompile Include="Source\GameObject.cpp" />
@@ -231,6 +232,7 @@
     <ClInclude Include="Source\EffectBase.h" />
     <ClInclude Include="Source\EffectHand.h" />
     <ClInclude Include="Source\EffectManager.h" />
+    <ClInclude Include="Source\EffectReticle.h" />
     <ClInclude Include="Source\EffectTrail.h" />
     <ClInclude Include="Source\Environment.h" />
     <ClInclude Include="Source\GameObject.h" />

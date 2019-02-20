@@ -21,6 +21,7 @@
 #include "EffectManager.h"
 #include "EffectTrail.h"
 #include "EffectHand.h"
+#include "EffectReticle.h"
 
 #include "CalamityManager.h"
 #include "CalamityEarthquake.h"
@@ -574,9 +575,12 @@ void SceneSP::Init()
 
 	UIManager::GetInstance()->Init();
 
+	reticle = new EffectReticle();
+
 	EffectManager::GetInstance()->Init();
 	EffectManager::GetInstance()->AddEffect(new EffectTrail(&camera));
 	EffectManager::GetInstance()->AddEffect(new EffectHand(&camera));
+	EffectManager::GetInstance()->AddEffect(reticle);
 
 	CalamityManager::GetInstance()->Init();
 
@@ -2215,6 +2219,7 @@ void SceneSP::UpdateSelectedUI()
 		UI->bIsDone = true;
 	}
 	m_selectedUi.clear();
+	reticle->selected = selected;
 	if (selected == NULL) return;
 	if (selected->type == GameObject::GO_ALTAR)
 	{
