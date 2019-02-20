@@ -227,6 +227,9 @@
     <ClCompile Include="Source\UIResearchButton.cpp">
       <Filter>UI\UIObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Source\UIOverlay.cpp">
+      <Filter>UI\UIObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -419,6 +422,9 @@
       <Filter>UI\UIObjects</Filter>
     </ClInclude>
     <ClInclude Include="Source\UIResearchButton.h">
+      <Filter>UI\UIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UIOverlay.h">
       <Filter>UI\UIObjects</Filter>
     </ClInclude>
   </ItemGroup>

@@ -103,6 +103,9 @@ protected:
 	GameObject* goTree;
 	GameObject* goTree2;
 	GameObject* goMountain;
+
+	// Research
+	bool bWoodResearch;
 };
 
 #endif

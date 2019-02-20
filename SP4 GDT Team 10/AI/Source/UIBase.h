@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector3.h"
+#include "Application.h"
 #include <vector>
 #include <string>
 //#include "UIComponent.h"

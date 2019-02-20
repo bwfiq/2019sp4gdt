@@ -33,7 +33,8 @@ private:
 	bool RemoveUI(const std::string& uiName);
 
 	//SceneBase* scene;
-	//std::vector<UIBase*> ui_list;
+	std::vector<UIBase*> ui_Rlist;
 	std::map<std::string, UIBase*> ui_list;
+
 };
 

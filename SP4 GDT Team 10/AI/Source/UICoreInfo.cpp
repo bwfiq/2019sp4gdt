@@ -32,7 +32,8 @@ UICoreInfo::UICoreInfo(INFO_TYPE infoType, Vector3 origPos) :
 	this->origPos = origPos;
 
 	pos.Set(origPos.x, origPos.y);
-	scale.Set(170, 50);
+	//scale.Set(170, 50);
+	scale.Set(Application::GetInstance().GetWindowWidth() * 0.17f, Application::GetInstance().GetWindowWidth() * 0.05f);
 	anchorPoint.Set(0.5, 0.5);
 	float ratio = scale.x / scale.y;
 
@@ -72,5 +73,12 @@ void UICoreInfo::Update(float dt)
 	case INFO_WOOD:
 		uiComponents_list[COMPONENT_TEXT].text = std::to_string(SD->GetWood()) + "/" + std::to_string(SD->GetWoodLimit());
 		break;
+	}
+	if (scale != Vector3(Application::GetInstance().GetWindowWidth() * 0.17f, Application::GetInstance().GetWindowWidth() * 0.05f, scale.z))
+	{
+		scale.Set(Application::GetInstance().GetWindowWidth() * 0.17f, Application::GetInstance().GetWindowWidth() * 0.05f);
+		float ratio = scale.x / scale.y;
+		uiComponents_list[COMPONENT_BOARD].scale.Set(1, 1);
+		uiComponents_list[COMPONENT_TEXT].textSize = scale.y * 0.4f;
 	}
 }
