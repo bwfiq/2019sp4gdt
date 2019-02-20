@@ -451,10 +451,13 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 			newUI = new UIResearchButton("", 0.25f, 0.45f);
 			UIManager::GetInstance()->AddUI("StoneResearch", newUI);
 			m_coreUi.push_back(newUI);
+			if (bStoneResearch)
+				UIManager::GetInstance()->GetUI("StoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("blackquad");
 			newUI = new UIResearchButton("", 0.25f, 0.25f);
 			UIManager::GetInstance()->AddUI("FullStoneResearch", newUI);
 			m_coreUi.push_back(newUI);
-
+			if (bFullStoneResearch)
+				UIManager::GetInstance()->GetUI("FullStoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("blackquad");
 		}
 	}
 	}
@@ -588,6 +591,8 @@ void SceneSP::Init()
 
 	//research
 	bWoodResearch = false;
+	bStoneResearch = false;
+	bFullStoneResearch = false;
 
 	//go->vel.Set(1, 0, 0);
 	MousePicker::GetInstance()->Init();
@@ -2431,23 +2436,29 @@ void SceneSP::Update(double dt)
 	break;
 	case G_RESEARCHTREE:
 	{
-		if (KC->IsKeyPressed('U')) {
+		if (KC->IsKeyPressed('U'))
 			ChangeState(G_INPLAY);
-			camera = tempCamera;
-		}
-		int currResearchPts = SD->GetResearchPoints();
 		// button pressin
 		if (UIM->GetUI("backButton")->IsMousePressed())
-		{
 			ChangeState(G_INPLAY);
-			camera = tempCamera;
-		}
 		// temporary research
-		if (UIM->GetUI("WoodResearch")->IsMousePressed() && currResearchPts >= 10 && !bWoodResearch)
+		if (UIM->GetUI("WoodResearch")->IsMousePressed() && SD->GetResearchPoints() >= 10 && !bWoodResearch)
 		{
-			SD->SetResearchPoints(currResearchPts - 10);
+			SD->SetResearchPoints(SD->GetResearchPoints() - 10);
 			bWoodResearch = true;
 			UIManager::GetInstance()->GetUI("WoodResearch")->uiComponents_list[UIResearchButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("blackquad");
+		}
+		else if (bWoodResearch && UIM->GetUI("StoneResearch")->IsMousePressed() && SD->GetResearchPoints() >= 20 && !bStoneResearch)
+		{
+			SD->SetResearchPoints(SD->GetResearchPoints() - 20);
+			bStoneResearch = true;
+			UIManager::GetInstance()->GetUI("StoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("blackquad");
+		}
+		else if (bStoneResearch && UIM->GetUI("FullStoneResearch")->IsMousePressed() && SD->GetResearchPoints() >= 30 && !bFullStoneResearch)
+		{
+			SD->SetResearchPoints(SD->GetResearchPoints() - 30);
+			bFullStoneResearch = true;
+			UIManager::GetInstance()->GetUI("FullStoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("blackquad");
 		}
 
 		return;
