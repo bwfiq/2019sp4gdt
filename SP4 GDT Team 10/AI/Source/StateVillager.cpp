@@ -366,7 +366,7 @@ void StateChopTree::Update(double dt, GameObject * m_go)
 		vGo->iWoodStored = treeGo->iWoodAmount;
 		treeGo->eCurrState = Tree::HALFCHOPPED;
 	}
-	if (treeGo->eCurrState == Tree::HALFCHOPPED)
+	else if (treeGo->eCurrState == Tree::HALFCHOPPED)
 	{
 		//Insert gathering time here
 		vGo->iWoodStored = treeGo->iWoodAmount;

@@ -755,8 +755,11 @@ bool SceneSP::Handle(Message* message)
 	{
 		if (messageAltarOffer->type == MessageAltarOffer::OFFER_FOOD)
 		{
-			static_cast<Altar*>(goAltar)->iFoodOffered += 10;
-			SD->SetFood(SD->GetFood() - 1);
+			if (SD->GetFood() > 0)
+			{
+				static_cast<Altar*>(goAltar)->iFoodOffered += 10;
+				SD->SetFood(SD->GetFood() - 1);
+			}
 		}
 		delete message;
 		return true;
@@ -2389,6 +2392,45 @@ void SceneSP::ChangeTimeOfDay()
 					static_cast<Bush*>(go)->eCurrState = Bush::LUSH;
 			}
 		}
+
+		//Spawning of Villagers
+		if (SD->GetPopulation() < SD->GetPopulationLimit())
+		{
+			int iDifference = SD->GetPopulationLimit() - SD->GetPopulation();
+			GameObject* go = NULL;
+			
+			//If more then 10 empty spaces, at least 1 will spawn
+			if (iDifference > 10)
+			{
+				go = FetchGO(GameObject::GO_VILLAGER);
+				go->scale.y = 1.f;
+				GridPt tempPt;
+				tempPt.Set(Math::RandIntMinMax(0, SD->GetNoGrid() - 1), Math::RandIntMinMax(0, SD->GetNoGrid() - 1));
+				while (!m_grid[GetGridIndex(tempPt)] == Grid::TILE_EMPTY)
+				{
+					tempPt.Set(Math::RandIntMinMax(0, SD->GetNoGrid() - 1), Math::RandIntMinMax(0, SD->GetNoGrid() - 1));
+				}
+				go->pos = GetGridPos(tempPt);
+				go->pos.y = go->scale.y * 0.5f;
+				goVillager->GiveAnimation(new AnimationJump());
+			}
+
+			int rand = Math::RandInt();
+			if (rand % 2 == 0)
+			{
+				go = FetchGO(GameObject::GO_VILLAGER);
+				go->scale.y = 1.f;
+				GridPt tempPt;
+				tempPt.Set(Math::RandIntMinMax(0, SD->GetNoGrid() - 1), Math::RandIntMinMax(0, SD->GetNoGrid() - 1));
+				while (!m_grid[GetGridIndex(tempPt)] == Grid::TILE_EMPTY)
+				{
+					tempPt.Set(Math::RandIntMinMax(0, SD->GetNoGrid() - 1), Math::RandIntMinMax(0, SD->GetNoGrid() - 1));
+				}
+				go->pos = GetGridPos(tempPt);
+				go->pos.y = go->scale.y * 0.5f;
+				goVillager->GiveAnimation(new AnimationJump());
+			}
+		}
 	}
 	else // nighttime reset
 	{
@@ -2651,22 +2693,6 @@ void SceneSP::Update(double dt)
 		}
 	}
 
-	if (KC->IsKeyPressed('F'))
-	{
-		if (selected != NULL)
-		{
-			if (selected == goAltar)
-			{
-				if (SD->GetFood() > 0)
-				{
-					//For now 1 food 10 food offered, change to 1 to 1 later
-					static_cast<Altar*>(goAltar)->iFoodOffered += 10;
-					SD->SetFood(SD->GetFood() - 1);
-				}
-			}
-		}
-	}
-
 	Vector3 clickTarget = NULL;
 
 	static bool leftClick = false;
@@ -2904,6 +2930,7 @@ void SceneSP::Update(double dt)
 			}
 		}
 	}
+
 	//Update the Grid
 	std::fill(m_grid.begin(), m_grid.end(), Grid::TILE_EMPTY);
 
