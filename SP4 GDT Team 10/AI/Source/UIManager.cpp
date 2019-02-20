@@ -100,7 +100,9 @@ void UIManager::Render(SceneBase * scene)
 				if (!UIC.text.empty())
 				{
 					count2 += 0.01f;
-					rendertext(scene, SceneData::GetInstance()->GetMesh("gungsuh"), UIC.text, UIC.textColor, false, UI_pos + (UIC_Pos + Vector3(-1,0,0)) * (UI->scale.x * 0.5f)
+					rendertext(scene, SceneData::GetInstance()->GetMesh("gungsuh"), UIC.text, UIC.textColor, false
+						, UI_pos + Vector3(UI->scale.x * -(UI->anchorPoint.x), UI->scale.y * -(UI->anchorPoint.y))
+						+ Vector3(UI->scale.x * (UIC.pos.x - UIC.anchorPoint.x), UI->scale.y * (UIC.pos.y - UIC.anchorPoint.y))
 						, UIC.textSize,  UIC.alpha);
 				}
 				scene->modelStack.PopMatrix();
