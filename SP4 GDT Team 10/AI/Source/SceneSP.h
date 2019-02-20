@@ -105,6 +105,8 @@ protected:
 	GameObject* goTree;
 	GameObject* goTree2;
 	GameObject* goMountain;
+	GameObject* goLogs;
+	GameObject* goHouse;
 };
 
 #endif
