@@ -602,3 +602,41 @@ Mesh * MeshBuilder::GenerateRay(const std::string & meshName, Color color, const
 
 	return mesh;
 }
+
+Mesh * MeshBuilder::GenerateReticle(const std::string & meshName, Color color, unsigned numSlice, float radius)
+{
+	Vertex v;
+	std::vector<Vertex> vertex_buffer_data;
+	float increment = 360.f / (float)numSlice;
+	for (int i = 0; i < 360.f; i += increment)
+	{
+		v.pos.Set(cosf(Math::DegreeToRadian(i)) * radius, sinf(Math::DegreeToRadian(i)) * radius, 0);
+		v.color = color;
+		v.normal.Set(0, 0, 1);
+		vertex_buffer_data.push_back(v);
+	}
+	std::vector<GLuint> index_buffer_data;
+	for (int i = 0; i < (int)vertex_buffer_data.size() - 1; ++i)
+	{
+		index_buffer_data.push_back(i);
+		index_buffer_data.push_back(i + 1);
+	}
+	index_buffer_data.push_back(vertex_buffer_data.size() - 1);
+	index_buffer_data.push_back(0);
+
+	Mesh *mesh = new Mesh(meshName);
+
+	glBindBuffer(GL_ARRAY_BUFFER, mesh->vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, vertex_buffer_data.size() * sizeof(Vertex),
+		&vertex_buffer_data[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->indexBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_buffer_data.size() * sizeof(GLuint),
+		&index_buffer_data[0], GL_STATIC_DRAW);
+
+	mesh->indexSize = index_buffer_data.size();
+	mesh->mode = Mesh::DRAW_LINES;
+
+	SceneData::GetInstance()->AddMesh(mesh);
+
+	return mesh;
+}

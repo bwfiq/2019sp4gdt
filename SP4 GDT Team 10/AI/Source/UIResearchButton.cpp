@@ -7,10 +7,15 @@ UIResearchButton::UIResearchButton(const std::string& text, float x, float y) :
 	SceneData* SD = SceneData::GetInstance();
 	uiComponents_list.resize(COMPONENT_TOTAL);
 	uiComponents_list[COMPONENT_OUTLINEBAR].mesh = SD->GetMesh("whitequad");
-	uiComponents_list[COMPONENT_GREYBAR].mesh = SD->GetMesh("greyquad");
+	if (text == "hehexd")
+		return;
+	else if (text == "coensuxlolrekt")
+		return;
+	else
+		uiComponents_list[COMPONENT_GREYBAR].mesh = SD->GetMesh("greyquad");
 
 	pos.Set(x, y);
-	scale.Set(100, 100);
+	scale.Set(Application::GetInstance().GetWindowWidth() * 0.05f, Application::GetInstance().GetWindowWidth() * 0.05f);
 	anchorPoint.Set(0.5, 0.5);
 	float ratio = scale.x / scale.y;
 
@@ -30,4 +35,11 @@ UIResearchButton::~UIResearchButton()
 
 void UIResearchButton::Update(float dt)
 {
+	if (scale != Vector3(Application::GetInstance().GetWindowWidth() * 0.05f, Application::GetInstance().GetWindowWidth() * 0.05f, scale.z))
+	{
+		scale.Set(Application::GetInstance().GetWindowWidth() * 0.05f, Application::GetInstance().GetWindowWidth() * 0.05f);
+		float ratio = scale.x / scale.y;
+		uiComponents_list[COMPONENT_OUTLINEBAR].scale.Set(1 + 0.2f / ratio, 1.2f);
+		uiComponents_list[COMPONENT_GREYBAR].textSize = scale.y;
+	}
 }

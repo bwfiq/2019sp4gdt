@@ -272,6 +272,8 @@ void SceneBase::Init()
 	meshList[GEO_HAND_GRAB] = MeshBuilder::GenerateOBJ("hand_grab", "Obj//hand_grab.obj");
 	meshList[GEO_HAND_POINT] = MeshBuilder::GenerateOBJ("hand_point", "Obj//hand_point.obj");
 
+	meshList[GEO_RETICLE] = MeshBuilder::GenerateReticle("reticle", Color(1, 1, 1));
+
 	meshList[GEO_UI_BOARD_BLANK] = MeshBuilder::GenerateQuad("ui_board_blank", Color());
 	meshList[GEO_UI_BOARD_FOOD] = MeshBuilder::GenerateQuad("ui_board_food", Color());
 	meshList[GEO_UI_BOARD_DAY] = MeshBuilder::GenerateQuad("ui_board_day", Color());

@@ -5,6 +5,7 @@ class UIGameButton : public UIBase
 public:
 	enum BUTTON_TYPE {
 		BUTTON_DAILYREQUIREMENT,
+		BUTTON_SELECTED_ALTAR_OFFER,
 
 		BUTTON_TOTAL
 	};

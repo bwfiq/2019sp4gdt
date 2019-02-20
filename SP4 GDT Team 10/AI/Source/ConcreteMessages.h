@@ -66,4 +66,14 @@ struct MessageDisplayDailyRequirement : public Message
 	virtual ~MessageDisplayDailyRequirement() {}
 	UIGameButton* ui;
 };
+
+struct MessageAltarOffer : public Message
+{
+	enum OFFER_TYPE {
+		OFFER_FOOD,
+	};
+	MessageAltarOffer(OFFER_TYPE type) : type(type) {}
+	virtual ~MessageAltarOffer() {}
+	OFFER_TYPE type;
+};
 #endif
