@@ -244,12 +244,23 @@ void StatePath::Update(double dt, GameObject * m_go)
 							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
 							break;
 						case GameObject::GO_CHIEFHUT:
+							m_go->goTarget = NULL;
+							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+							break;
+						case GameObject::GO_GRANARY:
 							//m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
 							SD->SetFood(Math::Min(SD->GetFoodLimit(), SD->GetFood() + static_cast<Villager*>(m_go)->iFoodStored));
+
+							static_cast<Villager*>(m_go)->iFoodStored = 0;
+
+							m_go->goTarget = NULL;
+							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+							break;
+						case GameObject::GO_WOODSHED:
+							//m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
 							SD->SetWood(Math::Min(SD->GetWoodLimit(), SD->GetWood() + static_cast<Villager*>(m_go)->iWoodStored));
 
 							static_cast<Villager*>(m_go)->iWoodStored = 0;
-							static_cast<Villager*>(m_go)->iFoodStored = 0;
 
 							m_go->goTarget = NULL;
 							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
@@ -354,24 +365,17 @@ void StateChopTree::Update(double dt, GameObject * m_go)
 		//Insert gathering time here
 		vGo->iWoodStored = treeGo->iWoodAmount;
 		treeGo->eCurrState = Tree::HALFCHOPPED;
-
-		MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_CHIEFHUT, 1);
-		PostOffice::GetInstance()->Send("Scene", messagewru);
-		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
-		return;
 	}
-	if (treeGo->eCurrState == Tree::HALFCHOPPED)
+	else if (treeGo->eCurrState == Tree::HALFCHOPPED)
 	{
 		//Insert gathering time here
 		vGo->iWoodStored = treeGo->iWoodAmount;
 		treeGo->active = false;
-
-		MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_CHIEFHUT, 1);
-		PostOffice::GetInstance()->Send("Scene", messagewru);
-		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
-		return;
 	}
+	MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_NEAREST_WOODSHED, 1);
+	PostOffice::GetInstance()->Send("Scene", messagewru);
 	m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+	return;
 }
 
 void StateChopTree::Exit(GameObject * m_go)
@@ -415,7 +419,7 @@ void StateForaging::Update(double dt, GameObject * m_go)
 		bushGo->eCurrState = Bush::DEPLETED;
 		m_go->goTarget = NULL;
 
-		MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_CHIEFHUT, 1);
+		MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_NEAREST_GRANARY, 1);
 		PostOffice::GetInstance()->Send("Scene", messagewru);
 		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 		return;

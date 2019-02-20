@@ -108,6 +108,10 @@ protected:
 	GameObject* goLogs;
 	GameObject* goHouse;
 
+	GameObject* goGranary;
+	GameObject* goWoodshed;
+
+
 	// Research
 	bool bWoodResearch;
 	bool bStoneResearch;

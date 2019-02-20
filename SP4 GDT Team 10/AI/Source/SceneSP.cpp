@@ -32,6 +32,8 @@
 #include "KeyboardController.h"
 
 #include "Villager.h"
+#include "Granary.h"
+#include "WoodShed.h"
 #include "House.h"
 #include "Building.h"
 #include "ChiefHut.h"
@@ -59,311 +61,6 @@ float FoodToReligionPoints(int food)
 {
 	//Insert Conversion Rates
 	return (float)(food) * 1;//* some dt related converter or someth
-}
-
-bool SceneSP::isTheCoastClear(GameObject* go, GridPt next, Grid::DIRECTION dir)
-{
-	if (go->iGridX > 0 && go->iGridZ > 0)
-	{
-		int iHalfGridX = go->iGridX * 0.5f;
-		int iHalfGridZ = go->iGridZ * 0.5f;
-		GridPt ptAhead;
-		switch (dir)
-		{
-		case Grid::DIR_LEFT:
-			for (int zAxis = 1; zAxis <= iHalfGridZ; ++zAxis)
-			{
-				ptAhead.Set(next.x - iHalfGridX, next.z + zAxis);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			for (int zAxis = 0; zAxis < (go->iGridZ - iHalfGridZ); ++zAxis)
-			{
-				ptAhead.Set(next.x - iHalfGridX, next.z - zAxis);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			break;
-		case Grid::DIR_RIGHT:
-			for (int zAxis = 1; zAxis <= iHalfGridZ; ++zAxis)
-			{
-				ptAhead.Set(next.x + iHalfGridX, next.z + zAxis);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			for (int zAxis = 0; zAxis < (go->iGridZ - iHalfGridZ); ++zAxis)
-			{
-				ptAhead.Set(next.x + iHalfGridX, next.z - zAxis);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			break;
-		case Grid::DIR_UP:
-			for (int xAxis = 1; xAxis <= iHalfGridX; ++xAxis)
-			{
-				ptAhead.Set(next.x + xAxis, next.z - iHalfGridZ);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-
-			for (int xAxis = 0; xAxis < (go->iGridX - iHalfGridX); ++xAxis)
-			{
-				ptAhead.Set(next.x - xAxis, next.z - iHalfGridZ);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			break;
-		case Grid::DIR_DOWN:
-			for (int xAxis = 1; xAxis <= iHalfGridX; ++xAxis)
-			{
-				ptAhead.Set(next.x + xAxis, next.z + iHalfGridZ);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			for (int xAxis = 0; xAxis < (go->iGridX - iHalfGridX); ++xAxis)
-			{
-				ptAhead.Set(next.x - xAxis, next.z + iHalfGridZ);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			break;
-		case Grid::DIR_LEFTUP:
-			//Checking Left
-			for (int zAxis = 1; zAxis <= iHalfGridZ; ++zAxis)
-			{
-				ptAhead.Set(next.x - iHalfGridX, next.z + zAxis);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			for (int zAxis = 0; zAxis < (go->iGridZ - iHalfGridZ); ++zAxis)
-			{
-				ptAhead.Set(next.x - iHalfGridX, next.z - zAxis);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			//Checking Up
-			for (int xAxis = 1; xAxis <= iHalfGridX; ++xAxis)
-			{
-				ptAhead.Set(next.x + xAxis, next.z - iHalfGridZ);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			for (int xAxis = 0; xAxis < (go->iGridX - iHalfGridX); ++xAxis)
-			{
-				ptAhead.Set(next.x - xAxis, next.z - iHalfGridZ);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			break;
-		case Grid::DIR_RIGHTUP:
-			//Checking Right
-			for (int zAxis = 1; zAxis <= iHalfGridZ; ++zAxis)
-			{
-				ptAhead.Set(next.x + iHalfGridX, next.z + zAxis);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			for (int zAxis = 0; zAxis < (go->iGridZ - iHalfGridZ); ++zAxis)
-			{
-				ptAhead.Set(next.x + iHalfGridX, next.z - zAxis);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			//Checking Up
-			for (int xAxis = 1; xAxis <= iHalfGridX; ++xAxis)
-			{
-				ptAhead.Set(next.x + xAxis, next.z - iHalfGridZ);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			for (int xAxis = 0; xAxis < (go->iGridX - iHalfGridX); ++xAxis)
-			{
-				ptAhead.Set(next.x - xAxis, next.z - iHalfGridZ);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			break;
-		case Grid::DIR_LEFTDOWN:
-			//Checking Left
-			for (int zAxis = 1; zAxis <= iHalfGridZ; ++zAxis)
-			{
-				ptAhead.Set(next.x - iHalfGridX, next.z + zAxis);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			for (int zAxis = 0; zAxis < (go->iGridZ - iHalfGridZ); ++zAxis)
-			{
-				ptAhead.Set(next.x - iHalfGridX, next.z - zAxis);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			//Checking Down
-			for (int xAxis = 1; xAxis <= iHalfGridX; ++xAxis)
-			{
-				ptAhead.Set(next.x + xAxis, next.z + iHalfGridZ);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			for (int xAxis = 0; xAxis < (go->iGridX - iHalfGridX); ++xAxis)
-			{
-				ptAhead.Set(next.x - xAxis, next.z + iHalfGridZ);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			break;
-		case Grid::DIR_RIGHTDOWN:
-			//Checking Right
-			for (int zAxis = 1; zAxis <= iHalfGridZ; ++zAxis)
-			{
-				ptAhead.Set(next.x + iHalfGridX, next.z + zAxis);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			for (int zAxis = 0; zAxis < (go->iGridZ - iHalfGridZ); ++zAxis)
-			{
-				ptAhead.Set(next.x + iHalfGridX, next.z - zAxis);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			//Checking Down
-			for (int xAxis = 1; xAxis <= iHalfGridX; ++xAxis)
-			{
-				ptAhead.Set(next.x + xAxis, next.z + iHalfGridZ);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			for (int xAxis = 0; xAxis < (go->iGridX - iHalfGridX); ++xAxis)
-			{
-				ptAhead.Set(next.x - xAxis, next.z + iHalfGridZ);
-				if (isPointInGrid(ptAhead))
-				{
-					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
-					{
-						return false;
-					}
-				}
-			}
-			break;
-		default:
-			break;
-		}
-	}
-	return true;
 }
 
 void SceneSP::ChangeState(GAME_STATE newstate)
@@ -490,6 +187,312 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 	game_state = newstate;
 }
 
+
+//bool SceneSP::isTheCoastClear(GameObject* go, GridPt next, Grid::DIRECTION dir)
+//{
+//	if (go->iGridX > 0 && go->iGridZ > 0)
+//	{
+//		int iHalfGridX = go->iGridX * 0.5f;
+//		int iHalfGridZ = go->iGridZ * 0.5f;
+//		GridPt ptAhead;
+//		switch (dir)
+//		{
+//		case Grid::DIR_LEFT:
+//			for (int zAxis = 1; zAxis <= iHalfGridZ; ++zAxis)
+//			{
+//				ptAhead.Set(next.x - iHalfGridX, next.z + zAxis);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			for (int zAxis = 0; zAxis < (go->iGridZ - iHalfGridZ); ++zAxis)
+//			{
+//				ptAhead.Set(next.x - iHalfGridX, next.z - zAxis);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			break;
+//		case Grid::DIR_RIGHT:
+//			for (int zAxis = 1; zAxis <= iHalfGridZ; ++zAxis)
+//			{
+//				ptAhead.Set(next.x + iHalfGridX, next.z + zAxis);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			for (int zAxis = 0; zAxis < (go->iGridZ - iHalfGridZ); ++zAxis)
+//			{
+//				ptAhead.Set(next.x + iHalfGridX, next.z - zAxis);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			break;
+//		case Grid::DIR_UP:
+//			for (int xAxis = 1; xAxis <= iHalfGridX; ++xAxis)
+//			{
+//				ptAhead.Set(next.x + xAxis, next.z - iHalfGridZ);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//
+//			for (int xAxis = 0; xAxis < (go->iGridX - iHalfGridX); ++xAxis)
+//			{
+//				ptAhead.Set(next.x - xAxis, next.z - iHalfGridZ);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			break;
+//		case Grid::DIR_DOWN:
+//			for (int xAxis = 1; xAxis <= iHalfGridX; ++xAxis)
+//			{
+//				ptAhead.Set(next.x + xAxis, next.z + iHalfGridZ);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			for (int xAxis = 0; xAxis < (go->iGridX - iHalfGridX); ++xAxis)
+//			{
+//				ptAhead.Set(next.x - xAxis, next.z + iHalfGridZ);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			break;
+//		case Grid::DIR_LEFTUP:
+//			//Checking Left
+//			for (int zAxis = 1; zAxis <= iHalfGridZ; ++zAxis)
+//			{
+//				ptAhead.Set(next.x - iHalfGridX, next.z + zAxis);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			for (int zAxis = 0; zAxis < (go->iGridZ - iHalfGridZ); ++zAxis)
+//			{
+//				ptAhead.Set(next.x - iHalfGridX, next.z - zAxis);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			//Checking Up
+//			for (int xAxis = 1; xAxis <= iHalfGridX; ++xAxis)
+//			{
+//				ptAhead.Set(next.x + xAxis, next.z - iHalfGridZ);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			for (int xAxis = 0; xAxis < (go->iGridX - iHalfGridX); ++xAxis)
+//			{
+//				ptAhead.Set(next.x - xAxis, next.z - iHalfGridZ);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			break;
+//		case Grid::DIR_RIGHTUP:
+//			//Checking Right
+//			for (int zAxis = 1; zAxis <= iHalfGridZ; ++zAxis)
+//			{
+//				ptAhead.Set(next.x + iHalfGridX, next.z + zAxis);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			for (int zAxis = 0; zAxis < (go->iGridZ - iHalfGridZ); ++zAxis)
+//			{
+//				ptAhead.Set(next.x + iHalfGridX, next.z - zAxis);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			//Checking Up
+//			for (int xAxis = 1; xAxis <= iHalfGridX; ++xAxis)
+//			{
+//				ptAhead.Set(next.x + xAxis, next.z - iHalfGridZ);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			for (int xAxis = 0; xAxis < (go->iGridX - iHalfGridX); ++xAxis)
+//			{
+//				ptAhead.Set(next.x - xAxis, next.z - iHalfGridZ);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			break;
+//		case Grid::DIR_LEFTDOWN:
+//			//Checking Left
+//			for (int zAxis = 1; zAxis <= iHalfGridZ; ++zAxis)
+//			{
+//				ptAhead.Set(next.x - iHalfGridX, next.z + zAxis);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			for (int zAxis = 0; zAxis < (go->iGridZ - iHalfGridZ); ++zAxis)
+//			{
+//				ptAhead.Set(next.x - iHalfGridX, next.z - zAxis);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			//Checking Down
+//			for (int xAxis = 1; xAxis <= iHalfGridX; ++xAxis)
+//			{
+//				ptAhead.Set(next.x + xAxis, next.z + iHalfGridZ);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			for (int xAxis = 0; xAxis < (go->iGridX - iHalfGridX); ++xAxis)
+//			{
+//				ptAhead.Set(next.x - xAxis, next.z + iHalfGridZ);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			break;
+//		case Grid::DIR_RIGHTDOWN:
+//			//Checking Right
+//			for (int zAxis = 1; zAxis <= iHalfGridZ; ++zAxis)
+//			{
+//				ptAhead.Set(next.x + iHalfGridX, next.z + zAxis);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			for (int zAxis = 0; zAxis < (go->iGridZ - iHalfGridZ); ++zAxis)
+//			{
+//				ptAhead.Set(next.x + iHalfGridX, next.z - zAxis);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			//Checking Down
+//			for (int xAxis = 1; xAxis <= iHalfGridX; ++xAxis)
+//			{
+//				ptAhead.Set(next.x + xAxis, next.z + iHalfGridZ);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			for (int xAxis = 0; xAxis < (go->iGridX - iHalfGridX); ++xAxis)
+//			{
+//				ptAhead.Set(next.x - xAxis, next.z + iHalfGridZ);
+//				if (isPointInGrid(ptAhead))
+//				{
+//					if (m_grid[GetGridIndex(ptAhead)] == Grid::TILE_USED)
+//					{
+//						return false;
+//					}
+//				}
+//			}
+//			break;
+//		default:
+//			break;
+//		}
+//	}
+//	return true;
+//}
+
 void SceneSP::Init()
 {
 	SceneData::GetInstance()->SetNoGrid(15);
@@ -538,6 +541,16 @@ void SceneSP::Init()
 	goHouse->pos = GetGridPos(GridPt(5, 7));
 	goHouse->pos.y = goHouse->scale.y * 0.5f;
 	static_cast<Building*>(goHouse)->bBuilt = true;
+
+	goGranary = FetchGO(GameObject::GO_GRANARY);
+	goGranary->pos = GetGridPos(GridPt(3, 5));
+	goGranary->pos.y = goGranary->scale.y * 0.5f;
+	static_cast<Building*>(goGranary)->bBuilt = true;
+
+	goWoodshed = FetchGO(GameObject::GO_WOODSHED);
+	goWoodshed->pos = GetGridPos(GridPt(7, 13));
+	goWoodshed->pos.y = goWoodshed->scale.y * 0.5f;
+	static_cast<Building*>(goWoodshed)->bBuilt = true;
 
 	goLogs = FetchGO(GameObject::GO_LOGS);
 	goLogs->pos = GetGridPos(GridPt(10, 7));
@@ -590,12 +603,13 @@ void SceneSP::Init()
 
 	SceneData* SD = SceneData::GetInstance();
 	SD->SetFood(0);
-	SD->SetFoodLimit(100);
+	SD->SetFoodLimit(0);
 	SD->SetPopulation(0);
-	SD->SetPopulationLimit(10);
+	SD->SetPopulationLimit(0);
 	SD->SetWood(0);
-	SD->SetWoodLimit(100);
+	SD->SetWoodLimit(0);
 	SD->SetResearchPoints(100);
+
 	SD->SetCurrMonth(1);
 	SD->SetCurrDay(1);
 
@@ -627,9 +641,9 @@ void SceneSP::Init()
 	ChangeState(G_SPLASHSCREEN);
 }
 
-
 bool SceneSP::Handle(Message* message)
 {
+	SceneData* SD = SceneData::GetInstance();
 	MessageWRU* messageWRU = dynamic_cast<MessageWRU*>(message);
 	if (messageWRU)
 	{
@@ -638,6 +652,60 @@ bool SceneSP::Handle(Message* message)
 		case MessageWRU::FIND_CHIEFHUT:
 			messageWRU->go->goTarget = goChiefHut;
 			break;
+		case MessageWRU::FIND_NEAREST_GRANARY:
+		{
+			GridPt currGrid = messageWRU->go->currentPt;
+			int iDistance = INT_MAX;
+			GameObject* currTarget = NULL;
+			for (auto go : m_goList)
+			{
+				if (!go->active || go->type != GameObject::GO_GRANARY)
+					continue;
+				GridPt goGrid = go->currentPt;
+				int iTotalDist = (goGrid.x - currGrid.x) * (goGrid.x - currGrid.x) + (goGrid.z - currGrid.z) * (goGrid.z - currGrid.z);
+				if (iTotalDist < iDistance)
+				{
+					iDistance = iTotalDist;
+					currTarget = go;
+				}
+			}
+			if (currTarget != NULL)
+			{
+				messageWRU->go->goTarget = currTarget;
+			}
+			else
+			{
+				messageWRU->go->goTarget = goChiefHut;
+			}
+		}
+			break;
+		case MessageWRU::FIND_NEAREST_WOODSHED:
+		{
+			GridPt currGrid = messageWRU->go->currentPt;
+			int iDistance = INT_MAX;
+			GameObject* currTarget = NULL;
+			for (auto go : m_goList)
+			{
+				if (!go->active || go->type != GameObject::GO_WOODSHED)
+					continue;
+				GridPt goGrid = go->currentPt;
+				int iTotalDist = (goGrid.x - currGrid.x) * (goGrid.x - currGrid.x) + (goGrid.z - currGrid.z) * (goGrid.z - currGrid.z);
+				if (iTotalDist < iDistance)
+				{
+					iDistance = iTotalDist;
+					currTarget = go;
+				}
+			}
+			if (currTarget != NULL)
+			{
+				messageWRU->go->goTarget = currTarget;
+			}
+			else
+			{
+				messageWRU->go->goTarget = goChiefHut;
+			}
+		}
+		break;
 		case MessageWRU::PATH_TO_TARGET:
 			AStarSingleGrid(messageWRU->go, GetPoint(messageWRU->go->goTarget->pos));
 			break;
@@ -659,9 +727,9 @@ bool SceneSP::Handle(Message* message)
 				}
 			}
 			std::pair<int, int> randPoint = GetPoint(iRandIndex);
-			messageWRU->go->target = GetGridPos(GridPt(randPoint.first, randPoint.second));
+			messageWRU->go->target = GetGridPos(GridPt(randPoint.first,randPoint.second));
 		}
-		break;
+			break;
 		default:
 			break;
 		}
@@ -696,6 +764,20 @@ bool SceneSP::Handle(Message* message)
 		delete message;
 		return true;
 	}
+	MessageAltarOffer* messageAltarOffer = dynamic_cast<MessageAltarOffer*>(message);
+	if (messageAltarOffer)
+	{
+		if (messageAltarOffer->type == MessageAltarOffer::OFFER_FOOD)
+		{
+			if (SD->GetFood() > 0)
+			{
+				static_cast<Altar*>(goAltar)->iFoodOffered += 10;
+				SD->SetFood(SD->GetFood() - 1);
+			}
+		}
+		delete message;
+		return true;
+	}
 	delete message;
 	return false;
 }
@@ -713,6 +795,12 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			{
 			case GameObject::GO_VILLAGER:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * .7f, .5f, SceneData::GetInstance()->GetGridSize() * .7f);
+				break;
+			case GameObject::GO_GRANARY:
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * .7f, 1.f, SceneData::GetInstance()->GetGridSize() * .7f);
+				break;
+			case GameObject::GO_WOODSHED:
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * .7f, 1.f, SceneData::GetInstance()->GetGridSize() * .7f);
 				break;
 			case GameObject::GO_HOUSE:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * .7f, 1.f, SceneData::GetInstance()->GetGridSize() * .7f);
@@ -757,6 +845,12 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 		case GameObject::GO_HOUSE:
 			go = new House(type);
 			break;
+		case GameObject::GO_GRANARY:
+			go = new Granary(type);
+			break;
+		case GameObject::GO_WOODSHED:
+			go = new WoodShed(type);
+			break;
 		case GameObject::GO_CHIEFHUT:
 			go = new ChiefHut(type);
 			break;
@@ -800,6 +894,7 @@ struct Compare3
 		return pair1.second.second < pair2.second.second;
 	}
 };
+
 
 void SceneSP::AStarSingleGrid(GameObject * go, GridPt target)
 {
@@ -1461,708 +1556,709 @@ void SceneSP::AStarSingleGrid(GameObject * go, GridPt target)
 	//return priority_Queue.begin()->second.first;
 }
 
-void SceneSP::AStarMultiGrid(GameObject * go, GridPt target)
-{
-
-	//first = curr point, second.first = tile cost, second.second = total cost(tile cost + distance to final destination)
-	if (go->currentPt == target)
-		return;
-	std::vector<std::pair<GridPt, std::pair<int, int>>>priority_Queue;
-	std::sort(priority_Queue.begin(), priority_Queue.end(), Compare2());
-	while (!m_shortestPath.empty())
-	{
-		m_shortestPath.pop_back();
-	}
-	SceneData* SD = SceneData::GetInstance();
-	go->m_visited.resize(SD->GetNoGrid() * SD->GetNoGrid());
-	std::fill(go->m_visited.begin(), go->m_visited.end(), false);
-	//keeping track of the parent node
-	m_previous.resize(SD->GetNoGrid() * SD->GetNoGrid());
-	std::fill(m_previous.begin(), m_previous.end(), NULL);
-
-	GridPt curr = go->currentPt;
-	if (!isPointInGrid(curr))
-		return;
-
-	GridPt bestStart = curr; //Closest gridPt to start from
-	float fDistanceToTarget = (target.x - curr.x) * (target.x - curr.x) + (target.z - curr.z) * (target.z - curr.z);
-	Vector3 ptPos = GetGridPos(curr); //Position of gridPt in world space
-
-	//Check if goPos is left of or right of gridPt
-	if (go->pos.x < ptPos.x)
-	{
-		//Check left of gridPt
-		GridPt temp = GridPt(curr.x - 1, curr.z);
-		if (isPointInGrid(temp))
-		{
-			if (isTheCoastClear(go, temp, Grid::DIR_LEFT))
-			{
-				float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
-				if (distance < fDistanceToTarget)
-				{
-					fDistanceToTarget = distance;
-					bestStart = temp;
-				}
-			}
-		}
-		//Check if goPos is above or below center of gridPt
-		if (go->pos.z < ptPos.z)
-		{
-			//Check above of gridPt
-			temp = GridPt(curr.x, curr.z - 1);
-			if (isPointInGrid(temp))
-			{
-				if (isTheCoastClear(go, temp, Grid::DIR_UP))
-				{
-					float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
-					if (distance < fDistanceToTarget)
-					{
-						fDistanceToTarget = distance;
-						bestStart = temp;
-					}
-				}
-			}
-			//Check diagonal
-			temp = GridPt(curr.x - 1, curr.z - 1);
-			if (isPointInGrid(temp))
-			{
-				if (isTheCoastClear(go, temp, Grid::DIR_LEFTUP))
-				{
-					float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
-					if (distance < fDistanceToTarget)
-					{
-						fDistanceToTarget = distance;
-						bestStart = temp;
-					}
-				}
-			}
-		}
-		else
-		{
-			//Check below of gridPt
-			temp = GridPt(curr.x, curr.z + 1);
-			if (isPointInGrid(temp))
-			{
-				if (isTheCoastClear(go, temp, Grid::DIR_DOWN))
-				{
-					float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
-					if (distance < fDistanceToTarget)
-					{
-						fDistanceToTarget = distance;
-						bestStart = temp;
-					}
-				}
-			}
-			//Check diagonal
-			temp = GridPt(curr.x - 1, curr.z + 1);
-			if (isPointInGrid(temp))
-			{
-				if (isTheCoastClear(go, temp, Grid::DIR_LEFTDOWN))
-				{
-					float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
-					if (distance < fDistanceToTarget)
-					{
-						fDistanceToTarget = distance;
-						bestStart = temp;
-					}
-				}
-			}
-		}
-	}
-	else
-	{
-		GridPt temp;
-		//Check right of gridPt
-		if (go->pos.x > ptPos.x)
-		{
-			temp = GridPt(curr.x + 1, curr.z);
-			if (isPointInGrid(temp))
-			{
-				if (isTheCoastClear(go, temp, Grid::DIR_RIGHT))
-				{
-					float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
-					if (distance < fDistanceToTarget)
-					{
-						fDistanceToTarget = distance;
-						bestStart = temp;
-					}
-				}
-			}
-		}
-		//Check if goPos is above or below center of gridPt
-		if (go->pos.z < ptPos.z)
-		{
-			//Check above of gridPt
-			temp = GridPt(curr.x, curr.z - 1);
-			if (isPointInGrid(temp))
-			{
-				if (isTheCoastClear(go, temp, Grid::DIR_UP))
-				{
-					float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
-					if (distance < fDistanceToTarget)
-					{
-						fDistanceToTarget = distance;
-						bestStart = temp;
-					}
-				}
-			}
-			//Check diagonal
-			if (go->pos.x > ptPos.x)
-			{
-				temp = GridPt(curr.x + 1, curr.z - 1);
-				if (isPointInGrid(temp))
-				{
-					if (isTheCoastClear(go, temp, Grid::DIR_RIGHTUP))
-					{
-						float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
-						if (distance < fDistanceToTarget)
-						{
-							fDistanceToTarget = distance;
-							bestStart = temp;
-						}
-					}
-				}
-			}
-		}
-		else if (go->pos.z > ptPos.z)
-		{
-			//Check below of gridPt
-			temp = GridPt(curr.x, curr.z + 1);
-			if (isPointInGrid(temp))
-			{
-				if (isTheCoastClear(go, temp, Grid::DIR_DOWN))
-				{
-					float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
-					if (distance < fDistanceToTarget)
-					{
-						fDistanceToTarget = distance;
-						bestStart = temp;
-					}
-				}
-			}
-			//Check diagonal
-			temp = GridPt(curr.x + 1, curr.z + 1);
-			if (isPointInGrid(temp))
-			{
-				if (isTheCoastClear(go, temp, Grid::DIR_RIGHTDOWN))
-				{
-					float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
-					if (distance < fDistanceToTarget)
-					{
-						fDistanceToTarget = distance;
-						bestStart = temp;
-					}
-				}
-			}
-		}
-	}
-
-	int G = 0;
-	priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(bestStart, std::pair<int, int>(G, 0)));
-	go->m_visited[GetGridIndex(bestStart)] = true;
-	float nearestDistance = FLT_MAX;
-	GridPt nearestTile = bestStart;
-	GridPt next = bestStart;
-	int currIndex = 0;
-
-	//Since this value is rounded down, this value is for the closer side of GridPt, refer to gridImage in beside solution file
-	int iHalfGridX = go->iGridX * 0.5f;
-	int iHalfGridZ = go->iGridZ * 0.5f;
-
-
-	for (int loop = 0; loop < SD->GetNoGrid() * SD->GetNoGrid() && !priority_Queue.empty(); ++loop)
-	{
-		//std::cout << "One Round of Loop" << std::endl;
-		curr = priority_Queue.begin()->first;
-		//m_queue.pop();
-
-
-		if (go->iGridX > 0 && go->iGridZ > 0)
-		{
-			if ((target.x - curr.x) * (target.x - curr.x) <= (go->iGridX - iHalfGridX + 1) * (go->iGridX - iHalfGridX + 1) && (target.z - curr.z) * (target.z - curr.z) <= (go->iGridZ - iHalfGridZ + 1) * (go->iGridZ - iHalfGridZ + 1))
-			{
-				if (target != curr)
-					m_previous[GetGridIndex(target)] = curr;
-				priority_Queue.begin()->first = target;
-				break;
-			}
-		}
-		else
-		{
-			if (curr == target)
-			{
-				break;
-			}
-		}
-
-		//Check Up
-		G = priority_Queue.begin()->second.first;
-		next.Set(curr.x, curr.z - 1);
-		currIndex = GetGridIndex(next);
-		if (isPointInGrid(next))
-		{
-			float distanceSquared = NULL;
-			//Cost of Empty Tile
-			G += 1;
-			//Calculate distance to end
-			distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
-			if (isTheCoastClear(go, next, Grid::DIR_UP))
-			{
-				if (!go->m_visited[currIndex])
-				{
-					//Update node cost
-					m_previous[currIndex] = curr;
-					priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
-					go->m_visited[currIndex] = true;
-
-					//Check if it is the nearest Tile
-					if (distanceSquared < nearestDistance)
-					{
-						nearestDistance = distanceSquared;
-						nearestTile = next;
-					}
-				}
-				else if (distanceSquared != NULL)
-				{
-					//Checks if visited node is in queue
-					for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
-					{
-						std::pair<GridPt, std::pair<int, int>> path = *it;
-						if (path.first == next)
-						{
-							//If in queue, check if new path is shorter thn old path
-							if (path.second.second > G + distanceSquared)
-							{
-								//Update if new path is shorter
-								priority_Queue.erase(it);
-								priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
-								m_previous[currIndex] = curr;
-							}
-							break;
-						}
-					}
-					//If not in queue, node is already in optimal path
-				}
-			}
-		}
-
-		//Check Down
-		G = priority_Queue.begin()->second.first;
-		next.Set(curr.x, curr.z + 1);
-		currIndex = GetGridIndex(next);
-		if (isPointInGrid(next))
-		{
-			float distanceSquared = NULL;
-			//Cost of Empty Tile
-			G += 1;
-			//Calculate distance to end
-			distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
-			if (isTheCoastClear(go, next, Grid::DIR_DOWN))
-			{
-				if (!go->m_visited[currIndex])
-				{
-					//Update node cost
-					m_previous[currIndex] = curr;
-					priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
-					go->m_visited[currIndex] = true;
-
-					//Check if it is the nearest Tile
-					if (distanceSquared < nearestDistance)
-					{
-						nearestDistance = distanceSquared;
-						nearestTile = next;
-					}
-				}
-				else if (distanceSquared != NULL)
-				{
-					//Checks if visited node is in queue
-					for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
-					{
-						std::pair<GridPt, std::pair<int, int>> path = *it;
-						if (path.first == next)
-						{
-							//If in queue, check if new path is shorter thn old path
-							if (path.second.second > G + distanceSquared)
-							{
-								//Update if new path is shorter
-								priority_Queue.erase(it);
-								priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
-								m_previous[currIndex] = curr;
-							}
-							break;
-						}
-					}
-					//If not in queue, node is already in optimal path
-				}
-			}
-		}
-
-		//Check Left
-		G = priority_Queue.begin()->second.first;
-		next.Set(curr.x - 1, curr.z);
-		currIndex = GetGridIndex(next);
-		if (isPointInGrid(next))
-		{
-			float distanceSquared = NULL;
-			//Cost of Empty Tile
-			G += 1;
-			//Calculate distance to end
-			distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
-			if (isTheCoastClear(go, next, Grid::DIR_LEFT))
-			{
-				if (!go->m_visited[currIndex])
-				{
-					//Update node cost
-					m_previous[currIndex] = curr;
-					priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
-					go->m_visited[currIndex] = true;
-
-					//Check if it is the nearest Tile
-					if (distanceSquared < nearestDistance)
-					{
-						nearestDistance = distanceSquared;
-						nearestTile = next;
-					}
-				}
-				else if (distanceSquared != NULL)
-				{
-					//Checks if visited node is in queue
-					for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
-					{
-						std::pair<GridPt, std::pair<int, int>> path = *it;
-						if (path.first == next)
-						{
-							//If in queue, check if new path is shorter thn old path
-							if (path.second.second > G + distanceSquared)
-							{
-								//Update if new path is shorter
-								priority_Queue.erase(it);
-								priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
-								m_previous[currIndex] = curr;
-							}
-							break;
-						}
-					}
-					//If not in queue, node is already in optimal path
-				}
-			}
-		}
-
-		//Check Right
-		G = priority_Queue.begin()->second.first;
-		next.Set(curr.x + 1, curr.z);
-		currIndex = GetGridIndex(next);
-		if (isPointInGrid(next))
-		{
-			float distanceSquared = NULL;
-			//Cost of Empty Tile
-			G += 1;
-			//Calculate distance to end
-			distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
-			if (isTheCoastClear(go, next, Grid::DIR_RIGHT))
-			{
-				if (!go->m_visited[currIndex])
-				{
-					//Update node cost
-					m_previous[currIndex] = curr;
-					priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
-					go->m_visited[currIndex] = true;
-
-					//Check if it is the nearest Tile
-					if (distanceSquared < nearestDistance)
-					{
-						nearestDistance = distanceSquared;
-						nearestTile = next;
-					}
-				}
-				else if (distanceSquared != NULL)
-				{
-					//Checks if visited node is in queue
-					for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
-					{
-						std::pair<GridPt, std::pair<int, int>> path = *it;
-						if (path.first == next)
-						{
-							//If in queue, check if new path is shorter thn old path
-							if (path.second.second > G + distanceSquared)
-							{
-								//Update if new path is shorter
-								priority_Queue.erase(it);
-								priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
-								m_previous[currIndex] = curr;
-							}
-							break;
-						}
-					}
-					//If not in queue, node is already in optimal path
-				}
-			}
-		}
-
-		//Check Up Left
-		G = priority_Queue.begin()->second.first;
-		next.Set(curr.x - 1, curr.z - 1);
-		currIndex = GetGridIndex(next);
-		if (isPointInGrid(next))
-		{
-			float distanceSquared = NULL;
-			//Cost of Empty Tile
-			G += 1;
-			//Calculate distance to end
-			distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
-			if (isTheCoastClear(go, next, Grid::DIR_LEFTUP))
-			{
-				if (!go->m_visited[currIndex])
-				{
-					//Update node cost
-					m_previous[currIndex] = curr;
-					priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
-					go->m_visited[currIndex] = true;
-
-					//Check if it is the nearest Tile
-					if (distanceSquared < nearestDistance)
-					{
-						nearestDistance = distanceSquared;
-						nearestTile = next;
-					}
-				}
-				else if (distanceSquared != NULL)
-				{
-					//Checks if visited node is in queue
-					for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
-					{
-						std::pair<GridPt, std::pair<int, int>> path = *it;
-						if (path.first == next)
-						{
-							//If in queue, check if new path is shorter thn old path
-							if (path.second.second > G + distanceSquared)
-							{
-								//Update if new path is shorter
-								priority_Queue.erase(it);
-								priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
-								m_previous[currIndex] = curr;
-							}
-							break;
-						}
-					}
-					//If not in queue, node is already in optimal path
-				}
-			}
-		}
-
-		//Check Up Right
-		G = priority_Queue.begin()->second.first;
-		next.Set(curr.x + 1, curr.z - 1);
-		currIndex = GetGridIndex(next);
-		if (isPointInGrid(next))
-		{
-			float distanceSquared = NULL;
-			//Cost of Empty Tile
-			G += 1;
-			//Calculate distance to end
-			distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
-			if (isTheCoastClear(go, next, Grid::DIR_RIGHTUP))
-			{
-				if (!go->m_visited[currIndex])
-				{
-					//Update node cost
-					m_previous[currIndex] = curr;
-					priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
-					go->m_visited[currIndex] = true;
-
-					//Check if it is the nearest Tile
-					if (distanceSquared < nearestDistance)
-					{
-						nearestDistance = distanceSquared;
-						nearestTile = next;
-					}
-				}
-				else if (distanceSquared != NULL)
-				{
-					//Checks if visited node is in queue
-					for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
-					{
-						std::pair<GridPt, std::pair<int, int>> path = *it;
-						if (path.first == next)
-						{
-							//If in queue, check if new path is shorter thn old path
-							if (path.second.second > G + distanceSquared)
-							{
-								//Update if new path is shorter
-								priority_Queue.erase(it);
-								priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
-								m_previous[currIndex] = curr;
-							}
-							break;
-						}
-					}
-					//If not in queue, node is already in optimal path
-				}
-			}
-		}
-
-		//Check Down Left
-		G = priority_Queue.begin()->second.first;
-		next.Set(curr.x - 1, curr.z + 1);
-		currIndex = GetGridIndex(next);
-		if (isPointInGrid(next))
-		{
-			float distanceSquared = NULL;
-			//Cost of Empty Tile
-			G += 1;
-			//Calculate distance to end
-			distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
-			if (isTheCoastClear(go, next, Grid::DIR_LEFTDOWN))
-			{
-				if (!go->m_visited[currIndex])
-				{
-					//Update node cost
-					m_previous[currIndex] = curr;
-					priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
-					go->m_visited[currIndex] = true;
-
-					//Check if it is the nearest Tile
-					if (distanceSquared < nearestDistance)
-					{
-						nearestDistance = distanceSquared;
-						nearestTile = next;
-					}
-				}
-				else if (distanceSquared != NULL)
-				{
-					//Checks if visited node is in queue
-					for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
-					{
-						std::pair<GridPt, std::pair<int, int>> path = *it;
-						if (path.first == next)
-						{
-							//If in queue, check if new path is shorter thn old path
-							if (path.second.second > G + distanceSquared)
-							{
-								//Update if new path is shorter
-								priority_Queue.erase(it);
-								priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
-								m_previous[currIndex] = curr;
-							}
-							break;
-						}
-					}
-					//If not in queue, node is already in optimal path
-				}
-			}
-		}
-
-		//Check Down Right
-		G = priority_Queue.begin()->second.first;
-		next.Set(curr.x + 1, curr.z + 1);
-		currIndex = GetGridIndex(next);
-		if (isPointInGrid(next))
-		{
-			float distanceSquared = NULL;
-			//Cost of Empty Tile
-			G += 1;
-			//Calculate distance to end
-			distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
-			if (isTheCoastClear(go, next, Grid::DIR_RIGHTDOWN))
-			{
-				if (!go->m_visited[currIndex])
-				{
-					//Update node cost
-					m_previous[currIndex] = curr;
-					priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
-					go->m_visited[currIndex] = true;
-
-					//Check if it is the nearest Tile
-					if (distanceSquared < nearestDistance)
-					{
-						nearestDistance = distanceSquared;
-						nearestTile = next;
-					}
-				}
-				else if (distanceSquared != NULL)
-				{
-					//Checks if visited node is in queue
-					for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
-					{
-						std::pair<GridPt, std::pair<int, int>> path = *it;
-						if (path.first == next)
-						{
-							//If in queue, check if new path is shorter thn old path
-							if (path.second.second > G + distanceSquared)
-							{
-								//Update if new path is shorter
-								priority_Queue.erase(it);
-								priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
-								m_previous[currIndex] = curr;
-							}
-							break;
-						}
-					}
-					//If not in queue, node is already in optimal path
-				}
-			}
-		}
-
-		priority_Queue.erase(priority_Queue.begin());
-		std::sort(priority_Queue.begin(), priority_Queue.end(), Compare2());
-	}
-
-	if (priority_Queue.size() > 0)
-	{
-		if (priority_Queue.begin()->first == target)
-		{
-			//If manage to reach target
-			curr = target;
-			m_shortestPath.push_back(curr);
-			curr = m_previous[GetGridIndex(curr)];
-			while (curr != NULL)
-			{
-				m_shortestPath.push_back(curr);
-				curr = m_previous[GetGridIndex(curr)];
-				std::cout << "hi" << std::endl;
-			}
-		}
-		else
-		{
-			//If unable to reach target
-			curr = nearestTile;
-			m_shortestPath.push_back(curr);
-			curr = m_previous[GetGridIndex(curr)];
-			while (curr != NULL)
-			{
-				m_shortestPath.push_back(curr);
-				curr = m_previous[GetGridIndex(curr)];
-				std::cout << "hi" << std::endl;
-			}
-		}
-	}
-	else
-	{
-		//If something happened
-		curr = nearestTile;
-		m_shortestPath.push_back(curr);
-		curr = m_previous[GetGridIndex(curr)];
-		while (curr != NULL)
-		{
-			m_shortestPath.push_back(curr);
-			curr = m_previous[GetGridIndex(curr)];
-			std::cout << "hi" << std::endl;
-		}
-	}
-
-	//Just take based on range of movement 
-	while (!m_shortestPath.empty())
-	{
-		go->path.push_back(m_shortestPath.back());
-		m_shortestPath.pop_back();
-	}
-	if (go->path.size() > 1)
-	{
-		std::reverse(go->path.begin(), go->path.end());
-	}
-	//std::cout << priority_Queue.begin()->second.first << std::endl;
-	//return priority_Queue.begin()->second.first;
-}
+//
+//void SceneSP::AStarMultiGrid(GameObject * go, GridPt target)
+//{
+//
+//	//first = curr point, second.first = tile cost, second.second = total cost(tile cost + distance to final destination)
+//	if (go->currentPt == target)
+//		return;
+//	std::vector<std::pair<GridPt, std::pair<int, int>>>priority_Queue;
+//	std::sort(priority_Queue.begin(), priority_Queue.end(), Compare2());
+//	while (!m_shortestPath.empty())
+//	{
+//		m_shortestPath.pop_back();
+//	}
+//	SceneData* SD = SceneData::GetInstance();
+//	go->m_visited.resize(SD->GetNoGrid() * SD->GetNoGrid());
+//	std::fill(go->m_visited.begin(), go->m_visited.end(), false);
+//	//keeping track of the parent node
+//	m_previous.resize(SD->GetNoGrid() * SD->GetNoGrid());
+//	std::fill(m_previous.begin(), m_previous.end(), NULL);
+//
+//	GridPt curr = go->currentPt;
+//	if (!isPointInGrid(curr))
+//		return;
+//
+//	GridPt bestStart = curr; //Closest gridPt to start from
+//	float fDistanceToTarget = (target.x - curr.x) * (target.x - curr.x) + (target.z - curr.z) * (target.z - curr.z);
+//	Vector3 ptPos = GetGridPos(curr); //Position of gridPt in world space
+//
+//	//Check if goPos is left of or right of gridPt
+//	if (go->pos.x < ptPos.x)
+//	{
+//		//Check left of gridPt
+//		GridPt temp = GridPt(curr.x - 1, curr.z);
+//		if (isPointInGrid(temp))
+//		{
+//			if (isTheCoastClear(go, temp, Grid::DIR_LEFT))
+//			{
+//				float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
+//				if (distance < fDistanceToTarget)
+//				{
+//					fDistanceToTarget = distance;
+//					bestStart = temp;
+//				}
+//			}
+//		}
+//		//Check if goPos is above or below center of gridPt
+//		if (go->pos.z < ptPos.z)
+//		{
+//			//Check above of gridPt
+//			temp = GridPt(curr.x, curr.z - 1);
+//			if (isPointInGrid(temp))
+//			{
+//				if (isTheCoastClear(go, temp, Grid::DIR_UP))
+//				{
+//					float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
+//					if (distance < fDistanceToTarget)
+//					{
+//						fDistanceToTarget = distance;
+//						bestStart = temp;
+//					}
+//				}
+//			}
+//			//Check diagonal
+//			temp = GridPt(curr.x - 1, curr.z - 1);
+//			if (isPointInGrid(temp))
+//			{
+//				if (isTheCoastClear(go, temp, Grid::DIR_LEFTUP))
+//				{
+//					float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
+//					if (distance < fDistanceToTarget)
+//					{
+//						fDistanceToTarget = distance;
+//						bestStart = temp;
+//					}
+//				}
+//			}
+//		}
+//		else
+//		{
+//			//Check below of gridPt
+//			temp = GridPt(curr.x, curr.z + 1);
+//			if (isPointInGrid(temp))
+//			{
+//				if (isTheCoastClear(go, temp, Grid::DIR_DOWN))
+//				{
+//					float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
+//					if (distance < fDistanceToTarget)
+//					{
+//						fDistanceToTarget = distance;
+//						bestStart = temp;
+//					}
+//				}
+//			}
+//			//Check diagonal
+//			temp = GridPt(curr.x - 1, curr.z + 1);
+//			if (isPointInGrid(temp))
+//			{
+//				if (isTheCoastClear(go, temp, Grid::DIR_LEFTDOWN))
+//				{
+//					float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
+//					if (distance < fDistanceToTarget)
+//					{
+//						fDistanceToTarget = distance;
+//						bestStart = temp;
+//					}
+//				}
+//			}
+//		}
+//	}
+//	else
+//	{
+//		GridPt temp;
+//		//Check right of gridPt
+//		if (go->pos.x > ptPos.x)
+//		{
+//			temp = GridPt(curr.x + 1, curr.z);
+//			if (isPointInGrid(temp))
+//			{
+//				if (isTheCoastClear(go, temp, Grid::DIR_RIGHT))
+//				{
+//					float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
+//					if (distance < fDistanceToTarget)
+//					{
+//						fDistanceToTarget = distance;
+//						bestStart = temp;
+//					}
+//				}
+//			}
+//		}
+//		//Check if goPos is above or below center of gridPt
+//		if (go->pos.z < ptPos.z)
+//		{
+//			//Check above of gridPt
+//			temp = GridPt(curr.x, curr.z - 1);
+//			if (isPointInGrid(temp))
+//			{
+//				if (isTheCoastClear(go, temp, Grid::DIR_UP))
+//				{
+//					float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
+//					if (distance < fDistanceToTarget)
+//					{
+//						fDistanceToTarget = distance;
+//						bestStart = temp;
+//					}
+//				}
+//			}
+//			//Check diagonal
+//			if (go->pos.x > ptPos.x)
+//			{
+//				temp = GridPt(curr.x + 1, curr.z - 1);
+//				if (isPointInGrid(temp))
+//				{
+//					if (isTheCoastClear(go, temp, Grid::DIR_RIGHTUP))
+//					{
+//						float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
+//						if (distance < fDistanceToTarget)
+//						{
+//							fDistanceToTarget = distance;
+//							bestStart = temp;
+//						}
+//					}
+//				}
+//			}
+//		}
+//		else if (go->pos.z > ptPos.z)
+//		{
+//			//Check below of gridPt
+//			temp = GridPt(curr.x, curr.z + 1);
+//			if (isPointInGrid(temp))
+//			{
+//				if (isTheCoastClear(go, temp, Grid::DIR_DOWN))
+//				{
+//					float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
+//					if (distance < fDistanceToTarget)
+//					{
+//						fDistanceToTarget = distance;
+//						bestStart = temp;
+//					}
+//				}
+//			}
+//			//Check diagonal
+//			temp = GridPt(curr.x + 1, curr.z + 1);
+//			if (isPointInGrid(temp))
+//			{
+//				if (isTheCoastClear(go, temp, Grid::DIR_RIGHTDOWN))
+//				{
+//					float distance = (target.x - temp.x) * (target.x - temp.x) + (target.z - temp.z) * (target.z - temp.z);
+//					if (distance < fDistanceToTarget)
+//					{
+//						fDistanceToTarget = distance;
+//						bestStart = temp;
+//					}
+//				}
+//			}
+//		}
+//	}
+//
+//	int G = 0;
+//	priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(bestStart, std::pair<int, int>(G, 0)));
+//	go->m_visited[GetGridIndex(bestStart)] = true;
+//	float nearestDistance = FLT_MAX;
+//	GridPt nearestTile = bestStart;
+//	GridPt next = bestStart;
+//	int currIndex = 0;
+//
+//	//Since this value is rounded down, this value is for the closer side of GridPt, refer to gridImage in beside solution file
+//	int iHalfGridX = go->iGridX * 0.5f;
+//	int iHalfGridZ = go->iGridZ * 0.5f;
+//
+//
+//	for (int loop = 0; loop < SD->GetNoGrid() * SD->GetNoGrid() && !priority_Queue.empty(); ++loop)
+//	{
+//		//std::cout << "One Round of Loop" << std::endl;
+// 		curr = priority_Queue.begin()->first;
+//		//m_queue.pop();
+//
+//
+//		if (go->iGridX > 0 && go->iGridZ > 0)
+//		{
+//			if ((target.x - curr.x) * (target.x - curr.x) <= (go->iGridX - iHalfGridX + 1) * (go->iGridX - iHalfGridX + 1) && (target.z - curr.z) * (target.z - curr.z) <= (go->iGridZ - iHalfGridZ + 1) * (go->iGridZ - iHalfGridZ + 1))
+//			{
+//				if(target != curr)
+//					m_previous[GetGridIndex(target)] = curr;
+//				priority_Queue.begin()->first = target;
+//				break;
+//			}
+//		}
+//		else
+//		{
+//			if (curr == target)
+//			{
+//				break;
+//			}
+//		}
+//
+//		//Check Up
+//		G = priority_Queue.begin()->second.first;
+//		next.Set(curr.x, curr.z - 1);
+//		currIndex = GetGridIndex(next);
+//		if (isPointInGrid(next))
+//		{
+//			float distanceSquared = NULL;
+//			//Cost of Empty Tile
+//			G += 1;
+//			//Calculate distance to end
+//			distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
+//			if (isTheCoastClear(go, next, Grid::DIR_UP))
+//			{
+//				if (!go->m_visited[currIndex])
+//				{
+//					//Update node cost
+//					m_previous[currIndex] = curr;
+//					priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+//					go->m_visited[currIndex] = true;
+//
+//					//Check if it is the nearest Tile
+//					if (distanceSquared < nearestDistance)
+//					{
+//						nearestDistance = distanceSquared;
+//						nearestTile = next;
+//					}
+//				}
+//				else if (distanceSquared != NULL)
+//				{
+//					//Checks if visited node is in queue
+//					for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
+//					{
+//						std::pair<GridPt, std::pair<int, int>> path = *it;
+//						if (path.first == next)
+//						{
+//							//If in queue, check if new path is shorter thn old path
+//							if (path.second.second > G + distanceSquared)
+//							{
+//								//Update if new path is shorter
+//								priority_Queue.erase(it);
+//								priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+//								m_previous[currIndex] = curr;
+//							}
+//							break;
+//						}
+//					}
+//					//If not in queue, node is already in optimal path
+//				}
+//			}
+//		}
+//
+//		//Check Down
+//		G = priority_Queue.begin()->second.first;
+//		next.Set(curr.x, curr.z + 1);
+//		currIndex = GetGridIndex(next);
+//		if (isPointInGrid(next))
+//		{
+//			float distanceSquared = NULL;
+//			//Cost of Empty Tile
+//			G += 1;
+//			//Calculate distance to end
+//			distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
+//			if (isTheCoastClear(go, next, Grid::DIR_DOWN))
+//			{
+//				if (!go->m_visited[currIndex])
+//				{
+//					//Update node cost
+//					m_previous[currIndex] = curr;
+//					priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+//					go->m_visited[currIndex] = true;
+//
+//					//Check if it is the nearest Tile
+//					if (distanceSquared < nearestDistance)
+//					{
+//						nearestDistance = distanceSquared;
+//						nearestTile = next;
+//					}
+//				}
+//				else if (distanceSquared != NULL)
+//				{
+//					//Checks if visited node is in queue
+//					for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
+//					{
+//						std::pair<GridPt, std::pair<int, int>> path = *it;
+//						if (path.first == next)
+//						{
+//							//If in queue, check if new path is shorter thn old path
+//							if (path.second.second > G + distanceSquared)
+//							{
+//								//Update if new path is shorter
+//								priority_Queue.erase(it);
+//								priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+//								m_previous[currIndex] = curr;
+//							}
+//							break;
+//						}
+//					}
+//					//If not in queue, node is already in optimal path
+//				}
+//			}
+//		}
+//
+//		//Check Left
+//		G = priority_Queue.begin()->second.first;
+//		next.Set(curr.x - 1, curr.z);
+//		currIndex = GetGridIndex(next);
+//		if (isPointInGrid(next))
+//		{
+//			float distanceSquared = NULL;
+//			//Cost of Empty Tile
+//			G += 1;
+//			//Calculate distance to end
+//			distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
+//			if (isTheCoastClear(go, next, Grid::DIR_LEFT))
+//			{
+//				if (!go->m_visited[currIndex])
+//				{
+//					//Update node cost
+//					m_previous[currIndex] = curr;
+//					priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+//					go->m_visited[currIndex] = true;
+//
+//					//Check if it is the nearest Tile
+//					if (distanceSquared < nearestDistance)
+//					{
+//						nearestDistance = distanceSquared;
+//						nearestTile = next;
+//					}
+//				}
+//				else if (distanceSquared != NULL)
+//				{
+//					//Checks if visited node is in queue
+//					for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
+//					{
+//						std::pair<GridPt, std::pair<int, int>> path = *it;
+//						if (path.first == next)
+//						{
+//							//If in queue, check if new path is shorter thn old path
+//							if (path.second.second > G + distanceSquared)
+//							{
+//								//Update if new path is shorter
+//								priority_Queue.erase(it);
+//								priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+//								m_previous[currIndex] = curr;
+//							}
+//							break;
+//						}
+//					}
+//					//If not in queue, node is already in optimal path
+//				}
+//			}
+//		}
+//
+//		//Check Right
+//		G = priority_Queue.begin()->second.first;
+//		next.Set(curr.x + 1, curr.z);
+//		currIndex = GetGridIndex(next);
+//		if (isPointInGrid(next))
+//		{
+//			float distanceSquared = NULL;
+//			//Cost of Empty Tile
+//			G += 1;
+//			//Calculate distance to end
+//			distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
+//			if (isTheCoastClear(go, next, Grid::DIR_RIGHT))
+//			{
+//				if (!go->m_visited[currIndex])
+//				{
+//					//Update node cost
+//					m_previous[currIndex] = curr;
+//					priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+//					go->m_visited[currIndex] = true;
+//
+//					//Check if it is the nearest Tile
+//					if (distanceSquared < nearestDistance)
+//					{
+//						nearestDistance = distanceSquared;
+//						nearestTile = next;
+//					}
+//				}
+//				else if (distanceSquared != NULL)
+//				{
+//					//Checks if visited node is in queue
+//					for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
+//					{
+//						std::pair<GridPt, std::pair<int, int>> path = *it;
+//						if (path.first == next)
+//						{
+//							//If in queue, check if new path is shorter thn old path
+//							if (path.second.second > G + distanceSquared)
+//							{
+//								//Update if new path is shorter
+//								priority_Queue.erase(it);
+//								priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+//								m_previous[currIndex] = curr;
+//							}
+//							break;
+//						}
+//					}
+//					//If not in queue, node is already in optimal path
+//				}
+//			}
+//		}
+//
+//		//Check Up Left
+//		G = priority_Queue.begin()->second.first;
+//		next.Set(curr.x - 1, curr.z - 1);
+//		currIndex = GetGridIndex(next);
+//		if (isPointInGrid(next))
+//		{
+//			float distanceSquared = NULL;
+//			//Cost of Empty Tile
+//			G += 1;
+//			//Calculate distance to end
+//			distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
+//			if (isTheCoastClear(go, next, Grid::DIR_LEFTUP))
+//			{
+//				if (!go->m_visited[currIndex])
+//				{
+//					//Update node cost
+//					m_previous[currIndex] = curr;
+//					priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+//					go->m_visited[currIndex] = true;
+//
+//					//Check if it is the nearest Tile
+//					if (distanceSquared < nearestDistance)
+//					{
+//						nearestDistance = distanceSquared;
+//						nearestTile = next;
+//					}
+//				}
+//				else if (distanceSquared != NULL)
+//				{
+//					//Checks if visited node is in queue
+//					for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
+//					{
+//						std::pair<GridPt, std::pair<int, int>> path = *it;
+//						if (path.first == next)
+//						{
+//							//If in queue, check if new path is shorter thn old path
+//							if (path.second.second > G + distanceSquared)
+//							{
+//								//Update if new path is shorter
+//								priority_Queue.erase(it);
+//								priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+//								m_previous[currIndex] = curr;
+//							}
+//							break;
+//						}
+//					}
+//					//If not in queue, node is already in optimal path
+//				}
+//			}
+//		}
+//
+//		//Check Up Right
+//		G = priority_Queue.begin()->second.first;
+//		next.Set(curr.x + 1, curr.z - 1);
+//		currIndex = GetGridIndex(next);
+//		if (isPointInGrid(next))
+//		{
+//			float distanceSquared = NULL;
+//			//Cost of Empty Tile
+//			G += 1;
+//			//Calculate distance to end
+//			distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
+//			if (isTheCoastClear(go, next, Grid::DIR_RIGHTUP))
+//			{
+//				if (!go->m_visited[currIndex])
+//				{
+//					//Update node cost
+//					m_previous[currIndex] = curr;
+//					priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+//					go->m_visited[currIndex] = true;
+//
+//					//Check if it is the nearest Tile
+//					if (distanceSquared < nearestDistance)
+//					{
+//						nearestDistance = distanceSquared;
+//						nearestTile = next;
+//					}
+//				}
+//				else if (distanceSquared != NULL)
+//				{
+//					//Checks if visited node is in queue
+//					for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
+//					{
+//						std::pair<GridPt, std::pair<int, int>> path = *it;
+//						if (path.first == next)
+//						{
+//							//If in queue, check if new path is shorter thn old path
+//							if (path.second.second > G + distanceSquared)
+//							{
+//								//Update if new path is shorter
+//								priority_Queue.erase(it);
+//								priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+//								m_previous[currIndex] = curr;
+//							}
+//							break;
+//						}
+//					}
+//					//If not in queue, node is already in optimal path
+//				}
+//			}
+//		}
+//
+//		//Check Down Left
+//		G = priority_Queue.begin()->second.first;
+//		next.Set(curr.x - 1, curr.z + 1);
+//		currIndex = GetGridIndex(next);
+//		if (isPointInGrid(next))
+//		{
+//			float distanceSquared = NULL;
+//			//Cost of Empty Tile
+//			G += 1;
+//			//Calculate distance to end
+//			distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
+//			if (isTheCoastClear(go, next, Grid::DIR_LEFTDOWN))
+//			{
+//				if (!go->m_visited[currIndex])
+//				{
+//					//Update node cost
+//					m_previous[currIndex] = curr;
+//					priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+//					go->m_visited[currIndex] = true;
+//
+//					//Check if it is the nearest Tile
+//					if (distanceSquared < nearestDistance)
+//					{
+//						nearestDistance = distanceSquared;
+//						nearestTile = next;
+//					}
+//				}
+//				else if (distanceSquared != NULL)
+//				{
+//					//Checks if visited node is in queue
+//					for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
+//					{
+//						std::pair<GridPt, std::pair<int, int>> path = *it;
+//						if (path.first == next)
+//						{
+//							//If in queue, check if new path is shorter thn old path
+//							if (path.second.second > G + distanceSquared)
+//							{
+//								//Update if new path is shorter
+//								priority_Queue.erase(it);
+//								priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+//								m_previous[currIndex] = curr;
+//							}
+//							break;
+//						}
+//					}
+//					//If not in queue, node is already in optimal path
+//				}
+//			}
+//		}
+//
+//		//Check Down Right
+//		G = priority_Queue.begin()->second.first;
+//		next.Set(curr.x + 1, curr.z + 1);
+//		currIndex = GetGridIndex(next);
+//		if (isPointInGrid(next))
+//		{
+//			float distanceSquared = NULL;
+//			//Cost of Empty Tile
+//			G += 1;
+//			//Calculate distance to end
+//			distanceSquared = (int)Math::FAbs(target.x - next.x) + (int)Math::FAbs(target.z - next.z);
+//			if (isTheCoastClear(go, next, Grid::DIR_RIGHTDOWN))
+//			{
+//				if (!go->m_visited[currIndex])
+//				{
+//					//Update node cost
+//					m_previous[currIndex] = curr;
+//					priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+//					go->m_visited[currIndex] = true;
+//
+//					//Check if it is the nearest Tile
+//					if (distanceSquared < nearestDistance)
+//					{
+//						nearestDistance = distanceSquared;
+//						nearestTile = next;
+//					}
+//				}
+//				else if (distanceSquared != NULL)
+//				{
+//					//Checks if visited node is in queue
+//					for (std::vector<std::pair<GridPt, std::pair<int, int>>>::iterator it = priority_Queue.begin(); it != priority_Queue.end(); ++it)
+//					{
+//						std::pair<GridPt, std::pair<int, int>> path = *it;
+//						if (path.first == next)
+//						{
+//							//If in queue, check if new path is shorter thn old path
+//							if (path.second.second > G + distanceSquared)
+//							{
+//								//Update if new path is shorter
+//								priority_Queue.erase(it);
+//								priority_Queue.push_back(std::pair<GridPt, std::pair<int, int>>(next, std::pair<int, int>(G, G + distanceSquared)));
+//								m_previous[currIndex] = curr;
+//							}
+//							break;
+//						}
+//					}
+//					//If not in queue, node is already in optimal path
+//				}
+//			}
+//		}
+//
+//		priority_Queue.erase(priority_Queue.begin());
+//		std::sort(priority_Queue.begin(), priority_Queue.end(), Compare2());
+//	}
+//
+//	if (priority_Queue.size() > 0)
+//	{
+//		if (priority_Queue.begin()->first == target)
+//		{
+//			//If manage to reach target
+//			curr = target;
+//			m_shortestPath.push_back(curr);
+//			curr = m_previous[GetGridIndex(curr)];
+//			while (curr != NULL)
+//			{
+//				m_shortestPath.push_back(curr);
+//				curr = m_previous[GetGridIndex(curr)];
+//				std::cout << "hi" << std::endl;
+//			}
+//		}
+//		else
+//		{
+//			//If unable to reach target
+//			curr = nearestTile;
+//			m_shortestPath.push_back(curr);
+//			curr = m_previous[GetGridIndex(curr)];
+//			while (curr != NULL)
+//			{
+//				m_shortestPath.push_back(curr);
+//				curr = m_previous[GetGridIndex(curr)];
+//				std::cout << "hi" << std::endl;
+//			}
+//		}
+//	}
+//	else
+//	{
+//		//If something happened
+//		curr = nearestTile;
+//		m_shortestPath.push_back(curr);
+//		curr = m_previous[GetGridIndex(curr)];
+//		while (curr != NULL)
+//		{
+//			m_shortestPath.push_back(curr);
+//			curr = m_previous[GetGridIndex(curr)];
+//			std::cout << "hi" << std::endl;
+//		}
+//	}
+//
+//	//Just take based on range of movement 
+//	while (!m_shortestPath.empty())
+//	{
+//		go->path.push_back(m_shortestPath.back());
+//		m_shortestPath.pop_back();
+//	}
+//	if (go->path.size() > 1)
+//	{
+//		std::reverse(go->path.begin(), go->path.end());
+//	}
+//	//std::cout << priority_Queue.begin()->second.first << std::endl;
+//	//return priority_Queue.begin()->second.first;
+//}
 
 //void SceneSP::AStar(GameObject * go, Vector3 target)
 //{
@@ -2263,9 +2359,16 @@ void SceneSP::UpdateSelectedUI()
 	if (selected == NULL) return;
 	if (selected->type == GameObject::GO_ALTAR)
 	{
-		UIBase* newUI = new UIAltarPopup();
-		UIManager::GetInstance()->AddUI("uiAltarPopup", newUI);
+		//UIBase* newUI = new UIAltarPopup();
+		//UIManager::GetInstance()->AddUI("uiAltarPopup", newUI);
+		//m_selectedUi.push_back(newUI);
+		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_ALTAR);
+		UIManager::GetInstance()->AddUI("uiSelected_Altar_Info", newUI);
 		m_selectedUi.push_back(newUI);
+		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_ALTAR_OFFER);
+		UIManager::GetInstance()->AddUI("uiSelected_Altar_Offer", newUI);
+		m_selectedUi.push_back(newUI);
+
 	}
 }
 
@@ -2292,6 +2395,7 @@ void SceneSP::ChangeTimeOfDay()
 		//bGodlights = false;
 		SceneData* SD = SceneData::GetInstance();
 		SD->SetCurrDay(SD->GetCurrDay() + 1);
+		//Resetting objects that need to be reset
 		for (auto go : m_goList)
 		{
 			if (!go->active)
@@ -2300,6 +2404,45 @@ void SceneSP::ChangeTimeOfDay()
 			{
 				if (static_cast<Bush*>(go)->eCurrState == Bush::DEPLETED)
 					static_cast<Bush*>(go)->eCurrState = Bush::LUSH;
+			}
+		}
+
+		//Spawning of Villagers
+		if (SD->GetPopulation() < SD->GetPopulationLimit())
+		{
+			int iDifference = SD->GetPopulationLimit() - SD->GetPopulation();
+			GameObject* go = NULL;
+			
+			//If more then 10 empty spaces, at least 1 will spawn
+			if (iDifference > 10)
+			{
+				go = FetchGO(GameObject::GO_VILLAGER);
+				go->scale.y = 1.f;
+				GridPt tempPt;
+				tempPt.Set(Math::RandIntMinMax(0, SD->GetNoGrid() - 1), Math::RandIntMinMax(0, SD->GetNoGrid() - 1));
+				while (!m_grid[GetGridIndex(tempPt)] == Grid::TILE_EMPTY)
+				{
+					tempPt.Set(Math::RandIntMinMax(0, SD->GetNoGrid() - 1), Math::RandIntMinMax(0, SD->GetNoGrid() - 1));
+				}
+				go->pos = GetGridPos(tempPt);
+				go->pos.y = go->scale.y * 0.5f;
+				goVillager->GiveAnimation(new AnimationJump());
+			}
+
+			int rand = Math::RandInt();
+			if (rand % 2 == 0)
+			{
+				go = FetchGO(GameObject::GO_VILLAGER);
+				go->scale.y = 1.f;
+				GridPt tempPt;
+				tempPt.Set(Math::RandIntMinMax(0, SD->GetNoGrid() - 1), Math::RandIntMinMax(0, SD->GetNoGrid() - 1));
+				while (!m_grid[GetGridIndex(tempPt)] == Grid::TILE_EMPTY)
+				{
+					tempPt.Set(Math::RandIntMinMax(0, SD->GetNoGrid() - 1), Math::RandIntMinMax(0, SD->GetNoGrid() - 1));
+				}
+				go->pos = GetGridPos(tempPt);
+				go->pos.y = go->scale.y * 0.5f;
+				goVillager->GiveAnimation(new AnimationJump());
 			}
 		}
 	}
@@ -2582,22 +2725,6 @@ void SceneSP::Update(double dt)
 		}
 	}
 
-	if (KC->IsKeyPressed('F'))
-	{
-		if (selected != NULL)
-		{
-			if (selected == goAltar)
-			{
-				if (SD->GetFood() > 0)
-				{
-					//For now 1 food 10 food offered, change to 1 to 1 later
-					static_cast<Altar*>(goAltar)->iFoodOffered += 10;
-					SD->SetFood(SD->GetFood() - 1);
-				}
-			}
-		}
-	}
-
 	Vector3 clickTarget = NULL;
 
 	static bool leftClick = false;
@@ -2760,6 +2887,7 @@ void SceneSP::Update(double dt)
 					}
 					selected->currentPt = selectedPt;
 					selected->pos = GetGridPos(selected->currentPt);
+					selected->pos.y += selected->scale.y * 0.5f;
 				}
 				else
 				{
@@ -2767,6 +2895,7 @@ void SceneSP::Update(double dt)
 					//goes back to previous pos
 					selected->currentPt = selected->pickupPt;
 					selected->pos = GetGridPos(selected->currentPt);
+					selected->pos.y += selected->scale.y * 0.5f;
 				}
 				selected = NULL;
 			}
@@ -2833,10 +2962,10 @@ void SceneSP::Update(double dt)
 			}
 		}
 	}
+
 	//Update the Grid
 	std::fill(m_grid.begin(), m_grid.end(), Grid::TILE_EMPTY);
 
-	m_grid[5 + SD->GetNoGrid() * 4] = Grid::TILE_USED;
 	GridPt selectedGrid = GetPoint(mousePos);
 	if (isPointInGrid(selectedGrid))
 	{
@@ -3099,6 +3228,8 @@ void SceneSP::Update(double dt)
 	static const float NPC_VELOCITY = 10.f;
 	SD->SetPopulation(0);
 	SD->SetPopulationLimit(0);
+	SD->SetFoodLimit(0);
+	SD->SetWoodLimit(0);
 	for (auto go : m_goList)
 	{
 		if (!go->active)
@@ -3112,6 +3243,7 @@ void SceneSP::Update(double dt)
 			SD->SetPopulation(SD->GetPopulation() + 1);
 			break;
 		case GameObject::GO_CHIEFHUT:
+			SD->SetPopulationLimit(SD->GetFoodLimit() + 10);
 			if (static_cast<Building*>(go)->eCurrState == Building::COMPLETED)
 			{
 				SD->SetPopulationLimit(SD->GetPopulationLimit() + 10);
@@ -3122,6 +3254,7 @@ void SceneSP::Update(double dt)
 			}
 			break;
 		case GameObject::GO_HOUSE:
+			SD->SetPopulationLimit(SD->GetFoodLimit() + 10);
 			if (static_cast<Building*>(go)->eCurrState == Building::COMPLETED)
 			{
 				SD->SetPopulationLimit(SD->GetPopulationLimit() + 10);
@@ -3132,6 +3265,12 @@ void SceneSP::Update(double dt)
 			}
 			break;
 		case GameObject::GO_BUSH:
+			break;
+		case GameObject::GO_GRANARY:
+			SD->SetFoodLimit(SD->GetFoodLimit() + static_cast<Granary*>(go)->foodCapacity);
+			break;
+		case GameObject::GO_WOODSHED:
+			SD->SetWoodLimit(SD->GetWoodLimit() + static_cast<WoodShed*>(go)->woodCapacity);
 			break;
 		case GameObject::GO_MOUNTAIN:
 		{
@@ -3280,6 +3419,7 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		if (go->animation != NULL)
 			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
+		modelStack.Rotate(-90, 0, 1, 0);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		//Current state of the building
 		switch (static_cast<Building*>(go)->eCurrState)
@@ -3305,6 +3445,7 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
 		if (go->animation != NULL)
 			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
+		modelStack.Rotate(-90, 0, 1, 0);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		//Current state of the building
 		switch (static_cast<Building*>(go)->eCurrState)
@@ -3317,6 +3458,58 @@ void SceneSP::RenderGO(GameObject *go)
 			break;
 		case Building::CONSTRUCTING:
 			RenderMesh(meshList[GEO_BUILDING], bGodlights, 0.6f);
+			break;
+		case Building::BROKEN:
+			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
+		}
+		modelStack.PopMatrix();
+	}
+	break;
+	case GameObject::GO_GRANARY:
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		if (go->animation != NULL)
+			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
+		modelStack.Rotate(-90, 0, 1, 0);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		//Current state of the building
+		switch (static_cast<Building*>(go)->eCurrState)
+		{
+		case Building::COMPLETED:
+			RenderMesh(meshList[GEO_GRANARY], bGodlights, 1.f);
+			break;
+		case Building::BLUEPRINT:
+			RenderMesh(meshList[GEO_GRANARY], bGodlights, 0.2f);
+			break;
+		case Building::CONSTRUCTING:
+			RenderMesh(meshList[GEO_GRANARY], bGodlights, 0.6f);
+			break;
+		case Building::BROKEN:
+			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
+		}
+		modelStack.PopMatrix();
+	}
+	break;
+	case GameObject::GO_WOODSHED:
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		if (go->animation != NULL)
+			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
+		modelStack.Rotate(-90, 0, 1, 0);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		//Current state of the building
+		switch (static_cast<Building*>(go)->eCurrState)
+		{
+		case Building::COMPLETED:
+			RenderMesh(meshList[GEO_WOODSHED], bGodlights, 1.f);
+			break;
+		case Building::BLUEPRINT:
+			RenderMesh(meshList[GEO_WOODSHED], bGodlights, 0.2f);
+			break;
+		case Building::CONSTRUCTING:
+			RenderMesh(meshList[GEO_WOODSHED], bGodlights, 0.6f);
 			break;
 		case Building::BROKEN:
 			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);

@@ -16,6 +16,8 @@ struct MessageWRU : public Message
 		PATH_TO_TARGET,
 		PATH_TO_POINT,
 		FIND_CHIEFHUT,
+		FIND_NEAREST_GRANARY,
+		FIND_NEAREST_WOODSHED,
 	};
 	MessageWRU(GameObject *goValue, SEARCH_TYPE typeValue, float thresholdValue) : go(goValue), type(typeValue), threshold(thresholdValue) {}
 	virtual ~MessageWRU() {}
@@ -63,5 +65,15 @@ struct MessageDisplayDailyRequirement : public Message
 	MessageDisplayDailyRequirement(UIGameButton* ui) : ui(ui) {}
 	virtual ~MessageDisplayDailyRequirement() {}
 	UIGameButton* ui;
+};
+
+struct MessageAltarOffer : public Message
+{
+	enum OFFER_TYPE {
+		OFFER_FOOD,
+	};
+	MessageAltarOffer(OFFER_TYPE type) : type(type) {}
+	virtual ~MessageAltarOffer() {}
+	OFFER_TYPE type;
 };
 #endif
