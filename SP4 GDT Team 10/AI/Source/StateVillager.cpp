@@ -250,7 +250,7 @@ void StatePath::Update(double dt, GameObject * m_go)
 							break;
 						case GameObject::GO_GRANARY:
 							//m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
-							SD->SetFood(Math::Min(SD->GetFoodLimit(), SD->GetFood() + static_cast<Villager*>(m_go)->iFoodStored));
+							SD->SetFood(SD->GetFood() + static_cast<Villager*>(m_go)->iFoodStored);
 
 							static_cast<Villager*>(m_go)->iFoodStored = 0;
 
@@ -425,22 +425,25 @@ void StateForaging::Enter(GameObject * m_go)
 
 void StateForaging::Update(double dt, GameObject * m_go)
 {
+
+	if (m_go->goTarget == NULL ||!m_go->goTarget->active)
+	{
+		m_go->goTarget = NULL;
+		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+		return;
+	}
 	//In StateForaging, the goTarget must be a Bush class
 	if (m_go->goTarget->type != GameObject::GO_BUSH)
 	{
 		std::cout << "Wrong State : Foraging" << std::endl;
 		return;
 	}
-	if (!m_go->goTarget->active)
-	{
-		m_go->goTarget = NULL;
-		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
-	}
+
 	Bush* bushGo = static_cast<Bush*>(m_go->goTarget);
 	Villager* vGo = static_cast<Villager*>(m_go);
-	if (vGo->fActionTimer <= 0.f)
+	if (bushGo->eCurrState == Bush::LUSH)
 	{
-		if (bushGo->eCurrState == Bush::LUSH)
+		if (vGo->fActionTimer <= 0.f)
 		{
 			//Insert gathering time here
 			vGo->iFoodStored = Math::Min(vGo->fStats[Villager::FORAGING] * bushGo->iFoodAmount + vGo->iFoodStored, (float)vGo->iMaxFoodStored);
@@ -452,11 +455,14 @@ void StateForaging::Update(double dt, GameObject * m_go)
 			m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 			return;
 		}
-		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+		else
+		{
+			vGo->fActionTimer -= dt;
+		}
 	}
 	else
 	{
-		vGo->fActionTimer -= dt;
+		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 	}
 }
 
