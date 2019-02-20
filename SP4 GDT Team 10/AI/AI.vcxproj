@@ -201,10 +201,13 @@
     <ClCompile Include="Source\UIAltarPopup.cpp" />
     <ClCompile Include="Source\UIBase.cpp" />
     <ClCompile Include="Source\UICoreInfo.cpp" />
+    <ClCompile Include="Source\UIGameButton.cpp" />
+    <ClCompile Include="Source\UIGameText.cpp" />
     <ClCompile Include="Source\UIManager.cpp" />
     <ClCompile Include="Source\UIMessagePopup.cpp" />
     <ClCompile Include="Source\UIReligionBar.cpp" />
     <ClCompile Include="Source\UIMenuButton.cpp" />
+    <ClCompile Include="Source\UIResearchButton.cpp" />
     <ClCompile Include="Source\Utility.cpp" />
     <ClCompile Include="Source\Villager.cpp" />
   </ItemGroup>
@@ -265,10 +268,13 @@
     <ClInclude Include="Source\UIAltarPopup.h" />
     <ClInclude Include="Source\UIBase.h" />
     <ClInclude Include="Source\UICoreInfo.h" />
+    <ClInclude Include="Source\UIGameButton.h" />
+    <ClInclude Include="Source\UIGameText.h" />
     <ClInclude Include="Source\UIManager.h" />
     <ClInclude Include="Source\UIMessagePopup.h" />
     <ClInclude Include="Source\UIReligionBar.h" />
     <ClInclude Include="Source\UIMenuButton.h" />
+    <ClInclude Include="Source\UIResearchButton.h" />
     <ClInclude Include="Source\Utility.h" />
     <ClInclude Include="Source\Vertex.h" />
     <ClInclude Include="Source\Villager.h" />

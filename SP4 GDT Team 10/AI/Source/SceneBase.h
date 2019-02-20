@@ -173,6 +173,7 @@ public:
 		GEO_BACKGROUND,
 		GEO_SPLASHSCREEN,	// opengl
 		GEO_LOGO,			// game logo
+		GEO_BACKBUTTON,
 
 		GEO_TEXT_GUNGSUH,
 		GEO_UI_BOARD_BLANK,
@@ -215,6 +216,8 @@ public:
 	Mtx44 m_lightDepthProj;
 	Mtx44 m_lightDepthView;
 	RENDER_PASS m_renderPass;
+	float m_worldWidth;
+	float m_worldHeight;
 protected:
 	unsigned m_vertexArrayID;
 	Mesh* meshList[NUM_GEOMETRY];

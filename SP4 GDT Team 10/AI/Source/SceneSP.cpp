@@ -12,8 +12,11 @@
 #include "UIManager.h"
 #include "UIReligionBar.h"
 #include "UIMenuButton.h"
+#include "UIResearchButton.h"
 #include "UIAltarPopup.h"
 #include "UICoreInfo.h"
+#include "UIGameButton.h"
+#include "UIGameText.h"
 
 #include "EffectManager.h"
 #include "EffectTrail.h"
@@ -366,6 +369,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 	for (auto UI : m_coreUi)
 		UI->bIsDone = true;
 	m_coreUi.clear();
+	Application::GetInstance().SetMouseVisiblity(true);
 	switch (newstate)
 	{
 	case G_SPLASHSCREEN:
@@ -374,7 +378,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 	case G_MAINMENU:
 	{
 		camera.Init(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));	// splashscreen
-		UIBase* newUI = new UIMenuButton("Start");
+		UIBase* newUI = new UIMenuButton("Start", 0.5f, 0.7f);
 		UIManager::GetInstance()->AddUI("startButton", newUI);
 		m_coreUi.push_back(newUI);
 	}
@@ -382,10 +386,11 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 	case G_INPLAY:
 	{
 		camera.Init(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));	// game
+		Application::GetInstance().SetMouseVisiblity(false);
 		//UIManager::GetInstance()->GetUI("startButton")->bIsDone = true;
+			//UIManager::GetInstance()->GetUI("startButton")->bIsDone = true;
 		case G_RESEARCHTREE: // will not init camera for overlays but will add ui for all ingame states
 		{
-			//UIManager::GetInstance()->GetUI("startButton")->bIsDone = true;
 			UIBase* newUI = new UIReligionBar();
 			UIManager::GetInstance()->AddUI("uiReligionBar", newUI);
 			m_coreUi.push_back(newUI);
@@ -413,9 +418,31 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 			newUI = new UICoreInfo(UICoreInfo::INFO_TIME, Vector3(0.5f, 0.85f));
 			UIManager::GetInstance()->AddUI("ui_Info_Time", newUI);
 			m_coreUi.push_back(newUI);
+
+			newUI = new UIGameButton(UIGameButton::BUTTON_DAILYREQUIREMENT);
+			UIManager::GetInstance()->AddUI("ui_Button_DailyRequirement", newUI);
+			m_coreUi.push_back(newUI);
+
+			newUI = new UIGameText(UIGameText::TEXT_DAILYREQUIREMENT);
+			newUI->bActive = false;
+			UIManager::GetInstance()->AddUI("ui_Text_DailyRequirement", newUI);
+			m_coreUi.push_back(newUI);
+
+			if (newstate == G_RESEARCHTREE)
+			{
+				newUI = new UIMenuButton("back", 0.1f, 0.9f);
+				UIManager::GetInstance()->AddUI("backButton", newUI);
+				newUI->pos.Set(newUI->pos.x, newUI->pos.y, 5);
+				m_coreUi.push_back(newUI);
+				newUI = new UIResearchButton("", 0.2f, 0.8f);
+				UIManager::GetInstance()->AddUI("WoodResearch", newUI);
+				m_coreUi.push_back(newUI);
+			}
+
 		}
 	}
-		break;
+	break;
+
 	default:
 		break;
 	}
@@ -440,6 +467,7 @@ void SceneSP::Init()
 	std::fill(m_grid.begin(), m_grid.end(), Grid::TILE_EMPTY);
 	bShowGrid = false;
 	bGodlights = true;
+	Application::GetInstance().SetMouseVisiblity(true);
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
@@ -600,6 +628,27 @@ bool SceneSP::Handle(Message* message)
 	if (messageCamShake)
 	{
 		camera.SetCamShake(messageCamShake->type + 1, messageCamShake->intensity, messageCamShake->duration);
+		delete message;
+		return true;
+	}
+	MessageDisplayDailyRequirement* messageDisplayReq = dynamic_cast<MessageDisplayDailyRequirement*>(message);
+	if (messageDisplayReq)
+	{
+		UIBase* dailyReqTextUI = UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement");
+		if (dailyReqTextUI == NULL)
+		{
+			delete message;
+			return false;
+		}
+		dailyReqTextUI->bActive = !dailyReqTextUI->bActive;
+		if (dailyReqTextUI->bActive)
+		{
+			messageDisplayReq->ui->SetText("Current Goal ^");
+		}
+		else
+		{
+			messageDisplayReq->ui->SetText("Current Goal v");
+		}
 		delete message;
 		return true;
 	}
@@ -2327,7 +2376,6 @@ void SceneSP::Update(double dt)
 	case G_MAINMENU:
 	{
 		//static bool bLButtonState = false;
-		Application::GetInstance().SetMouseVisiblity(true);
 		UIBase* startButton = UIM->GetUI("startButton");
 		if (startButton->IsMousePressed())
 		{
@@ -2342,6 +2390,11 @@ void SceneSP::Update(double dt)
 		if (KC->IsKeyPressed('U')) {
 			ChangeState(G_INPLAY);
 			camera = tempCamera;
+		}
+		UIBase* backButton = UIM->GetUI("backButton");
+		if (backButton->IsMousePressed())
+		{
+			ChangeState(G_INPLAY);
 		}
 		return;
 	}
@@ -2655,14 +2708,6 @@ void SceneSP::Update(double dt)
 	{
 		lights[0].position.x = (12.f - fTimeOfDay) * SHADOW_LENGTH;
 		lights[0].position.y = (-0.25f * pow(lights[0].position.x,2)) + 9;
-	}
-	else if(fTimeOfDay >= 18.f)
-	{
-		//lights[0].position.x = (fTimeOfDay - 24.f) * SHADOW_LENGTH;
-	}
-	else if(fTimeOfDay <= 6.f)
-	{
-		//lights[0].position.x = fTimeOfDay * SHADOW_LENGTH;
 	}
 	// month
 	if (SD->GetCurrDay() >= 31)
@@ -3697,10 +3742,16 @@ void SceneSP::RenderOverlayResearchTree()
 	RenderMesh(meshList[GEO_WHITEQUAD], false, 0.5f);
 	modelStack.PopMatrix();
 
+	modelStack.PushMatrix();
+	modelStack.Translate(m_worldWidth * 0.5f, m_worldHeight * 0.5f, 1.1f);
+	modelStack.Scale(10, 4, 1);
+	RenderMesh(meshList[GEO_BACKBUTTON], false, 1.f);
+	modelStack.PopMatrix();
+
 	modelStack.PopMatrix();
 	viewStack.PopMatrix();
 	projectionStack.PopMatrix();
-	//UIManager::GetInstance()->Render(this);
+	UIManager::GetInstance()->Render(this);
 }
 
 void SceneSP::RenderWorld()

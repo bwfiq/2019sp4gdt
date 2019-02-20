@@ -66,8 +66,6 @@ protected:
 	std::vector<UIBase*> m_coreUi;//dis da UI that will be up during game states (like aaaaaaaaaaaaa during main menu this will contain the buttons, and during gameplay this will hav UIs that show resources???????)
 	std::vector<GameObject *> m_goList;
 	float m_speed;
-	float m_worldWidth;
-	float m_worldHeight;
 	int m_objectCount;
 
 	float fSeaDeltaX = 0;

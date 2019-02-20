@@ -1,7 +1,7 @@
-#include "UIMenuButton.h"
+#include "UIResearchButton.h"
 #include "SceneData.h"
 
-UIMenuButton::UIMenuButton(const std::string& text, float x, float y) :
+UIResearchButton::UIResearchButton(const std::string& text, float x, float y) :
 	UIBase()
 {
 	SceneData* SD = SceneData::GetInstance();
@@ -10,7 +10,7 @@ UIMenuButton::UIMenuButton(const std::string& text, float x, float y) :
 	uiComponents_list[COMPONENT_GREYBAR].mesh = SD->GetMesh("greyquad");
 
 	pos.Set(x, y);
-	scale.Set(100, 40);
+	scale.Set(100, 100);
 	anchorPoint.Set(0.5, 0.5);
 	float ratio = scale.x / scale.y;
 
@@ -24,10 +24,10 @@ UIMenuButton::UIMenuButton(const std::string& text, float x, float y) :
 	uiComponents_list[COMPONENT_GREYBAR].textSize = scale.y;
 }
 
-UIMenuButton::~UIMenuButton()
+UIResearchButton::~UIResearchButton()
 {
 }
 
-void UIMenuButton::Update(float dt)
+void UIResearchButton::Update(float dt)
 {
 }

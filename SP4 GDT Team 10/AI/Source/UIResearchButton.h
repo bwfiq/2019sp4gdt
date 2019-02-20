@@ -1,10 +1,10 @@
 #include "UIBase.h"
 
-class UIMenuButton : public UIBase
+class UIResearchButton : public UIBase
 {
 public:
-	UIMenuButton(const std::string& text, float x = 0, float y = 0);
-	~UIMenuButton();
+	UIResearchButton(const std::string& text, float x = 0, float y = 0);
+	~UIResearchButton();
 
 	virtual void Update(float dt);
 private:
