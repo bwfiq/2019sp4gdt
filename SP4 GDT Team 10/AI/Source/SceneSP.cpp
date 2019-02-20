@@ -163,20 +163,25 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 				m_coreUi.push_back(newUI);
 
 				newUI = new UIResearchButton("", 0.25f, 0.65f);
+				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("woodResearch");
 				UIManager::GetInstance()->AddUI("WoodResearch", newUI);
 				m_coreUi.push_back(newUI);
 				if (bWoodResearch)
-					UIManager::GetInstance()->GetUI("WoodResearch")->uiComponents_list[UIResearchButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("blackquad");
+					UIManager::GetInstance()->GetUI("WoodResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+
 				newUI = new UIResearchButton("", 0.25f, 0.45f);
+				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("stoneResearch");
 				UIManager::GetInstance()->AddUI("StoneResearch", newUI);
 				m_coreUi.push_back(newUI);
 				if (bStoneResearch)
-					UIManager::GetInstance()->GetUI("StoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("blackquad");
+					UIManager::GetInstance()->GetUI("StoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+
 				newUI = new UIResearchButton("", 0.25f, 0.25f);
+				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("fullStoneResearch");
 				UIManager::GetInstance()->AddUI("FullStoneResearch", newUI);
 				m_coreUi.push_back(newUI);
 				if (bFullStoneResearch)
-					UIManager::GetInstance()->GetUI("FullStoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("blackquad");
+					UIManager::GetInstance()->GetUI("FullStoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 			}
 		}
 	}
@@ -2624,21 +2629,20 @@ void SceneSP::Update(double dt)
 		{
 			SD->SetResearchPoints(SD->GetResearchPoints() - 10);
 			bWoodResearch = true;
-			UIManager::GetInstance()->GetUI("WoodResearch")->uiComponents_list[UIResearchButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("blackquad");
+			UIManager::GetInstance()->GetUI("WoodResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 		}
 		else if (bWoodResearch && UIM->GetUI("StoneResearch")->IsMousePressed() && SD->GetResearchPoints() >= 20 && !bStoneResearch)
 		{
 			SD->SetResearchPoints(SD->GetResearchPoints() - 20);
 			bStoneResearch = true;
-			UIManager::GetInstance()->GetUI("StoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("blackquad");
+			UIManager::GetInstance()->GetUI("StoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 		}
 		else if (bStoneResearch && UIM->GetUI("FullStoneResearch")->IsMousePressed() && SD->GetResearchPoints() >= 30 && !bFullStoneResearch)
 		{
 			SD->SetResearchPoints(SD->GetResearchPoints() - 30);
 			bFullStoneResearch = true;
-			UIManager::GetInstance()->GetUI("FullStoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("blackquad");
+			UIManager::GetInstance()->GetUI("FullStoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 		}
-
 		return;
 	}
 	break;
@@ -3895,7 +3899,7 @@ void SceneSP::RenderPassMain()
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 30, 0);
 
 	// objective
-	ss.str("");
+	/*ss.str("");
 	ss << "Current Goal:";
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 0, 30);
 	ss.str("");
@@ -3903,7 +3907,7 @@ void SceneSP::RenderPassMain()
 		ss << "ACHIEVED";
 	else
 		ss << "Fill the Religion Meter by offering food to the altar.";
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 0, 27);
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 0, 27);*/
 }
 
 void SceneSP::RenderSplashScreen()

@@ -10,8 +10,8 @@ public:
 	//Order of ui components matter
 	enum UI_STARTBUTTON_COMPONENTS {
 		COMPONENT_OUTLINEBAR,
-
 		COMPONENT_GREYBAR,
+		COMPONENT_TICK,
 
 		COMPONENT_TOTAL
 	};
