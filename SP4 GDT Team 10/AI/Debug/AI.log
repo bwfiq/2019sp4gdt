@@ -1,8 +1,128 @@
-﻿  UIManager.cpp
-c:\users\170264f\documents\2019sp4gdt\sp4 gdt team 10\ai\source\application.h(7): warning C4099: 'Scene': type name first seen using 'class' now seen using 'struct'
-  c:\users\170264f\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scene.h(6): note: see declaration of 'Scene'
-c:\users\170264f\documents\2019sp4gdt\sp4 gdt team 10\ai\source\uimanager.cpp(53): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\170264f\documents\2019sp4gdt\sp4 gdt team 10\ai\source\uimanager.cpp(54): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\170264f\documents\2019sp4gdt\sp4 gdt team 10\ai\source\uimanager.cpp(207): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-c:\users\170264f\documents\2019sp4gdt\sp4 gdt team 10\ai\source\uimanager.cpp(208): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-  AI.vcxproj -> C:\Users\170264F\Documents\2019sp4gdt\SP4 GDT Team 10\Debug\AI.exe
+﻿  SceneSP.cpp
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\application.h(7): warning C4099: 'Scene': type name first seen using 'class' now seen using 'struct'
+  c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\common\source\scenemanager.h(8): note: see declaration of 'Scene'
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(63): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(64): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(393): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(397): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(401): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(405): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(586): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(735): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(745): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(759): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(770): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(784): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(795): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(813): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(828): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(841): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(856): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(867): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(912): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(912): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(963): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(963): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1014): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1014): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1065): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1065): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1116): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1116): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1167): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1167): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1218): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1218): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1269): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1269): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1395): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1407): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1424): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1438): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1455): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1469): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1490): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1508): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1524): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1542): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1556): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1576): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1577): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1615): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1615): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1666): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1666): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1717): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1717): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1768): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1768): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1819): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1819): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1870): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1870): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1921): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1921): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1972): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1972): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(2261): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(2266): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(2268): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(2269): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(2278): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(2289): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(2300): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(2314): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(2360): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(2585): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(2646): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(2677): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(2680): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(2736): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(2737): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(2984): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(3449): warning C4305: 'argument': truncation from 'double' to 'float'
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(3670): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(3671): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.15.26726\include\utility(173): warning C4244: 'initializing': conversion from '_Ty' to '_Ty2', possible loss of data
+          with
+          [
+              _Ty=int
+          ]
+          and
+          [
+              _Ty2=float
+          ]
+  c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(878): note: see reference to function template instantiation 'std::pair<float,float>::pair<float&,int,0>(_Other1,_Other2 &&) noexcept' being compiled
+          with
+          [
+              _Other1=float &,
+              _Other2=int
+          ]
+  c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(878): note: see reference to function template instantiation 'std::pair<float,float>::pair<float&,int,0>(_Other1,_Other2 &&) noexcept' being compiled
+          with
+          [
+              _Other1=float &,
+              _Other2=int
+          ]
+c:\program files (x86)\microsoft visual studio\2017\community\vc\tools\msvc\14.15.26726\include\utility(173): warning C4244: 'initializing': conversion from '_Ty' to '_Ty2', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+          and
+          [
+              _Ty2=int
+          ]
+  c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1622): note: see reference to function template instantiation 'std::pair<int,int>::pair<int&,float,0>(_Other1,_Other2 &&) noexcept' being compiled
+          with
+          [
+              _Other1=int &,
+              _Other2=float
+          ]
+  c:\users\173623w\documents\2019sp4gdt\sp4 gdt team 10\ai\source\scenesp.cpp(1622): note: see reference to function template instantiation 'std::pair<int,int>::pair<int&,float,0>(_Other1,_Other2 &&) noexcept' being compiled
+          with
+          [
+              _Other1=int &,
+              _Other2=float
+          ]
+  AI.vcxproj -> C:\Users\173623W\Documents\2019sp4gdt\SP4 GDT Team 10\Debug\AI.exe
