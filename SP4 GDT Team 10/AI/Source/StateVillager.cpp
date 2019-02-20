@@ -15,6 +15,7 @@
 
 #include "AnimationWalk.h"
 #include "AnimationPickUp.h"
+#include "AnimationChopping.h"
 
 #include "MousePicker.h"
 #include "MouseController.h"
@@ -354,6 +355,7 @@ void StateChopTree::Enter(GameObject * m_go)
 
 	SceneData* SD = SceneData::GetInstance();
 	goVil->mEquipment = SD->GetMesh("hatchet");
+	m_go->GiveAnimation(new AnimationChopping());
 }
 
 void StateChopTree::Update(double dt, GameObject * m_go)
@@ -401,6 +403,8 @@ void StateChopTree::Exit(GameObject * m_go)
 	m_go->pos.y = m_go->scale.y * 0.5f;
 	Villager* goVil = static_cast<Villager*>(m_go);
 	goVil->mEquipment = NULL;
+
+	m_go->ClearAnimation();
 }
 
 //StateForaging
