@@ -3714,8 +3714,9 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.Translate(go->pos.x, go->pos.y + 4.f * sinf(alpha) - 2.f, go->pos.z);
 		if (go->animation != NULL)
 			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
+		modelStack.Rotate(180, 0, 1, 0);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_CUBE], bGodlights, 1.f);
+		RenderMesh(meshList[GEO_TSUNAMI], bGodlights, 1.f);
 		modelStack.PopMatrix();
 	}
 	break;
