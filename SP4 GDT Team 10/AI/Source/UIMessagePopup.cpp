@@ -20,8 +20,10 @@ UIMessagePopup::UIMessagePopup(const std::string& text, float duration) :
 	uiComponents_list[COMPONENT_GREYBAR].pos.Set(0, 0);
 	uiComponents_list[COMPONENT_GREYBAR].anchorPoint.Set(0, 0);
 	uiComponents_list[COMPONENT_GREYBAR].scale.Set(1, 1);
-	uiComponents_list[COMPONENT_GREYBAR].text = text;
-	uiComponents_list[COMPONENT_GREYBAR].textSize = scale.y;
+	uiComponents_list[COMPONENT_TEXT].text = text;
+	uiComponents_list[COMPONENT_TEXT].textSize = scale.y * 0.75f;
+	uiComponents_list[COMPONENT_TEXT].pos.Set(0.f, 0.5f);
+
 
 	this->fDuration = duration;
 }

@@ -505,10 +505,11 @@ void SceneSP::Init()
 	UIManager::GetInstance()->Init();
 
 	reticle = new EffectReticle();
+	hand = new EffectHand(&camera);
 
 	EffectManager::GetInstance()->Init();
 	EffectManager::GetInstance()->AddEffect(new EffectTrail(&camera));
-	EffectManager::GetInstance()->AddEffect(new EffectHand(&camera));
+	EffectManager::GetInstance()->AddEffect(hand);
 	EffectManager::GetInstance()->AddEffect(reticle);
 
 	CalamityManager::GetInstance()->Init();
@@ -2788,6 +2789,7 @@ void SceneSP::Update(double dt)
 				selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("PickedUp");
 				selected->pickupPt = selected->currentPt;
 				clickTimer = 0.f;
+				hand->SetState(EffectHand::HAND_GRAB_OBJECT);
 				leftClick = false;
 			}
 		}
@@ -2807,6 +2809,7 @@ void SceneSP::Update(double dt)
 			{
 				GridPt selectedPt = GetPoint(mousePos);
 				selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
+				hand->SetState(EffectHand::HAND_DEFAULT);
 				if (isPointInGrid(selectedPt))
 				{
 					if (m_grid[GetGridIndex(selectedPt)] == Grid::TILE_USED)
