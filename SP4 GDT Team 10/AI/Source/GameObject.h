@@ -30,6 +30,7 @@ struct GameObject : public ObjectBase
 		GO_RESEARCHLAB,
 		GO_LOGS,
 		GO_GRANARY,
+		GO_WOODSHED,
 
 		GO_ENVIRONMENT,
 		GO_BUSH,

@@ -249,6 +249,10 @@ void SceneBase::Init()
 	meshList[GEO_VILLAGER]->textureArray[0] = LoadTGA("Image//villager.tga");
 	meshList[GEO_BUILDING] = MeshBuilder::GenerateOBJ("building", "Obj//house.obj");
 	meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//house.tga");
+	meshList[GEO_GRANARY] = MeshBuilder::GenerateOBJ("granary", "Obj//granary.obj");
+	meshList[GEO_GRANARY]->textureArray[0] = LoadTGA("Image//granary.tga");
+	meshList[GEO_WOODSHED] = MeshBuilder::GenerateOBJ("woodshed", "Obj//woodshed.obj");
+	meshList[GEO_WOODSHED]->textureArray[0] = LoadTGA("Image//woodshed.tga");
 	meshList[GEO_BROKEN_BUILDING] = MeshBuilder::GenerateCube("broken_building", Color(1, 0, 1), 1.f);
 	meshList[GEO_LOGS] = MeshBuilder::GenerateOBJ("logs", "Obj//logs.obj");
 	meshList[GEO_LOGS]->textureArray[0] = LoadTGA("Image//logs.tga");

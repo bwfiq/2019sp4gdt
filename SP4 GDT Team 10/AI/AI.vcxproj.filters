@@ -218,13 +218,12 @@
     <ClCompile Include="Source\AnimationPickUp.cpp">
       <Filter>VisualEffects\Animations</Filter>
     </ClCompile>
-
     <ClCompile Include="Source\Logs.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
     <ClCompile Include="Source\House.cpp">
       <Filter>GameObjects</Filter>
-    </ClCompile>	
+    </ClCompile>
     <ClCompile Include="Source\UIGameButton.cpp">
       <Filter>UI\UIObjects</Filter>
     </ClCompile>
@@ -233,6 +232,12 @@
     </ClCompile>
     <ClCompile Include="Source\UIResearchButton.cpp">
       <Filter>UI\UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Granary.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WoodShed.cpp">
+      <Filter>GameObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -419,13 +424,12 @@
     <ClInclude Include="Source\AnimationPickUp.h">
       <Filter>VisualEffects\Animations</Filter>
     </ClInclude>
-
     <ClInclude Include="Source\Logs.h">
       <Filter>GameObjects</Filter>
     </ClInclude>
     <ClInclude Include="Source\House.h">
       <Filter>GameObjects</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="Source\UIGameButton.h">
       <Filter>UI\UIObjects</Filter>
     </ClInclude>
@@ -434,6 +438,12 @@
     </ClInclude>
     <ClInclude Include="Source\UIResearchButton.h">
       <Filter>UI\UIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Granary.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WoodShed.h">
+      <Filter>GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
