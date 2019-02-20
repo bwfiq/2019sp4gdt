@@ -108,6 +108,8 @@ protected:
 
 	// Research
 	bool bWoodResearch;
+	bool bStoneResearch;
+	bool bFullStoneResearch;
 };
 
 #endif
