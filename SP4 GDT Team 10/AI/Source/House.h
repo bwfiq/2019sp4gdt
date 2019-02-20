@@ -5,6 +5,7 @@
 
 struct House : public Building
 {
+	int iHousingSpace;
 
 	virtual bool Handle(Message* msg);
 

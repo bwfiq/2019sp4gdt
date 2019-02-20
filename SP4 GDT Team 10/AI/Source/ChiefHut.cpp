@@ -2,7 +2,8 @@
 #include "ConcreteMessages.h"
 
 ChiefHut::ChiefHut(GAMEOBJECT_TYPE typeValue) 
-	: Building(typeValue)
+	: Building(typeValue),
+	iHousingSpace(2)
 {
 	//GameObject(typeValue);
 	std::cout << "ChiefHut Constructor" << std::endl;

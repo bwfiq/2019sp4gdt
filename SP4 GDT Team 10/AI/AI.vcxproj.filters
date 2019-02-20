@@ -57,6 +57,15 @@
     <Filter Include="VisualEffects\Animations">
       <UniqueIdentifier>{f1d761f6-10a9-4a2d-9840-3bbdf8b49b6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObjects\Buildings">
+      <UniqueIdentifier>{72a24115-e038-4e73-87af-79522c9923b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObjects\Environment">
+      <UniqueIdentifier>{521bac4e-c909-4c7f-ac8e-afeb057160de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObjects\Other">
+      <UniqueIdentifier>{6971df2b-d122-4ff2-a366-f02d17728e40}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -86,15 +95,6 @@
     <ClCompile Include="Source\GameObject.cpp">
       <Filter>GameObjects</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Villager.cpp">
-      <Filter>GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Building.cpp">
-      <Filter>GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ChiefHut.cpp">
-      <Filter>GameObjects</Filter>
-    </ClCompile>
     <ClCompile Include="Source\MousePicker.cpp">
       <Filter>MousePicker</Filter>
     </ClCompile>
@@ -107,17 +107,8 @@
     <ClCompile Include="Source\UIBase.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Bush.cpp">
-      <Filter>GameObjects</Filter>
-    </ClCompile>
     <ClCompile Include="Source\UIReligionBar.cpp">
       <Filter>UI\UIObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Environment.cpp">
-      <Filter>GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Tree.cpp">
-      <Filter>GameObjects</Filter>
     </ClCompile>
     <ClCompile Include="Source\EffectManager.cpp">
       <Filter>VisualEffects</Filter>
@@ -170,12 +161,6 @@
     <ClCompile Include="Source\Maze.cpp">
       <Filter>Structures</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Altar.cpp">
-      <Filter>GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\ResearchLab.cpp">
-      <Filter>GameObjects</Filter>
-    </ClCompile>
     <ClCompile Include="Source\EffectHand.cpp">
       <Filter>VisualEffects\EffectObjects</Filter>
     </ClCompile>
@@ -200,9 +185,6 @@
     <ClCompile Include="Source\UIAltarPopup.cpp">
       <Filter>UI\UIObjects</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Mountain.cpp">
-      <Filter>GameObjects</Filter>
-    </ClCompile>
     <ClCompile Include="Source\AnimationBase.cpp">
       <Filter>VisualEffects</Filter>
     </ClCompile>
@@ -218,12 +200,6 @@
     <ClCompile Include="Source\AnimationPickUp.cpp">
       <Filter>VisualEffects\Animations</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Logs.cpp">
-      <Filter>GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\House.cpp">
-      <Filter>GameObjects</Filter>
-    </ClCompile>
     <ClCompile Include="Source\UIGameButton.cpp">
       <Filter>UI\UIObjects</Filter>
     </ClCompile>
@@ -233,17 +209,50 @@
     <ClCompile Include="Source\UIResearchButton.cpp">
       <Filter>UI\UIObjects</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Granary.cpp">
-      <Filter>GameObjects</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\WoodShed.cpp">
-      <Filter>GameObjects</Filter>
-	</ClCompile>
     <ClCompile Include="Source\EffectReticle.cpp">
       <Filter>VisualEffects\EffectObjects</Filter>
     </ClCompile>
     <ClCompile Include="Source\UIOverlay.cpp">
       <Filter>UI\UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Granary.cpp">
+      <Filter>GameObjects\Buildings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\House.cpp">
+      <Filter>GameObjects\Buildings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Logs.cpp">
+      <Filter>GameObjects\Buildings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Altar.cpp">
+      <Filter>GameObjects\Buildings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Building.cpp">
+      <Filter>GameObjects\Buildings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ResearchLab.cpp">
+      <Filter>GameObjects\Buildings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WoodShed.cpp">
+      <Filter>GameObjects\Buildings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\ChiefHut.cpp">
+      <Filter>GameObjects\Buildings</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Bush.cpp">
+      <Filter>GameObjects\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Environment.cpp">
+      <Filter>GameObjects\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Mountain.cpp">
+      <Filter>GameObjects\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Tree.cpp">
+      <Filter>GameObjects\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Villager.cpp">
+      <Filter>GameObjects\Other</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -277,15 +286,6 @@
     <ClInclude Include="Source\ConcreteMessages.h">
       <Filter>Messaging</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Villager.h">
-      <Filter>GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Building.h">
-      <Filter>GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ChiefHut.h">
-      <Filter>GameObjects</Filter>
-    </ClInclude>
     <ClInclude Include="Source\MousePicker.h">
       <Filter>MousePicker</Filter>
     </ClInclude>
@@ -298,17 +298,8 @@
     <ClInclude Include="Source\UIBase.h">
       <Filter>UI</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Bush.h">
-      <Filter>GameObjects</Filter>
-    </ClInclude>
     <ClInclude Include="Source\UIReligionBar.h">
       <Filter>UI\UIObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Environment.h">
-      <Filter>GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Tree.h">
-      <Filter>GameObjects</Filter>
     </ClInclude>
     <ClInclude Include="Source\EffectManager.h">
       <Filter>VisualEffects</Filter>
@@ -382,12 +373,6 @@
     <ClInclude Include="Source\Message.h">
       <Filter>Utilities</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Altar.h">
-      <Filter>GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\ResearchLab.h">
-      <Filter>GameObjects</Filter>
-    </ClInclude>
     <ClInclude Include="Source\EffectHand.h">
       <Filter>VisualEffects\EffectObjects</Filter>
     </ClInclude>
@@ -412,9 +397,6 @@
     <ClInclude Include="Source\UIAltarPopup.h">
       <Filter>UI\UIObjects</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Mountain.h">
-      <Filter>GameObjects</Filter>
-    </ClInclude>
     <ClInclude Include="Source\AnimationBase.h">
       <Filter>VisualEffects</Filter>
     </ClInclude>
@@ -430,12 +412,6 @@
     <ClInclude Include="Source\AnimationPickUp.h">
       <Filter>VisualEffects\Animations</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Logs.h">
-      <Filter>GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\House.h">
-      <Filter>GameObjects</Filter>
-    </ClInclude>
     <ClInclude Include="Source\UIGameButton.h">
       <Filter>UI\UIObjects</Filter>
     </ClInclude>
@@ -445,17 +421,50 @@
     <ClInclude Include="Source\UIResearchButton.h">
       <Filter>UI\UIObjects</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Granary.h">
-      <Filter>GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\WoodShed.h">
-      <Filter>GameObjects</Filter>
-	</ClInclude>
     <ClInclude Include="Source\EffectReticle.h">
       <Filter>VisualEffects\EffectObjects</Filter>
     </ClInclude>
     <ClInclude Include="Source\UIOverlay.h">
       <Filter>UI\UIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Logs.h">
+      <Filter>GameObjects\Buildings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Granary.h">
+      <Filter>GameObjects\Buildings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\House.h">
+      <Filter>GameObjects\Buildings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Altar.h">
+      <Filter>GameObjects\Buildings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Building.h">
+      <Filter>GameObjects\Buildings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ResearchLab.h">
+      <Filter>GameObjects\Buildings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WoodShed.h">
+      <Filter>GameObjects\Buildings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ChiefHut.h">
+      <Filter>GameObjects\Buildings</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Bush.h">
+      <Filter>GameObjects\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Environment.h">
+      <Filter>GameObjects\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Mountain.h">
+      <Filter>GameObjects\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Tree.h">
+      <Filter>GameObjects\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Villager.h">
+      <Filter>GameObjects\Other</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

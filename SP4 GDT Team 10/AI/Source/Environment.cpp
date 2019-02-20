@@ -3,6 +3,7 @@
 
 Environment::Environment(GAMEOBJECT_TYPE typeValue)
 	: GameObject(typeValue)
+	,fTimer(1)
 {
 	//GameObject(typeValue);
 	std::cout << "Environment Constructor" << std::endl;

@@ -18,8 +18,6 @@ struct Bush : public Environment
 
 	virtual bool Handle(Message* msg);
 
-	float fTimer;
-
 	int iFoodAmount;
 
 	//virtual void TheFunction(GameObject* go);

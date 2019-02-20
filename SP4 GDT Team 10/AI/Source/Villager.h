@@ -2,6 +2,7 @@
 #define GAME_VILLAGER_H
 
 #include "GameObject.h"
+#include "Mesh.h"
 
 struct Villager : public GameObject
 {
@@ -39,13 +40,21 @@ struct Villager : public GameObject
 	int iWoodStored;
 	int iStoneStored;
 
+	int iMaxFoodStored;
+	int iMaxWoodStored;
+	int iMaxStoneStored;
+
 	float fEfficiency; //All states are to be multiplied by this float when used. 1.0f is normal efficiency
 	float fIdleTimer;
+
+	float fActionTimer;
 
 
 	virtual bool Handle(Message* msg);
 
 	void DoFunction();
+
+	Mesh* mEquipment;
 
 	//virtual void TheFunction(GameObject* go);
 
