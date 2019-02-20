@@ -3,8 +3,8 @@
 
 Bush::Bush(GAMEOBJECT_TYPE typeValue)
 	: Environment(typeValue),
-	fTimer(1.f),
-	iFoodAmount(10)
+	iFoodAmount(10),
+	eCurrState(LUSH)
 {
 	//GameObject(typeValue);
 	std::cout << "Bush Constructor" << std::endl;

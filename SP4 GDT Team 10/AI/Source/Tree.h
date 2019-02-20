@@ -18,8 +18,6 @@ struct Tree : public Environment
 
 	virtual bool Handle(Message* msg);
 
-	float fTimer;
-
 	int iWoodAmount;
 
 	//virtual void TheFunction(GameObject* go);

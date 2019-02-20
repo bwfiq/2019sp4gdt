@@ -444,7 +444,7 @@ void SceneSP::Init()
 	goBush->pos.y = goBush->scale.y * 0.5f;
 	Bush* bGo = static_cast<Bush*>(goBush);
 	bGo->eCurrState = Bush::LUSH;
-	bGo->fTimer = 0;
+	bGo->fTimer = 5;
 	bGo->iFoodAmount = 10;
 
 	goTree = FetchGO(GameObject::GO_TREE);
@@ -454,7 +454,7 @@ void SceneSP::Init()
 	goTree->iGridZ = 1;
 	Tree* tGo = static_cast<Tree*>(goTree);
 	tGo->eCurrState = Tree::FULL;
-	tGo->fTimer = 0;
+	tGo->fTimer = 5;
 	tGo->iWoodAmount = 10;
 
 	goTree2 = FetchGO(GameObject::GO_TREE);
@@ -464,7 +464,7 @@ void SceneSP::Init()
 	goTree2->iGridZ = 1;
 	tGo = static_cast<Tree*>(goTree2);
 	tGo->eCurrState = Tree::FULL;
-	tGo->fTimer = 0;
+	tGo->fTimer = 2;
 	tGo->iWoodAmount = 10;
 
 	goMountain = FetchGO(GameObject::GO_MOUNTAIN);
@@ -475,6 +475,7 @@ void SceneSP::Init()
 	Mountain* mGo = static_cast<Mountain*>(goMountain);
 	mGo->iStoneAmount = 11;
 	mGo->iStoneGain = 5;
+	mGo->fTimer = 4;
 
 	SceneData* SD = SceneData::GetInstance();
 	SD->SetFood(0);
@@ -3211,26 +3212,32 @@ void SceneSP::Update(double dt)
 			SD->SetPopulation(SD->GetPopulation() + 1);
 			break;
 		case GameObject::GO_CHIEFHUT:
-			SD->SetPopulationLimit(SD->GetFoodLimit() + 10);
-			if (static_cast<Building*>(go)->eCurrState == Building::COMPLETED)
+		{	
+			ChiefHut* goHouse = static_cast<ChiefHut*>(go);
+			SD->SetFoodLimit(SD->GetFoodLimit() + 10);
+			if (goHouse->eCurrState == Building::COMPLETED)
 			{
-				SD->SetPopulationLimit(SD->GetPopulationLimit() + 10);
+				SD->SetPopulationLimit(SD->GetPopulationLimit() + goHouse->iHousingSpace);
 			}
-			else if (static_cast<Building*>(go)->eCurrState == Building::BROKEN)
+			else if (goHouse->eCurrState == Building::BROKEN)
 			{
-				SD->SetPopulationLimit(SD->GetPopulationLimit() + 5);
+				SD->SetPopulationLimit(SD->GetPopulationLimit() + goHouse->iHousingSpace * 0.5f);
 			}
+		}
 			break;
 		case GameObject::GO_HOUSE:
-			SD->SetPopulationLimit(SD->GetFoodLimit() + 10);
-			if (static_cast<Building*>(go)->eCurrState == Building::COMPLETED)
+		{	
+			House* goHouse = static_cast<House*>(go);
+			SD->SetFoodLimit(SD->GetFoodLimit() + 10);
+			if (goHouse->eCurrState == Building::COMPLETED)
 			{
-				SD->SetPopulationLimit(SD->GetPopulationLimit() + 10);
+				SD->SetPopulationLimit(SD->GetPopulationLimit() + goHouse->iHousingSpace);
 			}
-			else if (static_cast<Building*>(go)->eCurrState == Building::BROKEN)
+			else if (goHouse->eCurrState == Building::BROKEN)
 			{
-				SD->SetPopulationLimit(SD->GetPopulationLimit() + 5);
+				SD->SetPopulationLimit(SD->GetPopulationLimit() + goHouse->iHousingSpace * 0.5f);
 			}
+		}
 			break;
 		case GameObject::GO_BUSH:
 			break;
@@ -3377,6 +3384,9 @@ void SceneSP::RenderGO(GameObject *go)
 		//RenderMesh(meshList[GEO_BUSH], false, 1.f);
 		//RenderMesh(meshList[GEO_VILLAGER], bGodlights, 1.f);
 		//modelStack.Rotate(-90, 1, 0, 0);
+		Villager* goVil = static_cast<Villager*>(go);
+		if(goVil->mEquipment != NULL)
+			RenderMesh(goVil->mEquipment, bGodlights, 1.f);
 		RenderMesh(meshList[GEO_VILLAGER], bGodlights, 1.f);
 		modelStack.PopMatrix();
 	}
