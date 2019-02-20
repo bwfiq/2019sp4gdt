@@ -254,6 +254,9 @@
     <ClCompile Include="Source\Villager.cpp">
       <Filter>GameObjects\Other</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AnimationChopping.cpp">
+      <Filter>VisualEffects\Animations</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -465,6 +468,9 @@
     </ClInclude>
     <ClInclude Include="Source\Villager.h">
       <Filter>GameObjects\Other</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AnimationChopping.h">
+      <Filter>VisualEffects\Animations</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

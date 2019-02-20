@@ -3386,6 +3386,8 @@ void SceneSP::Update(double dt)
 		}
 	}
 
+	SD->SetFood(Math::Min(SD->GetFood(), SD->GetFoodLimit()));
+	SD->SetWood(Math::Min(SD->GetWood(), SD->GetWoodLimit()));
 	if (prevSelect != selected)
 	{
 		UpdateSelectedUI();
