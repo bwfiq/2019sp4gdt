@@ -611,6 +611,7 @@ void SceneSP::Init()
 
 bool SceneSP::Handle(Message* message)
 {
+	SceneData* SD = SceneData::GetInstance();
 	MessageWRU* messageWRU = dynamic_cast<MessageWRU*>(message);
 	if (messageWRU)
 	{
@@ -673,6 +674,17 @@ bool SceneSP::Handle(Message* message)
 		else
 		{
 			messageDisplayReq->ui->SetText("Current Goal v");
+		}
+		delete message;
+		return true;
+	}
+	MessageAltarOffer* messageAltarOffer = dynamic_cast<MessageAltarOffer*>(message);
+	if (messageAltarOffer)
+	{
+		if (messageAltarOffer->type == MessageAltarOffer::OFFER_FOOD)
+		{
+			static_cast<Altar*>(goAltar)->iFoodOffered += 10;
+			SD->SetFood(SD->GetFood() - 1);
 		}
 		delete message;
 		return true;
@@ -2244,9 +2256,16 @@ void SceneSP::UpdateSelectedUI()
 	if (selected == NULL) return;
 	if (selected->type == GameObject::GO_ALTAR)
 	{
-		UIBase* newUI = new UIAltarPopup();
-		UIManager::GetInstance()->AddUI("uiAltarPopup", newUI);
+		//UIBase* newUI = new UIAltarPopup();
+		//UIManager::GetInstance()->AddUI("uiAltarPopup", newUI);
+		//m_selectedUi.push_back(newUI);
+		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_ALTAR);
+		UIManager::GetInstance()->AddUI("uiSelected_Altar_Info", newUI);
 		m_selectedUi.push_back(newUI);
+		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_ALTAR_OFFER);
+		UIManager::GetInstance()->AddUI("uiSelected_Altar_Offer", newUI);
+		m_selectedUi.push_back(newUI);
+
 	}
 }
 
