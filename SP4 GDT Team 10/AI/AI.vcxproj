@@ -155,6 +155,7 @@
     <ClCompile Include="Source\Altar.cpp" />
     <ClCompile Include="Source\AnimationBase.cpp" />
     <ClCompile Include="Source\AnimationChopping.cpp" />
+    <ClCompile Include="Source\AnimationForage.cpp" />
     <ClCompile Include="Source\AnimationJump.cpp" />
     <ClCompile Include="Source\AnimationPickUp.cpp" />
     <ClCompile Include="Source\AnimationWalk.cpp" />
@@ -220,6 +221,7 @@
     <ClInclude Include="Source\Altar.h" />
     <ClInclude Include="Source\AnimationBase.h" />
     <ClInclude Include="Source\AnimationChopping.h" />
+    <ClInclude Include="Source\AnimationForage.h" />
     <ClInclude Include="Source\AnimationJump.h" />
     <ClInclude Include="Source\AnimationPickUp.h" />
     <ClInclude Include="Source\AnimationWalk.h" />

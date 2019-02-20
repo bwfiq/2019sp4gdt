@@ -257,6 +257,9 @@
     <ClCompile Include="Source\AnimationChopping.cpp">
       <Filter>VisualEffects\Animations</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AnimationForage.cpp">
+      <Filter>VisualEffects\Animations</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -470,6 +473,9 @@
       <Filter>GameObjects\Other</Filter>
     </ClInclude>
     <ClInclude Include="Source\AnimationChopping.h">
+      <Filter>VisualEffects\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AnimationForage.h">
       <Filter>VisualEffects\Animations</Filter>
     </ClInclude>
   </ItemGroup>
