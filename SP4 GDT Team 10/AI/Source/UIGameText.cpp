@@ -15,14 +15,14 @@ UIGameText::UIGameText(TEXT_TYPE textType) :
 		scale.Set(225, 250);
 		anchorPoint.Set(0, 1);
 		uiComponents_list[COMPONENT_BOARD].mesh = SD->GetMesh("ui_board_blank");
-		for (int i = 0; i <= COMPONENT_TEXT_3 - COMPONENT_TEXT_1; ++i)
+		for (int i = 0; i <= COMPONENT_TEXT_5 - COMPONENT_TEXT_1; ++i)
 		{
 			uiComponents_list[COMPONENT_TEXT_1 + i].mesh = NULL;
 			uiComponents_list[COMPONENT_TEXT_1 + i].text = "asdasdasd";
 			uiComponents_list[COMPONENT_TEXT_1 + i].textSize = scale.y * 0.1f;
-			uiComponents_list[COMPONENT_TEXT_1 + i].pos.Set(0.65f, (i / 3.f));//very hardcoded anchorpoint offset
-			uiComponents_list[COMPONENT_TEXT_1 + i].scale.Set(1, 0.333f);
-			uiComponents_list[COMPONENT_TEXT_1 + i].anchorPoint.Set(0, 1);
+			uiComponents_list[COMPONENT_TEXT_1 + i].pos.Set(0.1f, ((i / 6.f) + 0.15f));
+			uiComponents_list[COMPONENT_TEXT_1 + i].scale.Set(1, 0.2f);
+			uiComponents_list[COMPONENT_TEXT_1 + i].anchorPoint.Set(0, 0);
 		}
 		break;
 	}

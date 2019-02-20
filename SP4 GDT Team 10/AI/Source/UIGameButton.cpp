@@ -18,8 +18,8 @@ UIGameButton::UIGameButton(BUTTON_TYPE buttonType) :
 		uiComponents_list[COMPONENT_TEXT].mesh = NULL;
 		uiComponents_list[COMPONENT_TEXT].text = "Current Goal v";
 		uiComponents_list[COMPONENT_TEXT].textSize = scale.y * 0.4f;
-		uiComponents_list[COMPONENT_TEXT].pos.Set(0.6f, 0);
-		uiComponents_list[COMPONENT_TEXT].anchorPoint.Set(0, 0.25);
+		uiComponents_list[COMPONENT_TEXT].pos.Set(0.1f, 0.5f);
+		uiComponents_list[COMPONENT_TEXT].anchorPoint.Set(0, 0);
 		break;
 	}
 	this->buttonType = buttonType;

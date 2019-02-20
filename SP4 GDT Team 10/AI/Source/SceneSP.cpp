@@ -31,12 +31,14 @@
 #include "KeyboardController.h"
 
 #include "Villager.h"
+#include "House.h"
 #include "Building.h"
 #include "ChiefHut.h"
 #include "Bush.h"
 #include "Tree.h"
 #include "Altar.h"
 #include "Mountain.h"
+#include "Logs.h"
 
 #include "AnimationJump.h"
 #include "AnimationWalk.h"
@@ -514,6 +516,16 @@ void SceneSP::Init()
 	goChiefHut->pos.y = goChiefHut->scale.y * 0.5f;
 	static_cast<Building*>(goChiefHut)->bBuilt = true;
 
+	goHouse = FetchGO(GameObject::GO_HOUSE);
+	goHouse->pos = GetGridPos(GridPt(5, 7));
+	goHouse->pos.y = goHouse->scale.y * 0.5f;
+	static_cast<Building*>(goHouse)->bBuilt = true;
+
+	goLogs = FetchGO(GameObject::GO_LOGS);
+	goLogs->pos = GetGridPos(GridPt(10, 7));
+	goLogs->pos.y = goLogs->scale.y * 0.5f;
+	static_cast<Building*>(goLogs)->bBuilt = true;
+
 	goAltar = FetchGO(GameObject::GO_ALTAR);
 	goAltar->pos = GetGridPos(GridPt(6, 2));
 	goAltar->pos.y = goAltar->scale.y * 0.5f;
@@ -679,6 +691,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			case GameObject::GO_VILLAGER:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * .7f, .5f, SceneData::GetInstance()->GetGridSize() * .7f);
 				break;
+			case GameObject::GO_HOUSE:
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * .7f, 1.f, SceneData::GetInstance()->GetGridSize() * .7f);
+				break;
 			case GameObject::GO_BUSH:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 0.75f, 1.f, SceneData::GetInstance()->GetGridSize() * 0.75f);
 				break;
@@ -692,6 +707,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
 				break;
 			case GameObject::GO_MOUNTAIN:
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
+				break;
+			case GameObject::GO_LOGS:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
 				break;
 			}
@@ -713,6 +731,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 		case GameObject::GO_BUILDING:
 			go = new Building(type);
 			break;
+		case GameObject::GO_HOUSE:
+			go = new House(type);
+			break;
 		case GameObject::GO_CHIEFHUT:
 			go = new ChiefHut(type);
 			break;
@@ -727,6 +748,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			break;
 		case GameObject::GO_MOUNTAIN:
 			go = new Mountain(type);
+			break;
+		case GameObject::GO_LOGS:
+			go = new Logs(type);
 			break;
 		default:
 			go = new GameObject(type);
@@ -3040,7 +3064,24 @@ void SceneSP::Update(double dt)
 			SD->SetPopulation(SD->GetPopulation() + 1);
 			break;
 		case GameObject::GO_CHIEFHUT:
-			SD->SetPopulationLimit(SD->GetPopulationLimit() + 10);
+			if (static_cast<Building*>(go)->eCurrState == Building::COMPLETED)
+			{
+				SD->SetPopulationLimit(SD->GetPopulationLimit() + 10);
+			}
+			else if (static_cast<Building*>(go)->eCurrState == Building::BROKEN)
+			{
+				SD->SetPopulationLimit(SD->GetPopulationLimit() + 5);
+			}
+			break;
+		case GameObject::GO_HOUSE:
+			if (static_cast<Building*>(go)->eCurrState == Building::COMPLETED)
+			{
+				SD->SetPopulationLimit(SD->GetPopulationLimit() + 10);
+			}
+			else if (static_cast<Building*>(go)->eCurrState == Building::BROKEN)
+			{
+				SD->SetPopulationLimit(SD->GetPopulationLimit() + 5);
+			}
 			break;
 		case GameObject::GO_BUSH:
 			break;
@@ -3210,6 +3251,31 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.PopMatrix();
 	}
 	break;
+	case GameObject::GO_HOUSE:
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		if (go->animation != NULL)
+			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		//Current state of the building
+		switch (static_cast<Building*>(go)->eCurrState)
+		{
+		case Building::COMPLETED:
+			RenderMesh(meshList[GEO_BUILDING], bGodlights, 1.f);
+			break;
+		case Building::BLUEPRINT:
+			RenderMesh(meshList[GEO_BUILDING], bGodlights, 0.2f);
+			break;
+		case Building::CONSTRUCTING:
+			RenderMesh(meshList[GEO_BUILDING], bGodlights, 0.6f);
+			break;
+		case Building::BROKEN:
+			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
+		}
+		modelStack.PopMatrix();
+	}
+	break;
 	case GameObject::GO_CHIEFHUT:
 	{
 		modelStack.PushMatrix();
@@ -3240,6 +3306,17 @@ void SceneSP::RenderGO(GameObject *go)
 			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_MOUNTAIN], bGodlights, 1.f);
+		modelStack.PopMatrix();
+	}
+	break;
+	case GameObject::GO_LOGS:
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		if (go->animation != NULL)
+			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_LOGS], bGodlights, 1.f);
 		modelStack.PopMatrix();
 	}
 	break;

@@ -175,8 +175,10 @@
     <ClCompile Include="Source\GameObject.cpp" />
     <ClCompile Include="Source\Graph.cpp" />
     <ClCompile Include="Source\Grid.cpp" />
+    <ClCompile Include="Source\House.cpp" />
     <ClCompile Include="Source\LoadOBJ.cpp" />
     <ClCompile Include="Source\LoadTGA.cpp" />
+    <ClCompile Include="Source\Logs.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\Maze.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
@@ -236,9 +238,11 @@
     <ClInclude Include="Source\Geometry.h" />
     <ClInclude Include="Source\Graph.h" />
     <ClInclude Include="Source\Grid.h" />
+    <ClInclude Include="Source\House.h" />
     <ClInclude Include="Source\Light.h" />
     <ClInclude Include="Source\LoadOBJ.h" />
     <ClInclude Include="Source\LoadTGA.h" />
+    <ClInclude Include="Source\Logs.h" />
     <ClInclude Include="Source\Material.h" />
     <ClInclude Include="Source\Maze.h" />
     <ClInclude Include="Source\Mesh.h" />
