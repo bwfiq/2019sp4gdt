@@ -3,7 +3,6 @@
 
 Tree::Tree(GAMEOBJECT_TYPE typeValue)
 	: Environment(typeValue),
-	fTimer(1.f),
 	iWoodAmount(10),
 	eCurrState(FULL)
 {

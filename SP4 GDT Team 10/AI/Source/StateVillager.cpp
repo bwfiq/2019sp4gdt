@@ -15,6 +15,7 @@
 
 #include "AnimationWalk.h"
 #include "AnimationPickUp.h"
+#include "AnimationChopping.h"
 
 #include "MousePicker.h"
 #include "MouseController.h"
@@ -249,7 +250,7 @@ void StatePath::Update(double dt, GameObject * m_go)
 							break;
 						case GameObject::GO_GRANARY:
 							//m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
-							SD->SetFood(Math::Min(SD->GetFoodLimit(), SD->GetFood() + static_cast<Villager*>(m_go)->iFoodStored));
+							SD->SetFood(SD->GetFood() + static_cast<Villager*>(m_go)->iFoodStored);
 
 							static_cast<Villager*>(m_go)->iFoodStored = 0;
 
@@ -343,6 +344,18 @@ StateChopTree::~StateChopTree()
 void StateChopTree::Enter(GameObject * m_go)
 {
 	std::cout << "Enter Chop Tree State" << std::endl;
+	Villager* goVil = static_cast<Villager*>(m_go);
+	goVil->fActionTimer = static_cast<Environment*>(m_go->goTarget)->fTimer;
+	m_go->scale *= 0.2f;
+	m_go->pos.x += m_go->goTarget->scale.x * 0.3f;
+	m_go->pos.y = m_go->scale.y * 0.5f;
+	m_go->pos.z += m_go->goTarget->scale.z * 0.3f;
+	m_go->direction.Set(-1, 0, -1);
+	m_go->direction.Normalize();
+
+	SceneData* SD = SceneData::GetInstance();
+	goVil->mEquipment = SD->GetMesh("hatchet");
+	m_go->GiveAnimation(new AnimationChopping());
 }
 
 void StateChopTree::Update(double dt, GameObject * m_go)
@@ -360,26 +373,38 @@ void StateChopTree::Update(double dt, GameObject * m_go)
 	}
 	Tree* treeGo = static_cast<Tree*>(m_go->goTarget);
 	Villager* vGo = static_cast<Villager*>(m_go);
-	if (treeGo->eCurrState == Tree::FULL)
+	if (vGo->fActionTimer <= 0.f)
 	{
-		//Insert gathering time here
-		vGo->iWoodStored = treeGo->iWoodAmount;
-		treeGo->eCurrState = Tree::HALFCHOPPED;
+		if (treeGo->eCurrState == Tree::FULL)
+		{
+			vGo->iWoodStored = Math::Min(vGo->fStats[Villager::WOODCUTTING] * treeGo->iWoodAmount + vGo->iWoodStored, (float)vGo->iMaxWoodStored);
+			treeGo->eCurrState = Tree::HALFCHOPPED;
+		}
+		else if (treeGo->eCurrState == Tree::HALFCHOPPED)
+		{
+			vGo->iWoodStored = Math::Min(vGo->fStats[Villager::WOODCUTTING] * treeGo->iWoodAmount + vGo->iWoodStored, (float)vGo->iMaxWoodStored);
+			treeGo->active = false;
+		}
+		MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_NEAREST_WOODSHED, 1);
+		PostOffice::GetInstance()->Send("Scene", messagewru);
+		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 	}
-	else if (treeGo->eCurrState == Tree::HALFCHOPPED)
+	else
 	{
-		//Insert gathering time here
-		vGo->iWoodStored = treeGo->iWoodAmount;
-		treeGo->active = false;
+		vGo->fActionTimer -= dt;
 	}
-	MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_NEAREST_WOODSHED, 1);
-	PostOffice::GetInstance()->Send("Scene", messagewru);
-	m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 	return;
 }
 
 void StateChopTree::Exit(GameObject * m_go)
 {
+	static_cast<Villager*>(m_go)->fActionTimer = 0;
+	m_go->scale *= 5.f;
+	m_go->pos.y = m_go->scale.y * 0.5f;
+	Villager* goVil = static_cast<Villager*>(m_go);
+	goVil->mEquipment = NULL;
+
+	m_go->ClearAnimation();
 }
 
 //StateForaging
@@ -395,40 +420,55 @@ StateForaging::~StateForaging()
 void StateForaging::Enter(GameObject * m_go)
 {
 	std::cout << "Enter Foraging State" << std::endl;
+	static_cast<Villager*>(m_go)->fActionTimer = static_cast<Environment*>(m_go->goTarget)->fTimer;
 }
 
 void StateForaging::Update(double dt, GameObject * m_go)
 {
+
+	if (m_go->goTarget == NULL ||!m_go->goTarget->active)
+	{
+		m_go->goTarget = NULL;
+		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+		return;
+	}
 	//In StateForaging, the goTarget must be a Bush class
 	if (m_go->goTarget->type != GameObject::GO_BUSH)
 	{
 		std::cout << "Wrong State : Foraging" << std::endl;
 		return;
 	}
-	if (!m_go->goTarget->active)
-	{
-		m_go->goTarget = NULL;
-		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
-	}
+
 	Bush* bushGo = static_cast<Bush*>(m_go->goTarget);
 	Villager* vGo = static_cast<Villager*>(m_go);
 	if (bushGo->eCurrState == Bush::LUSH)
 	{
-		//Insert gathering time here
-		vGo->iFoodStored = bushGo->iFoodAmount;
-		bushGo->eCurrState = Bush::DEPLETED;
-		m_go->goTarget = NULL;
+		if (vGo->fActionTimer <= 0.f)
+		{
+			//Insert gathering time here
+			vGo->iFoodStored = Math::Min(vGo->fStats[Villager::FORAGING] * bushGo->iFoodAmount + vGo->iFoodStored, (float)vGo->iMaxFoodStored);
+			bushGo->eCurrState = Bush::DEPLETED;
+			m_go->goTarget = NULL;
 
-		MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_NEAREST_GRANARY, 1);
-		PostOffice::GetInstance()->Send("Scene", messagewru);
-		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
-		return;
+			MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_NEAREST_GRANARY, 1);
+			PostOffice::GetInstance()->Send("Scene", messagewru);
+			m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+			return;
+		}
+		else
+		{
+			vGo->fActionTimer -= dt;
+		}
 	}
-	m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+	else
+	{
+		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+	}
 }
 
 void StateForaging::Exit(GameObject * m_go)
 {
+	static_cast<Villager*>(m_go)->fActionTimer = 0;
 }
 
 //StateAttack
@@ -632,6 +672,7 @@ StateMining::~StateMining()
 void StateMining::Enter(GameObject* m_go)
 {
 	std::cout << "Enter Mining State" << std::endl;
+	static_cast<Villager*>(m_go)->fActionTimer = static_cast<Environment*>(m_go->goTarget)->fTimer;
 }
 
 void StateMining::Update(double dt, GameObject* m_go)
@@ -651,20 +692,28 @@ void StateMining::Update(double dt, GameObject* m_go)
 	Villager* vGo = static_cast<Villager*>(m_go);
 
 	//Insert gathering time here
-	vGo->iStoneStored = Math::Min(vGo->fStats[Villager::MINING] * mountainGo->iStoneGain, (float)mountainGo->iStoneAmount);
-	mountainGo->iStoneAmount -= mountainGo->iStoneGain;
-
-	if (mountainGo->iStoneAmount <= 0)
+	if (vGo->fActionTimer <= 0.f)
 	{
-		mountainGo->active = false;
-	}
+		vGo->iStoneStored = Math::Min(vGo->fStats[Villager::MINING] * mountainGo->iStoneGain, (float)vGo->iMaxStoneStored);
+		mountainGo->iStoneAmount -= mountainGo->iStoneGain;
 
-	MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_CHIEFHUT, 1);
-	PostOffice::GetInstance()->Send("Scene", messagewru);
-	m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
-	return;
+		if (mountainGo->iStoneAmount <= 0)
+		{
+			mountainGo->active = false;
+		}
+
+		MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_CHIEFHUT, 1);
+		PostOffice::GetInstance()->Send("Scene", messagewru);
+		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+		return;
+	}
+	else
+	{
+		vGo->fActionTimer -= dt;
+	}
 }
 
 void StateMining::Exit(GameObject* m_go)
 {
+	static_cast<Villager*>(m_go)->fActionTimer = 0;
 }

@@ -22,7 +22,7 @@ public:
 	{
 		G_SPLASHSCREEN = 0,	// pre-game
 		G_MAINMENU,			// pre-game
-		//G_OPTIONS,		// pre-game
+		G_OPTIONS,			// pre-game
 		G_INPLAY,
 		//G_INGAMEOPTIONS,	// rendered over game
 		G_RESEARCHTREE,		// rendered over game
@@ -42,6 +42,7 @@ public:
 	void RenderPassMain();
 	void RenderSplashScreen();
 	void RenderMainMenu();
+	void RenderOptions();
 	void RenderWorld();
 
 	void RenderGO(GameObject *go);
@@ -112,7 +113,6 @@ protected:
 
 	GameObject* goGranary;
 	GameObject* goWoodshed;
-
 
 	// Research
 	bool bWoodResearch;

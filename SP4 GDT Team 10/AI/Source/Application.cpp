@@ -86,6 +86,11 @@ void Application::SetMouseVisiblity(bool isVisible)
 		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 }
 
+void Application::QuitGame()
+{
+	quit = true;
+}
+
 void Application::UpdateInput()
 {
 	double mouse_currX, mouse_currY;
@@ -191,7 +196,7 @@ void Application::Run()
 	temp = scene;*/
 
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
-	while (!glfwWindowShouldClose(m_window) && !IsKeyPressed(VK_ESCAPE))
+	while (!glfwWindowShouldClose(m_window) && !IsKeyPressed(VK_ESCAPE) && !quit)
 	{
 		//Get and organize events, like keyboard and mouse input, window resizing, etc...
 		glfwPollEvents();

@@ -83,6 +83,15 @@ void GameObject::GiveAnimation(AnimationBase * animation)
 	this->animation = animation;
 }
 
+void GameObject::ClearAnimation(void)
+{
+	if (this->animation != NULL)
+	{
+		delete this->animation;
+		this->animation = NULL;
+	}
+}
+
 void GameObject::Update(float dt)
 {
 	//Something

@@ -8,7 +8,11 @@ Villager::Villager(GAMEOBJECT_TYPE typeValue)
 	iFoodStored(0),
 	iWoodStored(0),
 	iStoneStored(0),
-	fIdleTimer(3)
+	iMaxFoodStored(5),
+	iMaxWoodStored(5),
+	iMaxStoneStored(5),
+	fIdleTimer(3),
+	mEquipment(NULL)
 {
 	//GameObject(typeValue);
 	for (int i = 0; i < STAT_TOTAL; ++i)
@@ -38,6 +42,7 @@ bool Villager::Handle(Message* msg)
 	delete msg;
 	return false;
 }
+
 
 void Villager::DoFunction()
 {

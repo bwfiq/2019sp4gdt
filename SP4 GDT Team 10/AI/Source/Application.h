@@ -30,6 +30,7 @@ public:
 
 	void UpdateInput();
 	void PostInputUpdate();
+	void QuitGame();
 
 	void Iterate();
 
@@ -40,6 +41,7 @@ private:
 	//Declare a window object
 	StopWatch m_timer;
 	Scene* temp;
+	bool quit = false;
 };
 
 #endif

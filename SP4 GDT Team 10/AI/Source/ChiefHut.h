@@ -5,7 +5,7 @@
 
 struct ChiefHut : public Building
 {
-
+	int iHousingSpace;
 	virtual bool Handle(Message* msg);
 
 	virtual void TheFunction(GameObject* go);

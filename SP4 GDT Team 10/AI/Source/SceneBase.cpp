@@ -223,6 +223,9 @@ void SceneBase::Init()
 	meshList[GEO_BACKGROUND]->textureArray[0] = LoadTGA("Image//background.tga");
 	meshList[GEO_SPLASHSCREEN] = MeshBuilder::GenerateQuad("splashscreen", Color(1, 1, 1));
 	meshList[GEO_SPLASHSCREEN]->textureArray[0] = LoadTGA("Image//splashscreen.tga");
+	meshList[GEO_LOGO] = MeshBuilder::GenerateQuad("logo", Color(1, 1, 1));
+	meshList[GEO_LOGO]->textureArray[0] = LoadTGA("Image//logo1.tga");
+
 	meshList[GEO_BACKBUTTON] = MeshBuilder::GenerateQuad("backbutton", Color(1, 1, 1));
 	meshList[GEO_BACKBUTTON]->textureArray[0] = LoadTGA("Image//backbutton.tga");
 	meshList[GEO_STARTBUTTON] = MeshBuilder::GenerateQuad("start", Color(1, 1, 1));
@@ -231,8 +234,7 @@ void SceneBase::Init()
 	meshList[GEO_OPTIONSBUTTON]->textureArray[0] = LoadTGA("Image//optionsbutton.tga");
 	meshList[GEO_QUITBUTTON] = MeshBuilder::GenerateQuad("quitbutton", Color(1, 1, 1));
 	meshList[GEO_QUITBUTTON]->textureArray[0] = LoadTGA("Image//quitbutton.tga");
-	meshList[GEO_LOGO] = MeshBuilder::GenerateQuad("logo", Color(1, 1, 1));
-	meshList[GEO_LOGO]->textureArray[0] = LoadTGA("Image//logo1.tga");
+
 	meshList[GEO_SEA] = MeshBuilder::GenerateQuad("sea", Color(1, 1, 1));
 	meshList[GEO_SEA]->textureArray[0] = LoadTGA("Image//sea.tga");
 	//meshList[GEO_GRASS] = MeshBuilder::GenerateCube("cube", Color(1, 1, 1), 1.f);
@@ -253,6 +255,9 @@ void SceneBase::Init()
 
 	meshList[GEO_VILLAGER] = MeshBuilder::GenerateOBJ("villager", "Obj//villager.obj");
 	meshList[GEO_VILLAGER]->textureArray[0] = LoadTGA("Image//villager.tga");
+	meshList[GEO_HATCHET] = MeshBuilder::GenerateOBJ("hatchet", "Obj//hatchet.obj");
+	meshList[GEO_HATCHET]->textureArray[0] = LoadTGA("Image//hatchet.tga");
+
 	meshList[GEO_BUILDING] = MeshBuilder::GenerateOBJ("building", "Obj//house.obj");
 	meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//house.tga");
 	meshList[GEO_GRANARY] = MeshBuilder::GenerateOBJ("granary", "Obj//granary.obj");
@@ -296,6 +301,14 @@ void SceneBase::Init()
 	meshList[GEO_UI_BOARD_TIME]->textureArray[0] = LoadTGA("Image//ui_board_time.tga");
 	meshList[GEO_UI_BOARD_WOOD]->textureArray[0] = LoadTGA("Image//ui_board_wood.tga");
 
+	meshList[GEO_WOODRESEARCH] = MeshBuilder::GenerateQuad("woodResearch", Color(1, 1, 1));
+	meshList[GEO_WOODRESEARCH]->textureArray[0] = LoadTGA("Image//woodResearch.tga");
+	meshList[GEO_STONERESEARCH] = MeshBuilder::GenerateQuad("stoneResearch", Color(1, 1, 1));
+	meshList[GEO_STONERESEARCH]->textureArray[0] = LoadTGA("Image//stoneResearch.tga");
+	meshList[GEO_FULLSTONERESEARCH] = MeshBuilder::GenerateQuad("fullStoneResearch", Color(1, 1, 1));
+	meshList[GEO_FULLSTONERESEARCH]->textureArray[0] = LoadTGA("Image//fullStoneResearch.tga");
+	meshList[GEO_RESEARCHTICK] = MeshBuilder::GenerateQuad("researchTick", Color(1, 1, 1));
+	meshList[GEO_RESEARCHTICK]->textureArray[0] = LoadTGA("Image//researchTick.tga");
 
 	meshList[GEO_TEXT]->material.kAmbient.Set(1, 0, 0);
 	meshList[GEO_TEXT_GUNGSUH]->material.kAmbient.Set(1, 0, 0);

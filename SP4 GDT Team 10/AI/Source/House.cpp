@@ -3,6 +3,7 @@
 
 House::House(GAMEOBJECT_TYPE typeValue)
 	: Building(typeValue)
+	, iHousingSpace(2)
 {
 	//GameObject(typeValue);
 	std::cout << "House Constructor" << std::endl;
