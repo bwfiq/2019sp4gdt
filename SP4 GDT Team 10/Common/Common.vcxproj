@@ -28,6 +28,7 @@
     <ClCompile Include="Source\Vector3.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\EasingStyle.h" />
     <ClInclude Include="Source\KeyboardController.h" />
     <ClInclude Include="Source\MatrixStack.h" />
     <ClInclude Include="Source\MouseController.h" />

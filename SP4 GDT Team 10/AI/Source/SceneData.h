@@ -57,6 +57,8 @@ public:
 	void SetCamPosition(Vector3 camPos);
 	Vector3 GetMousePos_World();
 	Vector3 GetCamPosition();
+	void SetMainMenuElapsedTime(float time);
+	float GetMainMenuElapsedTime();
 
 	void AddMesh(Mesh* mesh);
 	void RemoveMesh(const std::string& meshName);
@@ -74,6 +76,7 @@ private:
 	float m_worldHeight;
 	float m_worldWidth;
 	float f_elapsedTime;
+	float f_mainmenuElapsedTime;
 	std::map<std::string, Mesh*> meshList;//these meshes delete themselves via the scene
 	Vector3 mousePos_World;
 	Vector3 camPosition;

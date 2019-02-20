@@ -221,6 +221,16 @@ Vector3 SceneData::GetCamPosition()
 	return camPosition;
 }
 
+void SceneData::SetMainMenuElapsedTime(float time)
+{
+	this->f_mainmenuElapsedTime = time;
+}
+
+float SceneData::GetMainMenuElapsedTime()
+{
+	return this->f_mainmenuElapsedTime;
+}
+
 void SceneData::AddMesh(Mesh * mesh)
 {
 	if (mesh == nullptr || mesh == NULL)

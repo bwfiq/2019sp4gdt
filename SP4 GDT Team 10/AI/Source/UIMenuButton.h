@@ -7,7 +7,6 @@ public:
 	~UIMenuButton();
 
 	virtual void Update(float dt);
-private:
 	//Order of ui components matter
 	enum UI_STARTBUTTON_COMPONENTS {
 		COMPONENT_OUTLINEBAR,
@@ -17,4 +16,5 @@ private:
 
 		COMPONENT_TOTAL
 	};
+private:
 };
