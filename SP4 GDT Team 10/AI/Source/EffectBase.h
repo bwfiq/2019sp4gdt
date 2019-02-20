@@ -12,7 +12,9 @@ public:
 	Vector3 rotation;
 	bool bActive;
 	bool bLightEnabled;
+	bool bIsDone;
 	Mesh* mesh;
+	float fAlpha;
 
 	virtual void Update(float dt) = 0;
 protected:

@@ -238,12 +238,21 @@
     </ClCompile>
     <ClCompile Include="Source\WoodShed.cpp">
       <Filter>GameObjects</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="Source\EffectReticle.cpp">
       <Filter>VisualEffects\EffectObjects</Filter>
     </ClCompile>
     <ClCompile Include="Source\UIOverlay.cpp">
       <Filter>UI\UIObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CalamityTsunami.cpp">
+      <Filter>Calamities\CalamityObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EffectGridWarning.cpp">
+      <Filter>VisualEffects\EffectObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Tsunami.cpp">
+      <Filter>GameObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -450,12 +459,21 @@
     </ClInclude>
     <ClInclude Include="Source\WoodShed.h">
       <Filter>GameObjects</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="Source\EffectReticle.h">
       <Filter>VisualEffects\EffectObjects</Filter>
     </ClInclude>
     <ClInclude Include="Source\UIOverlay.h">
       <Filter>UI\UIObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CalamityTsunami.h">
+      <Filter>Calamities\CalamityObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EffectGridWarning.h">
+      <Filter>VisualEffects\EffectObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Tsunami.h">
+      <Filter>GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

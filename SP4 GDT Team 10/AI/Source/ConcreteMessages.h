@@ -3,6 +3,7 @@
 
 #include "Message.h"
 #include "GameObject.h"
+#include <vector>
 
 class UIGameButton;
 
@@ -55,10 +56,25 @@ struct MessageCameraShake : public Message
 	float duration;
 };
 
+struct MessageWarnLane : public Message
+{
+	MessageWarnLane() {}
+	virtual ~MessageWarnLane() {}
+	std::vector<unsigned> lanes;
+};
+
 struct MessageCalamityEarthquake : public Message
 {
 
 };
+
+struct MessageCalamityTsunami : public Message
+{
+	MessageCalamityTsunami() {}
+	virtual ~MessageCalamityTsunami() {}
+	std::vector<unsigned> lanes;
+};
+
 
 struct MessageDisplayDailyRequirement : public Message
 {

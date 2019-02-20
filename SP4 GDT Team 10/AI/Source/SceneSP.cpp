@@ -23,9 +23,11 @@
 #include "EffectTrail.h"
 #include "EffectHand.h"
 #include "EffectReticle.h"
+#include "EffectGridWarning.h"
 
 #include "CalamityManager.h"
 #include "CalamityEarthquake.h"
+#include "CalamityTsunami.h"
 
 #include "SMManager.h"
 #include "MouseController.h"
@@ -42,6 +44,7 @@
 #include "Altar.h"
 #include "Mountain.h"
 #include "Logs.h"
+#include "Tsunami.h"
 
 #include "AnimationJump.h"
 #include "AnimationWalk.h"
@@ -744,6 +747,35 @@ bool SceneSP::Handle(Message* message)
 		delete message;
 		return true;
 	}
+	MessageWarnLane* messageWarnLane = dynamic_cast<MessageWarnLane*>(message);
+	if (messageWarnLane)
+	{
+		for (auto laneNum : messageWarnLane->lanes)
+		{
+
+			EffectGridWarning* warningEffect = new EffectGridWarning(
+				GetGridPos(GridPt(SD->GetNoGrid() * 0.5f, laneNum)) + Vector3(0,0.002 + laneNum*0.01f)
+				, Vector3(SD->GetGridSize() * SD->GetNoGrid(), SD->GetGridSize(), 1)
+			);
+			EffectManager::GetInstance()->AddEffect(warningEffect);
+		}
+		delete message;
+		return true;
+	}
+	MessageCalamityTsunami* messageCalamityTsunami = dynamic_cast<MessageCalamityTsunami*>(message);
+	if (messageCalamityTsunami)
+	{
+		for (auto laneNum : messageCalamityTsunami->lanes)
+		{
+			GameObject* tsun = FetchGO(GameObject::GO_TSUNAMI);
+			Tsunami* tsunami = static_cast<Tsunami*>(tsun);
+			tsunami->tsunami_direction = Tsunami::DIRECTION_LEFT;
+			tsunami->moveSpeed = Math::RandFloatMinMax(3, 3.25f);
+			tsunami->pos = GetGridPos(GridPt(SD->GetNoGrid() + 8, laneNum));
+		}
+		delete message;
+		return true;
+	}
 	MessageDisplayDailyRequirement* messageDisplayReq = dynamic_cast<MessageDisplayDailyRequirement*>(message);
 	if (messageDisplayReq)
 	{
@@ -824,6 +856,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			case GameObject::GO_LOGS:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
 				break;
+			case GameObject::GO_TSUNAMI:
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
+				break;
 			}
 
 			go->goTarget = NULL;
@@ -869,6 +904,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			break;
 		case GameObject::GO_LOGS:
 			go = new Logs(type);
+			break;
+		case GameObject::GO_TSUNAMI:
+			go = new Tsunami(type);
 			break;
 		default:
 			go = new GameObject(type);
@@ -2634,6 +2672,9 @@ void SceneSP::Update(double dt)
 		CM->AddToCalamityQueue(new CalamityEarthquake());
 		SD->SetReligionValue(((int)SD->GetReligionValue() % (int)SD->GetMaxReligionValue()) + 25);
 	}
+	else if (KC->IsKeyPressed('O')) {
+		CM->AddToCalamityQueue(new CalamityTsunami());
+	}
 	if (KC->IsKeyPressed('U')) {
 		tempCamera = camera;
 		ChangeState(G_RESEARCHTREE);
@@ -3315,6 +3356,19 @@ void SceneSP::Update(double dt)
 			SD->SetReligionValue(Math::Min(100.f, (float)(static_cast<Altar*>(go)->iFoodOffered)));
 		}
 		break;
+		case GameObject::GO_TSUNAMI:
+		{
+			Tsunami* goTsunami = static_cast<Tsunami*>(go);
+			if (goTsunami->tsunami_direction == Tsunami::DIRECTION_LEFT)
+			{
+				goTsunami->pos += Vector3(-SD->GetGridSize() * goTsunami->moveSpeed, 0, 0) * dt * m_speed;
+				if (goTsunami->pos.x < GetGridPos(GridPt(-10, 0)).x)
+				{
+					goTsunami->active = false;
+				}
+			}
+		}
+		break;
 		default:
 			break;
 		}
@@ -3606,6 +3660,25 @@ void SceneSP::RenderGO(GameObject *go)
 			RenderMesh(meshList[GEO_TREE], bGodlights, 1.f);
 			break;
 		}
+		modelStack.PopMatrix();
+	}
+	break;
+	case GameObject::GO_TSUNAMI:
+	{
+		float alpha;
+		Tsunami* tsunami = dynamic_cast<Tsunami*>(go);
+		if (tsunami->tsunami_direction == Tsunami::DIRECTION_LEFT)
+		{
+			Vector3 start = GetGridPos(GridPt(SceneData::GetInstance()->GetNoGrid() + 8, 0));
+			Vector3 end = GetGridPos(GridPt(-10, 0));
+			alpha = (1 - (-(end.x - go->pos.x) / (start.x * 2))) * 3.14f;
+		}
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y + 4.f * sinf(alpha) - 2.f, go->pos.z);
+		if (go->animation != NULL)
+			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_CUBE], bGodlights, 1.f);
 		modelStack.PopMatrix();
 	}
 	break;

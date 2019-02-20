@@ -37,6 +37,8 @@ struct GameObject : public ObjectBase
 		GO_TREE,
 		GO_MOUNTAIN,
 
+		GO_TSUNAMI,
+
 		GO_TOTAL, //must be last
 	};
 

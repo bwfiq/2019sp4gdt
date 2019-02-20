@@ -17,6 +17,24 @@ void EffectManager::Update(float dt)
 	{
 		Effect->Update(dt);
 	}
+	std::vector<EffectBase*>::iterator it, end;
+	it = effect_list.begin();
+	end = effect_list.end();
+	while (it != end)
+	{
+		if ((*it)->bIsDone)
+		{
+			// Delete if done
+			delete *it;
+			it = effect_list.erase(it);
+			end = effect_list.end();
+		}
+		else
+		{
+			// Move on otherwise
+			++it;
+		}
+	}
 }
 
 void EffectManager::Render(SceneBase * scene)
@@ -115,6 +133,7 @@ void EffectManager::Render(SceneBase * scene)
 		}
 		scene->modelStack.PopMatrix();
 	}
+	glUniform1f(scene->m_parameters[SceneBase::U_ALPHA], 1.f);
 }
 
 bool EffectManager::AddEffect(EffectBase* effect)
@@ -139,7 +158,6 @@ EffectManager::~EffectManager()
 void EffectManager::rendermesh(SceneBase* scene,EffectBase* effect)
 {
 	Mtx44 MVP, modelView, modelView_inverse_transpose;
-
 	if (scene->m_renderPass == SceneBase::RENDER_PASS_PRE)
 	{
 		Mtx44 lightDepthMVP = scene->m_lightDepthProj *
@@ -204,7 +222,7 @@ void EffectManager::rendermesh(SceneBase* scene,EffectBase* effect)
 			glUniform1i(scene->m_parameters[SceneBase::U_COLOR_TEXTURE_ENABLED + i], 0);
 
 	}
-	glUniform1f(scene->m_parameters[SceneBase::U_ALPHA], 1.f);
+	glUniform1f(scene->m_parameters[SceneBase::U_ALPHA], effect->fAlpha);
 	effect->mesh->Render();
 	/*if (effect->mesh->textureID > 0)
 	{
