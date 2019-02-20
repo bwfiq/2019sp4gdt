@@ -206,6 +206,7 @@
     <ClCompile Include="Source\UIGameText.cpp" />
     <ClCompile Include="Source\UIManager.cpp" />
     <ClCompile Include="Source\UIMessagePopup.cpp" />
+    <ClCompile Include="Source\UIOverlay.cpp" />
     <ClCompile Include="Source\UIReligionBar.cpp" />
     <ClCompile Include="Source\UIMenuButton.cpp" />
     <ClCompile Include="Source\UIResearchButton.cpp" />
@@ -274,6 +275,7 @@
     <ClInclude Include="Source\UIGameText.h" />
     <ClInclude Include="Source\UIManager.h" />
     <ClInclude Include="Source\UIMessagePopup.h" />
+    <ClInclude Include="Source\UIOverlay.h" />
     <ClInclude Include="Source\UIReligionBar.h" />
     <ClInclude Include="Source\UIMenuButton.h" />
     <ClInclude Include="Source\UIResearchButton.h" />

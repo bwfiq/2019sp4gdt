@@ -236,6 +236,9 @@
     <ClCompile Include="Source\EffectReticle.cpp">
       <Filter>VisualEffects\EffectObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Source\UIOverlay.cpp">
+      <Filter>UI\UIObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -438,6 +441,9 @@
     </ClInclude>
     <ClInclude Include="Source\EffectReticle.h">
       <Filter>VisualEffects\EffectObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UIOverlay.h">
+      <Filter>UI\UIObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

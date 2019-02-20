@@ -10,13 +10,14 @@
 #include "ProjectileManager.h"
 
 #include "UIManager.h"
-#include "UIReligionBar.h"
-#include "UIMenuButton.h"
-#include "UIResearchButton.h"
 #include "UIAltarPopup.h"
 #include "UICoreInfo.h"
 #include "UIGameButton.h"
 #include "UIGameText.h"
+#include "UIMenuButton.h"
+#include "UIOverlay.h"
+#include "UIReligionBar.h"
+#include "UIResearchButton.h"
 
 #include "EffectManager.h"
 #include "EffectTrail.h"
@@ -367,9 +368,12 @@ bool SceneSP::isTheCoastClear(GameObject* go, GridPt next, Grid::DIRECTION dir)
 
 void SceneSP::ChangeState(GAME_STATE newstate)
 {
+	if (game_state == G_INPLAY)
+		tempCamera = camera; // save gamecam pos
 	for (auto UI : m_coreUi)
 		UI->bIsDone = true;
 	m_coreUi.clear();
+	UIBase*	newUI;
 	Application::GetInstance().SetMouseVisiblity(true);
 	switch (newstate)
 	{
@@ -379,68 +383,80 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 	case G_MAINMENU:
 	{
 		camera.Init(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));	// splashscreen
-		UIBase* newUI = new UIMenuButton("Start", 0.5f, 0.7f);
+		newUI = new UIMenuButton("Start", 0.7f, 0.7f);
 		UIManager::GetInstance()->AddUI("startButton", newUI);
 		m_coreUi.push_back(newUI);
 	}
-		break;
+	break;
 	case G_INPLAY:
 	{
-		camera.Init(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));	// game
+		//camera.Init(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));	// game
+		camera = tempCamera;
 		Application::GetInstance().SetMouseVisiblity(false);
-		//UIManager::GetInstance()->GetUI("startButton")->bIsDone = true;
-			//UIManager::GetInstance()->GetUI("startButton")->bIsDone = true;
-		case G_RESEARCHTREE: // will not init camera for overlays but will add ui for all ingame states
+	case G_RESEARCHTREE: // will not init camera for overlays but will add ui for all ingame states
+	{
+		newUI = new UIReligionBar();
+		UIManager::GetInstance()->AddUI("uiReligionBar", newUI);
+		m_coreUi.push_back(newUI);
+
+		newUI = new UICoreInfo(UICoreInfo::INFO_FOOD, Vector3(0.1f, 0.9));
+		UIManager::GetInstance()->AddUI("ui_Info_Food", newUI);
+		m_coreUi.push_back(newUI);
+
+		newUI = new UICoreInfo(UICoreInfo::INFO_POPULATION, Vector3(0.3f, 0.9));
+		UIManager::GetInstance()->AddUI("ui_Info_Population", newUI);
+		m_coreUi.push_back(newUI);
+
+		newUI = new UICoreInfo(UICoreInfo::INFO_STONE, Vector3(0.7f, 0.9));
+		UIManager::GetInstance()->AddUI("ui_Info_Stone", newUI);
+		m_coreUi.push_back(newUI);
+
+		newUI = new UICoreInfo(UICoreInfo::INFO_WOOD, Vector3(0.9f, 0.9));
+		UIManager::GetInstance()->AddUI("ui_Info_Wood", newUI);
+		m_coreUi.push_back(newUI);
+
+		newUI = new UICoreInfo(UICoreInfo::INFO_DAY, Vector3(0.5f, 0.95f));
+		UIManager::GetInstance()->AddUI("ui_Info_Day", newUI);
+		m_coreUi.push_back(newUI);
+
+		newUI = new UICoreInfo(UICoreInfo::INFO_TIME, Vector3(0.5f, 0.85f));
+		UIManager::GetInstance()->AddUI("ui_Info_Time", newUI);
+		m_coreUi.push_back(newUI);
+
+		newUI = new UIGameButton(UIGameButton::BUTTON_DAILYREQUIREMENT);
+		UIManager::GetInstance()->AddUI("ui_Button_DailyRequirement", newUI);
+		m_coreUi.push_back(newUI);
+
+		newUI = new UIGameText(UIGameText::TEXT_DAILYREQUIREMENT);
+		newUI->bActive = false;
+		UIManager::GetInstance()->AddUI("ui_Text_DailyRequirement", newUI);
+		m_coreUi.push_back(newUI);
+
+		if (newstate != G_INPLAY)
 		{
-			UIBase* newUI = new UIReligionBar();
-			UIManager::GetInstance()->AddUI("uiReligionBar", newUI);
+			newUI = new UIOverlay("", 0.5f, 0.45f);
+			UIManager::GetInstance()->AddUI("overlay", newUI);
 			m_coreUi.push_back(newUI);
 
-			newUI = new UICoreInfo(UICoreInfo::INFO_FOOD, Vector3(0.1f, 0.9));
-			UIManager::GetInstance()->AddUI("ui_Info_Food", newUI);
+			newUI = new UIMenuButton("back", 0.1f, 0.8f);
+			UIManager::GetInstance()->AddUI("backButton", newUI);
+			//newUI->pos.Set(newUI->pos.x, newUI->pos.y, 5);
 			m_coreUi.push_back(newUI);
 
-			newUI = new UICoreInfo(UICoreInfo::INFO_POPULATION, Vector3(0.3f, 0.9));
-			UIManager::GetInstance()->AddUI("ui_Info_Population", newUI);
+			newUI = new UIResearchButton("", 0.25f, 0.65f);
+			UIManager::GetInstance()->AddUI("WoodResearch", newUI);
 			m_coreUi.push_back(newUI);
-
-			newUI = new UICoreInfo(UICoreInfo::INFO_STONE, Vector3(0.7f, 0.9));
-			UIManager::GetInstance()->AddUI("ui_Info_Stone", newUI);
+			if (bWoodResearch)
+				UIManager::GetInstance()->GetUI("WoodResearch")->uiComponents_list[UIResearchButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("blackquad");
+			newUI = new UIResearchButton("", 0.25f, 0.45f);
+			UIManager::GetInstance()->AddUI("StoneResearch", newUI);
 			m_coreUi.push_back(newUI);
-
-			newUI = new UICoreInfo(UICoreInfo::INFO_WOOD, Vector3(0.9f, 0.9));
-			UIManager::GetInstance()->AddUI("ui_Info_Wood", newUI);
+			newUI = new UIResearchButton("", 0.25f, 0.25f);
+			UIManager::GetInstance()->AddUI("FullStoneResearch", newUI);
 			m_coreUi.push_back(newUI);
-
-			newUI = new UICoreInfo(UICoreInfo::INFO_DAY, Vector3(0.5f, 0.95f));
-			UIManager::GetInstance()->AddUI("ui_Info_Day", newUI);
-			m_coreUi.push_back(newUI);
-
-			newUI = new UICoreInfo(UICoreInfo::INFO_TIME, Vector3(0.5f, 0.85f));
-			UIManager::GetInstance()->AddUI("ui_Info_Time", newUI);
-			m_coreUi.push_back(newUI);
-
-			newUI = new UIGameButton(UIGameButton::BUTTON_DAILYREQUIREMENT);
-			UIManager::GetInstance()->AddUI("ui_Button_DailyRequirement", newUI);
-			m_coreUi.push_back(newUI);
-
-			newUI = new UIGameText(UIGameText::TEXT_DAILYREQUIREMENT);
-			newUI->bActive = false;
-			UIManager::GetInstance()->AddUI("ui_Text_DailyRequirement", newUI);
-			m_coreUi.push_back(newUI);
-
-			if (newstate == G_RESEARCHTREE)
-			{
-				newUI = new UIMenuButton("back", 0.1f, 0.9f);
-				UIManager::GetInstance()->AddUI("backButton", newUI);
-				newUI->pos.Set(newUI->pos.x, newUI->pos.y, 5);
-				m_coreUi.push_back(newUI);
-				newUI = new UIResearchButton("", 0.2f, 0.8f);
-				UIManager::GetInstance()->AddUI("WoodResearch", newUI);
-				m_coreUi.push_back(newUI);
-			}
 
 		}
+	}
 	}
 	break;
 
@@ -485,6 +501,7 @@ void SceneSP::Init()
 	Math::InitRNG();
 
 	selected = NULL;
+	tempCamera.Init(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));
 
 	//Objects from maya, bottom of object to be translated down
 	goVillager = FetchGO(GameObject::GO_VILLAGER);
@@ -561,12 +578,16 @@ void SceneSP::Init()
 	SD->SetPopulationLimit(10);
 	SD->SetWood(0);
 	SD->SetWoodLimit(100);
+	SD->SetResearchPoints(100);
 	SD->SetCurrMonth(1);
 	SD->SetCurrDay(1);
 
 	bDay = true; // day
 	fTimeOfDay = 8.f;
 	bGoalAchieved = false;
+
+	//research
+	bWoodResearch = false;
 
 	//go->vel.Set(1, 0, 0);
 	MousePicker::GetInstance()->Init();
@@ -619,9 +640,9 @@ bool SceneSP::Handle(Message* message)
 				}
 			}
 			std::pair<int, int> randPoint = GetPoint(iRandIndex);
-			messageWRU->go->target = GetGridPos(GridPt(randPoint.first,randPoint.second));
+			messageWRU->go->target = GetGridPos(GridPt(randPoint.first, randPoint.second));
 		}
-			break;
+		break;
 		default:
 			break;
 		}
@@ -1633,7 +1654,7 @@ void SceneSP::AStarMultiGrid(GameObject * go, GridPt target)
 	for (int loop = 0; loop < SD->GetNoGrid() * SD->GetNoGrid() && !priority_Queue.empty(); ++loop)
 	{
 		//std::cout << "One Round of Loop" << std::endl;
- 		curr = priority_Queue.begin()->first;
+		curr = priority_Queue.begin()->first;
 		//m_queue.pop();
 
 
@@ -1641,7 +1662,7 @@ void SceneSP::AStarMultiGrid(GameObject * go, GridPt target)
 		{
 			if ((target.x - curr.x) * (target.x - curr.x) <= (go->iGridX - iHalfGridX + 1) * (go->iGridX - iHalfGridX + 1) && (target.z - curr.z) * (target.z - curr.z) <= (go->iGridZ - iHalfGridZ + 1) * (go->iGridZ - iHalfGridZ + 1))
 			{
-				if(target != curr)
+				if (target != curr)
 					m_previous[GetGridIndex(target)] = curr;
 				priority_Queue.begin()->first = target;
 				break;
@@ -2328,8 +2349,8 @@ void SceneSP::Update(double dt)
 	{
 		// made with opengl
 		if (fOpenGLInTimer < 1.f)
-		{ 
-			fOpenGLInTimer += dt; 
+		{
+			fOpenGLInTimer += dt;
 			if (MC->IsButtonPressed(MouseController::LMB))//if LMB pressed, skip to logo splash
 			{
 				fOpenGLInTimer = 1;
@@ -2339,8 +2360,8 @@ void SceneSP::Update(double dt)
 		else
 		{
 			fOpenGLInTimer = 1.f;
-			if (fOpenGLOutTimer > 0.f) { 
-				fOpenGLOutTimer -= dt * 0.75f; 
+			if (fOpenGLOutTimer > 0.f) {
+				fOpenGLOutTimer -= dt * 0.75f;
 				if (MC->IsButtonPressed(MouseController::LMB))//if LMB pressed, skip to logo splash
 				{
 					fOpenGLOutTimer = 0;
@@ -2350,8 +2371,8 @@ void SceneSP::Update(double dt)
 			{
 				fOpenGLOutTimer = 0.f;
 				// game icon
-				if (fSplashScreenInTimer < 1.f) { 
-					fSplashScreenInTimer += dt; 
+				if (fSplashScreenInTimer < 1.f) {
+					fSplashScreenInTimer += dt;
 					if (MC->IsButtonPressed(MouseController::LMB))//if LMB pressed, skip to main menu
 					{
 						fSplashScreenInTimer = 1;
@@ -2377,7 +2398,7 @@ void SceneSP::Update(double dt)
 		}
 		return;
 	}
-		break;
+	break;
 	case G_MAINMENU:
 	{
 		//static bool bLButtonState = false;
@@ -2388,27 +2409,36 @@ void SceneSP::Update(double dt)
 		}
 		return;
 	}
-		break;
+	break;
 	case G_RESEARCHTREE:
 	{
-		// button pressin
 		if (KC->IsKeyPressed('U')) {
 			ChangeState(G_INPLAY);
 			camera = tempCamera;
 		}
-		UIBase* backButton = UIM->GetUI("backButton");
-		if (backButton->IsMousePressed())
+		int currResearchPts = SD->GetResearchPoints();
+		// button pressin
+		if (UIM->GetUI("backButton")->IsMousePressed())
 		{
 			ChangeState(G_INPLAY);
+			camera = tempCamera;
 		}
+		// temporary research
+		if (UIM->GetUI("WoodResearch")->IsMousePressed() && currResearchPts >= 10 && !bWoodResearch)
+		{
+			SD->SetResearchPoints(currResearchPts - 10);
+			bWoodResearch = true;
+			UIManager::GetInstance()->GetUI("WoodResearch")->uiComponents_list[UIResearchButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("blackquad");
+		}
+
 		return;
 	}
-		break;
+	break;
 	default:
 	{
 
 	}
-		break;
+	break;
 	}
 
 	camera.Update(dt);
@@ -2417,10 +2447,10 @@ void SceneSP::Update(double dt)
 		CM->AddToCalamityQueue(new CalamityEarthquake());
 		SD->SetReligionValue(((int)SD->GetReligionValue() % (int)SD->GetMaxReligionValue()) + 25);
 	}
-		if (KC->IsKeyPressed('U')) {
-			tempCamera = camera;
-			ChangeState(G_RESEARCHTREE);
-		}
+	if (KC->IsKeyPressed('U')) {
+		tempCamera = camera;
+		ChangeState(G_RESEARCHTREE);
+	}
 	if (Application::IsKeyPressed(VK_OEM_MINUS))
 	{
 		m_speed = Math::Max(0.f, m_speed - 0.1f);
@@ -2608,7 +2638,7 @@ void SceneSP::Update(double dt)
 						if (goBuilding->eCurrState == Building::BLUEPRINT)
 						{
 							//Should be trying to contruct now
-							if(!goBuilding->bBuilt)
+							if (!goBuilding->bBuilt)
 								goBuilding->eCurrState = Building::CONSTRUCTING;
 							else
 								goBuilding->eCurrState = Building::COMPLETED;
@@ -2712,7 +2742,7 @@ void SceneSP::Update(double dt)
 	if (bDay)
 	{
 		lights[0].position.x = (12.f - fTimeOfDay) * SHADOW_LENGTH;
-		lights[0].position.y = (-0.25f * pow(lights[0].position.x,2)) + 9;
+		lights[0].position.y = (-0.25f * pow(lights[0].position.x, 2)) + 9;
 	}
 	// month
 	if (SD->GetCurrDay() >= 31)
@@ -2754,7 +2784,7 @@ void SceneSP::Update(double dt)
 				selected->pos = GetGridPos(currentGrid);
 				selected->pos.y += selected->scale.y * 0.5f;
 			}
-			else if(goBuilding->eCurrState != Building::CONSTRUCTING)//The building is either completed / half broken
+			else if (goBuilding->eCurrState != Building::CONSTRUCTING)//The building is either completed / half broken
 			{
 				//Pop up some ui or something, maybe somewhere else
 			}
@@ -3099,7 +3129,7 @@ void SceneSP::Update(double dt)
 			}
 			SD->SetReligionValue(Math::Min(100.f, (float)(static_cast<Altar*>(go)->iFoodOffered)));
 		}
-			break;
+		break;
 		default:
 			break;
 		}
@@ -3220,7 +3250,7 @@ void SceneSP::RenderGO(GameObject *go)
 		case Building::CONSTRUCTING:
 			RenderMesh(meshList[GEO_BUILDING], bGodlights, 0.6f);
 			break;
-		case Building ::BROKEN:
+		case Building::BROKEN:
 			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
 		}
 		modelStack.PopMatrix();
@@ -3438,7 +3468,7 @@ void SceneSP::RenderPassMain()
 	modelStack.PopMatrix();
 
 	modelStack.PushMatrix();
-	modelStack.Translate(fSeaDeltaX, fSeaDeltaY +(-0.75f+0.49f), fSeaDeltaZ);
+	modelStack.Translate(fSeaDeltaX, fSeaDeltaY + (-0.75f + 0.49f), fSeaDeltaZ);
 	modelStack.Rotate(-90, 1, 0, 0);
 	modelStack.Scale(SEA_WIDTH, SEA_HEIGHT, SEA_HEIGHT);
 	RenderMesh(meshList[GEO_SEA], bGodlights, 0.75f);
@@ -3522,7 +3552,7 @@ void SceneSP::RenderPassMain()
 
 	// resources x=10
 	ss.str("");
-	ss << "Wood:" << SD->GetWood() << "/" << SD->GetWoodLimit();
+	ss << "Research:" << SD->GetResearchPoints();
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 6);
 
 	ss.str("");
@@ -3600,7 +3630,7 @@ void SceneSP::RenderPassMain()
 	ss << "Current Goal:";
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 0, 30);
 	ss.str("");
-	if (bGoalAchieved) 
+	if (bGoalAchieved)
 		ss << "ACHIEVED";
 	else
 		ss << "Fill the Religion Meter by offering food to the altar.";
@@ -3696,7 +3726,7 @@ void SceneSP::RenderMainMenu()
 	modelStack.LoadIdentity();
 
 	//RenderMesh(meshList[GEO_AXES], false);
-	
+
 	modelStack.PushMatrix();
 	modelStack.Translate(m_worldWidth * 0.5f, m_worldHeight * 0.5f, 0.f);
 	modelStack.Scale(m_worldWidth, ((m_worldWidth / 1024) * 720), m_worldHeight);
@@ -3744,19 +3774,19 @@ void SceneSP::RenderOverlayResearchTree()
 	modelStack.PushMatrix();
 	modelStack.Translate(m_worldWidth * 0.5f, m_worldHeight * 0.5f, 1.f);
 	modelStack.Scale(m_worldWidth*0.9f, m_worldHeight*0.9f, m_worldHeight);
-	RenderMesh(meshList[GEO_WHITEQUAD], false, 0.5f);
+	//RenderMesh(meshList[GEO_WHITEQUAD], false, 0.5f);
 	modelStack.PopMatrix();
 
 	modelStack.PushMatrix();
 	modelStack.Translate(m_worldWidth * 0.5f, m_worldHeight * 0.5f, 1.1f);
 	modelStack.Scale(10, 4, 1);
-	RenderMesh(meshList[GEO_BACKBUTTON], false, 1.f);
+	//RenderMesh(meshList[GEO_BACKBUTTON], false, 1.f);
 	modelStack.PopMatrix();
 
 	modelStack.PopMatrix();
 	viewStack.PopMatrix();
 	projectionStack.PopMatrix();
-	UIManager::GetInstance()->Render(this);
+	//UIManager::GetInstance()->Render(this);
 }
 
 void SceneSP::RenderWorld()
