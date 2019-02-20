@@ -41,7 +41,6 @@ public:
 	void RenderPassMain();
 	void RenderSplashScreen();
 	void RenderMainMenu();
-	void RenderOverlayResearchTree();
 	void RenderWorld();
 
 	void RenderGO(GameObject *go);
@@ -85,6 +84,7 @@ protected:
 	float fSplashScreenInTimer = 0.f;
 	float fSplashScreenOutTimer = 2.f;
 	float fGameStartTimer = 0.5f;
+	float fMainMenuDelta = 1000.f;
 
 	//Grid
 	bool bShowGrid;
