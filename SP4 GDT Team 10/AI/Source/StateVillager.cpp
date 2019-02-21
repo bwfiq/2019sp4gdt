@@ -244,11 +244,7 @@ void StatePath::Update(double dt, GameObject * m_go)
 						{
 						case GameObject::GO_BUILDING:
 							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
-							break;
-						case GameObject::GO_CHIEFHUT:
-							m_go->goTarget = NULL;
-							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
-							break;
+							return;
 						case GameObject::GO_GRANARY:
 							//m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
 							SD->SetFood(SD->GetFood() + static_cast<Villager*>(m_go)->iFoodStored);
@@ -257,7 +253,7 @@ void StatePath::Update(double dt, GameObject * m_go)
 
 							m_go->goTarget = NULL;
 							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
-							break;
+							return;
 						case GameObject::GO_WOODSHED:
 							//m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
 							SD->SetWood(Math::Min(SD->GetWoodLimit(), SD->GetWood() + static_cast<Villager*>(m_go)->iWoodStored));
@@ -266,24 +262,29 @@ void StatePath::Update(double dt, GameObject * m_go)
 
 							m_go->goTarget = NULL;
 							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
-							break;
+							return;
 						case GameObject::GO_HOUSE:
 							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
-							break;
+							return;
 						}
 					}
 					break;
 					case Building::CONSTRUCTING:
 					{
 						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Constructing");
+						return;
 					}
 					break;
 					case Building::BROKEN:
 					{
 						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Constructing");
+						return;
 					}
 					break;
 					}
+					m_go->goTarget = NULL;
+					m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+												
 					return;
 				}
 				Environment* goEnvironment = dynamic_cast<Environment*>(m_go->goTarget);
@@ -293,15 +294,14 @@ void StatePath::Update(double dt, GameObject * m_go)
 					{
 					case GameObject::GO_BUSH:
 						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Foraging");
-						break;
+						return;
 					case GameObject::GO_TREE:
 						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("ChopTree");
-						break;
+						return;
 					case GameObject::GO_MOUNTAIN:
 						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Mining");
-						break;
+						return;
 					}
-					return;
 				}
 				/* //For Enemies
 				case GameObject::GO_ENEMY:
@@ -552,6 +552,7 @@ void StatePickedUp::Update(double dt, GameObject* m_go)
 	//m_go->pos = SD->GetMousePos_World() + dir * (-MC->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) + 4) * 0.4f;
 	m_go->pos = SD->GetMousePos_World();
 	m_go->pos.y += 2.f;
+	//m_go->pos = SD->GetMousePos_World() + dir * (-MC->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) + 4) * 0.6f; //elton's one
 	//m_go->pos = SD->GetMousePos_World() + Vector3(0, (-MC->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) + 4) * 0.5f, 0);
 }
 

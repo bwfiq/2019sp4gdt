@@ -14,11 +14,17 @@ struct Tsunami : public GameObject
 
 	TSUNAMI_DIRECTION tsunami_direction;
 	virtual bool Handle(Message* msg);
-
+	virtual void Update(float dt);
 	virtual void TheFunction(GameObject* go);
 
 	Tsunami(GAMEOBJECT_TYPE typeValue = GO_NONE);
 	~Tsunami();
+
+	float fPower; //Strength of the wave
+
+	void Collided(GameObject* go);
+
+	std::vector<GameObject*> collidedObjects;
 };
 
 #endif

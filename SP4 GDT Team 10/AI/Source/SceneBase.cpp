@@ -5,7 +5,6 @@
 #include "MeshBuilder.h"
 #include "Application.h"
 #include "Utility.h"
-#include "LoadTGA.h"
 #include <sstream>
 #include "SceneData.h"
 
@@ -104,7 +103,7 @@ void SceneBase::Init()
 	glUseProgram(m_programID);
 
 	lights[0].type = Light::LIGHT_DIRECTIONAL;
-	lights[0].position.Set(0, 20, 0);
+	lights[0].position.Set(0, 20, 5.f);
 	lights[0].color.Set(1, 1, 1);
 	lights[0].power = 1.f;
 	lights[0].kC = 1.f;
@@ -264,7 +263,7 @@ void SceneBase::Init()
 	meshList[GEO_TSUNAMI]->material.kAmbient.Set(0, 0, 0.25f);
 
 	meshList[GEO_BUILDING] = MeshBuilder::GenerateOBJ("building", "Obj//house.obj");
-	meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//house.tga");
+	meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//strawhouse.tga");
 	meshList[GEO_GRANARY] = MeshBuilder::GenerateOBJ("granary", "Obj//granary.obj");
 	meshList[GEO_GRANARY]->textureArray[0] = LoadTGA("Image//granary.tga");
 	meshList[GEO_WOODSHED] = MeshBuilder::GenerateOBJ("woodshed", "Obj//woodshed.obj");

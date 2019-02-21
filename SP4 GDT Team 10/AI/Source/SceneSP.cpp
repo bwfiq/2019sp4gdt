@@ -116,6 +116,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 		camera = tempCamera;
 		Application::GetInstance().SetMouseVisiblity(false);
 		case G_RESEARCHTREE: // will not init camera for overlays but will add ui for all ingame states
+		case G_INGAMEOPTIONS:
 		{
 			newUI = new UIReligionBar();
 			UIManager::GetInstance()->AddUI("uiReligionBar", newUI);
@@ -154,7 +155,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 			UIManager::GetInstance()->AddUI("ui_Text_DailyRequirement", newUI);
 			m_coreUi.push_back(newUI);
 
-			if (newstate != G_INPLAY)
+			if (newstate == G_RESEARCHTREE)
 			{
 				newUI = new UIOverlay("", 0.5f, 0.45f);
 				UIManager::GetInstance()->AddUI("overlay", newUI);
@@ -185,6 +186,15 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 				m_coreUi.push_back(newUI);
 				if (bFullStoneResearch)
 					UIManager::GetInstance()->GetUI("FullStoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+			}
+			else if (newstate == G_INGAMEOPTIONS)
+			{
+				newUI = new UIOverlay("", 0.5f, 0.45f);
+				UIManager::GetInstance()->AddUI("overlay", newUI);
+				m_coreUi.push_back(newUI);
+				newUI = new UIMenuButton("back", 0.5f, 0.5f);
+				UIManager::GetInstance()->AddUI("backbutton", newUI);
+				m_coreUi.push_back(newUI);
 			}
 		}
 	}
@@ -512,6 +522,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 
 void SceneSP::Init()
 {
+	fYPos = 0.02f;
 	SceneData::GetInstance()->SetNoGrid(15);
 	SceneData::GetInstance()->SetGridSize(1.f);
 	SceneData::GetInstance()->SetGridOffset(0.5f);
@@ -787,9 +798,67 @@ bool SceneSP::Handle(Message* message)
 		{
 			GameObject* tsun = FetchGO(GameObject::GO_TSUNAMI);
 			Tsunami* tsunami = static_cast<Tsunami*>(tsun);
+			tsunami->fPower = 100.f;
+			tsunami->collidedObjects.clear(); 
 			tsunami->tsunami_direction = Tsunami::DIRECTION_LEFT;
 			tsunami->moveSpeed = Math::RandFloatMinMax(3, 3.25f);
 			tsunami->pos = GetGridPos(GridPt(SD->GetNoGrid() + 8, laneNum));
+		}
+		delete message;
+		return true;
+	}
+	MessageCalamityEarthquake* messageCalamityEarthquake = dynamic_cast<MessageCalamityEarthquake*>(message);
+	if (messageCalamityEarthquake)
+	{
+		if (messageCalamityEarthquake->type == MessageCalamityEarthquake::INTENSE)
+		{
+			//Chance to destroy buildings
+			for (auto go : m_goList)
+			{
+				if (!go->active)
+					continue;
+				Building* goBuilding = dynamic_cast<Building*>(go);
+				if (goBuilding)
+				{
+					if (Math::RandFloatMinMax(0.f, 100.f) < messageCalamityEarthquake->fPower)
+					{
+						switch (goBuilding->eCurrState)
+						{
+						case Building::COMPLETED:
+							goBuilding->eCurrState = Building::BROKEN;
+							break;
+						case Building::BROKEN:
+							goBuilding->active = false;
+							break;
+						default:
+							break;
+						}
+					}
+				}
+				Villager* goVil = dynamic_cast<Villager*>(go);
+				if (goVil)
+				{
+					//make villagers panic
+					goVil->eCurrState = Villager::PANIC;
+					//something something
+				}
+			}
+		}
+		else if (messageCalamityEarthquake->type == MessageCalamityEarthquake::STOPPING)
+		{
+			for (auto go : m_goList)
+			{
+				if (!go->active)
+					continue;
+				Villager* goVil = dynamic_cast<Villager*>(go);
+				if (goVil)
+				{
+					//make villagers calm down
+					goVil->eCurrState = Villager::TIRED;
+					//something something
+
+				}
+			}
 		}
 		delete message;
 		return true;
@@ -2453,7 +2522,7 @@ void SceneSP::ChangeTimeOfDay()
 	{
 		//light
 		lights[0].type = Light::LIGHT_DIRECTIONAL;
-		lights[0].position.Set((12.f - fTimeOfDay), (-0.25f * pow((12.f - fTimeOfDay), 2)) + 9, 0);
+		lights[0].position.Set((12.f - fTimeOfDay), /*(-0.25f * pow((12.f - fTimeOfDay), 2)) + */9, 5.f);
 		lights[0].color.Set(1, 1, 1);
 		lights[0].power = 1.f;
 		lights[0].kC = 1.f;
@@ -2698,19 +2767,32 @@ void SceneSP::Update(double dt)
 			SD->SetResearchPoints(SD->GetResearchPoints() - 10);
 			bWoodResearch = true;
 			UIManager::GetInstance()->GetUI("WoodResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//house.tga");
 		}
 		else if (bWoodResearch && UIM->GetUI("StoneResearch")->IsMousePressed() && SD->GetResearchPoints() >= 20 && !bStoneResearch)
 		{
 			SD->SetResearchPoints(SD->GetResearchPoints() - 20);
 			bStoneResearch = true;
 			UIManager::GetInstance()->GetUI("StoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//stonehouse.tga");
 		}
 		else if (bStoneResearch && UIM->GetUI("FullStoneResearch")->IsMousePressed() && SD->GetResearchPoints() >= 30 && !bFullStoneResearch)
 		{
 			SD->SetResearchPoints(SD->GetResearchPoints() - 30);
 			bFullStoneResearch = true;
 			UIManager::GetInstance()->GetUI("FullStoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//fullstonehouse.tga");
 		}
+		return;
+	}
+	break;
+	case G_INGAMEOPTIONS:
+	{
+		if (KC->IsKeyPressed('U'))
+			ChangeState(G_INPLAY);
+		// button pressin
+		if (UIM->GetUI("backbutton")->IsMousePressed())
+			ChangeState(G_INPLAY);
 		return;
 	}
 	break;
@@ -2743,6 +2825,10 @@ void SceneSP::Update(double dt)
 		tempCamera = camera;
 		ChangeState(G_RESEARCHTREE);
 	}
+	if (KC->IsKeyPressed('Y')) {
+		tempCamera = camera;
+		ChangeState(G_INGAMEOPTIONS);
+	}
 	if (Application::IsKeyPressed(VK_OEM_MINUS))
 	{
 		m_speed = Math::Max(0.f, m_speed - 0.1f);
@@ -2754,9 +2840,11 @@ void SceneSP::Update(double dt)
 
 	float LSPEED = 10.0f;
 	if (Application::IsKeyPressed('I'))
-		lights[0].position.z -= (float)(LSPEED * dt);
+		fYPos += 0.01f;
+		//lights[0].position.z -= (float)(LSPEED * dt);
 	if (Application::IsKeyPressed('K'))
-		lights[0].position.z += (float)(LSPEED * dt);
+		fYPos -= 0.01f;
+		//lights[0].position.z += (float)(LSPEED * dt);
 	if (Application::IsKeyPressed('J'))
 		lights[0].position.x -= (float)(LSPEED * dt);
 	if (Application::IsKeyPressed('L'))
@@ -2765,6 +2853,7 @@ void SceneSP::Update(double dt)
 		lights[0].position.y -= (float)(LSPEED * dt);
 	if (Application::IsKeyPressed('M'))
 		lights[0].position.y += (float)(LSPEED * dt);
+
 
 	if (Application::IsKeyPressed('Z'))
 		lights[0].type = Light::LIGHT_POINT;
@@ -2794,10 +2883,10 @@ void SceneSP::Update(double dt)
 	{
 		if (selected == NULL)
 		{
-			selected = FetchGO(GameObject::GO_BUILDING);
+			selected = FetchGO(GameObject::GO_HOUSE);
 			GridPt currentGrid = GetPoint(mousePos);
 			selected->pos = GetGridPos(currentGrid);
-			selected->pos.y += selected->scale.y * 0.5f;
+			selected->pos.y = selected->scale.y * 0.5f;
 			static_cast<Building*>(selected)->eCurrState = Building::BLUEPRINT;
 
 			bShowGrid = true;
@@ -2896,21 +2985,19 @@ void SceneSP::Update(double dt)
 			{
 				if (selected != NULL)
 				{
-					switch (selected->type)
-					{
-					case GameObject::GO_VILLAGER:
+					//If it is a villager
+					Villager* goVil = dynamic_cast<Villager*>(selected);
+					if (goVil)
 					{
 						selected->goTarget = NULL;
 
 						selected->target = GetGridPos(selectedPt);
 						selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
 					}
-					break;
-
-					//Test with just GO_BUILDING first
-					case GameObject::GO_BUILDING:
+					//If it is a building
+					Building* goBuilding = dynamic_cast<Building*>(selected);
+					if (goBuilding)
 					{
-						Building* goBuilding = static_cast<Building*>(selected);
 						if (goBuilding->eCurrState == Building::BLUEPRINT)
 						{
 							//Should be trying to contruct now
@@ -2920,19 +3007,6 @@ void SceneSP::Update(double dt)
 								goBuilding->eCurrState = Building::COMPLETED;
 							bShowGrid = false;
 						}
-					}
-					break;
-					case GameObject::GO_CHIEFHUT:
-					{
-						//Chief Hut should be built in init
-						Building* goBuilding = static_cast<Building*>(selected);
-						if (goBuilding->eCurrState == Building::BLUEPRINT)
-						{
-							goBuilding->eCurrState = Building::COMPLETED;
-							bShowGrid = false;
-						}
-					}
-					break;
 					}
 					selected = NULL;
 					goVillager->goTarget = NULL;
@@ -3022,7 +3096,7 @@ void SceneSP::Update(double dt)
 	if (bDay)
 	{
 		lights[0].position.x = (12.f - fTimeOfDay) * SHADOW_LENGTH;
-		lights[0].position.y = (-0.25f * pow(lights[0].position.x, 2)) + 9;
+		lights[0].position.y = (-0.0025f * pow(lights[0].position.x, 2)) + 9;
 	}
 	// month
 	if (SD->GetCurrDay() >= 31)
@@ -3437,6 +3511,16 @@ void SceneSP::Update(double dt)
 					goTsunami->active = false;
 				}
 			}
+			//Check collision
+			for (auto go2 : m_goList)
+			{
+				if (!go2->active || go2 == go)
+					continue;
+				if ((go2->pos - goTsunami->pos).LengthSquared() <= goTsunami->scale.x * goTsunami->scale.x)
+				{
+					goTsunami->Collided(go2);
+				}
+			}
 		}
 		break;
 		default:
@@ -3560,10 +3644,10 @@ void SceneSP::RenderGO(GameObject *go)
 			RenderMesh(meshList[GEO_BUILDING], bGodlights, 1.f);
 			break;
 		case Building::BLUEPRINT:
-			RenderMesh(meshList[GEO_BUILDING], bGodlights, 0.2f);
+			RenderMesh(meshList[GEO_BUILDING], false, 0.2f);
 			break;
 		case Building::CONSTRUCTING:
-			RenderMesh(meshList[GEO_BUILDING], bGodlights, 0.6f);
+			RenderMesh(meshList[GEO_BUILDING], false, 0.6f);
 			break;
 		case Building::BROKEN:
 			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
@@ -3586,10 +3670,10 @@ void SceneSP::RenderGO(GameObject *go)
 			RenderMesh(meshList[GEO_BUILDING], bGodlights, 1.f);
 			break;
 		case Building::BLUEPRINT:
-			RenderMesh(meshList[GEO_BUILDING], bGodlights, 0.2f);
+			RenderMesh(meshList[GEO_BUILDING], false, 0.2f);
 			break;
 		case Building::CONSTRUCTING:
-			RenderMesh(meshList[GEO_BUILDING], bGodlights, 0.6f);
+			RenderMesh(meshList[GEO_BUILDING], false, 0.6f);
 			break;
 		case Building::BROKEN:
 			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
@@ -3612,10 +3696,10 @@ void SceneSP::RenderGO(GameObject *go)
 			RenderMesh(meshList[GEO_GRANARY], bGodlights, 1.f);
 			break;
 		case Building::BLUEPRINT:
-			RenderMesh(meshList[GEO_GRANARY], bGodlights, 0.2f);
+			RenderMesh(meshList[GEO_GRANARY], false, 0.2f);
 			break;
 		case Building::CONSTRUCTING:
-			RenderMesh(meshList[GEO_GRANARY], bGodlights, 0.6f);
+			RenderMesh(meshList[GEO_GRANARY], false, 0.6f);
 			break;
 		case Building::BROKEN:
 			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
@@ -3638,10 +3722,10 @@ void SceneSP::RenderGO(GameObject *go)
 			RenderMesh(meshList[GEO_WOODSHED], bGodlights, 1.f);
 			break;
 		case Building::BLUEPRINT:
-			RenderMesh(meshList[GEO_WOODSHED], bGodlights, 0.2f);
+			RenderMesh(meshList[GEO_WOODSHED], false, 0.2f);
 			break;
 		case Building::CONSTRUCTING:
-			RenderMesh(meshList[GEO_WOODSHED], bGodlights, 0.6f);
+			RenderMesh(meshList[GEO_WOODSHED], false, 0.6f);
 			break;
 		case Building::BROKEN:
 			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
@@ -3656,7 +3740,21 @@ void SceneSP::RenderGO(GameObject *go)
 		if (go->animation != NULL)
 			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BUILDING], bGodlights, 1.f);
+		//Current state of the building
+		switch (static_cast<Building*>(go)->eCurrState)
+		{
+		case Building::COMPLETED:
+			RenderMesh(meshList[GEO_BUILDING], bGodlights, 1.f);
+			break;
+		case Building::BLUEPRINT:
+			RenderMesh(meshList[GEO_BUILDING], false, 0.2f);
+			break;
+		case Building::CONSTRUCTING:
+			std::cout << "Chief Hut being contructed??" << std::endl;
+			break;
+		case Building::BROKEN:
+			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
+		}
 		modelStack.PopMatrix();
 	}
 	break;
@@ -3667,7 +3765,21 @@ void SceneSP::RenderGO(GameObject *go)
 		if (go->animation != NULL)
 			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_ALTAR], bGodlights, 1.f);
+		//Current state of the building
+		switch (static_cast<Building*>(go)->eCurrState)
+		{
+		case Building::COMPLETED:
+			RenderMesh(meshList[GEO_ALTAR], bGodlights, 1.f);
+			break;
+		case Building::BLUEPRINT:
+			RenderMesh(meshList[GEO_ALTAR], false, 0.2f);
+			break;
+		case Building::CONSTRUCTING:
+			std::cout << "Altar being contructed??" << std::endl;
+			break;
+		case Building::BROKEN:
+			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
+		}
 		modelStack.PopMatrix();
 	}
 	break;
@@ -3689,7 +3801,21 @@ void SceneSP::RenderGO(GameObject *go)
 		if (go->animation != NULL)
 			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_LOGS], bGodlights, 1.f);
+		//Current state of the building
+		switch (static_cast<Building*>(go)->eCurrState)
+		{
+		case Building::COMPLETED:
+			RenderMesh(meshList[GEO_LOGS], bGodlights, 1.f);
+			break;
+		case Building::BLUEPRINT:
+			RenderMesh(meshList[GEO_LOGS], false, 0.2f);
+			break;
+		case Building::CONSTRUCTING:
+			RenderMesh(meshList[GEO_LOGS], false, 0.6f);
+			break;
+		case Building::BROKEN:
+			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
+		}
 		modelStack.PopMatrix();
 	}
 	break;
@@ -3846,7 +3972,7 @@ void SceneSP::RenderPassMain()
 
 	modelStack.PushMatrix();
 	//modelStack.Translate(0, 0.5f + cosf(asd) * 0.15f, 0);
-	modelStack.Translate(0, -0.75f, 0);
+	modelStack.Translate(0, fYPos - 0.65f, 0);
 	//modelStack.Translate(0, 0, 0);
 	//modelStack.Translate(0, -0.5f, 0);
 	//modelStack.Rotate(-90, 1, 0, 0);
@@ -3856,7 +3982,7 @@ void SceneSP::RenderPassMain()
 	modelStack.PopMatrix();
 
 	modelStack.PushMatrix();
-	modelStack.Translate(fSeaDeltaX, fSeaDeltaY + (-0.75f + 0.49f), fSeaDeltaZ);
+	modelStack.Translate(fSeaDeltaX, fSeaDeltaY + (fYPos - 0.65f + 0.49f), fSeaDeltaZ);
 	modelStack.Rotate(-90, 1, 0, 0);
 	modelStack.Scale(SEA_WIDTH, SEA_HEIGHT, SEA_HEIGHT);
 	RenderMesh(meshList[GEO_SEA], bGodlights, 0.75f);
@@ -3876,7 +4002,7 @@ void SceneSP::RenderPassMain()
 	if (bShowGrid)
 	{
 		modelStack.PushMatrix();
-		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), -0.1f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
+		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), fYPos, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
 		modelStack.Scale(1, 1, 1);
 		glLineWidth(2.f);
 		RenderMesh(meshList[GEO_GRID], false);
@@ -3884,7 +4010,7 @@ void SceneSP::RenderPassMain()
 		modelStack.PopMatrix();
 
 		modelStack.PushMatrix();
-		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), -0.1f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
+		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), fYPos, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
 		for (int i = 0; i < SD->GetNoGrid() * SD->GetNoGrid(); ++i)
 		{
 			std::pair<int, int> pt = GetPoint(i);
@@ -4195,6 +4321,7 @@ void SceneSP::Render()
 		break;
 	case G_INPLAY:
 	case G_RESEARCHTREE:
+	case G_INGAMEOPTIONS:
 		RenderPassGPass();
 		RenderPassMain();
 		break;
