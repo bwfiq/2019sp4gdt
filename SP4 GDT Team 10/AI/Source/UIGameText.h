@@ -20,7 +20,7 @@ public:
 
 	virtual void Update(float dt);
 	void SetText(std::string text);
-private:
+
 	//Order of ui components matter
 	TEXT_TYPE textType;
 	GameObject* go;
@@ -35,4 +35,5 @@ private:
 
 		COMPONENT_TOTAL,
 	};
+private:
 };
