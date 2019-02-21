@@ -2491,11 +2491,38 @@ void SceneSP::UpdateSelectedUI()
 		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_ALTAR);
 		UIManager::GetInstance()->AddUI("uiSelected_Altar_Info", newUI);
 		m_selectedUi.push_back(newUI);
-		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_ALTAR_OFFER, 0);
+		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_GENERAL_MOVE, 0);
+		UIManager::GetInstance()->AddUI("uiSelected_Altar_Move", newUI);
+		m_selectedUi.push_back(newUI);
+		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_ALTAR_OFFER, 1);
 		UIManager::GetInstance()->AddUI("uiSelected_Altar_Offer", newUI);
 		m_selectedUi.push_back(newUI);
-		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_GENERAL_MOVE, 1);
-		UIManager::GetInstance()->AddUI("uiSelected_Altar_Move", newUI);
+	}
+	else if (dynamic_cast<Building*>(selected))
+	{
+		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_BUILDING, selected);
+		UIManager::GetInstance()->AddUI("uiSelected_Building_Info", newUI);
+		m_selectedUi.push_back(newUI);
+		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_GENERAL_MOVE, 0, selected);
+		UIManager::GetInstance()->AddUI("uiSelected_Building_Move", newUI);
+		m_selectedUi.push_back(newUI);
+		if (selected->type == GameObject::GO_CHIEFHUT)
+		{
+			newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_CHIEFHUT_BUILD, 1, selected);
+			UIManager::GetInstance()->AddUI("uiSelected_Chiefhut_Build", newUI);
+			m_selectedUi.push_back(newUI);
+		}
+	}
+	else if (dynamic_cast<Villager*>(selected))
+	{
+		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_VILLAGER, selected);
+		UIManager::GetInstance()->AddUI("uiSelected_Villager_Info", newUI);
+		m_selectedUi.push_back(newUI);
+	}
+	else if (dynamic_cast<Environment*>(selected))
+	{
+		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_ENVIRONMENT, selected);
+		UIManager::GetInstance()->AddUI("uiSelected_Environment_Info", newUI);
 		m_selectedUi.push_back(newUI);
 	}
 }
