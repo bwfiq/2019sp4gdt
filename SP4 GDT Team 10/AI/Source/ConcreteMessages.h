@@ -65,7 +65,15 @@ struct MessageWarnLane : public Message
 
 struct MessageCalamityEarthquake : public Message
 {
-
+	enum EARTHQUAKE_TYPE
+	{
+		INTENSE,
+		STOPPING
+	};
+	MessageCalamityEarthquake(float fPower, EARTHQUAKE_TYPE type) : fPower(fPower), type(type) {}
+	virtual ~MessageCalamityEarthquake(){}
+	float fPower;
+	EARTHQUAKE_TYPE type;
 };
 
 struct MessageCalamityTsunami : public Message

@@ -784,9 +784,67 @@ bool SceneSP::Handle(Message* message)
 		{
 			GameObject* tsun = FetchGO(GameObject::GO_TSUNAMI);
 			Tsunami* tsunami = static_cast<Tsunami*>(tsun);
+			tsunami->fPower = 100.f;
+			tsunami->collidedObjects.clear(); 
 			tsunami->tsunami_direction = Tsunami::DIRECTION_LEFT;
 			tsunami->moveSpeed = Math::RandFloatMinMax(3, 3.25f);
 			tsunami->pos = GetGridPos(GridPt(SD->GetNoGrid() + 8, laneNum));
+		}
+		delete message;
+		return true;
+	}
+	MessageCalamityEarthquake* messageCalamityEarthquake = dynamic_cast<MessageCalamityEarthquake*>(message);
+	if (messageCalamityEarthquake)
+	{
+		if (messageCalamityEarthquake->type == MessageCalamityEarthquake::INTENSE)
+		{
+			//Chance to destroy buildings
+			for (auto go : m_goList)
+			{
+				if (!go->active)
+					continue;
+				Building* goBuilding = dynamic_cast<Building*>(go);
+				if (goBuilding)
+				{
+					if (Math::RandFloatMinMax(0.f, 100.f) < messageCalamityEarthquake->fPower)
+					{
+						switch (goBuilding->eCurrState)
+						{
+						case Building::COMPLETED:
+							goBuilding->eCurrState = Building::BROKEN;
+							break;
+						case Building::BROKEN:
+							goBuilding->active = false;
+							break;
+						default:
+							break;
+						}
+					}
+				}
+				Villager* goVil = dynamic_cast<Villager*>(go);
+				if (goVil)
+				{
+					//make villagers panic
+					goVil->eCurrState = Villager::PANIC;
+					//something something
+				}
+			}
+		}
+		else if (messageCalamityEarthquake->type == MessageCalamityEarthquake::STOPPING)
+		{
+			for (auto go : m_goList)
+			{
+				if (!go->active)
+					continue;
+				Villager* goVil = dynamic_cast<Villager*>(go);
+				if (goVil)
+				{
+					//make villagers calm down
+					goVil->eCurrState = Villager::TIRED;
+					//something something
+
+				}
+			}
 		}
 		delete message;
 		return true;
@@ -2756,10 +2814,10 @@ void SceneSP::Update(double dt)
 	{
 		if (selected == NULL)
 		{
-			selected = FetchGO(GameObject::GO_BUILDING);
+			selected = FetchGO(GameObject::GO_HOUSE);
 			GridPt currentGrid = GetPoint(mousePos);
 			selected->pos = GetGridPos(currentGrid);
-			selected->pos.y += selected->scale.y * 0.5f;
+			selected->pos.y = selected->scale.y * 0.5f;
 			static_cast<Building*>(selected)->eCurrState = Building::BLUEPRINT;
 
 			bShowGrid = true;
@@ -2858,21 +2916,19 @@ void SceneSP::Update(double dt)
 			{
 				if (selected != NULL)
 				{
-					switch (selected->type)
-					{
-					case GameObject::GO_VILLAGER:
+					//If it is a villager
+					Villager* goVil = dynamic_cast<Villager*>(selected);
+					if (goVil)
 					{
 						selected->goTarget = NULL;
 
 						selected->target = GetGridPos(selectedPt);
 						selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
 					}
-					break;
-
-					//Test with just GO_BUILDING first
-					case GameObject::GO_BUILDING:
+					//If it is a building
+					Building* goBuilding = dynamic_cast<Building*>(selected);
+					if (goBuilding)
 					{
-						Building* goBuilding = static_cast<Building*>(selected);
 						if (goBuilding->eCurrState == Building::BLUEPRINT)
 						{
 							//Should be trying to contruct now
@@ -2882,19 +2938,6 @@ void SceneSP::Update(double dt)
 								goBuilding->eCurrState = Building::COMPLETED;
 							bShowGrid = false;
 						}
-					}
-					break;
-					case GameObject::GO_CHIEFHUT:
-					{
-						//Chief Hut should be built in init
-						Building* goBuilding = static_cast<Building*>(selected);
-						if (goBuilding->eCurrState == Building::BLUEPRINT)
-						{
-							goBuilding->eCurrState = Building::COMPLETED;
-							bShowGrid = false;
-						}
-					}
-					break;
 					}
 					selected = NULL;
 					goVillager->goTarget = NULL;
@@ -3399,6 +3442,16 @@ void SceneSP::Update(double dt)
 					goTsunami->active = false;
 				}
 			}
+			//Check collision
+			for (auto go2 : m_goList)
+			{
+				if (!go2->active || go2 == go)
+					continue;
+				if ((go2->pos - goTsunami->pos).LengthSquared() <= goTsunami->scale.x * goTsunami->scale.x)
+				{
+					goTsunami->Collided(go2);
+				}
+			}
 		}
 		break;
 		default:
@@ -3522,10 +3575,10 @@ void SceneSP::RenderGO(GameObject *go)
 			RenderMesh(meshList[GEO_BUILDING], bGodlights, 1.f);
 			break;
 		case Building::BLUEPRINT:
-			RenderMesh(meshList[GEO_BUILDING], bGodlights, 0.2f);
+			RenderMesh(meshList[GEO_BUILDING], false, 0.2f);
 			break;
 		case Building::CONSTRUCTING:
-			RenderMesh(meshList[GEO_BUILDING], bGodlights, 0.6f);
+			RenderMesh(meshList[GEO_BUILDING], false, 0.6f);
 			break;
 		case Building::BROKEN:
 			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
@@ -3548,10 +3601,10 @@ void SceneSP::RenderGO(GameObject *go)
 			RenderMesh(meshList[GEO_BUILDING], bGodlights, 1.f);
 			break;
 		case Building::BLUEPRINT:
-			RenderMesh(meshList[GEO_BUILDING], bGodlights, 0.2f);
+			RenderMesh(meshList[GEO_BUILDING], false, 0.2f);
 			break;
 		case Building::CONSTRUCTING:
-			RenderMesh(meshList[GEO_BUILDING], bGodlights, 0.6f);
+			RenderMesh(meshList[GEO_BUILDING], false, 0.6f);
 			break;
 		case Building::BROKEN:
 			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
@@ -3574,10 +3627,10 @@ void SceneSP::RenderGO(GameObject *go)
 			RenderMesh(meshList[GEO_GRANARY], bGodlights, 1.f);
 			break;
 		case Building::BLUEPRINT:
-			RenderMesh(meshList[GEO_GRANARY], bGodlights, 0.2f);
+			RenderMesh(meshList[GEO_GRANARY], false, 0.2f);
 			break;
 		case Building::CONSTRUCTING:
-			RenderMesh(meshList[GEO_GRANARY], bGodlights, 0.6f);
+			RenderMesh(meshList[GEO_GRANARY], false, 0.6f);
 			break;
 		case Building::BROKEN:
 			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
@@ -3600,10 +3653,10 @@ void SceneSP::RenderGO(GameObject *go)
 			RenderMesh(meshList[GEO_WOODSHED], bGodlights, 1.f);
 			break;
 		case Building::BLUEPRINT:
-			RenderMesh(meshList[GEO_WOODSHED], bGodlights, 0.2f);
+			RenderMesh(meshList[GEO_WOODSHED], false, 0.2f);
 			break;
 		case Building::CONSTRUCTING:
-			RenderMesh(meshList[GEO_WOODSHED], bGodlights, 0.6f);
+			RenderMesh(meshList[GEO_WOODSHED], false, 0.6f);
 			break;
 		case Building::BROKEN:
 			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
@@ -3618,7 +3671,21 @@ void SceneSP::RenderGO(GameObject *go)
 		if (go->animation != NULL)
 			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_BUILDING], bGodlights, 1.f);
+		//Current state of the building
+		switch (static_cast<Building*>(go)->eCurrState)
+		{
+		case Building::COMPLETED:
+			RenderMesh(meshList[GEO_BUILDING], bGodlights, 1.f);
+			break;
+		case Building::BLUEPRINT:
+			RenderMesh(meshList[GEO_BUILDING], false, 0.2f);
+			break;
+		case Building::CONSTRUCTING:
+			std::cout << "Chief Hut being contructed??" << std::endl;
+			break;
+		case Building::BROKEN:
+			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
+		}
 		modelStack.PopMatrix();
 	}
 	break;
@@ -3629,7 +3696,21 @@ void SceneSP::RenderGO(GameObject *go)
 		if (go->animation != NULL)
 			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_ALTAR], bGodlights, 1.f);
+		//Current state of the building
+		switch (static_cast<Building*>(go)->eCurrState)
+		{
+		case Building::COMPLETED:
+			RenderMesh(meshList[GEO_ALTAR], bGodlights, 1.f);
+			break;
+		case Building::BLUEPRINT:
+			RenderMesh(meshList[GEO_ALTAR], false, 0.2f);
+			break;
+		case Building::CONSTRUCTING:
+			std::cout << "Altar being contructed??" << std::endl;
+			break;
+		case Building::BROKEN:
+			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
+		}
 		modelStack.PopMatrix();
 	}
 	break;
@@ -3651,7 +3732,21 @@ void SceneSP::RenderGO(GameObject *go)
 		if (go->animation != NULL)
 			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		RenderMesh(meshList[GEO_LOGS], bGodlights, 1.f);
+		//Current state of the building
+		switch (static_cast<Building*>(go)->eCurrState)
+		{
+		case Building::COMPLETED:
+			RenderMesh(meshList[GEO_LOGS], bGodlights, 1.f);
+			break;
+		case Building::BLUEPRINT:
+			RenderMesh(meshList[GEO_LOGS], false, 0.2f);
+			break;
+		case Building::CONSTRUCTING:
+			RenderMesh(meshList[GEO_LOGS], false, 0.6f);
+			break;
+		case Building::BROKEN:
+			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
+		}
 		modelStack.PopMatrix();
 	}
 	break;

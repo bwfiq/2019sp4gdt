@@ -27,6 +27,7 @@ struct Villager : public GameObject
 	enum STATES
 	{
 		HEALTHY = 0,
+		PANIC,
 		TIRED,
 		SICKLY,
 		DYING,
