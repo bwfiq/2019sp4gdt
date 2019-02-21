@@ -24,8 +24,8 @@ public:
 		G_MAINMENU,			// pre-game
 		G_OPTIONS,			// pre-game
 		G_INPLAY,
-		//G_INGAMEOPTIONS,	// rendered over game
-		G_RESEARCHTREE,		// rendered over game
+		G_INGAMEOPTIONS,	// overlay
+		G_RESEARCHTREE,		// overlay
 
 		G_TOTAL
 	};
@@ -94,6 +94,8 @@ protected:
 	std::vector<Grid::TILE_CONTENT> m_grid;
 	std::vector<GridPt> m_shortestPath; //Used for temporary storage of path in AStar
 	std::vector<GridPt> m_previous; //Used for storing the previous point in AStar
+
+	float fYPos;
 
 	Vector3 mousePos;
 	Camera tempCamera;
