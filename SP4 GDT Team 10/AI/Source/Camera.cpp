@@ -98,20 +98,31 @@ void Camera::Update(double dt)
 			target_velocity = mouseDelta * speed;
 		}
 	}
-	//if (KC->IsKeyPressed('Q'))
-	//{
-	//	Vector3 view = (target_goal - position_goal).Normalized();
-	//	float yaw = 90;
-	//	Mtx44 rotation;
-	//	rotation.SetToRotation(yaw, 0, 1, 0);
-	//	view = rotation * view;
-	//	target_goal = position_goal + view;
-	//	CalculateUp();
-	//}
-	//else if (KC->IsKeyPressed('E'))
-	//{
-
-	//}
+	Vector3 keyboardMovementDelta;
+	if (KC->IsKeyPressed('W'))
+	{
+		float movement = -(0.25f + 0.5f * mouseScroll);
+		keyboardMovementDelta.z += movement;
+		keyboardMovementDelta.z += movement;
+	}
+	else if (KC->IsKeyPressed('S'))
+	{
+		float movement = (0.25f + 0.5f * mouseScroll);
+		keyboardMovementDelta.z += movement;
+		keyboardMovementDelta.z += movement;
+	}
+	if (KC->IsKeyPressed('A'))
+	{
+		float movement = -(0.25f + 0.5f * mouseScroll);
+		keyboardMovementDelta.x += movement;
+		keyboardMovementDelta.x += movement;
+	}
+	else if (KC->IsKeyPressed('D'))
+	{
+		float movement = (0.25f + 0.5f * mouseScroll);
+		keyboardMovementDelta.x += movement;
+		keyboardMovementDelta.x += movement;
+	}
 
 	switch (this->shakeType) 
 	{
@@ -128,6 +139,11 @@ void Camera::Update(double dt)
 	}
 	
 	//Updat stuff
+	if (!keyboardMovementDelta.IsZero())//if der was keyboard input thin go
+	{
+		position_goal += keyboardMovementDelta;
+		target_goal += keyboardMovementDelta;
+	}
 	if (!position_velocity.IsZero())
 	{
 		//std::cout << "asd" << std::endl;
