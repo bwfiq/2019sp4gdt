@@ -549,7 +549,7 @@ void StatePickedUp::Update(double dt, GameObject* m_go)
 	{
 		dir.SetZero();
 	}
-	m_go->pos = SD->GetMousePos_World() + dir * (-MC->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) + 4) * 0.4f;
+	m_go->pos = SD->GetMousePos_World() + dir * (-MC->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) + 4) * 0.6f;
 	//m_go->pos = SD->GetMousePos_World() + Vector3(0, (-MC->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) + 4) * 0.5f, 0);
 }
 
