@@ -5,7 +5,7 @@ AnimationChopping::AnimationChopping()
 	,tempY(0)
 {
 	//Rotate.SetToRotation(90, 1, 0, 0);
-	type = A_WALK;
+	type = A_CHOPPING;
 }
 
 AnimationChopping::~AnimationChopping()

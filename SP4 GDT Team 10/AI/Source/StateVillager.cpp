@@ -14,6 +14,8 @@
 #include "Mountain.h"
 
 #include "AnimationWalk.h"
+#include "AnimationPanic.h"
+#include "AnimationTiredWalk.h"
 #include "AnimationPickUp.h"
 #include "AnimationChopping.h"
 #include "AnimationForage.h"
@@ -105,7 +107,18 @@ StatePath::~StatePath()
 void StatePath::Enter(GameObject * m_go)
 {
 	std::cout << "Enter Path State" << std::endl;
-	m_go->GiveAnimation(new AnimationWalk());
+	switch (static_cast<Villager*>(m_go)->eCurrState)
+	{
+	case Villager::HEALTHY:
+		m_go->GiveAnimation(new AnimationWalk());
+		break;
+	case Villager::PANIC:
+		m_go->GiveAnimation(new AnimationPanic());
+		break;
+	case Villager::TIRED:
+		m_go->GiveAnimation(new AnimationTiredWalk());
+		break;
+	}
 }
 
 void StatePath::Update(double dt, GameObject * m_go)
@@ -115,7 +128,18 @@ void StatePath::Update(double dt, GameObject * m_go)
 	{
 		if (m_go->animation == NULL)
 		{
-			m_go->GiveAnimation(new AnimationWalk());
+			switch (static_cast<Villager*>(m_go)->eCurrState)
+			{
+			case Villager::HEALTHY:
+				m_go->GiveAnimation(new AnimationWalk());
+				break;
+			case Villager::PANIC:
+				m_go->GiveAnimation(new AnimationPanic());
+				break;
+			case Villager::TIRED:
+				m_go->GiveAnimation(new AnimationTiredWalk());
+				break;
+			}
 		}
 		if (m_go->target != NULL)
 		{
@@ -324,7 +348,7 @@ void StatePath::Exit(GameObject * m_go)
 {
 	if (m_go->animation != NULL)
 	{
-		if (m_go->animation->type == AnimationBase::A_WALK)
+		if (m_go->animation->type == AnimationBase::A_WALK || m_go->animation->type == AnimationBase::A_TIRED)
 		{
 			delete m_go->animation;
 			m_go->animation = NULL;

@@ -275,6 +275,12 @@
     <ClCompile Include="Source\AnimationForage.cpp">
       <Filter>VisualEffects\Animations</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AnimationPanic.cpp">
+      <Filter>VisualEffects\Animations</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\AnimationTiredWalk.cpp">
+      <Filter>VisualEffects\Animations</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -506,6 +512,12 @@
       <Filter>VisualEffects\Animations</Filter>
     </ClInclude>
     <ClInclude Include="Source\AnimationForage.h">
+      <Filter>VisualEffects\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AnimationPanic.h">
+      <Filter>VisualEffects\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AnimationTiredWalk.h">
       <Filter>VisualEffects\Animations</Filter>
     </ClInclude>
   </ItemGroup>
