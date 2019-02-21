@@ -48,6 +48,7 @@
 
 #include "AnimationJump.h"
 #include "AnimationWalk.h"
+#include "AnimationPanic.h"
 
 #define SEA_WIDTH	100.f
 #define SEA_HEIGHT	100.f
@@ -658,13 +659,16 @@ void SceneSP::Init()
 
 	UIManager::GetInstance()->Init();
 
-	reticle = new EffectReticle();
+	reticle = new EffectReticle(EffectReticle::RETICLE_OUTER);
 	hand = new EffectHand(&camera);
+	EffectReticle* reticle_cross = new EffectReticle(EffectReticle::RETICLE_INNER);
+	reticle_cross->mesh = meshList[GEO_RETICLE_CROSS];
 
 	EffectManager::GetInstance()->Init();
-	EffectManager::GetInstance()->AddEffect(new EffectTrail(&camera));
-	EffectManager::GetInstance()->AddEffect(hand);
+	EffectManager::GetInstance()->AddEffect(new EffectTrail(hand));
 	EffectManager::GetInstance()->AddEffect(reticle);
+	EffectManager::GetInstance()->AddEffect(reticle_cross);
+	EffectManager::GetInstance()->AddEffect(hand);
 
 	CalamityManager::GetInstance()->Init();
 
@@ -854,7 +858,7 @@ bool SceneSP::Handle(Message* message)
 				{
 					//make villagers panic
 					goVil->eCurrState = Villager::PANIC;
-					//something something
+					goVil->GiveAnimation(new AnimationPanic());
 				}
 			}
 		}
@@ -869,8 +873,11 @@ bool SceneSP::Handle(Message* message)
 				{
 					//make villagers calm down
 					goVil->eCurrState = Villager::TIRED;
-					//something something
 
+					if (goVil->animation->type == AnimationBase::A_PANIC)
+					{
+						goVil->ClearAnimation();
+					}
 				}
 			}
 		}
@@ -928,7 +935,22 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			switch (type)
 			{
 			case GameObject::GO_VILLAGER:
+			{
+				Villager* goVil = static_cast<Villager*>(go);
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * .7f, .5f, SceneData::GetInstance()->GetGridSize() * .7f);
+				goVil->fEfficiency = 1.f;
+				goVil->eCurrState = Villager::HEALTHY;
+				goVil->iFoodStored = 0;
+				goVil->iWoodStored = 0;
+				goVil->iStoneStored = 0;
+				goVil->iMaxFoodStored = 5;
+				goVil->iMaxWoodStored = 5;
+				goVil->iMaxStoneStored = 5;
+				for (int i = 0; i < Villager::STAT_TOTAL; ++i)
+				{
+					goVil->fStats[i] = 1.f;
+				}
+			}
 				break;
 			case GameObject::GO_GRANARY:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * .7f, 1.f, SceneData::GetInstance()->GetGridSize() * .7f);
@@ -2505,10 +2527,39 @@ void SceneSP::UpdateSelectedUI()
 		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_ALTAR);
 		UIManager::GetInstance()->AddUI("uiSelected_Altar_Info", newUI);
 		m_selectedUi.push_back(newUI);
-		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_ALTAR_OFFER);
+		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_GENERAL_MOVE, 0);
+		UIManager::GetInstance()->AddUI("uiSelected_Altar_Move", newUI);
+		m_selectedUi.push_back(newUI);
+		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_ALTAR_OFFER, 1);
 		UIManager::GetInstance()->AddUI("uiSelected_Altar_Offer", newUI);
 		m_selectedUi.push_back(newUI);
-
+	}
+	else if (dynamic_cast<Building*>(selected))
+	{
+		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_BUILDING, selected);
+		UIManager::GetInstance()->AddUI("uiSelected_Building_Info", newUI);
+		m_selectedUi.push_back(newUI);
+		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_GENERAL_MOVE, 0, selected);
+		UIManager::GetInstance()->AddUI("uiSelected_Building_Move", newUI);
+		m_selectedUi.push_back(newUI);
+		if (selected->type == GameObject::GO_CHIEFHUT)
+		{
+			newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_CHIEFHUT_BUILD, 1, selected);
+			UIManager::GetInstance()->AddUI("uiSelected_Chiefhut_Build", newUI);
+			m_selectedUi.push_back(newUI);
+		}
+	}
+	else if (dynamic_cast<Villager*>(selected))
+	{
+		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_VILLAGER, selected);
+		UIManager::GetInstance()->AddUI("uiSelected_Villager_Info", newUI);
+		m_selectedUi.push_back(newUI);
+	}
+	else if (dynamic_cast<Environment*>(selected))
+	{
+		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_ENVIRONMENT, selected);
+		UIManager::GetInstance()->AddUI("uiSelected_Environment_Info", newUI);
+		m_selectedUi.push_back(newUI);
 	}
 }
 
@@ -2817,6 +2868,14 @@ void SceneSP::Update(double dt)
 
 	camera.Update(dt);
 
+	if (MC->IsMouseOnUI())
+	{
+		Application::GetInstance().SetMouseVisiblity(true);
+	}
+	else
+	{
+		Application::GetInstance().SetMouseVisiblity(false);
+	}
 	if (KC->IsKeyPressed('P')) {
 		CM->AddToCalamityQueue(new CalamityEarthquake());
 		SD->SetReligionValue(((int)SD->GetReligionValue() % (int)SD->GetMaxReligionValue()) + 25);

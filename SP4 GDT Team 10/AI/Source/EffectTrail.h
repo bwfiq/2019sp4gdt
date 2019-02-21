@@ -1,19 +1,18 @@
 #pragma once
 #include "EffectBase.h"
 #include <list>
-class Camera;
 class Mesh;
 
 class EffectTrail : public EffectBase {
 public:
-	EffectTrail(Camera* cam);
+	EffectTrail(EffectBase* toTrace);
 	virtual ~EffectTrail();
 
 	std::list<Vector3> trailPoints;
 	float fLifetime;
 	float fLineThickness;
 	int iTotalPoints;
-	Camera* cameraObj;
+	EffectBase* toTrace;
 
 	virtual void Update(float dt);
 protected:

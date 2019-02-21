@@ -11,6 +11,11 @@ public:
 	{
 		A_JUMP,
 		A_WALK,
+		A_CHOPPING,
+		A_FORAGING,
+		A_PICKUP,
+		A_PANIC,
+		A_TIRED,
 		A_TOTAL
 	};
 	bool active;

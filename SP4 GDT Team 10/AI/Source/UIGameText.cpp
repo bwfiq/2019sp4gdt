@@ -2,8 +2,9 @@
 #include "SceneData.h"
 #include "PostOffice.h"
 #include "ConcreteMessages.h"
+#include "GameObject.h"
 
-UIGameText::UIGameText(TEXT_TYPE textType) :
+UIGameText::UIGameText(TEXT_TYPE textType, GameObject* go) :
 	UIBase()
 {
 	SceneData* SD = SceneData::GetInstance();
@@ -15,6 +16,7 @@ UIGameText::UIGameText(TEXT_TYPE textType) :
 		uiComponents_list[COMPONENT_TEXT_1 + i].scale.Set(1, 0.2f);
 		uiComponents_list[COMPONENT_TEXT_1 + i].anchorPoint.Set(0, 0);
 	}
+	this->go = go;
 	switch (textType)
 	{
 	case TEXT_DAILYREQUIREMENT:
@@ -58,6 +60,79 @@ UIGameText::UIGameText(TEXT_TYPE textType) :
 		uiComponents_list[COMPONENT_TEXT_1].text = "asdasd";
 		uiComponents_list[COMPONENT_TEXT_1].textSize *= 1.15f;
 		uiComponents_list[COMPONENT_TEXT_1].pos.x = 0.25f;
+		break;
+	case TEXT_SELECTED_BUILDING:
+		pos.Set(1, 0.25f);
+		scale.Set(250, 250);
+		anchorPoint.Set(1, 0);
+		uiComponents_list[COMPONENT_BOARD].mesh = SD->GetMesh("ui_board_blank");
+		for (int i = 0; i <= COMPONENT_TEXT_5 - COMPONENT_TEXT_1; ++i)
+		{
+			uiComponents_list[COMPONENT_TEXT_1 + i].text = "";
+			uiComponents_list[COMPONENT_TEXT_1 + i].textSize = scale.y * 0.1f;
+		}
+		uiComponents_list[COMPONENT_TEXT_5].textSize *= 1.3f;
+		if (go->type == GameObject::GO_CHIEFHUT)
+		{
+			uiComponents_list[COMPONENT_TEXT_5].text = "Chief Hut";
+			uiComponents_list[COMPONENT_TEXT_5].pos.x += 0.08f;
+		}
+		else if (go->type == GameObject::GO_HOUSE)
+		{
+			uiComponents_list[COMPONENT_TEXT_5].text = "House";
+			uiComponents_list[COMPONENT_TEXT_5].pos.x += 0.2f;
+		}
+
+		break;
+	case TEXT_SELECTED_VILLAGER:
+		pos.Set(1, 0.25f);
+		scale.Set(250, 250);
+		anchorPoint.Set(1, 0);
+		uiComponents_list[COMPONENT_BOARD].mesh = SD->GetMesh("ui_board_blank");
+		for (int i = 0; i <= COMPONENT_TEXT_5 - COMPONENT_TEXT_1; ++i)
+		{
+			uiComponents_list[COMPONENT_TEXT_1 + i].text = "";
+			uiComponents_list[COMPONENT_TEXT_1 + i].textSize = scale.y * 0.1f;
+		}
+		uiComponents_list[COMPONENT_TEXT_5].textSize *= 1.3f;
+		uiComponents_list[COMPONENT_TEXT_5].text = "Villager";
+		uiComponents_list[COMPONENT_TEXT_5].pos.x += 0.08f;
+		break;
+	case TEXT_SELECTED_ENVIRONMENT:
+		pos.Set(1, 0.25f);
+		scale.Set(250, 250);
+		anchorPoint.Set(1, 0);
+		uiComponents_list[COMPONENT_BOARD].mesh = SD->GetMesh("ui_board_blank");
+		for (int i = 0; i <= COMPONENT_TEXT_5 - COMPONENT_TEXT_1; ++i)
+		{
+			uiComponents_list[COMPONENT_TEXT_1 + i].text = "";
+			uiComponents_list[COMPONENT_TEXT_1 + i].textSize = scale.y * 0.1f;
+		}
+		uiComponents_list[COMPONENT_TEXT_5].textSize *= 1.3f;
+		uiComponents_list[COMPONENT_TEXT_4].text = "Resource Type :";
+		uiComponents_list[COMPONENT_TEXT_3].textSize *= 1.15f;
+		uiComponents_list[COMPONENT_TEXT_3].pos.x += 0.23f;
+		if (go->type == GameObject::GO_BUSH)
+		{
+			uiComponents_list[COMPONENT_TEXT_5].text = "Bush";
+			uiComponents_list[COMPONENT_TEXT_5].pos.x += 0.22f;
+			uiComponents_list[COMPONENT_TEXT_3].text = "Food";
+			uiComponents_list[COMPONENT_TEXT_3].textColor.Set(99.f / 255.f, 170.f / 255.f, 71.f / 255.f);
+		}
+		else if (go->type == GameObject::GO_MOUNTAIN)
+		{
+			uiComponents_list[COMPONENT_TEXT_5].text = "Mountain";
+			uiComponents_list[COMPONENT_TEXT_5].pos.x += 0.11f;
+			uiComponents_list[COMPONENT_TEXT_3].text = "Stone";
+			uiComponents_list[COMPONENT_TEXT_3].textColor.Set(0.3f, 0.3f, 0.3f);
+		}
+		else if (go->type == GameObject::GO_TREE)
+		{
+			uiComponents_list[COMPONENT_TEXT_5].text = "Tree";
+			uiComponents_list[COMPONENT_TEXT_5].pos.x += 0.22f;
+			uiComponents_list[COMPONENT_TEXT_3].text = "Wood";
+			uiComponents_list[COMPONENT_TEXT_3].textColor.Set(122.f / 255.f, 73.f / 255.f, 9.f / 255.f);
+		}
 		break;
 	}
 	this->textType = textType;

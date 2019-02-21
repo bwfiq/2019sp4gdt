@@ -1,15 +1,20 @@
+#pragma once
 #include "UIBase.h"
+
+struct GameObject;
 
 class UIGameButton : public UIBase
 {
 public:
 	enum BUTTON_TYPE {
 		BUTTON_DAILYREQUIREMENT,
+		BUTTON_SELECTED_GENERAL_MOVE,
 		BUTTON_SELECTED_ALTAR_OFFER,
+		BUTTON_SELECTED_CHIEFHUT_BUILD,
 
 		BUTTON_TOTAL
 	};
-	UIGameButton(BUTTON_TYPE buttonType);
+	UIGameButton(BUTTON_TYPE buttonType, unsigned order = 0, GameObject* go = NULL);
 	~UIGameButton();
 
 	virtual void Update(float dt);
