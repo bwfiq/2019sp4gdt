@@ -2840,7 +2840,6 @@ void SceneSP::Update(double dt)
 	if (Application::IsKeyPressed('M'))
 		lights[0].position.y += (float)(LSPEED * dt);
 
-	std::cout << fYPos << std::endl;
 
 	if (Application::IsKeyPressed('Z'))
 		lights[0].type = Light::LIGHT_POINT;
