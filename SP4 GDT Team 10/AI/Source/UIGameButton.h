@@ -19,7 +19,7 @@ public:
 
 	virtual void Update(float dt);
 	void SetText(std::string text);
-private:
+
 	//Order of ui components matter
 	BUTTON_TYPE buttonType;
 	enum UI_GAMEBUTTON_COMPONENTS {
@@ -28,4 +28,5 @@ private:
 
 		COMPONENT_TOTAL,
 	};
+private:
 };

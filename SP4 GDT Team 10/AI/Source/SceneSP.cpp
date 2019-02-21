@@ -153,7 +153,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 			m_coreUi.push_back(newUI);
 
 			newUI = new UIGameText(UIGameText::TEXT_DAILYREQUIREMENT);
-			newUI->bActive = false;
+			//newUI->bActive = false;
 			UIManager::GetInstance()->AddUI("ui_Text_DailyRequirement", newUI);
 			m_coreUi.push_back(newUI);
 
@@ -2679,8 +2679,7 @@ void SceneSP::ProgressMonth()
 		SD->SetCurrMonth(1);
 		//ChangeState(G_MAINMENU);
 	}
-	if (bGoalAchieved)
-		bGoalAchieved = false;
+	bGoalAchieved = false;
 }
 
 void SceneSP::Update(double dt)
@@ -3182,10 +3181,38 @@ void SceneSP::Update(double dt)
 	switch (SD->GetCurrMonth())
 	{
 	case 1:
-		bGoalAchieved = SD->GetReligionValue() >= SD->GetMaxReligionValue();
+		bGoalAchieved = SD->GetFood() >= 1;
+		break;
+	case 2:
+		bGoalAchieved = SD->GetWood() >= 1;
+		break;
+	default:
+		bGoalAchieved = false;
 		break;
 	}
-
+	for (int i = 0; i <= UIGameText::COMPONENT_TEXT_5 - UIGameText::COMPONENT_TEXT_1; ++i)
+	{
+		UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_1 + i].text = ""; // clear ui
+	}
+	if (bGoalAchieved)
+		UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_5].text = "ACHIEVED";
+	else
+	{
+		switch (SD->GetCurrMonth())
+		{
+		case 1:
+			UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_5].text = "Collect";
+			UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_4].text = "20 Food";
+			break;
+		case 2:
+			UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_5].text = "Collect";
+			UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_4].text = "20 Wood";
+			break;
+		default:
+			UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_5].text = "No Goal";
+			break;
+		}
+	}
 
 	ProjectileManager::GetInstance()->Update(dt * m_speed);
 
@@ -3777,7 +3804,7 @@ void SceneSP::RenderGO(GameObject *go)
 			RenderMesh(meshList[GEO_GRANARY], false, 0.6f);
 			break;
 		case Building::BROKEN:
-			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
+			RenderMesh(meshList[GEO_BROKEN_GRANARY], bGodlights, 1.f);
 		}
 		modelStack.PopMatrix();
 	}
@@ -3803,7 +3830,7 @@ void SceneSP::RenderGO(GameObject *go)
 			RenderMesh(meshList[GEO_WOODSHED], false, 0.6f);
 			break;
 		case Building::BROKEN:
-			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
+			RenderMesh(meshList[GEO_BROKEN_WOODSHED], bGodlights, 1.f);
 		}
 		modelStack.PopMatrix();
 	}
@@ -4214,7 +4241,6 @@ void SceneSP::RenderPassMain()
 		ss << (int)(60 * fractpart);
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 30, 0);
 
-	// objective
 	/*ss.str("");
 	ss << "Current Goal:";
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 0, 30);
