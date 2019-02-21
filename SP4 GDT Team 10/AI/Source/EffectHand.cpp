@@ -4,6 +4,9 @@
 #include "MouseController.h"
 #include "MousePicker.h"
 
+#include "EffectManager.h"
+#include "EffectCloud.h"
+
 EffectHand::EffectHand(Camera* cam) :
 	EffectBase()
 	, defaultPosOffset(0, 0.25f, 0)
@@ -36,6 +39,12 @@ void EffectHand::Update(float dt)
 		if (MC->IsButtonPressed(MouseController::RMB))
 		{
 			mesh = SD->GetMesh("hand_grab");
+			for (int i = 0; i < 5; ++i)
+			{
+				EffectManager::GetInstance()->AddEffect(new EffectCloud(
+					this->pos, Math::RandFloatMinMax(0.4, 0.8f)
+				));
+			}
 		}
 		else if (MC->IsButtonReleased(MouseController::RMB))
 		{
@@ -49,9 +58,9 @@ void EffectHand::Update(float dt)
 		{
 			scale.lerp(defaultScale, alpha);
 		}
-		if (posOffset != defaultPosOffset)
+		//if (posOffset != defaultPosOffset)
 		{
-			posOffset.lerp(defaultPosOffset, alpha);
+			posOffset.lerp(defaultPosOffset + Vector3(0, 0.1f * cosf(SD->GetElapsedTime()), 0) , alpha);
 		}
 		fAlpha = 1;
 		break;

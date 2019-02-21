@@ -287,6 +287,20 @@ void SceneBase::Init()
 	meshList[GEO_HAND_DEFAULT] = MeshBuilder::GenerateOBJ("hand_default", "Obj//hand_default.obj");
 	meshList[GEO_HAND_GRAB] = MeshBuilder::GenerateOBJ("hand_grab", "Obj//hand_grab.obj");
 	meshList[GEO_HAND_POINT] = MeshBuilder::GenerateOBJ("hand_point", "Obj//hand_point.obj");
+	for (int i = GEO_HAND_DEFAULT; i <= GEO_HAND_POINT; ++i)
+	{
+		//meshList[i]->textureArray[0] = LoadTGA("Image//white.tga");
+		meshList[i]->material.kDiffuse.Set(1, 1, 1);
+		meshList[i]->material.kAmbient.Set(0.25f, 0.25f, 0.25f);
+		meshList[i]->material.kSpecular.Set(0.4f, 0.4f, 0.4f);
+		meshList[i]->material.kShininess = 20.f;
+	}
+	meshList[GEO_EFFECT_CLOUD] = MeshBuilder::GenerateOBJ("effect_cloud", "Obj//cloud.obj");
+	//meshList[GEO_EFFECT_CLOUD]->textureArray[0] = LoadTGA("Image//white.tga");
+	meshList[GEO_EFFECT_CLOUD]->material.kDiffuse.Set(1, 1, 1);
+	meshList[GEO_EFFECT_CLOUD]->material.kAmbient.Set(0.25f, 0.25f, 0.25f);
+	meshList[GEO_EFFECT_CLOUD]->material.kSpecular.Set(0.4f, 0.4f, 0.4f);
+	meshList[GEO_EFFECT_CLOUD]->material.kShininess = 20.f;
 
 	meshList[GEO_RETICLE] = MeshBuilder::GenerateReticle("reticle", Color(1, 1, 1));
 	meshList[GEO_RETICLE_CROSS] = MeshBuilder::GenerateCross("reticle_cross", Color(1, 1, 1));
@@ -305,8 +319,8 @@ void SceneBase::Init()
 	meshList[GEO_UI_BOARD_POPULATION]->textureArray[0] = LoadTGA("Image//ui_board_population.tga");
 	meshList[GEO_UI_BOARD_STONE]->textureArray[0] = LoadTGA("Image//ui_board_stone.tga");
 	meshList[GEO_UI_BOARD_TIME]->textureArray[0] = LoadTGA("Image//ui_board_time.tga");
-	meshList[GEO_UI_BOARD_WOOD]->textureArray[0] = LoadTGA("Image//ui_board_wood.tga");
 
+	meshList[GEO_UI_BOARD_WOOD]->textureArray[0] = LoadTGA("Image//ui_board_wood.tga");
 	meshList[GEO_WOODRESEARCH] = MeshBuilder::GenerateQuad("woodResearch", Color(1, 1, 1));
 	meshList[GEO_WOODRESEARCH]->textureArray[0] = LoadTGA("Image//woodResearch.tga");
 	meshList[GEO_STONERESEARCH] = MeshBuilder::GenerateQuad("stoneResearch", Color(1, 1, 1));

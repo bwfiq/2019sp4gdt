@@ -13,9 +13,19 @@ void EffectManager::Init()
 
 void EffectManager::Update(float dt)
 {
+	while (!effect_queue.empty()) 
+	{
+		effect_list.push_back(effect_queue.front());
+		effect_queue.pop();
+	}
 	for (auto Effect : effect_list)
 	{
 		Effect->Update(dt);
+	}
+	while (!effect_queue.empty())//THIS IS INTENTIONAL
+	{
+		effect_list.push_back(effect_queue.front());
+		effect_queue.pop();
 	}
 	std::vector<EffectBase*>::iterator it, end;
 	it = effect_list.begin();
@@ -138,7 +148,8 @@ void EffectManager::Render(SceneBase * scene)
 
 bool EffectManager::AddEffect(EffectBase* effect)
 {
-	effect_list.push_back(effect);
+	//effect_list.push_back(effect);
+	effect_queue.push(effect);
 	return true;
 }
 
@@ -152,6 +163,10 @@ EffectManager::~EffectManager()
 	while (!effect_list.empty()) {
 		delete effect_list.back();
 		effect_list.pop_back();
+	}
+	while (!effect_queue.empty()) {
+		delete effect_queue.front();
+		effect_queue.pop();
 	}
 }
 

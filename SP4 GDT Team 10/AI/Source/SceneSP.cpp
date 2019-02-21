@@ -24,6 +24,7 @@
 #include "EffectHand.h"
 #include "EffectReticle.h"
 #include "EffectGridWarning.h"
+#include "EffectCloud.h"
 
 #include "CalamityManager.h"
 #include "CalamityEarthquake.h"

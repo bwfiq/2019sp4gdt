@@ -281,6 +281,12 @@
     <ClCompile Include="Source\AnimationTiredWalk.cpp">
       <Filter>VisualEffects\Animations</Filter>
     </ClCompile>
+    <ClCompile Include="Source\EffectMovable.cpp">
+      <Filter>VisualEffects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EffectCloud.cpp">
+      <Filter>VisualEffects\EffectObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -519,6 +525,12 @@
     </ClInclude>
     <ClInclude Include="Source\AnimationTiredWalk.h">
       <Filter>VisualEffects\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EffectMovable.h">
+      <Filter>VisualEffects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EffectCloud.h">
+      <Filter>VisualEffects\EffectObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

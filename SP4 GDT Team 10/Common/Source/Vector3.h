@@ -70,6 +70,7 @@ struct Vector3
 	friend Vector3 operator*( float scalar, const Vector3& rhs ); //what is this for?
 
 	Vector3& lerp(const Vector3& rhs, float alpha);
+	Vector3 lerped(const Vector3& rhs, float alpha);
 };
 
 #endif //VECTOR3_H

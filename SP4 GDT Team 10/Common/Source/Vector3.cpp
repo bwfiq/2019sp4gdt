@@ -375,6 +375,11 @@ Vector3 & Vector3::lerp(const Vector3 & rhs, float alpha)
 	return *this;
 }
 
+Vector3 Vector3::lerped(const Vector3 & rhs, float alpha)
+{
+	return Vector3(*this).lerp(rhs, alpha);
+}
+
 std::ostream& operator<< (std::ostream& os, Vector3& rhs)
 {
 	os << "[ " << rhs.x << ", " << rhs.y << ", " << rhs.z << " ]";

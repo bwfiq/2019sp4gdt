@@ -1,6 +1,7 @@
 #pragma once
 #include "SingletonTemplate.h"
 #include <vector>
+#include <queue>
 
 class EffectBase;
 class SceneBase;
@@ -25,5 +26,6 @@ private:
 
 	//SceneBase* scene;
 	std::vector<EffectBase*> effect_list;
+	std::queue<EffectBase*> effect_queue;//this gon b used to uhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh add effects WITHOUT breaking the Update (via iterator thingo ya watever)
 };
 

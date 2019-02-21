@@ -264,7 +264,7 @@ void UIManager::rendertext(SceneBase * scene, Mesh * mesh, std::string text, Col
 
 		accum += 32.f / 64.f;//(float)fontWidth[(unsigned)text[i]] / 64.f;
 	}
-	//glBindTexture(GL_TEXTURE_2D, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glUniform1i(scene->m_parameters[SceneBase::U_TEXT_ENABLED], 0);
 	//if (mesh->textureID > 0)
 	//{
