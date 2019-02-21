@@ -157,7 +157,9 @@
     <ClCompile Include="Source\AnimationChopping.cpp" />
     <ClCompile Include="Source\AnimationForage.cpp" />
     <ClCompile Include="Source\AnimationJump.cpp" />
+    <ClCompile Include="Source\AnimationPanic.cpp" />
     <ClCompile Include="Source\AnimationPickUp.cpp" />
+    <ClCompile Include="Source\AnimationTiredWalk.cpp" />
     <ClCompile Include="Source\AnimationWalk.cpp" />
     <ClCompile Include="Source\Application.cpp" />
     <ClCompile Include="Source\Building.cpp" />
@@ -226,7 +228,9 @@
     <ClInclude Include="Source\AnimationChopping.h" />
     <ClInclude Include="Source\AnimationForage.h" />
     <ClInclude Include="Source\AnimationJump.h" />
+    <ClInclude Include="Source\AnimationPanic.h" />
     <ClInclude Include="Source\AnimationPickUp.h" />
+    <ClInclude Include="Source\AnimationTiredWalk.h" />
     <ClInclude Include="Source\AnimationWalk.h" />
     <ClInclude Include="Source\Application.h" />
     <ClInclude Include="Source\Building.h" />

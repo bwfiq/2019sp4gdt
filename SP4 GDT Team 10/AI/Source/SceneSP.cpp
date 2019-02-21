@@ -48,6 +48,7 @@
 
 #include "AnimationJump.h"
 #include "AnimationWalk.h"
+#include "AnimationPanic.h"
 
 #define SEA_WIDTH	100.f
 #define SEA_HEIGHT	100.f
@@ -837,7 +838,7 @@ bool SceneSP::Handle(Message* message)
 				{
 					//make villagers panic
 					goVil->eCurrState = Villager::PANIC;
-					//something something
+					goVil->GiveAnimation(new AnimationPanic());
 				}
 			}
 		}
@@ -852,8 +853,11 @@ bool SceneSP::Handle(Message* message)
 				{
 					//make villagers calm down
 					goVil->eCurrState = Villager::TIRED;
-					//something something
 
+					if (goVil->animation->type == AnimationBase::A_PANIC)
+					{
+						goVil->ClearAnimation();
+					}
 				}
 			}
 		}
@@ -911,7 +915,22 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			switch (type)
 			{
 			case GameObject::GO_VILLAGER:
+			{
+				Villager* goVil = static_cast<Villager*>(go);
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * .7f, .5f, SceneData::GetInstance()->GetGridSize() * .7f);
+				goVil->fEfficiency = 1.f;
+				goVil->eCurrState = Villager::HEALTHY;
+				goVil->iFoodStored = 0;
+				goVil->iWoodStored = 0;
+				goVil->iStoneStored = 0;
+				goVil->iMaxFoodStored = 5;
+				goVil->iMaxWoodStored = 5;
+				goVil->iMaxStoneStored = 5;
+				for (int i = 0; i < Villager::STAT_TOTAL; ++i)
+				{
+					goVil->fStats[i] = 1.f;
+				}
+			}
 				break;
 			case GameObject::GO_GRANARY:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * .7f, 1.f, SceneData::GetInstance()->GetGridSize() * .7f);
