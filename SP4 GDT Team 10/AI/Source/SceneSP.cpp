@@ -817,7 +817,24 @@ bool SceneSP::Handle(Message* message)
 				Building* goBuilding = dynamic_cast<Building*>(go);
 				if (goBuilding)
 				{
-					if (Math::RandFloatMinMax(0.f, 100.f) < messageCalamityEarthquake->fPower)
+					float dmgReduction = 0;
+					switch (goBuilding->eCurrTier)
+					{
+					case Building::STRAW:
+						dmgReduction += 0;
+						break;
+					case Building::WOOD:
+						dmgReduction += 10;
+						break;
+					case Building::STONE:
+						dmgReduction += 25;
+						break;
+					case Building::FULL_STONE:
+						dmgReduction += 50;
+						break;
+					}
+
+					if (Math::RandFloatMinMax(0.f, 100.f) + dmgReduction < messageCalamityEarthquake->fPower)
 					{
 						switch (goBuilding->eCurrState)
 						{
@@ -2800,7 +2817,7 @@ void SceneSP::Update(double dt)
 
 	camera.Update(dt);
 
-	if (KC->IsKeyPressed('P')) {//A TEST TO CHANGE RELIGION VALUE DIS WONT BE IN DA FNIAL GAME
+	if (KC->IsKeyPressed('P')) {
 		CM->AddToCalamityQueue(new CalamityEarthquake());
 		SD->SetReligionValue(((int)SD->GetReligionValue() % (int)SD->GetMaxReligionValue()) + 25);
 	}
@@ -3405,6 +3422,18 @@ void SceneSP::Update(double dt)
 		go->currentPt = GetPoint(go->pos);
 		go->Update(dt * m_speed);
 		// updating GameObjects
+		Building* goB = dynamic_cast<Building*>(go);
+		if (goB)
+		{
+			if (bFullStoneResearch)
+				goB->eCurrTier = Building::FULL_STONE;
+			else if (bStoneResearch)
+				goB->eCurrTier = Building::STONE;
+			else if (bWoodResearch)
+				goB->eCurrTier = Building::WOOD;
+			else
+				goB->eCurrTier = Building::STRAW;
+		}
 		switch (go->type)
 		{
 		case GameObject::GO_VILLAGER:

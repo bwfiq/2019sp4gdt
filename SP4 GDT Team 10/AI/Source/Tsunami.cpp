@@ -70,11 +70,27 @@ void Tsunami::Collided(GameObject * go)
 	{	
 		//Chance to reduce the state of the GameObject
 		bool bReduceState = false;
-		if (Math::RandFloatMinMax(0.f, 100.f) < fPower)
+		float dmgReduction = 0;
+		switch (goBuilding->eCurrTier)
 		{
-			bReduceState = true;
+		case Building::STRAW:
+			dmgReduction += 0;
+			break;
+		case Building::WOOD:
+			dmgReduction += 10;
+			break;
+		case Building::STONE:
+			dmgReduction += 25;
+			break;
+		case Building::FULL_STONE:
+			dmgReduction += 50;
+			break;
 		}
-		if (bReduceState)
+
+		if (Math::RandFloatMinMax(0.f, 100.f) + dmgReduction < fPower)
+			/*bReduceState = true;
+
+		if (bReduceState)*/
 		{
 			switch (goBuilding->eCurrState)
 			{
@@ -91,13 +107,9 @@ void Tsunami::Collided(GameObject * go)
 
 		//Reduce power of Tsunami Wave
 		if (go->type == GameObject::GO_LOGS)
-		{
 			fPower -= 30.f;
-		}
 		else
-		{
 			fPower -= 10.f;
-		}
 
 		return;
 	}

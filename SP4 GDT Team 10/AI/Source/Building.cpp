@@ -4,6 +4,7 @@
 Building::Building(GAMEOBJECT_TYPE typeValue)
 	: GameObject(typeValue),
 	eCurrState(COMPLETED),
+	eCurrTier(STRAW),
 	bBuilt(false)
 {
 	//GameObject(typeValue);

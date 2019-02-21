@@ -14,8 +14,18 @@ struct Building : public GameObject
 		BLUEPRINT,
 		STATES_TOTAL //Should not have any enums below this
 	};
+	enum TIER
+	{
+		STRAW = 0,
+		WOOD,
+		STONE,
+		FULL_STONE,
+
+		TIER_TOTAL
+	};
 
 	STATES eCurrState;
+	TIER eCurrTier;
 
 	bool bBuilt;
 
