@@ -3776,7 +3776,7 @@ void SceneSP::RenderGO(GameObject *go)
 			RenderMesh(meshList[GEO_GRANARY], false, 0.6f);
 			break;
 		case Building::BROKEN:
-			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
+			RenderMesh(meshList[GEO_BROKEN_GRANARY], bGodlights, 1.f);
 		}
 		modelStack.PopMatrix();
 	}
@@ -3802,7 +3802,7 @@ void SceneSP::RenderGO(GameObject *go)
 			RenderMesh(meshList[GEO_WOODSHED], false, 0.6f);
 			break;
 		case Building::BROKEN:
-			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
+			RenderMesh(meshList[GEO_BROKEN_WOODSHED], bGodlights, 1.f);
 		}
 		modelStack.PopMatrix();
 	}

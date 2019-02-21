@@ -45,9 +45,6 @@ void CalamityEarthquake::Update(float dt)
 			PO->Send("Scene"
 				, new MessageCameraShake(MessageCameraShake::SHAKE_EARTHQUAKE, 1)
 			);
-			PO->Send("Scene"
-				, new MessageCalamityEarthquake(50.f, MessageCalamityEarthquake::INTENSE)
-			);
 			state = STATE_INTENSE;
 		}
 	}
