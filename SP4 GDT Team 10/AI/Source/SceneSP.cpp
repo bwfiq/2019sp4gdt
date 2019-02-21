@@ -116,6 +116,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 		camera = tempCamera;
 		Application::GetInstance().SetMouseVisiblity(false);
 		case G_RESEARCHTREE: // will not init camera for overlays but will add ui for all ingame states
+		case G_INGAMEOPTIONS:
 		{
 			newUI = new UIReligionBar();
 			UIManager::GetInstance()->AddUI("uiReligionBar", newUI);
@@ -154,7 +155,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 			UIManager::GetInstance()->AddUI("ui_Text_DailyRequirement", newUI);
 			m_coreUi.push_back(newUI);
 
-			if (newstate != G_INPLAY)
+			if (newstate == G_RESEARCHTREE)
 			{
 				newUI = new UIOverlay("", 0.5f, 0.45f);
 				UIManager::GetInstance()->AddUI("overlay", newUI);
@@ -185,6 +186,15 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 				m_coreUi.push_back(newUI);
 				if (bFullStoneResearch)
 					UIManager::GetInstance()->GetUI("FullStoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+			}
+			else if (newstate == G_INGAMEOPTIONS)
+			{
+				newUI = new UIOverlay("", 0.5f, 0.45f);
+				UIManager::GetInstance()->AddUI("overlay", newUI);
+				m_coreUi.push_back(newUI);
+				newUI = new UIMenuButton("back", 0.5f, 0.5f);
+				UIManager::GetInstance()->AddUI("backbutton", newUI);
+				m_coreUi.push_back(newUI);
 			}
 		}
 	}
@@ -512,6 +522,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 
 void SceneSP::Init()
 {
+	fYPos = 0.02f;
 	SceneData::GetInstance()->SetNoGrid(15);
 	SceneData::GetInstance()->SetGridSize(1.f);
 	SceneData::GetInstance()->SetGridOffset(0.5f);
@@ -2448,7 +2459,7 @@ void SceneSP::ChangeTimeOfDay()
 	{
 		//light
 		lights[0].type = Light::LIGHT_DIRECTIONAL;
-		lights[0].position.Set((12.f - fTimeOfDay), (-0.25f * pow((12.f - fTimeOfDay), 2)) + 9, 0);
+		lights[0].position.Set((12.f - fTimeOfDay), /*(-0.25f * pow((12.f - fTimeOfDay), 2)) + */9, 5.f);
 		lights[0].color.Set(1, 1, 1);
 		lights[0].power = 1.f;
 		lights[0].kC = 1.f;
@@ -2709,6 +2720,16 @@ void SceneSP::Update(double dt)
 		return;
 	}
 	break;
+	case G_INGAMEOPTIONS:
+	{
+		if (KC->IsKeyPressed('U'))
+			ChangeState(G_INPLAY);
+		// button pressin
+		if (UIM->GetUI("backbutton")->IsMousePressed())
+			ChangeState(G_INPLAY);
+		return;
+	}
+	break;
 	default:
 	{
 
@@ -2729,6 +2750,10 @@ void SceneSP::Update(double dt)
 		tempCamera = camera;
 		ChangeState(G_RESEARCHTREE);
 	}
+	if (KC->IsKeyPressed('Y')) {
+		tempCamera = camera;
+		ChangeState(G_INGAMEOPTIONS);
+	}
 	if (Application::IsKeyPressed(VK_OEM_MINUS))
 	{
 		m_speed = Math::Max(0.f, m_speed - 0.1f);
@@ -2740,9 +2765,11 @@ void SceneSP::Update(double dt)
 
 	float LSPEED = 10.0f;
 	if (Application::IsKeyPressed('I'))
-		lights[0].position.z -= (float)(LSPEED * dt);
+		fYPos += 0.01f;
+		//lights[0].position.z -= (float)(LSPEED * dt);
 	if (Application::IsKeyPressed('K'))
-		lights[0].position.z += (float)(LSPEED * dt);
+		fYPos -= 0.01f;
+		//lights[0].position.z += (float)(LSPEED * dt);
 	if (Application::IsKeyPressed('J'))
 		lights[0].position.x -= (float)(LSPEED * dt);
 	if (Application::IsKeyPressed('L'))
@@ -2751,6 +2778,8 @@ void SceneSP::Update(double dt)
 		lights[0].position.y -= (float)(LSPEED * dt);
 	if (Application::IsKeyPressed('M'))
 		lights[0].position.y += (float)(LSPEED * dt);
+
+	std::cout << fYPos << std::endl;
 
 	if (Application::IsKeyPressed('Z'))
 		lights[0].type = Light::LIGHT_POINT;
@@ -3008,7 +3037,7 @@ void SceneSP::Update(double dt)
 	if (bDay)
 	{
 		lights[0].position.x = (12.f - fTimeOfDay) * SHADOW_LENGTH;
-		lights[0].position.y = (-0.25f * pow(lights[0].position.x, 2)) + 9;
+		lights[0].position.y = (-0.0025f * pow(lights[0].position.x, 2)) + 9;
 	}
 	// month
 	if (SD->GetCurrDay() >= 31)
@@ -3832,7 +3861,7 @@ void SceneSP::RenderPassMain()
 
 	modelStack.PushMatrix();
 	//modelStack.Translate(0, 0.5f + cosf(asd) * 0.15f, 0);
-	modelStack.Translate(0, -0.75f, 0);
+	modelStack.Translate(0, fYPos - 0.65f, 0);
 	//modelStack.Translate(0, 0, 0);
 	//modelStack.Translate(0, -0.5f, 0);
 	//modelStack.Rotate(-90, 1, 0, 0);
@@ -3842,7 +3871,7 @@ void SceneSP::RenderPassMain()
 	modelStack.PopMatrix();
 
 	modelStack.PushMatrix();
-	modelStack.Translate(fSeaDeltaX, fSeaDeltaY + (-0.75f + 0.49f), fSeaDeltaZ);
+	modelStack.Translate(fSeaDeltaX, fSeaDeltaY + (fYPos - 0.65f + 0.49f), fSeaDeltaZ);
 	modelStack.Rotate(-90, 1, 0, 0);
 	modelStack.Scale(SEA_WIDTH, SEA_HEIGHT, SEA_HEIGHT);
 	RenderMesh(meshList[GEO_SEA], bGodlights, 0.75f);
@@ -3862,7 +3891,7 @@ void SceneSP::RenderPassMain()
 	if (bShowGrid)
 	{
 		modelStack.PushMatrix();
-		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), -0.1f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
+		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), fYPos, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
 		modelStack.Scale(1, 1, 1);
 		glLineWidth(2.f);
 		RenderMesh(meshList[GEO_GRID], false);
@@ -3870,7 +3899,7 @@ void SceneSP::RenderPassMain()
 		modelStack.PopMatrix();
 
 		modelStack.PushMatrix();
-		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), -0.1f, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
+		modelStack.Translate(-0.5f * SD->GetNoGrid() * SD->GetGridSize(), fYPos, -0.5f * SD->GetNoGrid() * SD->GetGridSize());
 		for (int i = 0; i < SD->GetNoGrid() * SD->GetNoGrid(); ++i)
 		{
 			std::pair<int, int> pt = GetPoint(i);
@@ -4181,6 +4210,7 @@ void SceneSP::Render()
 		break;
 	case G_INPLAY:
 	case G_RESEARCHTREE:
+	case G_INGAMEOPTIONS:
 		RenderPassGPass();
 		RenderPassMain();
 		break;
