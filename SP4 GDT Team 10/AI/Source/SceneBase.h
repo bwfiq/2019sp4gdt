@@ -10,6 +10,7 @@
 #include "Utility.h"
 #include "GameObject.h"
 #include "DepthFBO.h"
+#include "LoadTGA.h"
 #include <vector>
 
 class SceneBase : public Scene

@@ -2704,18 +2704,21 @@ void SceneSP::Update(double dt)
 			SD->SetResearchPoints(SD->GetResearchPoints() - 10);
 			bWoodResearch = true;
 			UIManager::GetInstance()->GetUI("WoodResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//house.tga");
 		}
 		else if (bWoodResearch && UIM->GetUI("StoneResearch")->IsMousePressed() && SD->GetResearchPoints() >= 20 && !bStoneResearch)
 		{
 			SD->SetResearchPoints(SD->GetResearchPoints() - 20);
 			bStoneResearch = true;
 			UIManager::GetInstance()->GetUI("StoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//stonehouse.tga");
 		}
 		else if (bStoneResearch && UIM->GetUI("FullStoneResearch")->IsMousePressed() && SD->GetResearchPoints() >= 30 && !bFullStoneResearch)
 		{
 			SD->SetResearchPoints(SD->GetResearchPoints() - 30);
 			bFullStoneResearch = true;
 			UIManager::GetInstance()->GetUI("FullStoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//fullstonehouse.tga");
 		}
 		return;
 	}
