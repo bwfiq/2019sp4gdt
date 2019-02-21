@@ -2,8 +2,9 @@
 #include "SceneData.h"
 #include "PostOffice.h"
 #include "ConcreteMessages.h"
+#include "GameObject.h"
 
-UIGameText::UIGameText(TEXT_TYPE textType) :
+UIGameText::UIGameText(TEXT_TYPE textType, GameObject* go) :
 	UIBase()
 {
 	SceneData* SD = SceneData::GetInstance();
@@ -34,6 +35,37 @@ UIGameText::UIGameText(TEXT_TYPE textType) :
 		anchorPoint.Set(1, 0);
 		uiComponents_list[COMPONENT_BOARD].mesh = SD->GetMesh("ui_board_blank");
 		uiComponents_list[COMPONENT_TEXT_1].text = "Altar";
+		for (int i = 0; i <= COMPONENT_TEXT_5 - COMPONENT_TEXT_1; ++i)
+		{
+			uiComponents_list[COMPONENT_TEXT_1 + i].text = "";
+			uiComponents_list[COMPONENT_TEXT_1 + i].textSize = scale.y * 0.1f;
+		}
+		uiComponents_list[COMPONENT_TEXT_5].text = "Altar";
+		uiComponents_list[COMPONENT_TEXT_5].textSize *= 1.3f;
+		uiComponents_list[COMPONENT_TEXT_5].pos.x = 0.3f;
+
+		uiComponents_list[COMPONENT_TEXT_4].text = "Appeasement : ";
+		uiComponents_list[COMPONENT_TEXT_4].textSize *= 0.85f;
+		uiComponents_list[COMPONENT_TEXT_4].pos.x = 0.1f;
+
+		uiComponents_list[COMPONENT_TEXT_3].text = "aa";
+		uiComponents_list[COMPONENT_TEXT_3].textSize *= 0.9f;
+		uiComponents_list[COMPONENT_TEXT_3].pos.x = 0.275f;
+
+		uiComponents_list[COMPONENT_TEXT_2].text = "The gods are :";
+		uiComponents_list[COMPONENT_TEXT_2].textSize *= 1.f;
+		uiComponents_list[COMPONENT_TEXT_2].pos.x = 0.15f;
+
+		uiComponents_list[COMPONENT_TEXT_1].text = "asdasd";
+		uiComponents_list[COMPONENT_TEXT_1].textSize *= 1.15f;
+		uiComponents_list[COMPONENT_TEXT_1].pos.x = 0.25f;
+		break;
+	case TEXT_SELECTED_BUILDING:
+		pos.Set(1, 0.25f);
+		scale.Set(250, 250);
+		anchorPoint.Set(1, 0);
+		uiComponents_list[COMPONENT_BOARD].mesh = SD->GetMesh("ui_board_blank");
+		uiComponents_list[COMPONENT_TEXT_1].text = "Building";
 		for (int i = 0; i <= COMPONENT_TEXT_5 - COMPONENT_TEXT_1; ++i)
 		{
 			uiComponents_list[COMPONENT_TEXT_1 + i].text = "";

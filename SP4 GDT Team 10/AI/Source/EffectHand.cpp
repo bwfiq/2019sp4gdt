@@ -6,12 +6,19 @@
 
 EffectHand::EffectHand(Camera* cam) :
 	EffectBase()
+	, defaultPosOffset(0, 0.25f, 0)
+	, defaultScale(0.65f, 0.65f, 0.65f)
+	, defaultRot()
+	, grabPosOffset(0.15f, 2, 0)
+	, grabScale(1, 1, 1)
+	, grabRot(0, 0, -90)
 {
 	SceneData* SD = SceneData::GetInstance();
-	mesh = SD->GetMesh("hand_default");
+	mesh = SD->GetMesh("hand_point");
 	bLightEnabled = true;
 	this->cameraObj = cam;
 	this->state = HAND_DEFAULT;
+	posOffset = defaultPosOffset;
 }
 
 EffectHand::~EffectHand()
@@ -22,7 +29,7 @@ void EffectHand::Update(float dt)
 {
 	SceneData* SD = SceneData::GetInstance();
 	MouseController* MC = MouseController::GetInstance();
-	Vector3 posOffset;
+	float alpha = Math::Min(1.f, dt * 20.f);
 	switch (this->state)
 	{
 	case HAND_DEFAULT:
@@ -32,20 +39,38 @@ void EffectHand::Update(float dt)
 		}
 		else if (MC->IsButtonReleased(MouseController::RMB))
 		{
-			mesh = SD->GetMesh("hand_default");
+			mesh = SD->GetMesh("hand_point");
 		}
-		if (!rotation.IsZero())
+		if (rotation != defaultRot)
 		{
-			rotation.lerp(Vector3(), Math::Min(1.f, dt * 20.f));
+			rotation.lerp(defaultRot, alpha*0.75f);
 		}
+		if (scale != defaultScale)
+		{
+			scale.lerp(defaultScale, alpha);
+		}
+		if (posOffset != defaultPosOffset)
+		{
+			posOffset.lerp(defaultPosOffset, alpha);
+		}
+		fAlpha = 1;
 		break;
 	case HAND_GRAB_OBJECT:
 		mesh = SD->GetMesh("hand_grab");
-		if (rotation != Vector3(0, 0, -90))
+		if (rotation != grabRot)
 		{
-			rotation.lerp(Vector3(0, 0, -90), Math::Min(1.f, dt * 20.f));
+			rotation.lerp(grabRot, alpha*0.75f);
 		}
-		posOffset.Set(0.5f, 0, -0.5f);
+		if (scale != grabScale)
+		{
+			scale.lerp(grabScale, alpha);
+		}
+		if (posOffset != grabPosOffset)
+		{
+			posOffset.lerp(grabPosOffset, alpha);
+		}
+		fAlpha = 0.2f;
+
 		break;
 	}
 	
@@ -59,8 +84,8 @@ void EffectHand::Update(float dt)
 	{
 		dir.SetZero();
 	}
-	pos = SD->GetMousePos_World() + posOffset + dir * (-MC->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) + 4) * 0.7f;
-	pos.z += 0.2f;
+	//pos = SD->GetMousePos_World() + posOffset + dir * (-MC->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) + 4) * 0.7f;
+	pos = SD->GetMousePos_World() + posOffset;
 
 }
 
@@ -69,6 +94,6 @@ void EffectHand::SetState(HAND_STATE state)
 	this->state = state;
 	if (state == HAND_DEFAULT && !MouseController::GetInstance()->IsButtonDown(MouseController::RMB))
 	{
-		mesh = SceneData::GetInstance()->GetMesh("hand_default");
+		mesh = SceneData::GetInstance()->GetMesh("hand_point");
 	}
 }

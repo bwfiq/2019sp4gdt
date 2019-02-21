@@ -27,6 +27,7 @@ public:
 	static Mesh* GenerateGrid(const std::string &meshName, Color color, int numX, int numZ, float length = 1.f);
 	static Mesh* GenerateRay(const std::string &meshName, Color color, const float length = 1.f);
 	static Mesh* GenerateReticle(const std::string &meshName, Color color, unsigned numSlice = 4, float radius = 0.5f);
+	static Mesh* GenerateCross(const std::string &meshName, Color color, float length = 1);
 };
 
 #endif

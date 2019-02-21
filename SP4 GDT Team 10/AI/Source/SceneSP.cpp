@@ -647,13 +647,16 @@ void SceneSP::Init()
 
 	UIManager::GetInstance()->Init();
 
-	reticle = new EffectReticle();
+	reticle = new EffectReticle(EffectReticle::RETICLE_OUTER);
 	hand = new EffectHand(&camera);
+	EffectReticle* reticle_cross = new EffectReticle(EffectReticle::RETICLE_INNER);
+	reticle_cross->mesh = meshList[GEO_RETICLE_CROSS];
 
 	EffectManager::GetInstance()->Init();
-	EffectManager::GetInstance()->AddEffect(new EffectTrail(&camera));
-	EffectManager::GetInstance()->AddEffect(hand);
+	EffectManager::GetInstance()->AddEffect(new EffectTrail(hand));
 	EffectManager::GetInstance()->AddEffect(reticle);
+	EffectManager::GetInstance()->AddEffect(reticle_cross);
+	EffectManager::GetInstance()->AddEffect(hand);
 
 	CalamityManager::GetInstance()->Init();
 
@@ -2419,10 +2422,12 @@ void SceneSP::UpdateSelectedUI()
 		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_ALTAR);
 		UIManager::GetInstance()->AddUI("uiSelected_Altar_Info", newUI);
 		m_selectedUi.push_back(newUI);
-		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_ALTAR_OFFER);
+		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_ALTAR_OFFER, 0);
 		UIManager::GetInstance()->AddUI("uiSelected_Altar_Offer", newUI);
 		m_selectedUi.push_back(newUI);
-
+		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_GENERAL_MOVE, 1);
+		UIManager::GetInstance()->AddUI("uiSelected_Altar_Move", newUI);
+		m_selectedUi.push_back(newUI);
 	}
 }
 
@@ -2717,6 +2722,15 @@ void SceneSP::Update(double dt)
 	}
 
 	camera.Update(dt);
+
+	if (MC->IsMouseOnUI())
+	{
+		Application::GetInstance().SetMouseVisiblity(true);
+	}
+	else
+	{
+		Application::GetInstance().SetMouseVisiblity(false);
+	}
 
 	if (KC->IsKeyPressed('P')) {//A TEST TO CHANGE RELIGION VALUE DIS WONT BE IN DA FNIAL GAME
 		CM->AddToCalamityQueue(new CalamityEarthquake());

@@ -2,8 +2,9 @@
 #include "SceneData.h"
 #include "PostOffice.h"
 #include "ConcreteMessages.h"
+#include "GameObject.h"
 
-UIGameButton::UIGameButton(BUTTON_TYPE buttonType) :
+UIGameButton::UIGameButton(BUTTON_TYPE buttonType, unsigned order, GameObject* go) :
 	UIBase()
 {
 	SceneData* SD = SceneData::GetInstance();
@@ -22,14 +23,25 @@ UIGameButton::UIGameButton(BUTTON_TYPE buttonType) :
 		uiComponents_list[COMPONENT_TEXT].anchorPoint.Set(0, 0);
 		break;
 	case BUTTON_SELECTED_ALTAR_OFFER:
-		pos.Set(1, 0.25f);
-		scale.Set(250, 100);
+		scale.Set(250, 50);
+		pos.Set(1, 0.25f - (scale.y / (float)Application::GetInstance().GetWindowHeight()) * order);
 		anchorPoint.Set(1, 1);
 		uiComponents_list[COMPONENT_BOARD].mesh = SD->GetMesh("ui_board_blank");
 		uiComponents_list[COMPONENT_TEXT].mesh = NULL;
 		uiComponents_list[COMPONENT_TEXT].text = "Offer Food";
-		uiComponents_list[COMPONENT_TEXT].textSize = scale.y * 0.35f;
-		uiComponents_list[COMPONENT_TEXT].pos.Set(0.1f, 0.5f);
+		uiComponents_list[COMPONENT_TEXT].textSize = scale.y * 0.5f;
+		uiComponents_list[COMPONENT_TEXT].pos.Set(0.2f, 0.5f);
+		uiComponents_list[COMPONENT_TEXT].anchorPoint.Set(0, 0);
+		break;
+	case BUTTON_SELECTED_GENERAL_MOVE:
+		scale.Set(250, 50);
+		pos.Set(1, 0.25f - (scale.y/(float)Application::GetInstance().GetWindowHeight()) * order);
+		anchorPoint.Set(1, 1);
+		uiComponents_list[COMPONENT_BOARD].mesh = SD->GetMesh("ui_board_blank");
+		uiComponents_list[COMPONENT_TEXT].mesh = NULL;
+		uiComponents_list[COMPONENT_TEXT].text = "Move";
+		uiComponents_list[COMPONENT_TEXT].textSize = scale.y * 0.5f;
+		uiComponents_list[COMPONENT_TEXT].pos.Set(0.3f , 0.5f);
 		uiComponents_list[COMPONENT_TEXT].anchorPoint.Set(0, 0);
 		break;
 	}
