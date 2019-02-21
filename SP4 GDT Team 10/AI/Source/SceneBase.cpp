@@ -257,6 +257,8 @@ void SceneBase::Init()
 	meshList[GEO_VILLAGER]->textureArray[0] = LoadTGA("Image//villager.tga");
 	meshList[GEO_HATCHET] = MeshBuilder::GenerateOBJ("hatchet", "Obj//hatchet.obj");
 	meshList[GEO_HATCHET]->textureArray[0] = LoadTGA("Image//hatchet.tga");
+	meshList[GEO_BASKET] = MeshBuilder::GenerateOBJ("basket", "Obj//basket.obj");
+	meshList[GEO_BASKET]->textureArray[0] = LoadTGA("Image//basket.tga");
 	meshList[GEO_TSUNAMI] = MeshBuilder::GenerateOBJ("tsunami", "Obj//tsunami.obj");
 	meshList[GEO_TSUNAMI]->textureArray[0] = LoadTGA("Image//tsunami.tga");
 	meshList[GEO_TSUNAMI]->material.kAmbient.Set(0, 0, 0.25f);

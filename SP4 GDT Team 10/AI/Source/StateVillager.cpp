@@ -16,6 +16,7 @@
 #include "AnimationWalk.h"
 #include "AnimationPickUp.h"
 #include "AnimationChopping.h"
+#include "AnimationForage.h"
 
 #include "MousePicker.h"
 #include "MouseController.h"
@@ -420,7 +421,18 @@ StateForaging::~StateForaging()
 void StateForaging::Enter(GameObject * m_go)
 {
 	std::cout << "Enter Foraging State" << std::endl;
-	static_cast<Villager*>(m_go)->fActionTimer = static_cast<Environment*>(m_go->goTarget)->fTimer;
+	Villager* goVil = static_cast<Villager*>(m_go);
+	goVil->fActionTimer = static_cast<Environment*>(m_go->goTarget)->fTimer;
+	m_go->scale *= 0.2f;
+	m_go->pos.x += m_go->goTarget->scale.x * 0.3f;
+	m_go->pos.y = m_go->scale.y * 0.5f;
+	m_go->pos.z += m_go->goTarget->scale.z * 0.3f;
+	m_go->direction.Set(-1, 0, -1);
+	m_go->direction.Normalize();
+
+	SceneData* SD = SceneData::GetInstance();
+	goVil->mEquipment = SD->GetMesh("basket");
+	goVil->GiveAnimation(new AnimationForage());
 }
 
 void StateForaging::Update(double dt, GameObject * m_go)
@@ -468,7 +480,13 @@ void StateForaging::Update(double dt, GameObject * m_go)
 
 void StateForaging::Exit(GameObject * m_go)
 {
-	static_cast<Villager*>(m_go)->fActionTimer = 0;
+	Villager* goVil = static_cast<Villager*>(m_go);
+	goVil->fActionTimer = 0;
+
+	m_go->scale *= 5;
+	m_go->pos.y = m_go->scale.y * 0.5f;
+	m_go->ClearAnimation();
+	goVil->mEquipment = NULL;
 }
 
 //StateAttack

@@ -14,7 +14,13 @@ public:
 	virtual ~AnimationForage();
 
 	virtual void Update(float dt);
+
+	float timer;
 protected:
+	bool turnLeft;
+	bool goDown;
+	bool turnRight;
+	bool goUp;
 private:
 	//virtual void Render() = 0;
 };
