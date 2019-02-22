@@ -55,6 +55,28 @@ UIGameButton::UIGameButton(BUTTON_TYPE buttonType, unsigned order, GameObject* g
 		uiComponents_list[COMPONENT_TEXT].pos.Set(0.3f, 0.5f);
 		uiComponents_list[COMPONENT_TEXT].anchorPoint.Set(0, 0);
 		break;
+	case BUTTON_BUILD_LOGS:
+	case BUTTON_BUILD_GRANARY:
+	case BUTTON_BUILD_HOUSE:
+	case BUTTON_BUILD_WOODSHED:
+		scale.Set(250, 50);
+		pos.Set(1 - (scale.x / (float)Application::GetInstance().GetWindowWidth()), 0.25f + ((scale.y / (float)Application::GetInstance().GetWindowHeight())) * ((int)order - 1));
+		anchorPoint.Set(1, 1);
+		uiComponents_list[COMPONENT_BOARD].mesh = SD->GetMesh("ui_board_blank");
+		uiComponents_list[COMPONENT_TEXT].mesh = NULL;
+		uiComponents_list[COMPONENT_TEXT].textSize = scale.y * 0.5f;
+		uiComponents_list[COMPONENT_TEXT].pos.Set(0.3f, 0.5f);
+		uiComponents_list[COMPONENT_TEXT].anchorPoint.Set(0, 0);
+		if (buttonType == BUTTON_BUILD_LOGS)
+			uiComponents_list[COMPONENT_TEXT].text = "Logs";
+		else if(buttonType == BUTTON_BUILD_GRANARY)
+			uiComponents_list[COMPONENT_TEXT].text = "Granary";
+		else if (buttonType == BUTTON_BUILD_WOODSHED)
+			uiComponents_list[COMPONENT_TEXT].text = "Woodshed";
+		else if (buttonType == BUTTON_BUILD_HOUSE)
+			uiComponents_list[COMPONENT_TEXT].text = "House";
+		
+		break;
 	}
 	this->buttonType = buttonType;
 	
@@ -85,8 +107,24 @@ void UIGameButton::Update(float dt)
 				, new MessageMoveButton());
 			break;
 		case BUTTON_SELECTED_CHIEFHUT_BUILD:
+			PO->Send("Scene",
+				new MessageCreateBuildUIs());
+			break;
+		case BUTTON_BUILD_LOGS:
 			PO->Send("Scene"
-				, new MessageBuildBuildings());
+				, new MessageBuildBuildings(GameObject::GO_LOGS));
+			break;
+		case BUTTON_BUILD_GRANARY:
+			PO->Send("Scene"
+				, new MessageBuildBuildings(GameObject::GO_GRANARY));
+			break;
+		case BUTTON_BUILD_HOUSE:
+			PO->Send("Scene"
+				, new MessageBuildBuildings(GameObject::GO_HOUSE));
+			break;
+		case BUTTON_BUILD_WOODSHED:
+			PO->Send("Scene"
+				, new MessageBuildBuildings(GameObject::GO_WOODSHED));
 			break;
 		}
 	}

@@ -108,7 +108,13 @@ struct MessageMoveButton : public Message
 };
 struct MessageBuildBuildings : public Message
 {
-	MessageBuildBuildings() {}
+	MessageBuildBuildings(GameObject::GAMEOBJECT_TYPE type) : type(type) {}
 	virtual ~MessageBuildBuildings() {}
+	GameObject::GAMEOBJECT_TYPE type;
+};
+struct MessageCreateBuildUIs : public Message
+{
+	MessageCreateBuildUIs() {}
+	virtual ~MessageCreateBuildUIs() {}
 };
 #endif
