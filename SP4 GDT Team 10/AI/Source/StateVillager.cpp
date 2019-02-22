@@ -7,6 +7,8 @@
 #include "ProjectileManager.h"
 #include <iostream>
 
+#include "EffectManager.h"
+
 #include "Villager.h"
 #include "Building.h"
 #include "Bush.h"
@@ -411,6 +413,7 @@ void StateChopTree::Update(double dt, GameObject * m_go)
 			vGo->iWoodStored = Math::Min(vGo->fStats[Villager::WOODCUTTING] * treeGo->iWoodAmount + vGo->iWoodStored, (float)vGo->iMaxWoodStored);
 			treeGo->active = false;
 		}
+		EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_COMPLETEOBJECT, treeGo->pos);
 		MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_NEAREST_WOODSHED, 1);
 		PostOffice::GetInstance()->Send("Scene", messagewru);
 		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
@@ -723,7 +726,7 @@ void StateConstructing::Update(double dt, GameObject* m_go)
 				m_go->goTarget = NULL;
 				goBuilding->bBuilt = true;
 				goBuilding->eCurrState = Building::COMPLETED;
-				
+				EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_COMPLETEOBJECT, goBuilding->pos);
 				m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 				return;
 			}

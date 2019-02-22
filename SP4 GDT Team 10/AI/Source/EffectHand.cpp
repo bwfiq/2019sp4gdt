@@ -20,6 +20,7 @@ EffectHand::EffectHand(Camera* cam) :
 	mesh = SD->GetMesh("hand_point");
 	bLightEnabled = true;
 	this->cameraObj = cam;
+	this->fAlpha = 0.5f;
 	this->state = HAND_DEFAULT;
 	posOffset = defaultPosOffset;
 }
