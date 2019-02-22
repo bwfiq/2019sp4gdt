@@ -2761,15 +2761,6 @@ void SceneSP::Update(double dt)
 	UIM->Update(dt);
 	EM->Update(dt);
 
-	if (MouseController::GetInstance()->IsMouseOnUI())
-	{
-		std::cout << "True" << std::endl;
-	}
-	else
-	{
-		std::cout << "naw" << std::endl;
-	}
-
 	switch (game_state)
 	{
 	case G_SPLASHSCREEN:

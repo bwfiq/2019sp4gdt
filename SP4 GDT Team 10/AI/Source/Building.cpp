@@ -5,7 +5,9 @@ Building::Building(GAMEOBJECT_TYPE typeValue)
 	: GameObject(typeValue),
 	eCurrState(COMPLETED),
 	eCurrTier(STRAW),
-	bBuilt(false)
+	bBuilt(false),
+	fBuildTime(4),
+	fRepairTime(4)
 {
 	//GameObject(typeValue);
 	std::cout << "Building Constructor" << std::endl;
@@ -30,6 +32,11 @@ bool Building::Handle(Message* msg)
 	}
 	delete msg;
 	return false;
+}
+
+void Building::Update(float dt)
+{
+	GameObject::Update(dt);
 }
 
 void Building::TheFunction(GameObject* go)

@@ -29,7 +29,12 @@ struct Building : public GameObject
 
 	bool bBuilt;
 
+	float fBuildTime;
+	float fRepairTime;
+
 	virtual bool Handle(Message* msg);
+
+	virtual void Update(float dt);
 
 	virtual void TheFunction(GameObject* go);
 

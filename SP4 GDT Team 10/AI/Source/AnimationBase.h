@@ -16,6 +16,7 @@ public:
 		A_PICKUP,
 		A_PANIC,
 		A_TIRED,
+		A_CONSTRUCTING,
 		A_TOTAL
 	};
 	bool active;

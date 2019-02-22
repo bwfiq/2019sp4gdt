@@ -287,6 +287,9 @@
     <ClCompile Include="Source\EffectCloud.cpp">
       <Filter>VisualEffects\EffectObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Source\AnimationConstructing.cpp">
+      <Filter>VisualEffects\Animations</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -531,6 +534,9 @@
     </ClInclude>
     <ClInclude Include="Source\EffectCloud.h">
       <Filter>VisualEffects\EffectObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\AnimationConstructing.h">
+      <Filter>VisualEffects\Animations</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
