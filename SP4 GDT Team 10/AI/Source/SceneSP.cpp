@@ -524,7 +524,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 
 void SceneSP::Init()
 {
-	fYPos = 0.02f;
+	fYPos = 0.12f;
 	SceneData::GetInstance()->SetNoGrid(15);
 	SceneData::GetInstance()->SetGridSize(1.f);
 	SceneData::GetInstance()->SetGridOffset(0.5f);
@@ -2969,6 +2969,7 @@ void SceneSP::Update(double dt)
 	}
 
 	float LSPEED = 10.0f;
+	float temp34 = fYPos;
 	if (Application::IsKeyPressed('I'))
 		fYPos += 0.01f;
 		//lights[0].position.z -= (float)(LSPEED * dt);
@@ -2984,6 +2985,8 @@ void SceneSP::Update(double dt)
 	if (Application::IsKeyPressed('M'))
 		lights[0].position.y += (float)(LSPEED * dt);
 
+	if (fYPos != temp34)
+		std::cout << fYPos << std::endl;
 
 	if (Application::IsKeyPressed('Z'))
 		lights[0].type = Light::LIGHT_POINT;
@@ -4122,7 +4125,7 @@ void SceneSP::RenderPassMain()
 
 	modelStack.PushMatrix();
 	//modelStack.Translate(0, 0.5f + cosf(asd) * 0.15f, 0);
-	modelStack.Translate(0, fYPos - 0.65f, 0);
+	modelStack.Translate(0, fYPos - 1.f, 0);
 	//modelStack.Translate(0, 0, 0);
 	//modelStack.Translate(0, -0.5f, 0);
 	//modelStack.Rotate(-90, 1, 0, 0);
@@ -4132,10 +4135,10 @@ void SceneSP::RenderPassMain()
 	modelStack.PopMatrix();
 
 	modelStack.PushMatrix();
-	modelStack.Translate(fSeaDeltaX, fSeaDeltaY + (fYPos - 0.65f + 0.49f), fSeaDeltaZ);
+	modelStack.Translate(fSeaDeltaX, fSeaDeltaY + (fYPos - 1.f) + 0.7f, fSeaDeltaZ);
 	modelStack.Rotate(-90, 1, 0, 0);
 	modelStack.Scale(SEA_WIDTH, SEA_HEIGHT, SEA_HEIGHT);
-	RenderMesh(meshList[GEO_SEA], bGodlights, 0.75f);
+	RenderMesh(meshList[GEO_SEA], false, 0.75f);
 	modelStack.PopMatrix();
 
 	RenderWorld();
