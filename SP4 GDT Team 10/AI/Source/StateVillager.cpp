@@ -770,7 +770,20 @@ StateMining::~StateMining()
 void StateMining::Enter(GameObject* m_go)
 {
 	std::cout << "Enter Mining State" << std::endl;
-	static_cast<Villager*>(m_go)->fActionTimer = static_cast<Environment*>(m_go->goTarget)->fTimer;
+
+	Villager* goVil = static_cast<Villager*>(m_go);
+	goVil->fActionTimer = static_cast<Environment*>(m_go->goTarget)->fTimer;
+
+	SceneData* SD = SceneData::GetInstance();
+	m_go->scale *= 0.2f;
+	m_go->pos.x += SD->GetGridOffset() - m_go->scale.x;
+	m_go->pos.y = m_go->scale.y * 0.5f;
+	m_go->pos.z += SD->GetGridOffset() - m_go->scale.z;
+	m_go->direction.Set(-1, 0, -1);
+	m_go->direction.Normalize();
+
+	goVil->mEquipment = SD->GetMesh("pickaxe");
+	m_go->GiveAnimation(new AnimationConstructing());
 }
 
 void StateMining::Update(double dt, GameObject* m_go)
@@ -814,4 +827,10 @@ void StateMining::Update(double dt, GameObject* m_go)
 void StateMining::Exit(GameObject* m_go)
 {
 	static_cast<Villager*>(m_go)->fActionTimer = 0;
+	m_go->scale *= 5.f;
+	m_go->pos.y = m_go->scale.y * 0.5f;
+	Villager* goVil = static_cast<Villager*>(m_go);
+	goVil->mEquipment = NULL;
+
+	m_go->ClearAnimation();
 }
