@@ -920,6 +920,46 @@ bool SceneSP::Handle(Message* message)
 		delete message;
 		return true;
 	}
+	MessageMoveButton* messageMoveButton = dynamic_cast<MessageMoveButton*>(message);
+	if (messageMoveButton)
+	{
+		if (selected != NULL)
+		{
+			Building* goBuilding = dynamic_cast<Building*>(selected);
+			if (goBuilding)
+			{
+				//Only Completed and non broken buildings can be moved again
+				if (goBuilding->eCurrState == Building::COMPLETED)
+				{
+					goBuilding->eCurrState = Building::BLUEPRINT;
+					GridPt currentGrid = GetPoint(mousePos);
+					selected->pos = GetGridPos(currentGrid);
+					selected->pos.y += selected->scale.y * 0.5f;
+
+					bShowGrid = true;
+				}
+			}
+		}
+		else
+		{
+			std::cout << "move bttn error" << std::endl;
+		}
+		delete message;
+		return true;
+	}
+	MessageBuildBuildings* messageBuildBuildings = dynamic_cast<MessageBuildBuildings*>(message);
+	if (messageBuildBuildings)
+	{
+		selected = FetchGO(GameObject::GO_HOUSE);
+		GridPt currentGrid = GetPoint(mousePos);
+		selected->pos = GetGridPos(currentGrid);
+		selected->pos.y = selected->scale.y * 0.5f;
+		static_cast<Building*>(selected)->eCurrState = Building::BLUEPRINT;
+
+		bShowGrid = true;
+		delete message;
+		return true;
+	}
 	delete message;
 	return false;
 }
@@ -2699,6 +2739,7 @@ void SceneSP::Update(double dt)
 	EffectManager* EM = EffectManager::GetInstance();
 	CalamityManager* CM = CalamityManager::GetInstance();
 
+
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
@@ -2719,6 +2760,15 @@ void SceneSP::Update(double dt)
 
 	UIM->Update(dt);
 	EM->Update(dt);
+
+	if (MouseController::GetInstance()->IsMouseOnUI())
+	{
+		std::cout << "True" << std::endl;
+	}
+	else
+	{
+		std::cout << "naw" << std::endl;
+	}
 
 	switch (game_state)
 	{
@@ -2953,33 +3003,6 @@ void SceneSP::Update(double dt)
 
 			bShowGrid = true;
 		}
-		else
-		{
-			Building* goBuilding = dynamic_cast<Building*>(selected);
-			if (goBuilding)
-			{
-				//Only Completed and non broken buildings can be moved again
-				if (goBuilding->eCurrState == Building::COMPLETED)
-				{
-					goBuilding->eCurrState = Building::BLUEPRINT;
-					GridPt currentGrid = GetPoint(mousePos);
-					selected->pos = GetGridPos(currentGrid);
-					selected->pos.y += selected->scale.y * 0.5f;
-
-					bShowGrid = true;
-				}
-				//Only non broken buildings can be moved again
-				/*if (goBuilding->eCurrState != Building::BROKEN)
-				{
-					goBuilding->eCurrState = Building::BLUEPRINT;
-					GridPt currentGrid = GetPoint(mousePos);
-					selected->pos = GetGridPos(currentGrid);
-					selected->pos.y += selected->scale.y * 0.5f;
-
-					bShowGrid = true;
-				}*/
-			}
-		}
 	}
 
 	Vector3 clickTarget = NULL;
@@ -2987,91 +3010,95 @@ void SceneSP::Update(double dt)
 	static bool leftClick = false;
 	if (MC->IsButtonPressed(MouseController::LMB))
 	{
-		leftClick = true;
+		
 		//std::cout << "LBUTTON DOWN" << std::endl;
 
-		double x, y;
-		Application::GetCursorPos(&x, &y);
-		int w = Application::GetWindowWidth();
-		int h = Application::GetWindowHeight();
-		float posX = static_cast<float>(x) / w * m_worldWidth;
-		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
-		//std::cout << mousePos << std::endl;
-		GridPt selectedPt = GetPoint(mousePos);
-		if (isPointInGrid(selectedPt))
-			//std::cout << "Selected Grid: " << selectedPt.x << ", " << selectedPt.z << std::endl;
+		if (!MC->IsMouseOnUI())
 		{
-			bool objectFound = false;
-			for (auto go : m_goList)
+			leftClick = true;
+			double x, y;
+			Application::GetCursorPos(&x, &y);
+			int w = Application::GetWindowWidth();
+			int h = Application::GetWindowHeight();
+			float posX = static_cast<float>(x) / w * m_worldWidth;
+			float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
+			//std::cout << mousePos << std::endl;
+			GridPt selectedPt = GetPoint(mousePos);
+			if (isPointInGrid(selectedPt))
+				//std::cout << "Selected Grid: " << selectedPt.x << ", " << selectedPt.z << std::endl;
 			{
-				if (!go->active)
-					continue;
-				if (selectedPt == go->currentPt)
+				bool objectFound = false;
+				for (auto go : m_goList)
 				{
-					//Supposed to implement priority here
-					if (selected == NULL)
+					if (!go->active)
+						continue;
+					if (selectedPt == go->currentPt)
 					{
-						selected = go;
-						objectFound = true;
-						go->GiveAnimation(new AnimationJump());
-						if (go->type == GameObject::GO_VILLAGER)
+						//Supposed to implement priority here
+						if (selected == NULL)
 						{
-							go->direction = Vector3(0, 0, 1);
-						}
-						break;
-					}
-					else if (selected != go)
-					{
-						objectFound = true;
-						switch (selected->type)
-						{
-						case GameObject::GO_VILLAGER:
-						{
-							selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
-							selected->goTarget = go;
-							selected = NULL;
+							selected = go;
 							objectFound = true;
-						}
-						break;
-						default:
+							go->GiveAnimation(new AnimationJump());
+							if (go->type == GameObject::GO_VILLAGER)
+							{
+								go->direction = Vector3(0, 0, 1);
+							}
 							break;
 						}
-					}
-				}
-				if (objectFound)
-				{
-					break;
-				}
-			}
-			if (!objectFound)
-			{
-				if (selected != NULL)
-				{
-					//If it is a villager
-					Villager* goVil = dynamic_cast<Villager*>(selected);
-					if (goVil)
-					{
-						selected->goTarget = NULL;
-
-						selected->target = GetGridPos(selectedPt);
-						selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
-					}
-					//If it is a building
-					Building* goBuilding = dynamic_cast<Building*>(selected);
-					if (goBuilding)
-					{
-						if (goBuilding->eCurrState == Building::BLUEPRINT)
+						else if (selected != go)
 						{
-							//Should be trying to contruct now
-							if (!goBuilding->bBuilt)
-								goBuilding->eCurrState = Building::CONSTRUCTING;
-							else
-								goBuilding->eCurrState = Building::COMPLETED;
-							bShowGrid = false;
+							objectFound = true;
+							switch (selected->type)
+							{
+							case GameObject::GO_VILLAGER:
+							{
+								selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
+								selected->goTarget = go;
+								selected = NULL;
+								objectFound = true;
+							}
+							break;
+							default:
+								break;
+							}
 						}
 					}
-					selected = NULL;
-					goVillager->goTarget = NULL;
+					if (objectFound)
+					{
+						break;
+					}
+				}
+				if (!objectFound)
+				{
+					if (selected != NULL)
+					{
+						//If it is a villager
+						Villager* goVil = dynamic_cast<Villager*>(selected);
+						if (goVil)
+						{
+							selected->goTarget = NULL;
+
+							selected->target = GetGridPos(selectedPt);
+							selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
+						}
+						//If it is a building
+						Building* goBuilding = dynamic_cast<Building*>(selected);
+						if (goBuilding)
+						{
+							if (goBuilding->eCurrState == Building::BLUEPRINT)
+							{
+								//Should be trying to contruct now
+								if (!goBuilding->bBuilt)
+									goBuilding->eCurrState = Building::CONSTRUCTING;
+								else
+									goBuilding->eCurrState = Building::COMPLETED;
+								bShowGrid = false;
+							}
+						}
+						selected = NULL;
+						goVillager->goTarget = NULL;
+					}
 				}
 			}
 		}

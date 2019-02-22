@@ -100,4 +100,15 @@ struct MessageAltarOffer : public Message
 	virtual ~MessageAltarOffer() {}
 	OFFER_TYPE type;
 };
+
+struct MessageMoveButton : public Message
+{
+	MessageMoveButton() {}
+	virtual ~MessageMoveButton() {}
+};
+struct MessageBuildBuildings : public Message
+{
+	MessageBuildBuildings() {}
+	virtual ~MessageBuildBuildings() {}
+};
 #endif

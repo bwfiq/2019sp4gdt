@@ -80,6 +80,14 @@ void UIGameButton::Update(float dt)
 			PO->Send("Scene"
 				, new MessageAltarOffer(MessageAltarOffer::OFFER_FOOD));
 			break;
+		case BUTTON_SELECTED_GENERAL_MOVE:
+			PO->Send("Scene"
+				, new MessageMoveButton());
+			break;
+		case BUTTON_SELECTED_CHIEFHUT_BUILD:
+			PO->Send("Scene"
+				, new MessageBuildBuildings());
+			break;
 		}
 	}
 }

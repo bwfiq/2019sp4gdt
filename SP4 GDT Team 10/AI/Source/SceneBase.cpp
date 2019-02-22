@@ -300,7 +300,8 @@ void SceneBase::Init()
 		meshList[i]->material.kShininess = 20.f;
 	}
 	meshList[GEO_EFFECT_CLOUD] = MeshBuilder::GenerateOBJ("effect_cloud", "Obj//cloud.obj");
-	//meshList[GEO_EFFECT_CLOUD]->textureArray[0] = LoadTGA("Image//white.tga");
+	meshList[GEO_EFFECT_CLOUD]->textureArray[0] = LoadTGA("Image//white.tga");
+	//meshList[GEO_EFFECT_CLOUD] = MeshBuilder::GenerateCube("effect_cloud", Color(1, 1, 1));
 	meshList[GEO_EFFECT_CLOUD]->material.kDiffuse.Set(1, 1, 1);
 	meshList[GEO_EFFECT_CLOUD]->material.kAmbient.Set(0.25f, 0.25f, 0.25f);
 	meshList[GEO_EFFECT_CLOUD]->material.kSpecular.Set(0.4f, 0.4f, 0.4f);
