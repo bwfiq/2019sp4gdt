@@ -122,7 +122,7 @@ void main(){
 	if(lightEnabled == true)
 	{
 		// Material properties
-		vec4 materialColor = vec4(0, 0, 0, 1);
+		vec4 materialColor = vec4(0, 0, 0, alpha);
 		
 		int texCount = 0;
 		
@@ -148,7 +148,7 @@ void main(){
 		vec3 N = normalize( vertexNormal_cameraspace );
 		
 		// Ambient : simulates indirect lighting
-		color = materialColor * vec4(material.kAmbient, 1);
+		color = materialColor * vec4(material.kAmbient, alpha);
 		
 		for(int i = 0; i < numLights; ++i)
 		{
@@ -185,13 +185,15 @@ void main(){
 				
 				// Specular : reflective highlight, like a mirror
 				visibility * vec4(material.kSpecular, 1) * vec4(lights[i].color, 1) * lights[i].power * pow(cosAlpha, material.kShininess) * attenuationFactor * spotlightEffect;
+			
+			color = color * vec4(1,1,1, alpha);
 		}
 	}
 	else
 	{
 		if(colorTextureEnabled[0] == true && textEnabled == true)
 		{
-			color = texture2D( colorTexture[0], texCoord + uvOffset ) * vec4( textColor, 1 );
+			color = texture2D( colorTexture[0], texCoord + uvOffset ) * vec4( textColor, alpha );
 		}
 		else
 		{
@@ -208,7 +210,7 @@ void main(){
 			}
 			if (texCount > 0)
 			{
-				color = color/texCount;
+				color = (color/texCount) * vec4(1,1,1,alpha);
 			}
 			else
 				color = vec4( fragmentColor, alpha );
