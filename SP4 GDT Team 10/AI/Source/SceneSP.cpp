@@ -950,13 +950,40 @@ bool SceneSP::Handle(Message* message)
 	MessageBuildBuildings* messageBuildBuildings = dynamic_cast<MessageBuildBuildings*>(message);
 	if (messageBuildBuildings)
 	{
-		selected = FetchGO(GameObject::GO_HOUSE);
+		//selected = FetchGO(GameObject::GO_HOUSE);
+		selected = FetchGO(messageBuildBuildings->type);
 		GridPt currentGrid = GetPoint(mousePos);
 		selected->pos = GetGridPos(currentGrid);
 		selected->pos.y = selected->scale.y * 0.5f;
 		static_cast<Building*>(selected)->eCurrState = Building::BLUEPRINT;
 
 		bShowGrid = true;
+		delete message;
+		return true;
+	}
+	MessageCreateBuildUIs* messageCreateBuildUIs = dynamic_cast<MessageCreateBuildUIs*>(message);
+	if (messageCreateBuildUIs)
+	{
+		UIBase* buildButtonUI = UIManager::GetInstance()->GetUI("uiSelected_Chiefhut_Build");
+		if (!buildButtonUI->bActive)
+		{
+			delete message;
+			return false;
+		}
+		UIBase* newUI = new UIGameButton(UIGameButton::BUTTON_BUILD_LOGS, 0);
+		UIManager::GetInstance()->AddUI("uiBuild_Logs", newUI);
+		m_selectedUi.push_back(newUI);
+		newUI = new UIGameButton(UIGameButton::BUTTON_BUILD_GRANARY, 1);
+		UIManager::GetInstance()->AddUI("uiBuild_Granary", newUI);
+		m_selectedUi.push_back(newUI);
+		newUI = new UIGameButton(UIGameButton::BUTTON_BUILD_HOUSE, 2);
+		UIManager::GetInstance()->AddUI("uiBuild_House", newUI);
+		m_selectedUi.push_back(newUI);
+		newUI = new UIGameButton(UIGameButton::BUTTON_BUILD_WOODSHED, 3);
+		UIManager::GetInstance()->AddUI("uiBuild_Woodshed", newUI);
+		m_selectedUi.push_back(newUI);
+		UIManager::GetInstance()->GetUI("uiSelected_Chiefhut_Build")->bActive = false;
+
 		delete message;
 		return true;
 	}
