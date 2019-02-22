@@ -132,6 +132,7 @@ void EffectManager::Render(SceneBase * scene)
 				scene->modelStack.Rotate(Effect->rotation.z, 0, 0, 1);
 
 			}
+			//scene->modelStack.Scale(Math::Max(0.06f, Effect->scale.x), Math::Max(0.06f, Effect->scale.y), Math::Max(0.06f, Effect->scale.z));
 			scene->modelStack.Scale(Effect->scale.x, Effect->scale.y, Effect->scale.z);
 			if (EffReticle)
 			{
@@ -158,6 +159,7 @@ void EffectManager::DoPrefabEffect(EFFECT_PREFABS prefab, Vector3 goPos)
 {
 	switch (prefab)
 	{
+	case PREFAB_COMPLETEOBJECT:
 	case PREFAB_PLACEOBJECT:
 	{
 		for (int i = 0; i < 8; ++i)
