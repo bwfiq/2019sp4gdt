@@ -229,6 +229,7 @@ void EffectManager::rendermesh(SceneBase* scene,EffectBase* effect)
 				glUniform1i(scene->m_parameters[SceneBase::U_SHADOW_COLOR_TEXTURE_ENABLED
 					+ i], 0);
 		}
+		glUniform1f(scene->m_parameters[SceneBase::U_ALPHA], effect->fAlpha);
 		effect->mesh->Render();
 		return;
 	}

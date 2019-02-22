@@ -4445,13 +4445,13 @@ void SceneSP::RenderOptions()
 
 void SceneSP::RenderWorld()
 {
+	EffectManager::GetInstance()->Render(this);
 	for (auto go : m_goList)
 	{
 		if (!go->active)
 			continue;
 		RenderGO(go);
 	}
-	EffectManager::GetInstance()->Render(this);
 }
 
 void SceneSP::Render()
