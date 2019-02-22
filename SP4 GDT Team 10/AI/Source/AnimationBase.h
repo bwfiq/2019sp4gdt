@@ -17,6 +17,7 @@ public:
 		A_PANIC,
 		A_TIRED,
 		A_CONSTRUCTING,
+		A_MINING,
 		A_TOTAL
 	};
 	bool active;
