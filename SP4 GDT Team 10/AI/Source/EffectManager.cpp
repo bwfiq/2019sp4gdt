@@ -6,6 +6,7 @@
 #include "EffectTrail.h"
 #include "EffectHand.h"
 #include "EffectReticle.h"
+#include "EffectCloud.h"
 
 void EffectManager::Init()
 {
@@ -151,6 +152,40 @@ bool EffectManager::AddEffect(EffectBase* effect)
 	//effect_list.push_back(effect);
 	effect_queue.push(effect);
 	return true;
+}
+
+void EffectManager::DoPrefabEffect(EFFECT_PREFABS prefab, Vector3 goPos)
+{
+	switch (prefab)
+	{
+	case PREFAB_PLACEOBJECT:
+	{
+		for (int i = 0; i < 8; ++i)
+		{
+			EffectCloud* newCloud = new EffectCloud(
+				goPos + Vector3(Math::RandFloatMinMax(-0.5f, 0.5f), -0.5f + Math::RandFloatMinMax(0.f, 0.5f), Math::RandFloatMinMax(-0.5f, 0.5f)) * 0.5f
+				, Math::RandFloatMinMax(0.25f, 0.75f)
+				, Vector3(1, 1, 1) * Math::RandFloatMinMax(1.f, 3.f)
+			);
+			newCloud->vel += Vector3(0, 1, 0);
+			this->AddEffect(newCloud);
+		}
+		break;
+	}
+	case PREFAB_PLACEVILLAGER:
+	{
+		for (int i = 0; i < 3; ++i)
+		{
+			EffectCloud* newCloud = new EffectCloud(
+				goPos + Vector3(Math::RandFloatMinMax(-0.5f, 0.5f), 0, Math::RandFloatMinMax(-0.5f, 0.5f)) * 0.25f
+				, Math::RandFloatMinMax(0.25f, 0.9f)
+				, Vector3(1, 1, 1) * Math::RandFloatMinMax(0.8f, 1.5f)
+			);
+			this->AddEffect(newCloud);
+		}
+		break;
+	}
+	}
 }
 
 EffectManager::EffectManager()

@@ -11,7 +11,7 @@ EffectCloud::EffectCloud(Vector3 origPos, float lifeTime, Vector3 startScale, Ve
 	bLightEnabled = true;
 	this->startScale = scale = startScale;
 	this->endScale = endScale;
-	Vector3 randVel = Vector3(Math::RandFloatMinMax(-1, 1), Math::RandFloatMinMax(-1, 1), Math::RandFloatMinMax(-1, 1)).Normalized();
+	Vector3 randVel = Vector3(Math::RandFloatMinMax(-1, 1), Math::RandFloatMinMax(0, 1), Math::RandFloatMinMax(-1, 1)).Normalized();
 	float randVelMagnitude = Math::RandFloatMinMax(1, 4) / lifeTime;
 	vel = randVel * randVelMagnitude;
 	acc = -randVel * randVelMagnitude * 2;

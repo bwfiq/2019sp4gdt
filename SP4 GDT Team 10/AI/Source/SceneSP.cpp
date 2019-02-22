@@ -3112,7 +3112,9 @@ void SceneSP::Update(double dt)
 								else
 									goBuilding->eCurrState = Building::COMPLETED;
 								bShowGrid = false;
+								EM->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, selected->pos);
 							}
+							
 						}
 						selected = NULL;
 						goVillager->goTarget = NULL;
@@ -3186,6 +3188,7 @@ void SceneSP::Update(double dt)
 					selected->pos = GetGridPos(selected->currentPt);
 					selected->pos.y += selected->scale.y * 0.5f;
 				}
+				EM->DoPrefabEffect(EffectManager::PREFAB_PLACEVILLAGER, selected->pos + Vector3(0, -selected->scale.y * 0.5f, 0));
 				selected = NULL;
 			}
 		}
