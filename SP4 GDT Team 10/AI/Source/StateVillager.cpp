@@ -19,6 +19,7 @@
 #include "AnimationPickUp.h"
 #include "AnimationChopping.h"
 #include "AnimationForage.h"
+#include "AnimationConstructing.h"
 
 #include "MousePicker.h"
 #include "MouseController.h"
@@ -671,6 +672,33 @@ StateConstructing::~StateConstructing()
 void StateConstructing::Enter(GameObject* m_go)
 {
 	std::cout << "Enter Constructing State" << std::endl;
+
+	Villager* goVil = static_cast<Villager*>(m_go);
+	Building* goBuilding = dynamic_cast<Building*>(m_go->goTarget);
+	if(goBuilding)
+	{
+		if (goBuilding->eCurrState == Building::CONSTRUCTING)
+			goVil->fActionTimer = goBuilding->fBuildTime;
+		else if (goBuilding->eCurrState == Building::BROKEN)
+			goVil->fActionTimer = goBuilding->fRepairTime;
+		else
+			goVil->fActionTimer = 0;
+		SceneData* SD = SceneData::GetInstance();
+		m_go->scale *= 0.2f;
+		m_go->pos.x += SD->GetGridOffset() - m_go->scale.x;
+		m_go->pos.y = m_go->scale.y * 0.5f;
+		m_go->pos.z += SD->GetGridOffset() - m_go->scale.z;
+		m_go->direction.Set(-1, 0, -1);
+		m_go->direction.Normalize();
+
+
+		goVil->mEquipment = SD->GetMesh("hammer");
+		m_go->GiveAnimation(new AnimationConstructing());
+	}
+	else
+	{
+		std::cout << "Wrong State : Constructing" << std::endl;
+	}
 }
 
 void StateConstructing::Update(double dt, GameObject* m_go)
@@ -687,20 +715,45 @@ void StateConstructing::Update(double dt, GameObject* m_go)
 			return;
 		}
 		//Construction and Repair code here, maybe some timer idk
-		m_go->goTarget = NULL;
-		goBuilding->eCurrState = Building::COMPLETED;
-		goBuilding->bBuilt = true;
-		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+
+		if (goBuilding->eCurrState == Building::CONSTRUCTING || goBuilding->eCurrState == Building::BROKEN)
+		{
+			if (vGo->fActionTimer <= 0.f)
+			{
+				m_go->goTarget = NULL;
+				goBuilding->bBuilt = true;
+				goBuilding->eCurrState = Building::COMPLETED;
+				
+				m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+				return;
+			}
+			else
+			{
+				vGo->fActionTimer -= dt;
+			}
+		}
+		else
+		{
+			m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+		}
 	}
 	else
 	{
 		std::cout << "Wrong State : Constructing" << std::endl;
+		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 		return;
 	}
 }
 
 void StateConstructing::Exit(GameObject* m_go)
 {
+	Villager* goVil = static_cast<Villager*>(m_go);
+	goVil->fActionTimer = 0;
+
+	m_go->scale *= 5;
+	m_go->pos.y = m_go->scale.y * 0.5f;
+	m_go->ClearAnimation();
+	goVil->mEquipment = NULL;
 }
 
 //StateMining
