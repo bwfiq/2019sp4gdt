@@ -944,9 +944,12 @@ bool SceneSP::Handle(Message* message)
 					//make villagers calm down
 					goVil->eCurrState = Villager::TIRED;
 
-					if (goVil->animation->type == AnimationBase::A_PANIC)
+					if (goVil->animation != NULL)
 					{
-						goVil->ClearAnimation();
+						if (goVil->animation->type == AnimationBase::A_PANIC)
+						{
+							goVil->ClearAnimation();
+						}
 					}
 				}
 			}
