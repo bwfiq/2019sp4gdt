@@ -63,6 +63,9 @@ public:
 	Vector3 GetCamPosition();
 	void SetMainMenuElapsedTime(float time);
 	float GetMainMenuElapsedTime();
+	void SetTimeOfDay(float timeOfDay);
+	float GetTimeOfDay();
+	std::string GetTimeOfDay_string();
 
 	void AddMesh(Mesh* mesh);
 	void RemoveMesh(const std::string& meshName);
@@ -81,12 +84,13 @@ private:
 	float m_worldWidth;
 	float f_elapsedTime;
 	float f_mainmenuElapsedTime;
-	std::map<std::string, Mesh*> meshList;//these meshes delete themselves via the scene
+	std::map<std::string, Mesh*> meshList; //these meshes delete themselves via the scene
 	Vector3 mousePos_World;
 	Vector3 camPosition;
 
 	float fReligionValue, fMaxReligionValue;
 	int iFood, iFoodLimit, iPopulation, iPopulationLimit, iWood, iWoodLimit, iStone, iStoneLimit, iResearchPoints, iCurrMonth, iCurrDay;
+	float fTimeOfDay;
 };
 
 #endif

@@ -58,7 +58,7 @@ void UICoreInfo::Update(float dt)
 	switch (infoType)
 	{
 	case INFO_DAY:
-		uiComponents_list[COMPONENT_TEXT].text = SD->GetCurrMonth_string();
+		uiComponents_list[COMPONENT_TEXT].text = SD->GetCurrMonth_string() + " " + std::to_string(SD->GetCurrDay());
 		break;
 	case INFO_FOOD:
 		uiComponents_list[COMPONENT_TEXT].text = std::to_string(SD->GetFood()) + "/" + std::to_string(SD->GetFoodLimit());
@@ -70,7 +70,7 @@ void UICoreInfo::Update(float dt)
 		uiComponents_list[COMPONENT_TEXT].text = std::to_string(SD->GetStone()) + "/" + std::to_string(SD->GetStoneLimit());
 		break;
 	case INFO_TIME:
-		
+		uiComponents_list[COMPONENT_TEXT].text = SD->GetTimeOfDay_string();
 		break;
 	case INFO_WOOD:
 		uiComponents_list[COMPONENT_TEXT].text = std::to_string(SD->GetWood()) + "/" + std::to_string(SD->GetWoodLimit());

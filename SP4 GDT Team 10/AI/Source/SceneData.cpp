@@ -247,6 +247,33 @@ float SceneData::GetMainMenuElapsedTime()
 	return this->f_mainmenuElapsedTime;
 }
 
+void SceneData::SetTimeOfDay(float timeOfDay)
+{
+	this->fTimeOfDay = timeOfDay;
+}
+
+float SceneData::GetTimeOfDay()
+{
+	return this->fTimeOfDay;
+}
+
+std::string SceneData::GetTimeOfDay_string()
+{
+	float fractpart, intpart;
+	std::string tod;
+	fractpart = modf(fTimeOfDay, &intpart);
+	if (intpart < 10)
+		tod += "0" + std::to_string((int)intpart);
+	else
+		tod += std::to_string((int)intpart);
+	tod += ":";
+	if ((int)(60 * fractpart) < 10)
+		tod += "0" + std::to_string((int)(60 * fractpart));
+	else
+		tod += std::to_string((int)(60 * fractpart));
+	return tod;
+}
+
 void SceneData::AddMesh(Mesh * mesh)
 {
 	if (mesh == nullptr || mesh == NULL)
