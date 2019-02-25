@@ -70,6 +70,18 @@ public:
 	void AddMesh(Mesh* mesh);
 	void RemoveMesh(const std::string& meshName);
 	Mesh* GetMesh(const std::string& meshName);
+
+	// Research
+	bool bWoodResearch;
+	bool bStoneResearch;
+	bool bFullStoneResearch;
+
+	bool bAnimalHunting;
+	bool bAnimalTaming;
+	bool bAnimalBreeding;
+
+	bool bWoodCutting;
+	bool bStoneMining;
 private:
 	SceneData();
 	~SceneData();
