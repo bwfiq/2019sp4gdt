@@ -19,6 +19,7 @@ struct MessageWRU : public Message
 		FIND_CHIEFHUT,
 		FIND_NEAREST_GRANARY,
 		FIND_NEAREST_WOODSHED,
+		FIND_NEAREST_LUSH_BUSH,
 	};
 	MessageWRU(GameObject *goValue, SEARCH_TYPE typeValue, float thresholdValue) : go(goValue), type(typeValue), threshold(thresholdValue) {}
 	virtual ~MessageWRU() {}

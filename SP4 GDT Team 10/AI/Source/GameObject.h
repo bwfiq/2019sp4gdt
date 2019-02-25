@@ -20,6 +20,7 @@ struct GameObject : public ObjectBase
 		GO_CIRCLE,
 
 		GO_VILLAGER,
+		GO_PIG,
 
 		GO_ENEMY, //Later
 

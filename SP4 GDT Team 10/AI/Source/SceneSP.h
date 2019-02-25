@@ -51,8 +51,8 @@ public:
 	//void AStar(GameObject* go, Vector3 target); //For Graph Pathfinding
 
 	void AStarSingleGrid(GameObject* go, GridPt target); //For Grid Pathfinding with objects that have only 1 grids
-	void AStarMultiGrid(GameObject* go, GridPt target); //For Grid Pathfinding with objects that have multiple grids
-	bool isTheCoastClear(GameObject* go, GridPt next, Grid::DIRECTION dir); //For making it neat
+	//void AStarMultiGrid(GameObject* go, GridPt target); //For Grid Pathfinding with objects that have multiple grids
+	//bool isTheCoastClear(GameObject* go, GridPt next, Grid::DIRECTION dir); //For making it neat
 
 	void ChangeState(GAME_STATE newstate);
 	void ChangeTimeOfDay();
@@ -115,6 +115,7 @@ protected:
 
 	GameObject* goGranary;
 	GameObject* goWoodshed;
+	GameObject* goPig;
 
 	// Research
 	bool bWoodResearch;

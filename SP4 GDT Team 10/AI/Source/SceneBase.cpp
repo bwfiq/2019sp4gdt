@@ -254,6 +254,8 @@ void SceneBase::Init()
 
 	meshList[GEO_VILLAGER] = MeshBuilder::GenerateOBJ("villager", "Obj//villager.obj");
 	meshList[GEO_VILLAGER]->textureArray[0] = LoadTGA("Image//villager.tga");
+	meshList[GEO_PIG] = MeshBuilder::GenerateOBJ("pig", "Obj//pig.obj");
+	meshList[GEO_PIG]->textureArray[0] = LoadTGA("Image//pig.tga");
 	meshList[GEO_HATCHET] = MeshBuilder::GenerateOBJ("hatchet", "Obj//hatchet.obj");
 	meshList[GEO_HATCHET]->textureArray[0] = LoadTGA("Image//hatchet.tga");
 	meshList[GEO_BASKET] = MeshBuilder::GenerateOBJ("basket", "Obj//basket.obj");

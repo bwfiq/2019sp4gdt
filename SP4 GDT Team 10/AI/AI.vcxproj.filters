@@ -290,6 +290,12 @@
     <ClCompile Include="Source\AnimationConstructing.cpp">
       <Filter>VisualEffects\Animations</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Pig.cpp">
+      <Filter>GameObjects\Other</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\StatePig.cpp">
+      <Filter>FSM</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -537,6 +543,12 @@
     </ClInclude>
     <ClInclude Include="Source\AnimationConstructing.h">
       <Filter>VisualEffects\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StatePig.h">
+      <Filter>FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Pig.h">
+      <Filter>GameObjects\Other</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

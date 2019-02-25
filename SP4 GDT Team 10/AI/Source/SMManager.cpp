@@ -1,6 +1,7 @@
 #include "SMManager.h"
 
 #include "StateVillager.h"
+#include "StatePig.h"
 
 SMManager::SMManager()
 {
@@ -45,6 +46,15 @@ StateMachine* SMManager::GetSM(const std::string& smID)
 		SMVillager->AddState(new StateMining("Mining"));
 		this->AddSM(SMVillager);
 		return SMVillager;
+	}
+	else if (smID == "PigSM")
+	{
+		StateMachine* SMPig = new StateMachine("PigSM");
+		SMPig->AddState(new StateIdle("Idle"));
+		SMPig->AddState(new StatePath("Path"));
+		SMPig->AddState(new StateEating("Eating"));
+		this->AddSM(SMPig);
+		return SMPig;
 	}
 	else
 	{

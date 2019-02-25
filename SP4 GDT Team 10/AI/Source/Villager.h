@@ -50,6 +50,7 @@ struct Villager : public GameObject
 
 	float fActionTimer;
 
+	float fRecalculate;
 
 	virtual bool Handle(Message* msg);
 

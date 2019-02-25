@@ -8,6 +8,18 @@ AnimationWalk::AnimationWalk()
 	//Rotate.SetToRotation(90, 1, 0, 0);
 	currentYTranslation = 0;
 	type = A_WALK;
+	rotationMagnitude = 10.f;
+}
+
+AnimationWalk::AnimationWalk(float rotationMag)
+	:AnimationBase()
+	, vel(0, 30, 0)
+	, tempY(0)
+{
+	//Rotate.SetToRotation(90, 1, 0, 0);
+	currentYTranslation = 0;
+	type = A_WALK;
+	rotationMagnitude = rotationMag;
 }
 
 AnimationWalk::~AnimationWalk()
@@ -25,7 +37,7 @@ void AnimationWalk::Update(float dt)
 
 	tempY += dt * 9.5f;
 	currentYTranslation = 0.8f * fabs(sinf(tempY));
-	currentRotation = 15.f * (cosf(tempY));
+	currentRotation = rotationMagnitude * (cosf(tempY));
 	OffsetRotate.SetToRotation(currentRotation, 1, 0, 0);
 	
 	TranslateOffset.SetToTranslation(0, 1, 0);

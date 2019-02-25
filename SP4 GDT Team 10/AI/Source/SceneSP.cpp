@@ -35,6 +35,7 @@
 #include "KeyboardController.h"
 
 #include "Villager.h"
+#include "Pig.h"
 #include "Granary.h"
 #include "WoodShed.h"
 #include "House.h"
@@ -558,9 +559,13 @@ void SceneSP::Init()
 	goVillager->scale.y = 1.f;
 	goVillager->pos = GetGridPos(GridPt(5, 5));
 	goVillager->pos.y = goVillager->scale.y * 0.5f;
-	goVillager->iGridX = 1;
-	goVillager->iGridZ = 1;
 	goVillager->GiveAnimation(new AnimationJump());
+
+	goPig = FetchGO(GameObject::GO_PIG);
+	goPig->scale.y = 1.f;
+	goPig->pos = GetGridPos(GridPt(3, 5));
+	goPig->pos.y = goVillager->scale.y * 0.5f;
+	goPig->GiveAnimation(new AnimationJump());
 
 	goChiefHut = FetchGO(GameObject::GO_CHIEFHUT);
 	goChiefHut->pos = GetGridPos(GridPt(8, 7));
@@ -722,6 +727,33 @@ bool SceneSP::Handle(Message* message)
 			for (auto go : m_goList)
 			{
 				if (!go->active || go->type != GameObject::GO_WOODSHED)
+					continue;
+				GridPt goGrid = go->currentPt;
+				int iTotalDist = (goGrid.x - currGrid.x) * (goGrid.x - currGrid.x) + (goGrid.z - currGrid.z) * (goGrid.z - currGrid.z);
+				if (iTotalDist < iDistance)
+				{
+					iDistance = iTotalDist;
+					currTarget = go;
+				}
+			}
+			if (currTarget != NULL)
+			{
+				messageWRU->go->goTarget = currTarget;
+			}
+			else
+			{
+				messageWRU->go->goTarget = goChiefHut;
+			}
+		}
+		break;
+		case MessageWRU::FIND_NEAREST_LUSH_BUSH:
+		{
+			GridPt currGrid = messageWRU->go->currentPt;
+			int iDistance = INT_MAX;
+			GameObject* currTarget = NULL;
+			for (auto go : m_goList)
+			{
+				if (!go->active || go->type != GameObject::GO_BUSH || static_cast<Bush*>(go)->eCurrState != Bush::LUSH)
 					continue;
 				GridPt goGrid = go->currentPt;
 				int iTotalDist = (goGrid.x - currGrid.x) * (goGrid.x - currGrid.x) + (goGrid.z - currGrid.z) * (goGrid.z - currGrid.z);
@@ -1018,8 +1050,20 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 				{
 					goVil->fStats[i] = 1.f;
 				}
+				goVil->fActionTimer = 0.f;
+				goVil->mEquipment = NULL;
 			}
 				break;
+			case GameObject::GO_PIG:
+			{
+				Pig* goPig = static_cast<Pig*>(go);
+				goPig->fEnergy = 50;
+				goPig->fActionTimer = 0.f;
+				goPig->state = Pig::WILD;
+				goPig->movement = Pig::WALKING;
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * .7f, .5f, SceneData::GetInstance()->GetGridSize() * .7f);
+			}
+			break;
 			case GameObject::GO_GRANARY:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * .7f, 1.f, SceneData::GetInstance()->GetGridSize() * .7f);
 				break;
@@ -1064,6 +1108,11 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 		case GameObject::GO_VILLAGER:
 			go = new Villager(type);
 			go->smID = "VillagerSM";
+			go->m_currState = go->m_nextState = SMManager::GetInstance()->GetSM(go->smID)->GetState("Idle");
+			break;
+		case GameObject::GO_PIG:
+			go = new Pig(type);
+			go->smID = "PigSM";
 			go->m_currState = go->m_nextState = SMManager::GetInstance()->GetSM(go->smID)->GetState("Idle");
 			break;
 		case GameObject::GO_BUILDING:
@@ -3736,17 +3785,6 @@ void SceneSP::RenderGO(GameObject *go)
 	{
 		modelStack.PushMatrix();
 		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
-
-		//Offset to center to middle of used grids
-		if (go->iGridX % 2 == 0)
-		{
-			modelStack.Translate(SceneData::GetInstance()->GetGridSize() * 0.5f, 0, 0);
-		}
-		if (go->iGridZ % 2 == 0)
-		{
-			modelStack.Translate(0, 0, SceneData::GetInstance()->GetGridSize() * 0.5f);
-		}
-
 		if (go->animation != NULL)
 		{
 			float angle = Math::RadianToDegree(atan2(-go->direction.z, go->direction.x));
@@ -3768,17 +3806,39 @@ void SceneSP::RenderGO(GameObject *go)
 		}
 
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
-		//std::cout << angle << std::endl;
-		//RenderMesh(meshList[GEO_VILLAGER], false, 1.f);
-		//RenderMesh(meshList[GEO_TREE], false, 1.f);
-		//RenderMesh(meshList[GEO_BERRIES], false, 1.f);
-		//RenderMesh(meshList[GEO_BUSH], false, 1.f);
-		//RenderMesh(meshList[GEO_VILLAGER], bGodlights, 1.f);
-		//modelStack.Rotate(-90, 1, 0, 0);
 		Villager* goVil = static_cast<Villager*>(go);
 		if(goVil->mEquipment != NULL)
 			RenderMesh(goVil->mEquipment, bGodlights, 1.f);
 		RenderMesh(meshList[GEO_VILLAGER], bGodlights, 1.f);
+		modelStack.PopMatrix();
+	}
+	break;
+	case GameObject::GO_PIG:
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		if (go->animation != NULL)
+		{
+			float angle = Math::RadianToDegree(atan2(-go->direction.z, go->direction.x));
+			if (go->animation != NULL)
+			{
+				Mtx44 temp;
+				temp.SetToIdentity();
+				temp.SetToRotation((angle), 0, 1, 0);
+				//go->animation->Rotate = go->animation->Rotate * temp;
+				go->animation->DirectionRotate.SetToRotation((angle), 0, 1, 0);
+			}
+			go->animation->MultiplyMtx();
+			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
+		}
+		else
+		{
+			float angle = Math::RadianToDegree(atan2(-go->direction.z, go->direction.x));
+			modelStack.Rotate(angle, 0, 1, 0);
+		}
+
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_PIG], bGodlights, 1.f);
 		modelStack.PopMatrix();
 	}
 	break;

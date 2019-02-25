@@ -1,5 +1,7 @@
 #include "StateVillager.h"
 
+#include "Pig.h"
+
 #include "PostOffice.h"
 #include "ConcreteMessages.h"
 #include "SceneData.h"
@@ -41,6 +43,7 @@
 
 static float RUN_SPEED = 3.f;
 static float WALK_SPEED = 1.5f;
+static float PIG_SPEED = 0.9f;
 
 //StateIdle
 StateIdle::StateIdle(const std::string & stateID)
@@ -67,7 +70,7 @@ void StateIdle::Enter(GameObject* m_go)
 
 void StateIdle::Update(double dt, GameObject* m_go)
 {
-	Villager* goVillager = static_cast<Villager*>(m_go);
+
 
 	if (m_go->goTarget != NULL || m_go->target != NULL)
 	{
@@ -84,12 +87,37 @@ void StateIdle::Update(double dt, GameObject* m_go)
 		}
 		return;
 	}
-	goVillager->fIdleTimer -= dt;
-	if (goVillager->fIdleTimer <= 0.f)
+	Villager* goVillager = dynamic_cast<Villager*>(m_go);
+	if (goVillager)
 	{
-		goVillager->fIdleTimer = Math::RandFloatMinMax(3.f, 10.f);
-		MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::RANDOM_TARGET, 2 * 2 + 2 * 2);
-		PostOffice::GetInstance()->Send("Scene", messagewru);
+		goVillager->fIdleTimer -= dt;
+		if (goVillager->fIdleTimer <= 0.f)
+		{
+			goVillager->fIdleTimer = Math::RandFloatMinMax(3.f, 10.f);
+			MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::RANDOM_TARGET, 2 * 2 + 2 * 2);
+			PostOffice::GetInstance()->Send("Scene", messagewru);
+		}
+		return;
+	}
+	Pig* goPig = dynamic_cast<Pig*>(m_go);
+	if(goPig)
+	{
+		goPig->fIdleTimer -= dt;
+		goPig->fEnergy -= dt;
+		if (goPig->fEnergy <= 15.f)
+		{
+			goPig->fIdleTimer = Math::RandFloatMinMax(3.f, 10.f);
+			MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_NEAREST_LUSH_BUSH, 1);
+			PostOffice::GetInstance()->Send("Scene", messagewru);
+			return;
+		}
+		if (goPig->fIdleTimer <= 0.f)
+		{
+			goPig->fIdleTimer = Math::RandFloatMinMax(3.f, 10.f);
+			MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::RANDOM_TARGET, 2 * 2 + 2 * 2);
+			PostOffice::GetInstance()->Send("Scene", messagewru);
+			return;
+		}
 	}
 }
 
@@ -110,17 +138,37 @@ StatePath::~StatePath()
 void StatePath::Enter(GameObject * m_go)
 {
 	std::cout << "Enter Path State" << std::endl;
-	switch (static_cast<Villager*>(m_go)->eCurrState)
+
+	Villager* goVillager = dynamic_cast<Villager*>(m_go);
+	if (goVillager)
 	{
-	case Villager::HEALTHY:
-		m_go->GiveAnimation(new AnimationWalk());
-		break;
-	case Villager::PANIC:
-		m_go->GiveAnimation(new AnimationPanic());
-		break;
-	case Villager::TIRED:
-		m_go->GiveAnimation(new AnimationTiredWalk());
-		break;
+		switch (goVillager->eCurrState)
+		{
+		case Villager::HEALTHY:
+			m_go->GiveAnimation(new AnimationWalk());
+			break;
+		case Villager::PANIC:
+			m_go->GiveAnimation(new AnimationPanic());
+			break;
+		case Villager::TIRED:
+			m_go->GiveAnimation(new AnimationTiredWalk());
+			break;
+		}
+		return;
+	}
+	Pig* goPig = dynamic_cast<Pig*>(m_go);
+	if (goPig)
+	{
+		switch (goPig->movement)
+		{
+		case Pig::WALKING:
+			m_go->GiveAnimation(new AnimationWalk(5.f));
+			break;
+		case Pig::ROLLING:
+			m_go->GiveAnimation(new AnimationPanic());
+			break;
+		}
+		return;
 	}
 }
 
@@ -129,19 +177,23 @@ void StatePath::Update(double dt, GameObject * m_go)
 	SceneData* SD = SceneData::GetInstance();
 	if (m_go->target != NULL || m_go->goTarget != NULL)
 	{
+		Villager* goVillager = dynamic_cast<Villager*>(m_go);
 		if (m_go->animation == NULL)
 		{
-			switch (static_cast<Villager*>(m_go)->eCurrState)
+			if (goVillager)
 			{
-			case Villager::HEALTHY:
-				m_go->GiveAnimation(new AnimationWalk());
-				break;
-			case Villager::PANIC:
-				m_go->GiveAnimation(new AnimationPanic());
-				break;
-			case Villager::TIRED:
-				m_go->GiveAnimation(new AnimationTiredWalk());
-				break;
+				switch (goVillager->eCurrState)
+				{
+				case Villager::HEALTHY:
+					m_go->GiveAnimation(new AnimationWalk());
+					break;
+				case Villager::PANIC:
+					m_go->GiveAnimation(new AnimationPanic());
+					break;
+				case Villager::TIRED:
+					m_go->GiveAnimation(new AnimationTiredWalk());
+					break;
+				}
 			}
 		}
 		if (m_go->target != NULL)
@@ -158,19 +210,10 @@ void StatePath::Update(double dt, GameObject * m_go)
 				}
 				else
 				{
-					m_go->pos += (direction).Normalized() * dt * WALK_SPEED;
-
-					//float currentAngle = acos(m_go->direction.Normalized().Dot(Vector3(1, 0, 0)));
-					//Vector3 godirNormalized = m_go->direction.Normalized();
-					//float currentAngletheSequel = atan2f(godirNormalized.x, godirNormalized.z);
-					//std::cout << Math::RadianToDegree(currentAngletheSequel) - 90 << std::endl;
-					//Vector3 dirNormalized = direction.Normalized();
-					//std::cout << Math::RadianToDegree(atan2f(dirNormalized.x, dirNormalized.z)) << std::endl;
-					//float deltaAngleSequel = Math::lerp(currentAngletheSequel, atan2f(dirNormalized.x, dirNormalized.z),Math::Min(1.f,(float)dt*10.5f));
-					////std::cout << Math::RadianToDegree(deltaAngleSequel) << std::endl;
-					////float alphaAngleSequel = currentAngletheSequel + deltaAngleSequel * Math::Min(1.f, (float)dt*10.5f);
-					//m_go->direction.x = sinf(deltaAngleSequel);
-					//m_go->direction.z = cosf(deltaAngleSequel);
+					if(m_go->type == GameObject::GO_PIG)
+						m_go->pos += (direction).Normalized() * dt * PIG_SPEED;
+					else
+						m_go->pos += (direction).Normalized() * dt * WALK_SPEED;
 
 					float currentAngle = acos(m_go->direction.Normalized().Dot(Vector3(1, 0, 0)));
 
@@ -213,6 +256,35 @@ void StatePath::Update(double dt, GameObject * m_go)
 			//Movement
 			if (!m_go->path.empty())
 			{
+				Building* temp = dynamic_cast<Building*>(m_go->goTarget);
+				if (temp)
+				{
+					//Do nothing
+				}
+				else
+				{
+					Environment* temp2 = dynamic_cast<Environment*>(m_go->goTarget);
+					if (temp2)
+					{
+						//Do nothing
+					}
+					else
+					{
+						//It is not a building/environment
+						goVillager->fRecalculate -= dt;
+						if (goVillager->fRecalculate <= 0.f)
+						{
+							//Checks path
+							goVillager->fRecalculate = 1.5f;
+							while (!m_go->path.empty())
+							{
+								m_go->path.pop_back();
+							}
+							MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::PATH_TO_TARGET, 1);
+							PostOffice::GetInstance()->Send("Scene", messagewru);
+						}
+					}
+				}
 				Vector3 ptPos = GetGridPos(m_go->path.back()); //Position of gridPt in world space
 				Vector3 direction = ptPos - m_go->pos;
 				direction.y = 0;
@@ -223,7 +295,10 @@ void StatePath::Update(double dt, GameObject * m_go)
 				}
 				else
 				{
-					m_go->pos += (direction).Normalized() * dt * RUN_SPEED;
+					if (m_go->type == GameObject::GO_PIG)
+						m_go->pos += (direction).Normalized() * dt * PIG_SPEED;
+					else
+						m_go->pos += (direction).Normalized() * dt * RUN_SPEED;
 
 					float currentAngle = acos(m_go->direction.Normalized().Dot(Vector3(1, 0, 0)));
 
@@ -251,93 +326,139 @@ void StatePath::Update(double dt, GameObject * m_go)
 			}
 			else //Reached Destination
 			{
-				Villager* goVillager = dynamic_cast<Villager*>(m_go->goTarget);
-				if (goVillager)
+				Villager* goVil = dynamic_cast<Villager*>(m_go);
+				if (goVil)
 				{
-					//If its another villager
-					m_go->goTarget = NULL;
-					m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
-					return;
-				}
-				Building* goBuilding = dynamic_cast<Building*>(m_go->goTarget);
-				if (goBuilding)
-				{
-					//If its a building class
-					switch (goBuilding->eCurrState)
+					Villager* goVillager = dynamic_cast<Villager*>(m_go->goTarget);
+					if (goVillager)
 					{
-					case Building::COMPLETED:
+						//If its another villager
+						m_go->goTarget = NULL;
+						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+						return;
+					}
+					Building* goBuilding = dynamic_cast<Building*>(m_go->goTarget);
+					if (goBuilding)
 					{
-						switch (goBuilding->type)
+						//If its a building class
+						switch (goBuilding->eCurrState)
 						{
-						case GameObject::GO_BUILDING:
-							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
+						case Building::COMPLETED:
+						{
+							switch (goBuilding->type)
+							{
+							case GameObject::GO_BUILDING:
+								m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
+								return;
+							case GameObject::GO_GRANARY:
+								//m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
+								SD->SetFood(SD->GetFood() + static_cast<Villager*>(m_go)->iFoodStored);
+
+								static_cast<Villager*>(m_go)->iFoodStored = 0;
+
+								m_go->goTarget = NULL;
+								m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+								return;
+							case GameObject::GO_WOODSHED:
+								//m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
+								SD->SetWood(Math::Min(SD->GetWoodLimit(), SD->GetWood() + static_cast<Villager*>(m_go)->iWoodStored));
+
+								static_cast<Villager*>(m_go)->iWoodStored = 0;
+
+								m_go->goTarget = NULL;
+								m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+								return;
+							case GameObject::GO_HOUSE:
+								m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
+								return;
+							}
+						}
+						break;
+						case Building::CONSTRUCTING:
+						{
+							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Constructing");
 							return;
-						case GameObject::GO_GRANARY:
-							//m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
-							SD->SetFood(SD->GetFood() + static_cast<Villager*>(m_go)->iFoodStored);
-
-							static_cast<Villager*>(m_go)->iFoodStored = 0;
-
-							m_go->goTarget = NULL;
-							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+						}
+						break;
+						case Building::BROKEN:
+						{
+							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Constructing");
 							return;
-						case GameObject::GO_WOODSHED:
-							//m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
-							SD->SetWood(Math::Min(SD->GetWoodLimit(), SD->GetWood() + static_cast<Villager*>(m_go)->iWoodStored));
+						}
+						break;
+						}
+						m_go->goTarget = NULL;
+						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 
-							static_cast<Villager*>(m_go)->iWoodStored = 0;
-
-							m_go->goTarget = NULL;
-							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+						return;
+					}
+					Environment* goEnvironment = dynamic_cast<Environment*>(m_go->goTarget);
+					if (goEnvironment)
+					{
+						switch (goEnvironment->type)
+						{
+						case GameObject::GO_BUSH:
+							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Foraging");
 							return;
-						case GameObject::GO_HOUSE:
-							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
+						case GameObject::GO_TREE:
+							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("ChopTree");
+							return;
+						case GameObject::GO_MOUNTAIN:
+							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Mining");
 							return;
 						}
 					}
-					break;
-					case Building::CONSTRUCTING:
+					Pig* goPig = dynamic_cast<Pig*>(m_go->goTarget);
+					if (goPig)
 					{
-						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Constructing");
-						return;
+						//If it is a pig
+						//Use bools for actions to be done
 					}
-					break;
-					case Building::BROKEN:
+					/* //For Enemies
+					case GameObject::GO_ENEMY:
+						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Attack");
+						break;
+					*/
+					m_go->goTarget = NULL;
+					m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+					return;
+				}
+				Pig* goPig = dynamic_cast<Pig*>(m_go);
+				if (goPig)
+				{
+					Environment* goEnvironment = dynamic_cast<Environment*>(m_go->goTarget);
+					if (goEnvironment)
 					{
-						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Constructing");
-						return;
-					}
-					break;
+						switch (goEnvironment->type)
+						{
+						case GameObject::GO_BUSH:
+							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Eating");
+							return;
+						}
 					}
 					m_go->goTarget = NULL;
 					m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
-												
 					return;
 				}
-				Environment* goEnvironment = dynamic_cast<Environment*>(m_go->goTarget);
-				if (goEnvironment)
+			}
+		}
+
+		Pig* goPig = dynamic_cast<Pig*>(m_go);
+		if (goPig)
+		{
+			goPig->fEnergy -= dt;
+			if (goPig->state == Pig::WILD)
+			{
+				if (goPig->goTarget == NULL || goPig->goTarget->type != GameObject::GO_BUSH)
 				{
-					switch (goEnvironment->type)
+					if (goPig->fEnergy <= 10.f)
 					{
-					case GameObject::GO_BUSH:
-						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Foraging");
-						return;
-					case GameObject::GO_TREE:
-						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("ChopTree");
-						return;
-					case GameObject::GO_MOUNTAIN:
-						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Mining");
+						MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_NEAREST_LUSH_BUSH, 1);
+						PostOffice::GetInstance()->Send("Scene", messagewru);
+						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 						return;
 					}
 				}
-				/* //For Enemies
-				case GameObject::GO_ENEMY:
-					m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Attack");
-					break;
-				*/
-				m_go->goTarget = NULL;
-				m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
-				return;
 			}
 		}
 	}
@@ -502,6 +623,7 @@ void StateForaging::Update(double dt, GameObject * m_go)
 	}
 	else
 	{
+		m_go->goTarget = NULL;
 		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 	}
 }
@@ -737,6 +859,7 @@ void StateConstructing::Update(double dt, GameObject* m_go)
 		}
 		else
 		{
+			m_go->goTarget = NULL;
 			m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 		}
 	}
@@ -819,6 +942,7 @@ void StateMining::Update(double dt, GameObject* m_go)
 		MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_CHIEFHUT, 1);
 		PostOffice::GetInstance()->Send("Scene", messagewru);
 		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+		//m_go->goTarget = NULL;
 		return;
 	}
 	else
