@@ -38,10 +38,14 @@ public:
 	int GetFood();
 	void SetWood(int wood);
 	int GetWood();
+	void SetStone(int stone);
+	int GetStone();
 	void SetFoodLimit(int foodLimit);
 	int GetFoodLimit();
 	void SetWoodLimit(int woodLimit);
 	int GetWoodLimit();
+	void SetStoneLimit(int stoneLimit);
+	int GetStoneLimit();
 	void SetPopulation(int population);
 	int GetPopulation();
 	void SetPopulationLimit(int populationLimit);
@@ -82,7 +86,7 @@ private:
 	Vector3 camPosition;
 
 	float fReligionValue, fMaxReligionValue;
-	int iFood, iFoodLimit, iPopulation, iPopulationLimit, iWood, iWoodLimit, iResearchPoints, iCurrMonth, iCurrDay;
+	int iFood, iFoodLimit, iPopulation, iPopulationLimit, iWood, iWoodLimit, iStone, iStoneLimit, iResearchPoints, iCurrMonth, iCurrDay;
 };
 
 #endif

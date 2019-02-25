@@ -658,6 +658,8 @@ void SceneSP::Init()
 	SD->SetPopulationLimit(0);
 	SD->SetWood(0);
 	SD->SetWoodLimit(0);
+	SD->SetStone(0);
+	SD->SetStoneLimit(0);
 	SD->SetResearchPoints(100);
 
 	SD->SetCurrMonth(1);
@@ -3593,6 +3595,7 @@ void SceneSP::Update(double dt)
 	SD->SetPopulationLimit(0);
 	SD->SetFoodLimit(0);
 	SD->SetWoodLimit(0);
+	SD->SetStoneLimit(100);
 	for (auto go : m_goList)
 	{
 		if (!go->active)
