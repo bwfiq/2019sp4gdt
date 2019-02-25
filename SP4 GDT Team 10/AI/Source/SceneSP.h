@@ -117,17 +117,6 @@ protected:
 	GameObject* goGranary;
 	GameObject* goWoodshed;
 
-	// Research
-	bool bWoodResearch;
-	bool bStoneResearch;
-	bool bFullStoneResearch;
-
-	bool bAnimalHunting;
-	bool bAnimalTaming;
-	bool bAnimalBreeding;
-
-	bool bWoodCutting;
-	bool bStoneMining;
 };
 
 #endif
