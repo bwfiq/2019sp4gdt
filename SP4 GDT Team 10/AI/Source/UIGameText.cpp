@@ -203,7 +203,7 @@ void UIGameText::Update(float dt)
 		break;
 	case TEXT_SELECTED_RLAB:
 	{
-		uiComponents_list[COMPONENT_TEXT_3].text = std::to_string((int)SD->GetResearchPoints());
+		//uiComponents_list[COMPONENT_TEXT_3].text = std::to_string((int)SD->GetResearchPoints());
 	}
 		break;
 	}
