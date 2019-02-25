@@ -2872,6 +2872,12 @@ void SceneSP::Update(double dt)
 	{
 		if (SD->GetMainMenuElapsedTime() < 1.f)
 		{
+
+			if (MC->IsButtonPressed(MouseController::LMB))//if LMB pressed, skip
+			{
+				SD->SetMainMenuElapsedTime(1);
+				fMainMenuDelta = m_worldWidth * 0.3f;
+			}
 			SD->SetMainMenuElapsedTime(SD->GetMainMenuElapsedTime() + dt);
 			fMainMenuDelta = Math::lerp(m_worldWidth * 0.5f, m_worldWidth * 0.3f, Math::Min(1.f, EasingStyle::easeInOutSine(SD->GetMainMenuElapsedTime(), 0, 1.f, 1.f)));
 		}
