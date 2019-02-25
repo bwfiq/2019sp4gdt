@@ -33,6 +33,17 @@ UIGameButton::UIGameButton(BUTTON_TYPE buttonType, unsigned order, GameObject* g
 		uiComponents_list[COMPONENT_TEXT].pos.Set(0.2f, 0.5f);
 		uiComponents_list[COMPONENT_TEXT].anchorPoint.Set(0, 0);
 		break;
+	case BUTTON_SELECTED_RLAB:
+		scale.Set(250, 50);
+		pos.Set(1, 0.25f - (scale.y / (float)Application::GetInstance().GetWindowHeight()) * order);
+		anchorPoint.Set(1, 1);
+		uiComponents_list[COMPONENT_BOARD].mesh = SD->GetMesh("ui_board_blank");
+		uiComponents_list[COMPONENT_TEXT].mesh = NULL;
+		uiComponents_list[COMPONENT_TEXT].text = "Open Research";
+		uiComponents_list[COMPONENT_TEXT].textSize = scale.y * 0.5f;
+		uiComponents_list[COMPONENT_TEXT].pos.Set(0.2f, 0.5f);
+		uiComponents_list[COMPONENT_TEXT].anchorPoint.Set(0, 0);
+		break;
 	case BUTTON_SELECTED_GENERAL_MOVE:
 		scale.Set(250, 50);
 		pos.Set(1, 0.25f - (scale.y/(float)Application::GetInstance().GetWindowHeight()) * order);
@@ -101,6 +112,10 @@ void UIGameButton::Update(float dt)
 		case BUTTON_SELECTED_ALTAR_OFFER:
 			PO->Send("Scene"
 				, new MessageAltarOffer(MessageAltarOffer::OFFER_FOOD));
+			break;
+		case BUTTON_SELECTED_RLAB:
+			PO->Send("Scene"
+				, new MessageResearch());
 			break;
 		case BUTTON_SELECTED_GENERAL_MOVE:
 			PO->Send("Scene"
