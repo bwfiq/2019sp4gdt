@@ -38,10 +38,14 @@ public:
 	int GetFood();
 	void SetWood(int wood);
 	int GetWood();
+	void SetStone(int stone);
+	int GetStone();
 	void SetFoodLimit(int foodLimit);
 	int GetFoodLimit();
 	void SetWoodLimit(int woodLimit);
 	int GetWoodLimit();
+	void SetStoneLimit(int stoneLimit);
+	int GetStoneLimit();
 	void SetPopulation(int population);
 	int GetPopulation();
 	void SetPopulationLimit(int populationLimit);
@@ -80,12 +84,12 @@ private:
 	float m_worldWidth;
 	float f_elapsedTime;
 	float f_mainmenuElapsedTime;
-	std::map<std::string, Mesh*> meshList;//these meshes delete themselves via the scene
+	std::map<std::string, Mesh*> meshList; //these meshes delete themselves via the scene
 	Vector3 mousePos_World;
 	Vector3 camPosition;
 
 	float fReligionValue, fMaxReligionValue;
-	int iFood, iFoodLimit, iPopulation, iPopulationLimit, iWood, iWoodLimit, iResearchPoints, iCurrMonth, iCurrDay;
+	int iFood, iFoodLimit, iPopulation, iPopulationLimit, iWood, iWoodLimit, iStone, iStoneLimit, iResearchPoints, iCurrMonth, iCurrDay;
 	float fTimeOfDay;
 };
 

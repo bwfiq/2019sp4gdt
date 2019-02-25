@@ -9,7 +9,7 @@ UIOverlay::UIOverlay(const std::string& text, float x, float y) :
 	uiComponents_list[COMPONENT_OVERLAY].mesh = SD->GetMesh("whitequad");
 
 	pos.Set(x, y);
-	scale.Set(Application::GetInstance().GetWindowWidth() * 0.7f, Application::GetInstance().GetWindowHeight() * 0.7f);
+	scale.Set(Application::GetInstance().GetWindowWidth() * 0.6f, Application::GetInstance().GetWindowHeight() * 0.7f);
 	anchorPoint.Set(0.5, 0.5);
 	float ratio = scale.x / scale.y;
 
@@ -27,9 +27,9 @@ UIOverlay::~UIOverlay()
 
 void UIOverlay::Update(float dt)
 {
-	if (scale != Vector3(Application::GetInstance().GetWindowWidth() * 0.7f, Application::GetInstance().GetWindowHeight() * 0.7f, scale.z))
+	if (scale != Vector3(Application::GetInstance().GetWindowWidth() * 0.6f, Application::GetInstance().GetWindowHeight() * 0.7f, scale.z))
 	{
-		scale.Set(Application::GetInstance().GetWindowWidth() * 0.7f, Application::GetInstance().GetWindowHeight() * 0.7f);
+		scale.Set(Application::GetInstance().GetWindowWidth() * 0.6f, Application::GetInstance().GetWindowHeight() * 0.7f);
 		float ratio = scale.x / scale.y;
 		uiComponents_list[COMPONENT_OVERLAY].textSize = scale.y;
 	}

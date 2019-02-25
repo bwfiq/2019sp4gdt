@@ -133,6 +133,14 @@ int SceneData::GetWood()
 {
 	return iWood;
 }
+void SceneData::SetStone(int stone)
+{
+	this->iStone = stone;
+}
+int SceneData::GetStone()
+{
+	return iStone;
+}
 void SceneData::SetFoodLimit(int foodLimit)
 {
 	this->iFoodLimit = foodLimit;
@@ -148,6 +156,14 @@ void SceneData::SetWoodLimit(int woodLimit)
 int SceneData::GetWoodLimit()
 {
 	return iWoodLimit;
+}
+void SceneData::SetStoneLimit(int stoneLimit)
+{
+	this->iStoneLimit = stoneLimit;
+}
+int SceneData::GetStoneLimit()
+{
+	return iStoneLimit;
 }
 void SceneData::SetPopulation(int population)
 {

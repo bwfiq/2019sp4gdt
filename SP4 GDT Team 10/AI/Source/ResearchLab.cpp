@@ -5,7 +5,7 @@ ResearchLab::ResearchLab(GAMEOBJECT_TYPE typeValue)
 	: Building(typeValue)
 {
 	//GameObject(typeValue);
-	std::cout << "ChiefHut Constructor" << std::endl;
+	std::cout << "ResearchLab Constructor" << std::endl;
 }
 
 ResearchLab::~ResearchLab()

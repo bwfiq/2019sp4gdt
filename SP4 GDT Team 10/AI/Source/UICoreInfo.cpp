@@ -67,7 +67,7 @@ void UICoreInfo::Update(float dt)
 		uiComponents_list[COMPONENT_TEXT].text = std::to_string(SD->GetPopulation()) + "/" + std::to_string(SD->GetPopulationLimit());
 		break;
 	case INFO_STONE:
-		//uiComponents_list[COMPONENT_TEXT].text = std::to_string(SD->GetSt()) + "/" + std::to_string(SD->GetWoodLimit());
+		uiComponents_list[COMPONENT_TEXT].text = std::to_string(SD->GetStone()) + "/" + std::to_string(SD->GetStoneLimit());
 		break;
 	case INFO_TIME:
 		uiComponents_list[COMPONENT_TEXT].text = SD->GetTimeOfDay_string();

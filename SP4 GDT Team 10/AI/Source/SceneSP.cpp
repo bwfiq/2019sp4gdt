@@ -40,6 +40,7 @@
 #include "House.h"
 #include "Building.h"
 #include "ChiefHut.h"
+#include "ResearchLab.h"
 #include "Bush.h"
 #include "Tree.h"
 #include "Altar.h"
@@ -114,6 +115,8 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 	break;
 	case G_INPLAY:
 	{
+		if (reticle->selected && reticle->selected != NULL)
+			selected = reticle->selected;
 		//camera.Init(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));	// game
 		camera = tempCamera;
 		Application::GetInstance().SetMouseVisiblity(false);
@@ -157,15 +160,17 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 			UIManager::GetInstance()->AddUI("ui_Text_DailyRequirement", newUI);
 			m_coreUi.push_back(newUI);
 
+			UpdateSelectedUI();
+
 			if (newstate == G_RESEARCHTREE)
 			{
 				newUI = new UIOverlay("", 0.5f, 0.45f);
 				UIManager::GetInstance()->AddUI("overlay", newUI);
 				m_coreUi.push_back(newUI);
-				newUI = new UIMenuButton("back", 0.1f, 0.8f);
+				/*newUI = new UIMenuButton("back", 0.1f, 0.8f);
 				UIManager::GetInstance()->AddUI("backButton", newUI);
 				//newUI->pos.Set(newUI->pos.x, newUI->pos.y, 5);
-				m_coreUi.push_back(newUI);
+				m_coreUi.push_back(newUI);*/
 
 				//first column
 				newUI = new UIResearchButton("", 0.25f, 0.65f);
@@ -606,6 +611,11 @@ void SceneSP::Init()
 	goLogs->pos.y = goLogs->scale.y * 0.5f;
 	static_cast<Building*>(goLogs)->bBuilt = true;
 
+	goResearchLab = FetchGO(GameObject::GO_RESEARCHLAB);
+	goResearchLab->pos = GetGridPos(GridPt(8, 2));
+	goResearchLab->pos.y = goResearchLab->scale.y * 0.5f;
+	static_cast<Building*>(goResearchLab)->bBuilt = true;
+
 	goAltar = FetchGO(GameObject::GO_ALTAR);
 	goAltar->pos = GetGridPos(GridPt(6, 2));
 	goAltar->pos.y = goAltar->scale.y * 0.5f;
@@ -658,6 +668,8 @@ void SceneSP::Init()
 	SD->SetPopulationLimit(0);
 	SD->SetWood(0);
 	SD->SetWoodLimit(0);
+	SD->SetStone(0);
+	SD->SetStoneLimit(0);
 	SD->SetResearchPoints(100);
 
 	SD->SetCurrMonth(1);
@@ -945,6 +957,21 @@ bool SceneSP::Handle(Message* message)
 		delete message;
 		return true;
 	}
+	MessageResearch* messageResearch = dynamic_cast<MessageResearch*>(message);
+	if (messageResearch)
+	{
+		switch (game_state)
+		{
+		case G_RESEARCHTREE:
+			ChangeState(G_INPLAY);
+			break;
+		case G_INPLAY:
+			ChangeState(G_RESEARCHTREE);
+			break;
+		}
+		delete message;
+		return true;
+	}
 	MessageMoveButton* messageMoveButton = dynamic_cast<MessageMoveButton*>(message);
 	if (messageMoveButton)
 	{
@@ -1066,6 +1093,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			case GameObject::GO_ALTAR:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
 				break;
+			case GameObject::GO_RESEARCHLAB:
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 2.f, SceneData::GetInstance()->GetGridSize() * 1.f);
+				break;
 			case GameObject::GO_MOUNTAIN:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
 				break;
@@ -1108,6 +1138,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			break;
 		case GameObject::GO_ALTAR:
 			go = new Altar(type);
+			break;
+		case GameObject::GO_RESEARCHLAB:
+			go = new ResearchLab(type);
 			break;
 		case GameObject::GO_BUSH:
 			go = new Bush(type);
@@ -2606,9 +2639,7 @@ void SceneSP::AStarSingleGrid(GameObject * go, GridPt target)
 void SceneSP::UpdateSelectedUI()
 {
 	for (auto UI : m_selectedUi)
-	{
 		UI->bIsDone = true;
-	}
 	m_selectedUi.clear();
 	reticle->selected = selected;
 	if (selected == NULL) return;
@@ -2625,6 +2656,18 @@ void SceneSP::UpdateSelectedUI()
 		m_selectedUi.push_back(newUI);
 		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_ALTAR_OFFER, 1);
 		UIManager::GetInstance()->AddUI("uiSelected_Altar_Offer", newUI);
+		m_selectedUi.push_back(newUI);
+	}
+	else if (selected->type == GameObject::GO_RESEARCHLAB)
+	{
+		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_RLAB);
+		UIManager::GetInstance()->AddUI("uiSelected_RLab_Info", newUI);
+		m_selectedUi.push_back(newUI);
+		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_GENERAL_MOVE, 0);
+		UIManager::GetInstance()->AddUI("uiSelected_RLab_Move", newUI);
+		m_selectedUi.push_back(newUI);
+		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_RLAB, 1);
+		UIManager::GetInstance()->AddUI("uiSelected_RLab", newUI);
 		m_selectedUi.push_back(newUI);
 	}
 	else if (dynamic_cast<Building*>(selected))
@@ -2667,7 +2710,13 @@ void SceneSP::Reset()
 	}
 	*/
 	m_speed = 1.f;
-
+	selected = NULL;
+	for (auto UI : m_coreUi)
+		UI->bIsDone = true;
+	m_coreUi.clear();
+	for (auto UI : m_selectedUi)
+		UI->bIsDone = true;
+	m_selectedUi.clear();
 	ChangeState(G_MAINMENU);
 }
 
@@ -2921,8 +2970,6 @@ void SceneSP::Update(double dt)
 		if (KC->IsKeyPressed('U'))
 			ChangeState(G_INPLAY);
 		// button pressin
-		if (UIM->GetUI("backButton")->IsMousePressed())
-			ChangeState(G_INPLAY);
 		// research
 		if (UIM->GetUI("WoodResearch")->IsMousePressed() && SD->GetResearchPoints() >= 10 && !bWoodResearch)
 		{
@@ -3595,6 +3642,7 @@ void SceneSP::Update(double dt)
 	SD->SetPopulationLimit(0);
 	SD->SetFoodLimit(0);
 	SD->SetWoodLimit(0);
+	SD->SetStoneLimit(100);
 	for (auto go : m_goList)
 	{
 		if (!go->active)
@@ -3775,6 +3823,7 @@ void SceneSP::Update(double dt)
 
 	SD->SetFood(Math::Min(SD->GetFood(), SD->GetFoodLimit()));
 	SD->SetWood(Math::Min(SD->GetWood(), SD->GetWoodLimit()));
+	SD->SetStone(Math::Min(SD->GetStone(), SD->GetStoneLimit()));
 	if (prevSelect != selected)
 	{
 		UpdateSelectedUI();
@@ -3984,6 +4033,31 @@ void SceneSP::RenderGO(GameObject *go)
 			break;
 		case Building::CONSTRUCTING:
 			std::cout << "Altar being contructed??" << std::endl;
+			break;
+		case Building::BROKEN:
+			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
+		}
+		modelStack.PopMatrix();
+	}
+	break;
+	case GameObject::GO_RESEARCHLAB:
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		if (go->animation != NULL)
+			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		//Current state of the building
+		switch (static_cast<Building*>(go)->eCurrState)
+		{
+		case Building::COMPLETED:
+			RenderMesh(meshList[GEO_ALTAR], bGodlights, 1.f);
+			break;
+		case Building::BLUEPRINT:
+			RenderMesh(meshList[GEO_ALTAR], false, 0.2f);
+			break;
+		case Building::CONSTRUCTING:
+			std::cout << "ResearchLab being contructed??" << std::endl;
 			break;
 		case Building::BROKEN:
 			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
