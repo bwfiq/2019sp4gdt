@@ -20,7 +20,7 @@ EffectHand::EffectHand(Camera* cam) :
 	mesh = SD->GetMesh("hand_point");
 	bLightEnabled = true;
 	this->cameraObj = cam;
-	this->fAlpha = 0.5f;
+	this->fAlpha = 1;
 	this->state = HAND_DEFAULT;
 	posOffset = defaultPosOffset;
 }
@@ -63,7 +63,6 @@ void EffectHand::Update(float dt)
 		{
 			posOffset.lerp(defaultPosOffset + Vector3(0, 0.1f * cosf(SD->GetElapsedTime()), 0) , alpha);
 		}
-		fAlpha = 1;
 		break;
 	case HAND_GRAB_OBJECT:
 		mesh = SD->GetMesh("hand_grab");
@@ -79,7 +78,6 @@ void EffectHand::Update(float dt)
 		{
 			posOffset.lerp(grabPosOffset, alpha);
 		}
-		fAlpha = 0.2f;
 
 		break;
 	}
