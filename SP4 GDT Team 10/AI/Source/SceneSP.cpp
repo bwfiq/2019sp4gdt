@@ -162,32 +162,51 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 				newUI = new UIOverlay("", 0.5f, 0.45f);
 				UIManager::GetInstance()->AddUI("overlay", newUI);
 				m_coreUi.push_back(newUI);
-
 				newUI = new UIMenuButton("back", 0.1f, 0.8f);
 				UIManager::GetInstance()->AddUI("backButton", newUI);
 				//newUI->pos.Set(newUI->pos.x, newUI->pos.y, 5);
 				m_coreUi.push_back(newUI);
 
+				//first column
 				newUI = new UIResearchButton("", 0.25f, 0.65f);
 				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("woodResearch");
+				if (bWoodResearch)
+					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 				UIManager::GetInstance()->AddUI("WoodResearch", newUI);
 				m_coreUi.push_back(newUI);
-				if (bWoodResearch)
-					UIManager::GetInstance()->GetUI("WoodResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
-
 				newUI = new UIResearchButton("", 0.25f, 0.45f);
 				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("stoneResearch");
+				if (bStoneResearch)
+					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 				UIManager::GetInstance()->AddUI("StoneResearch", newUI);
 				m_coreUi.push_back(newUI);
-				if (bStoneResearch)
-					UIManager::GetInstance()->GetUI("StoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
-
 				newUI = new UIResearchButton("", 0.25f, 0.25f);
 				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("fullStoneResearch");
+				if (bFullStoneResearch)
+					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 				UIManager::GetInstance()->AddUI("FullStoneResearch", newUI);
 				m_coreUi.push_back(newUI);
-				if (bFullStoneResearch)
-					UIManager::GetInstance()->GetUI("FullStoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+
+				//second column
+				newUI = new UIResearchButton("", 0.5f, 0.65f);
+				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("whitequad");
+				if (bAnimalHunting)
+					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+				UIManager::GetInstance()->AddUI("animalHunting", newUI);
+				m_coreUi.push_back(newUI);
+				newUI = new UIResearchButton("", 0.5f, 0.45f);
+				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("whitequad");
+				if (bAnimalTaming)
+					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+				UIManager::GetInstance()->AddUI("animalTaming", newUI);
+				m_coreUi.push_back(newUI);
+				newUI = new UIResearchButton("", 0.5f, 0.25f);
+				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("whitequad");
+				if (bAnimalBreeding)
+					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+				UIManager::GetInstance()->AddUI("animalBreeding", newUI);
+				m_coreUi.push_back(newUI);
+
 			}
 			else if (newstate == G_INGAMEOPTIONS)
 			{
@@ -652,6 +671,10 @@ void SceneSP::Init()
 	bWoodResearch = false;
 	bStoneResearch = false;
 	bFullStoneResearch = false;
+
+	bAnimalHunting = false;
+	bAnimalTaming = false;
+	bAnimalBreeding = false;
 
 	//go->vel.Set(1, 0, 0);
 	MousePicker::GetInstance()->Init();
@@ -2893,7 +2916,7 @@ void SceneSP::Update(double dt)
 		// button pressin
 		if (UIM->GetUI("backButton")->IsMousePressed())
 			ChangeState(G_INPLAY);
-		// temporary research
+		// research
 		if (UIM->GetUI("WoodResearch")->IsMousePressed() && SD->GetResearchPoints() >= 10 && !bWoodResearch)
 		{
 			SD->SetResearchPoints(SD->GetResearchPoints() - 10);
@@ -2914,6 +2937,24 @@ void SceneSP::Update(double dt)
 			bFullStoneResearch = true;
 			UIManager::GetInstance()->GetUI("FullStoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//fullstonehouse.tga");
+		}
+		if (UIM->GetUI("animalHunting")->IsMousePressed() && SD->GetResearchPoints() >= 10 && !bAnimalHunting)
+		{
+			SD->SetResearchPoints(SD->GetResearchPoints() - 10);
+			bAnimalHunting = true;
+			UIManager::GetInstance()->GetUI("animalHunting")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+		}
+		else if (bAnimalHunting && UIM->GetUI("animalTaming")->IsMousePressed() && SD->GetResearchPoints() >= 20 && !bAnimalTaming)
+		{
+			SD->SetResearchPoints(SD->GetResearchPoints() - 20);
+			bAnimalTaming = true;
+			UIManager::GetInstance()->GetUI("animalTaming")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+		}
+		else if (bAnimalTaming && UIM->GetUI("animalBreeding")->IsMousePressed() && SD->GetResearchPoints() >= 30 && !bAnimalBreeding)
+		{
+			SD->SetResearchPoints(SD->GetResearchPoints() - 30);
+			bAnimalBreeding = true;
+			UIManager::GetInstance()->GetUI("animalBreeding")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 		}
 		return;
 	}

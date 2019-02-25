@@ -120,6 +120,10 @@ protected:
 	bool bWoodResearch;
 	bool bStoneResearch;
 	bool bFullStoneResearch;
+
+	bool bAnimalHunting;
+	bool bAnimalTaming;
+	bool bAnimalBreeding;
 };
 
 #endif
