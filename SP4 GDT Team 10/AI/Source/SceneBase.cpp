@@ -305,19 +305,13 @@ void SceneBase::Init()
 	meshList[GEO_HAND_DEFAULT] = MeshBuilder::GenerateOBJ("hand_default", "Obj//hand_default.obj");
 	meshList[GEO_HAND_GRAB] = MeshBuilder::GenerateOBJ("hand_grab", "Obj//hand_grab.obj");
 	meshList[GEO_HAND_POINT] = MeshBuilder::GenerateOBJ("hand_point", "Obj//hand_point.obj");
-	for (int i = GEO_HAND_DEFAULT; i <= GEO_HAND_POINT; ++i)
-	{
-		//meshList[i]->textureArray[0] = LoadTGA("Image//white.tga");
-		meshList[i]->material.kDiffuse.Set(1, 1, 1);
-		meshList[i]->material.kAmbient.Set(0.25f, 0.25f, 0.25f);
-		meshList[i]->material.kSpecular.Set(0.4f, 0.4f, 0.4f);
-		meshList[i]->material.kShininess = 20.f;
-	}
 	meshList[GEO_EFFECT_CLOUD] = MeshBuilder::GenerateOBJ("effect_cloud", "Obj//cloud.obj");
 	meshList[GEO_EFFECT_CLOUD]->textureArray[0] = LoadTGA("Image//white.tga");
 	meshList[GEO_EFFECT_DIRT] = MeshBuilder::GenerateOBJ("effect_dirt", "Obj//cloud.obj");
 	meshList[GEO_EFFECT_DIRT]->textureArray[0] = LoadTGA("Image//brown.tga");
-	for (int i = GEO_EFFECT_CLOUD; i <= GEO_EFFECT_DIRT; ++i)
+	meshList[GEO_EFFECT_RING] = MeshBuilder::GenerateRing("effect_ring", Color(1, 1, 1), 16, 1.f, 0.75f);
+	SceneData::GetInstance()->AddMesh(meshList[GEO_EFFECT_RING]);
+	for (int i = GEO_EFFECT_CLOUD; i <= GEO_EFFECT_RING; ++i)
 	{
 		meshList[i]->material.kDiffuse.Set(1, 1, 1);
 		meshList[i]->material.kAmbient.Set(0.25f, 0.25f, 0.25f);

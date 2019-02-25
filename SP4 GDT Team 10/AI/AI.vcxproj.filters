@@ -308,6 +308,9 @@
     <ClCompile Include="Source\Tornado.cpp">
       <Filter>GameObjects\Calamity</Filter>
     </ClCompile>
+    <ClCompile Include="Source\EffectRing.cpp">
+      <Filter>VisualEffects\EffectObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -570,6 +573,9 @@
     </ClInclude>
     <ClInclude Include="Source\Tornado.h">
       <Filter>GameObjects\Calamity</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EffectRing.h">
+      <Filter>VisualEffects\EffectObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
