@@ -3,6 +3,7 @@
 #include "PostOffice.h"
 #include "ConcreteMessages.h"
 #include "GameObject.h"
+#include "Building.h"
 
 UIGameText::UIGameText(TEXT_TYPE textType, GameObject* go) :
 	UIBase()
@@ -93,6 +94,8 @@ UIGameText::UIGameText(TEXT_TYPE textType, GameObject* go) :
 		uiComponents_list[COMPONENT_TEXT_1].pos.x = 0.25f;
 		break;
 	case TEXT_SELECTED_BUILDING:
+	{
+		Building* building = dynamic_cast<Building*>(go);
 		pos.Set(1, 0.25f);
 		scale.Set(250, 250);
 		anchorPoint.Set(1, 0);
@@ -103,17 +106,95 @@ UIGameText::UIGameText(TEXT_TYPE textType, GameObject* go) :
 			uiComponents_list[COMPONENT_TEXT_1 + i].textSize = scale.y * 0.1f;
 		}
 		uiComponents_list[COMPONENT_TEXT_5].textSize *= 1.3f;
+		uiComponents_list[COMPONENT_TEXT_4].text = "v Info v";
+		uiComponents_list[COMPONENT_TEXT_4].pos.x += 0.04f;
 		if (go->type == GameObject::GO_CHIEFHUT)
 		{
 			uiComponents_list[COMPONENT_TEXT_5].text = "Chief Hut";
-			uiComponents_list[COMPONENT_TEXT_5].pos.x += 0.08f;
+			//uiComponents_list[COMPONENT_TEXT_5].pos.x += 0.02f;
+			uiComponents_list[COMPONENT_TEXT_3].textSize *= 0.65f;
+			uiComponents_list[COMPONENT_TEXT_3].text = "Makes blueprints that";
+			uiComponents_list[COMPONENT_TEXT_3].pos.x -= 0.105f;
+			uiComponents_list[COMPONENT_TEXT_2].textSize *= 0.6f;
+			uiComponents_list[COMPONENT_TEXT_2].text = "Villagers can build with";
+			uiComponents_list[COMPONENT_TEXT_2].pos.x -= 0.095f;
 		}
 		else if (go->type == GameObject::GO_HOUSE)
 		{
 			uiComponents_list[COMPONENT_TEXT_5].text = "House";
-			uiComponents_list[COMPONENT_TEXT_5].pos.x += 0.2f;
+			uiComponents_list[COMPONENT_TEXT_5].pos.x += 0.09f;
+			uiComponents_list[COMPONENT_TEXT_3].textSize *= 0.75f;
+			uiComponents_list[COMPONENT_TEXT_3].text = "Increases population";
+			uiComponents_list[COMPONENT_TEXT_3].pos.x -= 0.105f;
+			uiComponents_list[COMPONENT_TEXT_2].textSize *= 0.75f;
+			uiComponents_list[COMPONENT_TEXT_2].text = "limit";
+			uiComponents_list[COMPONENT_TEXT_2].pos.x += 0.095f;
 		}
-
+		else if (go->type == GameObject::GO_LOGS)
+		{
+			uiComponents_list[COMPONENT_TEXT_5].text = "Logs";
+			uiComponents_list[COMPONENT_TEXT_5].pos.x += 0.12f;
+			uiComponents_list[COMPONENT_TEXT_3].textSize *= 0.75f;
+			uiComponents_list[COMPONENT_TEXT_3].text = "Reduces power of";
+			uiComponents_list[COMPONENT_TEXT_3].pos.x -= 0.075f;
+			uiComponents_list[COMPONENT_TEXT_2].textSize *= 0.75f;
+			uiComponents_list[COMPONENT_TEXT_2].text = "Calamity objects";
+			uiComponents_list[COMPONENT_TEXT_2].pos.x -= 0.055f;
+		}
+		else if (go->type == GameObject::GO_GRANARY)
+		{
+			uiComponents_list[COMPONENT_TEXT_5].text = "Granary";
+			uiComponents_list[COMPONENT_TEXT_5].pos.x += 0.03f;
+			uiComponents_list[COMPONENT_TEXT_3].textSize *= 0.85f;
+			uiComponents_list[COMPONENT_TEXT_3].text = "Increases food";
+			uiComponents_list[COMPONENT_TEXT_3].pos.x -= 0.055f;
+			uiComponents_list[COMPONENT_TEXT_2].textSize *= 0.85f;
+			uiComponents_list[COMPONENT_TEXT_2].text = "limit";
+			uiComponents_list[COMPONENT_TEXT_2].pos.x += 0.095f;
+		}
+		else if (go->type == GameObject::GO_WOODSHED)
+		{
+			uiComponents_list[COMPONENT_TEXT_5].text = "Woodshed";
+			uiComponents_list[COMPONENT_TEXT_3].textSize *= 0.85f;
+			uiComponents_list[COMPONENT_TEXT_3].text = "Increases wood";
+			uiComponents_list[COMPONENT_TEXT_3].pos.x -= 0.055f;
+			uiComponents_list[COMPONENT_TEXT_2].textSize *= 0.85f;
+			uiComponents_list[COMPONENT_TEXT_2].text = "limit";
+			uiComponents_list[COMPONENT_TEXT_2].pos.x += 0.095f;
+		}
+		switch (building->eCurrState)
+		{
+		case Building::COMPLETED:
+			uiComponents_list[COMPONENT_TEXT_1].text = "= Completed =";
+			uiComponents_list[COMPONENT_TEXT_1].textColor.Set(0, 1, 0);
+			uiComponents_list[COMPONENT_TEXT_1].pos.x -= 0.08f;
+			break;
+		case Building::CONSTRUCTING:
+			uiComponents_list[COMPONENT_TEXT_1].text = "= Unconstructed =";
+			uiComponents_list[COMPONENT_TEXT_1].textColor.Set(0.73f, 0.44f, 0);
+			uiComponents_list[COMPONENT_TEXT_1].pos.x -= 0.17f;
+			uiComponents_list[COMPONENT_TEXT_4].text = "Requires construction!";
+			uiComponents_list[COMPONENT_TEXT_4].textSize *= 0.7f;
+			uiComponents_list[COMPONENT_TEXT_4].pos.x -= 0.1f;
+			uiComponents_list[COMPONENT_TEXT_4].textColor.Set(0.2, 0.2f, 0.2f);
+			break;
+		case Building::BROKEN:
+			uiComponents_list[COMPONENT_TEXT_1].text = "= Broken =";
+			uiComponents_list[COMPONENT_TEXT_1].textColor.Set(1, 0, 0);
+			uiComponents_list[COMPONENT_TEXT_1].pos.x -= 0.04f;
+			uiComponents_list[COMPONENT_TEXT_4].text = "Requires repair!";
+			uiComponents_list[COMPONENT_TEXT_4].textSize *= 0.9f;
+			uiComponents_list[COMPONENT_TEXT_4].pos.x -= 0.1f;
+			uiComponents_list[COMPONENT_TEXT_4].textColor.Set(1, 0.2f, 0.2f);
+			break;
+		case Building::BLUEPRINT:
+			uiComponents_list[COMPONENT_TEXT_1].text = "= Blueprint =";
+			uiComponents_list[COMPONENT_TEXT_1].textColor.Set(0, 0.69f, 0.73f);
+			uiComponents_list[COMPONENT_TEXT_1].pos.x -= 0.08f;
+			break;
+		}
+	}
+		
 		break;
 	case TEXT_SELECTED_VILLAGER:
 		pos.Set(1, 0.25f);
@@ -142,7 +223,7 @@ UIGameText::UIGameText(TEXT_TYPE textType, GameObject* go) :
 		uiComponents_list[COMPONENT_TEXT_5].textSize *= 1.3f;
 		uiComponents_list[COMPONENT_TEXT_4].text = "Resource Type :";
 		uiComponents_list[COMPONENT_TEXT_3].textSize *= 1.15f;
-		uiComponents_list[COMPONENT_TEXT_3].pos.x += 0.23f;
+		uiComponents_list[COMPONENT_TEXT_3].pos.x += 0.03f;
 		if (go->type == GameObject::GO_BUSH)
 		{
 			uiComponents_list[COMPONENT_TEXT_5].text = "Bush";
@@ -164,6 +245,9 @@ UIGameText::UIGameText(TEXT_TYPE textType, GameObject* go) :
 			uiComponents_list[COMPONENT_TEXT_3].text = "Wood";
 			uiComponents_list[COMPONENT_TEXT_3].textColor.Set(122.f / 255.f, 73.f / 255.f, 9.f / 255.f);
 		}
+		uiComponents_list[COMPONENT_TEXT_5].pos.x -= 0.1f;
+		uiComponents_list[COMPONENT_TEXT_4].pos.x -= 0.04f;
+		uiComponents_list[COMPONENT_TEXT_3].pos.x += 0.08f;
 		break;
 	}
 	this->textType = textType;

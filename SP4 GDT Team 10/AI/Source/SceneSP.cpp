@@ -121,6 +121,10 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 	{
 		if (reticle->selected && reticle->selected != NULL)
 			selected = reticle->selected;
+
+		if (isnan(reticle->pos.x))
+			reticle->pos.SetZero();
+
 		//camera.Init(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));	// game
 		camera = tempCamera;
 		Application::GetInstance().SetMouseVisiblity(false);
@@ -2930,10 +2934,7 @@ void SceneSP::Update(double dt)
 	mousePos = MP->GetIntersectionWithPlane(camera.position, Vector3(0, 0, 0), Vector3(0, 1, 0));
 	SD->SetMousePos_World(mousePos);
 
-	CM->Update(dt);
-
 	UIM->Update(dt);
-	EM->Update(dt);
 
 	switch (game_state)
 	{
@@ -3104,6 +3105,8 @@ void SceneSP::Update(double dt)
 	}
 
 	camera.Update(dt);
+	CM->Update(dt);
+	EM->Update(dt);
 
 	if (MC->IsMouseOnUI())
 	{
