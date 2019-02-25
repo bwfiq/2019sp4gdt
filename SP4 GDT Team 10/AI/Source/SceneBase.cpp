@@ -197,6 +197,14 @@ void SceneBase::Init()
 	meshList[GEO_REDQUAD] = MeshBuilder::GenerateQuad("redquad", Color(1, 0, 0));
 	meshList[GEO_GREENQUAD] = MeshBuilder::GenerateQuad("greenquad", Color(0, 1, 0));
 	meshList[GEO_YELLOWQUAD] = MeshBuilder::GenerateQuad("yellowquad", Color(1, 1, 0));
+	Color beige(0.858f, 0.694f, 0.317f);
+	Color brown(0.509f, 0.388f, 0.105f);
+	meshList[GEO_BROWNQUAD] = MeshBuilder::GenerateQuad("brownquad", brown);
+	meshList[GEO_BEIGEQUAD] = MeshBuilder::GenerateQuad("beigequad", beige);
+	meshList[GEO_BROWN_TRIANGLE] = MeshBuilder::GenerateTriangle("brownTriangle", brown, 1.f);
+	meshList[GEO_BEIGE_TRIANGLE] = MeshBuilder::GenerateTriangle("beigeTriangle", beige, 1.f);
+
+
 
 	meshList[GEO_WHITEHEX] = MeshBuilder::GenerateRing("whitequad", Color(1, 1, 1), 6, 0.5f);
 	meshList[GEO_GREYHEX] = MeshBuilder::GenerateRing("whitequad", Color(0.5, 0.5, 0.5), 6, 0.5f);

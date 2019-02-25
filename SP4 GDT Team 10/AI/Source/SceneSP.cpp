@@ -4481,25 +4481,25 @@ void SceneSP::RenderPassMain()
 	ss << "FPS:" << fps;
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 50, 3);
 
-	ss.str("");
-	ss << "Graph " << 0;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 50, 0);
+	//ss.str("");
+	//ss << "Graph " << 0;
+	//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 50, 0);
 
 	// resources x=10
-	ss.str("");
-	ss << "Research:" << SD->GetResearchPoints();
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 6);
+	//ss.str("");
+	//ss << "Research:" << SD->GetResearchPoints();
+	//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 6);
 
-	ss.str("");
-	ss << "Food:" << SD->GetFood() << "/" << SD->GetFoodLimit();
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 3);
+	//ss.str("");
+	//ss << "Food:" << SD->GetFood() << "/" << SD->GetFoodLimit();
+	//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 3);
 
-	ss.str("");
-	ss << "Population:" << SD->GetPopulation() << "/" << SD->GetPopulationLimit();
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 0);
+	//ss.str("");
+	//ss << "Population:" << SD->GetPopulation() << "/" << SD->GetPopulationLimit();
+	//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 0);
 
 	//time and month x=30
-	ss.str("");
+	/*ss.str("");
 	ss << "Date: ";
 	switch (SD->GetCurrMonth())
 	{
@@ -4558,7 +4558,7 @@ void SceneSP::RenderPassMain()
 		ss << "0" << (int)(60 * fractpart);
 	else
 		ss << (int)(60 * fractpart);
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 30, 0);
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 30, 0);*/
 
 	/*ss.str("");
 	ss << "Current Goal:";
