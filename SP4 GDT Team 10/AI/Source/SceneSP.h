@@ -82,6 +82,7 @@ protected:
 	GAME_STATE game_state;
 
 	bool bGodlights = true;
+	bool bGodMode = false;
 	float fOpenGLInTimer = -1.f;
 	float fOpenGLOutTimer = 2.f;
 	float fSplashScreenInTimer = 0.f;

@@ -682,7 +682,6 @@ void SceneSP::Init()
 	SD->SetWoodLimit(0);
 	SD->SetStone(0);
 	SD->SetStoneLimit(0);
-	SD->SetResearchPoints(100);
 
 	SD->SetCurrMonth(1);
 	SD->SetCurrDay(1);
@@ -2917,7 +2916,6 @@ void SceneSP::Update(double dt)
 	EffectManager* EM = EffectManager::GetInstance();
 	CalamityManager* CM = CalamityManager::GetInstance();
 
-
 	//Calculating aspect ratio
 	m_worldHeight = 100.f;
 	m_worldWidth = m_worldHeight * (float)Application::GetWindowWidth() / Application::GetWindowHeight();
@@ -2933,7 +2931,7 @@ void SceneSP::Update(double dt)
 
 	mousePos = MP->GetIntersectionWithPlane(camera.position, Vector3(0, 0, 0), Vector3(0, 1, 0));
 	SD->SetMousePos_World(mousePos);
-
+	
 	UIM->Update(dt);
 
 	switch (game_state)
@@ -3043,44 +3041,51 @@ void SceneSP::Update(double dt)
 	{
 		if (KC->IsKeyPressed('U'))
 			ChangeState(G_INPLAY);
-		// button pressin
 		// research
-		if (UIM->GetUI("WoodResearch")->IsMousePressed() && SD->GetResearchPoints() >= 10 && !SceneData::GetInstance()->bWoodResearch)
+		if (UIM->GetUI("WoodResearch")->IsMousePressed() &&
+			((SD->GetWood() >= 10 && !SceneData::GetInstance()->bWoodResearch) || bGodMode))
 		{
-			SD->SetResearchPoints(SD->GetResearchPoints() - 10);
+			SD->SetWood(SD->GetWood() - 10);
 			SceneData::GetInstance()->bWoodResearch = true;
 			UIManager::GetInstance()->GetUI("WoodResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//house.tga");
 		}
-		else if (SceneData::GetInstance()->bWoodResearch && UIM->GetUI("StoneResearch")->IsMousePressed() && SD->GetResearchPoints() >= 20 && !SceneData::GetInstance()->bStoneResearch)
+		else if (SceneData::GetInstance()->bWoodResearch && UIM->GetUI("StoneResearch")->IsMousePressed() &&
+			((SD->GetWood() >= 10 && SD->GetStone() >= 10 && !SceneData::GetInstance()->bStoneResearch) || bGodMode))
 		{
-			SD->SetResearchPoints(SD->GetResearchPoints() - 20);
+			SD->SetWood(SD->GetWood() - 10);
+			SD->SetStone(SD->GetStone() - 10);
 			SceneData::GetInstance()->bStoneResearch = true;
 			UIManager::GetInstance()->GetUI("StoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//stonehouse.tga");
 		}
-		else if (SceneData::GetInstance()->bStoneResearch && UIM->GetUI("FullStoneResearch")->IsMousePressed() && SD->GetResearchPoints() >= 30 && !SceneData::GetInstance()->bFullStoneResearch)
+		else if (SceneData::GetInstance()->bStoneResearch && UIM->GetUI("FullStoneResearch")->IsMousePressed() &&
+			((SD->GetStone() >= 20 && !SceneData::GetInstance()->bFullStoneResearch) || bGodMode))
 		{
-			SD->SetResearchPoints(SD->GetResearchPoints() - 30);
+			SD->SetStone(SD->GetStone() - 20);
 			SceneData::GetInstance()->bFullStoneResearch = true;
 			UIManager::GetInstance()->GetUI("FullStoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//fullstonehouse.tga");
 		}
-		if (UIM->GetUI("animalHunting")->IsMousePressed() && SD->GetResearchPoints() >= 10 && !SceneData::GetInstance()->bAnimalHunting)
+
+		if (UIM->GetUI("animalHunting")->IsMousePressed() &&
+			((SD->GetFood() >= 5 && !SceneData::GetInstance()->bAnimalHunting) || bGodMode))
 		{
-			SD->SetResearchPoints(SD->GetResearchPoints() - 10);
+			SD->SetFood(SD->GetFood() - 5);
 			SceneData::GetInstance()->bAnimalHunting = true;
 			UIManager::GetInstance()->GetUI("animalHunting")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 		}
-		else if (SceneData::GetInstance()->bAnimalHunting && UIM->GetUI("animalTaming")->IsMousePressed() && SD->GetResearchPoints() >= 20 && !SceneData::GetInstance()->bAnimalTaming)
+		else if (SceneData::GetInstance()->bAnimalHunting && UIM->GetUI("animalTaming")->IsMousePressed() &&
+			((SD->GetFood() >= 10 && !SceneData::GetInstance()->bAnimalTaming) || bGodMode))
 		{
-			SD->SetResearchPoints(SD->GetResearchPoints() - 20);
+			SD->SetFood(SD->GetFood() - 10);
 			SceneData::GetInstance()->bAnimalTaming = true;
 			UIManager::GetInstance()->GetUI("animalTaming")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 		}
-		else if (SceneData::GetInstance()->bAnimalTaming && UIM->GetUI("animalBreeding")->IsMousePressed() && SD->GetResearchPoints() >= 30 && !SceneData::GetInstance()->bAnimalBreeding)
+		else if (SceneData::GetInstance()->bAnimalTaming && UIM->GetUI("animalBreeding")->IsMousePressed() &&
+			((SD->GetFood() >= 20 && !SceneData::GetInstance()->bAnimalBreeding) || bGodMode))
 		{
-			SD->SetResearchPoints(SD->GetResearchPoints() - 30);
+			SD->SetFood(SD->GetFood() - 20);
 			SceneData::GetInstance()->bAnimalBreeding = true;
 			UIManager::GetInstance()->GetUI("animalBreeding")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 		}
@@ -3108,14 +3113,14 @@ void SceneSP::Update(double dt)
 	CM->Update(dt);
 	EM->Update(dt);
 
-	if (MC->IsMouseOnUI())
+	/*if (MC->IsMouseOnUI())
 	{
 		Application::GetInstance().SetMouseVisiblity(true);
 	}
 	else
 	{
 		Application::GetInstance().SetMouseVisiblity(false);
-	}
+	}*/
 	if (KC->IsKeyPressed('P')) {
 		CM->AddToCalamityQueue(new CalamityEarthquake());
 		SD->SetReligionValue(((int)SD->GetReligionValue() % (int)SD->GetMaxReligionValue()) + 25);
@@ -3185,6 +3190,10 @@ void SceneSP::Update(double dt)
 	if (KC->IsKeyPressed('G'))
 	{
 		bShowGrid = !bShowGrid;
+	}
+	if (KC->IsKeyPressed('T'))
+	{
+		bGodMode = !bGodMode;
 	}
 
 	if (KC->IsKeyPressed('B'))
@@ -4474,12 +4483,12 @@ void SceneSP::RenderPassMain()
 	ss.str("");
 	ss.precision(3);
 	ss << "Speed:" << m_speed;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 50, 6);
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 70, 6);
 
 	ss.str("");
 	ss.precision(5);
 	ss << "FPS:" << fps;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 50, 3);
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 70, 3);
 
 	//ss.str("");
 	//ss << "Graph " << 0;
@@ -4569,6 +4578,9 @@ void SceneSP::RenderPassMain()
 	else
 		ss << "Fill the Religion Meter by offering food to the altar.";
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 0, 27);*/
+	ss.str("");
+	ss << "God Mode:" << bGodMode;
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 70, 0);
 }
 
 void SceneSP::RenderSplashScreen()

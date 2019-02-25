@@ -50,8 +50,6 @@ public:
 	int GetPopulation();
 	void SetPopulationLimit(int populationLimit);
 	int GetPopulationLimit();
-	void SetResearchPoints(int researchPoints);
-	int GetResearchPoints();
 	void SetCurrMonth(int month);
 	int GetCurrMonth();
 	std::string GetCurrMonth_string();
@@ -101,7 +99,7 @@ private:
 	Vector3 camPosition;
 
 	float fReligionValue, fMaxReligionValue;
-	int iFood, iFoodLimit, iPopulation, iPopulationLimit, iWood, iWoodLimit, iStone, iStoneLimit, iResearchPoints, iCurrMonth, iCurrDay;
+	int iFood, iFoodLimit, iPopulation, iPopulationLimit, iWood, iWoodLimit, iStone, iStoneLimit, iCurrMonth, iCurrDay;
 	float fTimeOfDay;
 };
 
