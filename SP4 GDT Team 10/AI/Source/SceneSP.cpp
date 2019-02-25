@@ -3735,9 +3735,7 @@ void SceneSP::Update(double dt)
 	{
 		if (!go->active)
 			continue;
-		go->currentPt = GetPoint(go->pos);
-		go->Update(dt * m_speed);
-		// updating GameObjects
+		// updating resources limits and tier
 		Building* goB = dynamic_cast<Building*>(go);
 		if (goB)
 		{
@@ -3952,12 +3950,18 @@ void SceneSP::Update(double dt)
 			}
 		}*/
 		//go->pos += go->vel * dt * m_speed;
+	}
+	for (auto go : m_goList)
+	{
+		if (!go->active)
+			continue;
+		go->currentPt = GetPoint(go->pos);
+		go->Update(dt * m_speed);
 		if (go->smID != "")
 		{
 			SMManager::GetInstance()->GetSM(go->smID)->Update(dt * m_speed, go);
 		}
 	}
-
 	SD->SetFood(Math::Min(SD->GetFood(), SD->GetFoodLimit()));
 	SD->SetWood(Math::Min(SD->GetWood(), SD->GetWoodLimit()));
 	SD->SetStone(Math::Min(SD->GetStone(), SD->GetStoneLimit()));
