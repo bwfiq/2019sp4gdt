@@ -130,7 +130,7 @@ void SceneBase::Init()
 	glUniform2f(m_parameters[U_UV_OFFSET], 0, 0);
 
 	//camera.Init(Vector3(-3, 3, 3), Vector3(0, 0, 0), Vector3(0, 1, 0));
-	camera.Init(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));
+	camera.Init(Vector3(0, 2, 0), Vector3(0, 0, 0), Vector3(0, 1, 0));
 	Vector3 dir = camera.target - camera.position;
 	dir.Normalize();
 	Vector3 right(1, 0, 0);

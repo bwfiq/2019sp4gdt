@@ -6,6 +6,13 @@
 class Camera
 {
 public:
+	enum CAMERA_VIEWANGLE {
+		VIEW_TOPDOWN,
+		VIEW_ANGLE_1,
+		VIEW_ANGLE_2,
+		
+		VIEW_TOTAL
+	};
 	Vector3 position;
 	Vector3 target;
 	Vector3 up;
@@ -40,6 +47,11 @@ private:
 	CAMERA_SHAKE_TYPE shakeType;
 	float fShakeIntensity;
 	float fShakeDuration;
+	CAMERA_VIEWANGLE viewAngle;
+
+	Vector3 position_offset;//used for camera angle
+
+	void SetCameraAngle(CAMERA_VIEWANGLE viewAngle);
 
 	void CalculateUp();
 };

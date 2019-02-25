@@ -21,6 +21,7 @@ void Camera::Init(const Vector3& pos, const Vector3& target, const Vector3& up)
 	this->target = this->target_goal = this->default_target = target;
 	this->up = this->default_up = up;
 	fCameraBorderMovespeed = 4.f;
+	SetCameraAngle(VIEW_TOPDOWN);
 }
 
 void Camera::Reset()
@@ -123,6 +124,10 @@ void Camera::Update(double dt)
 		keyboardMovementDelta.x += movement;
 		keyboardMovementDelta.x += movement;
 	}
+	if (KC->IsKeyPressed(VK_TAB))
+	{
+		this->SetCameraAngle((CAMERA_VIEWANGLE)(((int)viewAngle + 1) % (int)VIEW_TOTAL));
+	}
 
 	switch (this->shakeType) 
 	{
@@ -161,7 +166,7 @@ void Camera::Update(double dt)
 		if (target_velocity.IsZero() || origVel.Dot(target_velocity.Normalized()) < -0.9f)
 			target_velocity.SetZero();
 	}
-	Vector3 position_goal_with_zoom = position_goal + Vector3(0, position_goal.y, 0) * mouseScroll;
+	Vector3 position_goal_with_zoom = position_goal + Vector3(0, position_goal.y, 0) * mouseScroll + this->position_offset;
 	if (position != position_goal_with_zoom)
 	{
 		position.lerp(position_goal_with_zoom, Math::Min((float)dt*20.f, 1.f));
@@ -170,6 +175,13 @@ void Camera::Update(double dt)
 	{
 		target.lerp(target_goal, Math::Min((float)dt*15.5f, 1.f));
 	}
+	Vector3 view = (target_goal - position_goal_with_zoom).Normalized();
+	Vector3 right = view.Cross(up);
+	right.y = 0;
+	right.Normalize();
+	up = right.Cross(view).Normalized();
+	view = view;
+	target_goal = position_goal + view;
 
 	SceneData::GetInstance()->SetCamPosition(this->position);
 }
@@ -184,6 +196,23 @@ void Camera::SetCamShake(int shakeType, float intensity, float duration)
 	this->shakeType = (CAMERA_SHAKE_TYPE)shakeType;
 	this->fShakeIntensity = intensity;
 	this->fShakeDuration = duration;
+}
+
+void Camera::SetCameraAngle(CAMERA_VIEWANGLE viewAngle)
+{
+	this->viewAngle = viewAngle;
+	switch (this->viewAngle)
+	{
+	case VIEW_TOPDOWN:
+		this->position_offset = Vector3(0, 2, 0);
+		break;
+	case VIEW_ANGLE_1:
+		this->position_offset = Vector3(0, 1, 3);
+		break;
+	case VIEW_ANGLE_2:
+		this->position_offset = Vector3(0, -2, 5);
+		break;
+	}
 }
 
 void Camera::CalculateUp()

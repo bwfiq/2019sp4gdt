@@ -141,7 +141,16 @@ void EffectManager::Render(SceneBase * scene)
 				glLineWidth(1);
 			}
 			else
-				rendermesh(scene, Effect);
+			{
+				try
+				{
+					rendermesh(scene, Effect);
+				}
+				catch (std::exception())
+				{
+					std::cout << "dividebyzero" << std::endl;
+				}
+			}
 		}
 		scene->modelStack.PopMatrix();
 	}

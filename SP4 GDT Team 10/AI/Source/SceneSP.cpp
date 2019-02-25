@@ -673,6 +673,7 @@ void SceneSP::Init()
 
 	CalamityManager::GetInstance()->Init();
 
+	game_state = G_INPLAY;//to save the camera pos
 	ChangeState(G_SPLASHSCREEN);
 }
 
