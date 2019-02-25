@@ -7,6 +7,8 @@
 #include "EffectHand.h"
 #include "EffectReticle.h"
 #include "EffectCloud.h"
+#include "EffectDirt.h"
+#include "SceneData.h"
 
 void EffectManager::Init()
 {
@@ -194,6 +196,21 @@ void EffectManager::DoPrefabEffect(EFFECT_PREFABS prefab, Vector3 goPos)
 			);
 			this->AddEffect(newCloud);
 		}
+		break;
+	}
+	case PREFAB_EARTHQUAKE_DEBRIS:
+	{
+		SceneData* SD = SceneData::GetInstance();
+		float worldRadius = (SD->GetNoGrid() * SD->GetGridSize());
+		EffectDirt* newDirt = new EffectDirt(
+			Vector3(Math::RandFloatMinMax(-worldRadius, worldRadius), -2, Math::RandFloatMinMax(-worldRadius, worldRadius)) //hardcoded for now
+			, Math::RandFloatMinMax(0.5f, 2.f)
+			, Vector3(1, 1, 1) * Math::RandFloatMinMax(1, 3)
+			, Vector3(1, 1, 1) * Math::RandFloatMinMax(0.2f, 0.5f)
+		);
+		newDirt->vel *= 9;
+		newDirt->acc *= 9;
+		this->AddEffect(newDirt);
 		break;
 	}
 	}

@@ -15,7 +15,7 @@ EffectCloud::EffectCloud(Vector3 origPos, float lifeTime, Vector3 startScale, Ve
 	float randVelMagnitude = Math::RandFloatMinMax(1, 4) / lifeTime;
 	vel = randVel * randVelMagnitude;
 	acc = -randVel * randVelMagnitude * 2;
-	rotation.Set(Math::RandInt() % 361, Math::RandInt() % 361, Math::RandInt() % 361);
+	rotation.Set(Math::RandInt(), Math::RandInt(), Math::RandInt());
 }
 
 EffectCloud::~EffectCloud()

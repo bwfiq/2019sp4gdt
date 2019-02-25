@@ -21,6 +21,7 @@ struct Tsunami : public GameObject
 	~Tsunami();
 
 	float fPower; //Strength of the wave
+	float fParticleTimer_Cloud;
 
 	void Collided(GameObject* go);
 

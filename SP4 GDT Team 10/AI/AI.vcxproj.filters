@@ -66,6 +66,9 @@
     <Filter Include="GameObjects\Other">
       <UniqueIdentifier>{6971df2b-d122-4ff2-a366-f02d17728e40}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObjects\Calamity">
+      <UniqueIdentifier>{69e82d0a-8298-4941-b50a-2c39b1520a3a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -227,9 +230,6 @@
     <ClCompile Include="Source\EffectGridWarning.cpp">
       <Filter>VisualEffects\EffectObjects</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Tsunami.cpp">
-      <Filter>GameObjects</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Granary.cpp">
       <Filter>GameObjects\Buildings</Filter>
     </ClCompile>
@@ -289,6 +289,12 @@
     </ClCompile>
     <ClCompile Include="Source\AnimationConstructing.cpp">
       <Filter>VisualEffects\Animations</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Tsunami.cpp">
+      <Filter>GameObjects\Calamity</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\EffectDirt.cpp">
+      <Filter>VisualEffects\EffectObjects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -475,9 +481,6 @@
     <ClInclude Include="Source\EffectGridWarning.h">
       <Filter>VisualEffects\EffectObjects</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Tsunami.h">
-      <Filter>GameObjects</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Logs.h">
       <Filter>GameObjects\Buildings</Filter>
     </ClInclude>
@@ -537,6 +540,12 @@
     </ClInclude>
     <ClInclude Include="Source\AnimationConstructing.h">
       <Filter>VisualEffects\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Tsunami.h">
+      <Filter>GameObjects\Calamity</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EffectDirt.h">
+      <Filter>VisualEffects\EffectObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

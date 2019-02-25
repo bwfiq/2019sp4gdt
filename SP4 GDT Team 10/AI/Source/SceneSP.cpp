@@ -3698,6 +3698,19 @@ void SceneSP::Update(double dt)
 		case GameObject::GO_TSUNAMI:
 		{
 			Tsunami* goTsunami = static_cast<Tsunami*>(go);
+			goTsunami->fParticleTimer_Cloud += (float)dt * m_speed;
+			if (goTsunami->fParticleTimer_Cloud > 0.1f)
+			{
+				goTsunami->fParticleTimer_Cloud = 0;
+				EffectCloud* cloud = new EffectCloud(
+					goTsunami->pos
+					, Math::RandFloatMinMax(0.5f, 1.2f)
+					, Vector3(1, 1, 1) * Math::RandFloatMinMax(1.6f, 2.4f)
+				);
+				cloud->vel *= 0.7;
+				cloud->acc *= 0.35;
+				EM->AddEffect(cloud);
+			}
 			if (goTsunami->tsunami_direction == Tsunami::DIRECTION_LEFT)
 			{
 				goTsunami->pos += Vector3(-SD->GetGridSize() * goTsunami->moveSpeed, 0, 0) * dt * m_speed;

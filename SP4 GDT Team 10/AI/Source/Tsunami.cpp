@@ -14,6 +14,7 @@ Tsunami::Tsunami(GAMEOBJECT_TYPE typeValue)
 	std::cout << "Tsunami Constructor" << std::endl;
 
 	fPower = 100.f;
+	fParticleTimer_Cloud = 0;
 }
 
 Tsunami::~Tsunami()
