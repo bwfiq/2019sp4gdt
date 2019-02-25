@@ -59,6 +59,9 @@ public:
 	Vector3 GetCamPosition();
 	void SetMainMenuElapsedTime(float time);
 	float GetMainMenuElapsedTime();
+	void SetTimeOfDay(float timeOfDay);
+	float GetTimeOfDay();
+	std::string GetTimeOfDay_string();
 
 	void AddMesh(Mesh* mesh);
 	void RemoveMesh(const std::string& meshName);
@@ -83,6 +86,7 @@ private:
 
 	float fReligionValue, fMaxReligionValue;
 	int iFood, iFoodLimit, iPopulation, iPopulationLimit, iWood, iWoodLimit, iResearchPoints, iCurrMonth, iCurrDay;
+	float fTimeOfDay;
 };
 
 #endif

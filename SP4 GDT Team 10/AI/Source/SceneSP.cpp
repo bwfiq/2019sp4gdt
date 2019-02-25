@@ -662,9 +662,10 @@ void SceneSP::Init()
 
 	SD->SetCurrMonth(1);
 	SD->SetCurrDay(1);
+	SD->SetTimeOfDay(8);
 
 	bDay = true; // day
-	fTimeOfDay = 8.f;
+	fTimeOfDay = SD->GetTimeOfDay();
 	bGoalAchieved = false;
 
 	//research
@@ -3253,6 +3254,7 @@ void SceneSP::Update(double dt)
 		ChangeTimeOfDay();
 	else if ((fTimeOfDay <= 6.f || fTimeOfDay >= 18.f) && bDay) // 1800 to 0600 night
 		ChangeTimeOfDay();
+	SD->SetTimeOfDay(fTimeOfDay);
 	float SHADOW_LENGTH = 1.f;
 	if (bDay)
 	{
