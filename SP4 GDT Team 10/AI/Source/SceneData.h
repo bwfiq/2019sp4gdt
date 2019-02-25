@@ -38,10 +38,14 @@ public:
 	int GetFood();
 	void SetWood(int wood);
 	int GetWood();
+	void SetStone(int stone);
+	int GetStone();
 	void SetFoodLimit(int foodLimit);
 	int GetFoodLimit();
 	void SetWoodLimit(int woodLimit);
 	int GetWoodLimit();
+	void SetStoneLimit(int stoneLimit);
+	int GetStoneLimit();
 	void SetPopulation(int population);
 	int GetPopulation();
 	void SetPopulationLimit(int populationLimit);
@@ -59,10 +63,25 @@ public:
 	Vector3 GetCamPosition();
 	void SetMainMenuElapsedTime(float time);
 	float GetMainMenuElapsedTime();
+	void SetTimeOfDay(float timeOfDay);
+	float GetTimeOfDay();
+	std::string GetTimeOfDay_string();
 
 	void AddMesh(Mesh* mesh);
 	void RemoveMesh(const std::string& meshName);
 	Mesh* GetMesh(const std::string& meshName);
+
+	// Research
+	bool bWoodResearch;
+	bool bStoneResearch;
+	bool bFullStoneResearch;
+
+	bool bAnimalHunting;
+	bool bAnimalTaming;
+	bool bAnimalBreeding;
+
+	bool bWoodCutting;
+	bool bStoneMining;
 private:
 	SceneData();
 	~SceneData();
@@ -77,12 +96,13 @@ private:
 	float m_worldWidth;
 	float f_elapsedTime;
 	float f_mainmenuElapsedTime;
-	std::map<std::string, Mesh*> meshList;//these meshes delete themselves via the scene
+	std::map<std::string, Mesh*> meshList; //these meshes delete themselves via the scene
 	Vector3 mousePos_World;
 	Vector3 camPosition;
 
 	float fReligionValue, fMaxReligionValue;
-	int iFood, iFoodLimit, iPopulation, iPopulationLimit, iWood, iWoodLimit, iResearchPoints, iCurrMonth, iCurrDay;
+	int iFood, iFoodLimit, iPopulation, iPopulationLimit, iWood, iWoodLimit, iStone, iStoneLimit, iResearchPoints, iCurrMonth, iCurrDay;
+	float fTimeOfDay;
 };
 
 #endif

@@ -61,6 +61,37 @@ UIGameText::UIGameText(TEXT_TYPE textType, GameObject* go) :
 		uiComponents_list[COMPONENT_TEXT_1].textSize *= 1.15f;
 		uiComponents_list[COMPONENT_TEXT_1].pos.x = 0.25f;
 		break;
+	case TEXT_SELECTED_RLAB:
+		pos.Set(1, 0.25f);
+		scale.Set(250, 250);
+		anchorPoint.Set(1, 0);
+		uiComponents_list[COMPONENT_BOARD].mesh = SD->GetMesh("ui_board_blank");
+		uiComponents_list[COMPONENT_TEXT_1].text = "Research Lab";
+		for (int i = 0; i <= COMPONENT_TEXT_5 - COMPONENT_TEXT_1; ++i)
+		{
+			uiComponents_list[COMPONENT_TEXT_1 + i].text = "";
+			uiComponents_list[COMPONENT_TEXT_1 + i].textSize = scale.y * 0.1f;
+		}
+		uiComponents_list[COMPONENT_TEXT_5].text = "Research Lab";
+		uiComponents_list[COMPONENT_TEXT_5].textSize *= 1.1f;
+		uiComponents_list[COMPONENT_TEXT_5].pos.x = 0.1f;
+
+		uiComponents_list[COMPONENT_TEXT_4].text = "Research Points : ";
+		uiComponents_list[COMPONENT_TEXT_4].textSize *= 0.85f;
+		uiComponents_list[COMPONENT_TEXT_4].pos.x = 0.1f;
+
+		uiComponents_list[COMPONENT_TEXT_3].text = "aa";
+		uiComponents_list[COMPONENT_TEXT_3].textSize *= 0.9f;
+		uiComponents_list[COMPONENT_TEXT_3].pos.x = 0.275f;
+
+		uiComponents_list[COMPONENT_TEXT_2].text = "Next Point :";
+		uiComponents_list[COMPONENT_TEXT_2].textSize *= 1.f;
+		uiComponents_list[COMPONENT_TEXT_2].pos.x = 0.15f;
+
+		uiComponents_list[COMPONENT_TEXT_1].text = "asdasd";
+		uiComponents_list[COMPONENT_TEXT_1].textSize *= 1.15f;
+		uiComponents_list[COMPONENT_TEXT_1].pos.x = 0.25f;
+		break;
 	case TEXT_SELECTED_BUILDING:
 		pos.Set(1, 0.25f);
 		scale.Set(250, 250);
@@ -168,6 +199,11 @@ void UIGameText::Update(float dt)
 			uiComponents_list[COMPONENT_TEXT_1].text = "Appeased";
 			uiComponents_list[COMPONENT_TEXT_1].textColor.Set(0, 0.8f, 0);
 		}
+	}
+		break;
+	case TEXT_SELECTED_RLAB:
+	{
+		uiComponents_list[COMPONENT_TEXT_3].text = std::to_string((int)SD->GetResearchPoints());
 	}
 		break;
 	}

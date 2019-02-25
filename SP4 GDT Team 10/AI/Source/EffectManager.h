@@ -18,6 +18,8 @@ public:
 
 		PREFAB_COMPLETEOBJECT,
 
+		PREFAB_EARTHQUAKE_DEBRIS,
+
 		PREFAB_TOTAL
 	};
 	void Init();

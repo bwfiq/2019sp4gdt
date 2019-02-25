@@ -175,6 +175,7 @@
     <ClCompile Include="Source\DepthFBO.cpp" />
     <ClCompile Include="Source\EffectBase.cpp" />
     <ClCompile Include="Source\EffectCloud.cpp" />
+    <ClCompile Include="Source\EffectDirt.cpp" />
     <ClCompile Include="Source\EffectHand.cpp" />
     <ClCompile Include="Source\EffectGridWarning.cpp" />
     <ClCompile Include="Source\EffectManager.cpp" />
@@ -252,6 +253,7 @@
     <ClInclude Include="Source\DepthFBO.h" />
     <ClInclude Include="Source\EffectBase.h" />
     <ClInclude Include="Source\EffectCloud.h" />
+    <ClInclude Include="Source\EffectDirt.h" />
     <ClInclude Include="Source\EffectHand.h" />
     <ClInclude Include="Source\EffectGridWarning.h" />
     <ClInclude Include="Source\EffectManager.h" />

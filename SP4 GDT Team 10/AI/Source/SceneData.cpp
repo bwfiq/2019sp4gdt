@@ -133,6 +133,14 @@ int SceneData::GetWood()
 {
 	return iWood;
 }
+void SceneData::SetStone(int stone)
+{
+	this->iStone = stone;
+}
+int SceneData::GetStone()
+{
+	return iStone;
+}
 void SceneData::SetFoodLimit(int foodLimit)
 {
 	this->iFoodLimit = foodLimit;
@@ -148,6 +156,14 @@ void SceneData::SetWoodLimit(int woodLimit)
 int SceneData::GetWoodLimit()
 {
 	return iWoodLimit;
+}
+void SceneData::SetStoneLimit(int stoneLimit)
+{
+	this->iStoneLimit = stoneLimit;
+}
+int SceneData::GetStoneLimit()
+{
+	return iStoneLimit;
 }
 void SceneData::SetPopulation(int population)
 {
@@ -229,6 +245,33 @@ void SceneData::SetMainMenuElapsedTime(float time)
 float SceneData::GetMainMenuElapsedTime()
 {
 	return this->f_mainmenuElapsedTime;
+}
+
+void SceneData::SetTimeOfDay(float timeOfDay)
+{
+	this->fTimeOfDay = timeOfDay;
+}
+
+float SceneData::GetTimeOfDay()
+{
+	return this->fTimeOfDay;
+}
+
+std::string SceneData::GetTimeOfDay_string()
+{
+	float fractpart, intpart;
+	std::string tod;
+	fractpart = modf(fTimeOfDay, &intpart);
+	if (intpart < 10)
+		tod += "0" + std::to_string((int)intpart);
+	else
+		tod += std::to_string((int)intpart);
+	tod += ":";
+	if ((int)(60 * fractpart) < 10)
+		tod += "0" + std::to_string((int)(60 * fractpart));
+	else
+		tod += std::to_string((int)(60 * fractpart));
+	return tod;
 }
 
 void SceneData::AddMesh(Mesh * mesh)

@@ -405,6 +405,17 @@ void StatePath::Update(double dt, GameObject * m_go)
 							return;
 						case GameObject::GO_MOUNTAIN:
 							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Mining");
+						case GameObject::GO_CHIEFHUT: // should be stone storage
+							//m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
+							SD->SetStone(SD->GetStone() + static_cast<Villager*>(m_go)->iStoneStored);
+
+							static_cast<Villager*>(m_go)->iStoneStored = 0;
+
+							m_go->goTarget = NULL;
+							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+							return;
+						case GameObject::GO_HOUSE:
+							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
 							return;
 						}
 					}

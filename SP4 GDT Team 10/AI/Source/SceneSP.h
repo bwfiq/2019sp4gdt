@@ -103,6 +103,7 @@ protected:
 	GameObject* selected; //Gameobject selected by mouse click, can do actions from UI choices that pop up
 	GameObject* goChiefHut;
 	GameObject* goAltar;
+	GameObject* goResearchLab;
 
 	//Temporary
 	GameObject* goVillager;
@@ -117,10 +118,6 @@ protected:
 	GameObject* goWoodshed;
 	GameObject* goPig;
 
-	// Research
-	bool bWoodResearch;
-	bool bStoneResearch;
-	bool bFullStoneResearch;
 };
 
 #endif

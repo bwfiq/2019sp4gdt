@@ -41,6 +41,7 @@
 #include "House.h"
 #include "Building.h"
 #include "ChiefHut.h"
+#include "ResearchLab.h"
 #include "Bush.h"
 #include "Tree.h"
 #include "Altar.h"
@@ -115,6 +116,8 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 	break;
 	case G_INPLAY:
 	{
+		if (reticle->selected && reticle->selected != NULL)
+			selected = reticle->selected;
 		//camera.Init(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));	// game
 		camera = tempCamera;
 		Application::GetInstance().SetMouseVisiblity(false);
@@ -158,37 +161,58 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 			UIManager::GetInstance()->AddUI("ui_Text_DailyRequirement", newUI);
 			m_coreUi.push_back(newUI);
 
+			UpdateSelectedUI();
+
 			if (newstate == G_RESEARCHTREE)
 			{
 				newUI = new UIOverlay("", 0.5f, 0.45f);
 				UIManager::GetInstance()->AddUI("overlay", newUI);
 				m_coreUi.push_back(newUI);
-
-				newUI = new UIMenuButton("back", 0.1f, 0.8f);
+				/*newUI = new UIMenuButton("back", 0.1f, 0.8f);
 				UIManager::GetInstance()->AddUI("backButton", newUI);
 				//newUI->pos.Set(newUI->pos.x, newUI->pos.y, 5);
-				m_coreUi.push_back(newUI);
+				m_coreUi.push_back(newUI);*/
 
+				//first column
 				newUI = new UIResearchButton("", 0.25f, 0.65f);
 				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("woodResearch");
+				if (SceneData::GetInstance()->bWoodResearch)
+					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 				UIManager::GetInstance()->AddUI("WoodResearch", newUI);
 				m_coreUi.push_back(newUI);
-				if (bWoodResearch)
-					UIManager::GetInstance()->GetUI("WoodResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
-
 				newUI = new UIResearchButton("", 0.25f, 0.45f);
 				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("stoneResearch");
+				if (SceneData::GetInstance()->bStoneResearch)
+					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 				UIManager::GetInstance()->AddUI("StoneResearch", newUI);
 				m_coreUi.push_back(newUI);
-				if (bStoneResearch)
-					UIManager::GetInstance()->GetUI("StoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
-
 				newUI = new UIResearchButton("", 0.25f, 0.25f);
 				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("fullStoneResearch");
+				if (SceneData::GetInstance()->bFullStoneResearch)
+					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 				UIManager::GetInstance()->AddUI("FullStoneResearch", newUI);
 				m_coreUi.push_back(newUI);
-				if (bFullStoneResearch)
-					UIManager::GetInstance()->GetUI("FullStoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+
+				//second column
+				newUI = new UIResearchButton("", 0.5f, 0.65f);
+				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("whitequad");
+				if (SceneData::GetInstance()->bAnimalHunting)
+					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+				UIManager::GetInstance()->AddUI("animalHunting", newUI);
+				m_coreUi.push_back(newUI);
+				newUI = new UIResearchButton("", 0.5f, 0.45f);
+				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("whitequad");
+				if (SceneData::GetInstance()->bAnimalTaming)
+					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+				UIManager::GetInstance()->AddUI("animalTaming", newUI);
+				m_coreUi.push_back(newUI);
+				newUI = new UIResearchButton("", 0.5f, 0.25f);
+				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("whitequad");
+				if (SceneData::GetInstance()->bAnimalBreeding)
+					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+				UIManager::GetInstance()->AddUI("animalBreeding", newUI);
+				m_coreUi.push_back(newUI);
+
 			}
 			else if (newstate == G_INGAMEOPTIONS)
 			{
@@ -592,6 +616,11 @@ void SceneSP::Init()
 	goLogs->pos.y = goLogs->scale.y * 0.5f;
 	static_cast<Building*>(goLogs)->bBuilt = true;
 
+	goResearchLab = FetchGO(GameObject::GO_RESEARCHLAB);
+	goResearchLab->pos = GetGridPos(GridPt(8, 2));
+	goResearchLab->pos.y = goResearchLab->scale.y * 0.5f;
+	static_cast<Building*>(goResearchLab)->bBuilt = true;
+
 	goAltar = FetchGO(GameObject::GO_ALTAR);
 	goAltar->pos = GetGridPos(GridPt(6, 2));
 	goAltar->pos.y = goAltar->scale.y * 0.5f;
@@ -644,19 +673,26 @@ void SceneSP::Init()
 	SD->SetPopulationLimit(0);
 	SD->SetWood(0);
 	SD->SetWoodLimit(0);
+	SD->SetStone(0);
+	SD->SetStoneLimit(0);
 	SD->SetResearchPoints(100);
 
 	SD->SetCurrMonth(1);
 	SD->SetCurrDay(1);
+	SD->SetTimeOfDay(8);
 
 	bDay = true; // day
-	fTimeOfDay = 8.f;
+	fTimeOfDay = SD->GetTimeOfDay();
 	bGoalAchieved = false;
 
 	//research
-	bWoodResearch = false;
-	bStoneResearch = false;
-	bFullStoneResearch = false;
+	SceneData::GetInstance()->bWoodResearch = false;
+	SceneData::GetInstance()->bStoneResearch = false;
+	SceneData::GetInstance()->bFullStoneResearch = false;
+
+	SceneData::GetInstance()->bAnimalHunting = false;
+	SceneData::GetInstance()->bAnimalTaming = false;
+	SceneData::GetInstance()->bAnimalBreeding = false;
 
 	//go->vel.Set(1, 0, 0);
 	MousePicker::GetInstance()->Init();
@@ -678,6 +714,7 @@ void SceneSP::Init()
 
 	CalamityManager::GetInstance()->Init();
 
+	game_state = G_INPLAY;//to save the camera pos
 	ChangeState(G_SPLASHSCREEN);
 }
 
@@ -952,6 +989,21 @@ bool SceneSP::Handle(Message* message)
 		delete message;
 		return true;
 	}
+	MessageResearch* messageResearch = dynamic_cast<MessageResearch*>(message);
+	if (messageResearch)
+	{
+		switch (game_state)
+		{
+		case G_RESEARCHTREE:
+			ChangeState(G_INPLAY);
+			break;
+		case G_INPLAY:
+			ChangeState(G_RESEARCHTREE);
+			break;
+		}
+		delete message;
+		return true;
+	}
 	MessageMoveButton* messageMoveButton = dynamic_cast<MessageMoveButton*>(message);
 	if (messageMoveButton)
 	{
@@ -1085,6 +1137,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			case GameObject::GO_ALTAR:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
 				break;
+			case GameObject::GO_RESEARCHLAB:
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 2.f, SceneData::GetInstance()->GetGridSize() * 1.f);
+				break;
 			case GameObject::GO_MOUNTAIN:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
 				break;
@@ -1132,6 +1187,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			break;
 		case GameObject::GO_ALTAR:
 			go = new Altar(type);
+			break;
+		case GameObject::GO_RESEARCHLAB:
+			go = new ResearchLab(type);
 			break;
 		case GameObject::GO_BUSH:
 			go = new Bush(type);
@@ -2630,9 +2688,7 @@ void SceneSP::AStarSingleGrid(GameObject * go, GridPt target)
 void SceneSP::UpdateSelectedUI()
 {
 	for (auto UI : m_selectedUi)
-	{
 		UI->bIsDone = true;
-	}
 	m_selectedUi.clear();
 	reticle->selected = selected;
 	if (selected == NULL) return;
@@ -2649,6 +2705,18 @@ void SceneSP::UpdateSelectedUI()
 		m_selectedUi.push_back(newUI);
 		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_ALTAR_OFFER, 1);
 		UIManager::GetInstance()->AddUI("uiSelected_Altar_Offer", newUI);
+		m_selectedUi.push_back(newUI);
+	}
+	else if (selected->type == GameObject::GO_RESEARCHLAB)
+	{
+		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_RLAB);
+		UIManager::GetInstance()->AddUI("uiSelected_RLab_Info", newUI);
+		m_selectedUi.push_back(newUI);
+		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_GENERAL_MOVE, 0);
+		UIManager::GetInstance()->AddUI("uiSelected_RLab_Move", newUI);
+		m_selectedUi.push_back(newUI);
+		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_RLAB, 1);
+		UIManager::GetInstance()->AddUI("uiSelected_RLab", newUI);
 		m_selectedUi.push_back(newUI);
 	}
 	else if (dynamic_cast<Building*>(selected))
@@ -2691,7 +2759,13 @@ void SceneSP::Reset()
 	}
 	*/
 	m_speed = 1.f;
-
+	selected = NULL;
+	for (auto UI : m_coreUi)
+		UI->bIsDone = true;
+	m_coreUi.clear();
+	for (auto UI : m_selectedUi)
+		UI->bIsDone = true;
+	m_selectedUi.clear();
 	ChangeState(G_MAINMENU);
 }
 
@@ -2897,6 +2971,12 @@ void SceneSP::Update(double dt)
 	{
 		if (SD->GetMainMenuElapsedTime() < 1.f)
 		{
+
+			if (MC->IsButtonPressed(MouseController::LMB))//if LMB pressed, skip
+			{
+				SD->SetMainMenuElapsedTime(1);
+				fMainMenuDelta = m_worldWidth * 0.3f;
+			}
 			SD->SetMainMenuElapsedTime(SD->GetMainMenuElapsedTime() + dt);
 			fMainMenuDelta = Math::lerp(m_worldWidth * 0.5f, m_worldWidth * 0.3f, Math::Min(1.f, EasingStyle::easeInOutSine(SD->GetMainMenuElapsedTime(), 0, 1.f, 1.f)));
 		}
@@ -2939,29 +3019,45 @@ void SceneSP::Update(double dt)
 		if (KC->IsKeyPressed('U'))
 			ChangeState(G_INPLAY);
 		// button pressin
-		if (UIM->GetUI("backButton")->IsMousePressed())
-			ChangeState(G_INPLAY);
-		// temporary research
-		if (UIM->GetUI("WoodResearch")->IsMousePressed() && SD->GetResearchPoints() >= 10 && !bWoodResearch)
+		// research
+		if (UIM->GetUI("WoodResearch")->IsMousePressed() && SD->GetResearchPoints() >= 10 && !SceneData::GetInstance()->bWoodResearch)
 		{
 			SD->SetResearchPoints(SD->GetResearchPoints() - 10);
-			bWoodResearch = true;
+			SceneData::GetInstance()->bWoodResearch = true;
 			UIManager::GetInstance()->GetUI("WoodResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//house.tga");
 		}
-		else if (bWoodResearch && UIM->GetUI("StoneResearch")->IsMousePressed() && SD->GetResearchPoints() >= 20 && !bStoneResearch)
+		else if (SceneData::GetInstance()->bWoodResearch && UIM->GetUI("StoneResearch")->IsMousePressed() && SD->GetResearchPoints() >= 20 && !SceneData::GetInstance()->bStoneResearch)
 		{
 			SD->SetResearchPoints(SD->GetResearchPoints() - 20);
-			bStoneResearch = true;
+			SceneData::GetInstance()->bStoneResearch = true;
 			UIManager::GetInstance()->GetUI("StoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//stonehouse.tga");
 		}
-		else if (bStoneResearch && UIM->GetUI("FullStoneResearch")->IsMousePressed() && SD->GetResearchPoints() >= 30 && !bFullStoneResearch)
+		else if (SceneData::GetInstance()->bStoneResearch && UIM->GetUI("FullStoneResearch")->IsMousePressed() && SD->GetResearchPoints() >= 30 && !SceneData::GetInstance()->bFullStoneResearch)
 		{
 			SD->SetResearchPoints(SD->GetResearchPoints() - 30);
-			bFullStoneResearch = true;
+			SceneData::GetInstance()->bFullStoneResearch = true;
 			UIManager::GetInstance()->GetUI("FullStoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//fullstonehouse.tga");
+		}
+		if (UIM->GetUI("animalHunting")->IsMousePressed() && SD->GetResearchPoints() >= 10 && !SceneData::GetInstance()->bAnimalHunting)
+		{
+			SD->SetResearchPoints(SD->GetResearchPoints() - 10);
+			SceneData::GetInstance()->bAnimalHunting = true;
+			UIManager::GetInstance()->GetUI("animalHunting")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+		}
+		else if (SceneData::GetInstance()->bAnimalHunting && UIM->GetUI("animalTaming")->IsMousePressed() && SD->GetResearchPoints() >= 20 && !SceneData::GetInstance()->bAnimalTaming)
+		{
+			SD->SetResearchPoints(SD->GetResearchPoints() - 20);
+			SceneData::GetInstance()->bAnimalTaming = true;
+			UIManager::GetInstance()->GetUI("animalTaming")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+		}
+		else if (SceneData::GetInstance()->bAnimalTaming && UIM->GetUI("animalBreeding")->IsMousePressed() && SD->GetResearchPoints() >= 30 && !SceneData::GetInstance()->bAnimalBreeding)
+		{
+			SD->SetResearchPoints(SD->GetResearchPoints() - 30);
+			SceneData::GetInstance()->bAnimalBreeding = true;
+			UIManager::GetInstance()->GetUI("animalBreeding")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 		}
 		return;
 	}
@@ -3078,99 +3174,91 @@ void SceneSP::Update(double dt)
 	Vector3 clickTarget = NULL;
 
 	static bool leftClick = false;
-	if (MC->IsButtonPressed(MouseController::LMB))
+	if (MC->IsButtonPressed(MouseController::LMB) && !MC->IsMouseOnUI())
 	{
-		
-		//std::cout << "LBUTTON DOWN" << std::endl;
-
-		if (!MC->IsMouseOnUI())
+		leftClick = true;
+		double x, y;
+		Application::GetCursorPos(&x, &y);
+		int w = Application::GetWindowWidth();
+		int h = Application::GetWindowHeight();
+		float posX = static_cast<float>(x) / w * m_worldWidth;
+		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
+		//std::cout << mousePos << std::endl;
+		GridPt selectedPt = GetPoint(mousePos);
+		if (isPointInGrid(selectedPt))
+			//std::cout << "Selected Grid: " << selectedPt.x << ", " << selectedPt.z << std::endl;
 		{
-			leftClick = true;
-			double x, y;
-			Application::GetCursorPos(&x, &y);
-			int w = Application::GetWindowWidth();
-			int h = Application::GetWindowHeight();
-			float posX = static_cast<float>(x) / w * m_worldWidth;
-			float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
-			//std::cout << mousePos << std::endl;
-			GridPt selectedPt = GetPoint(mousePos);
-			if (isPointInGrid(selectedPt))
-				//std::cout << "Selected Grid: " << selectedPt.x << ", " << selectedPt.z << std::endl;
+			bool objectFound = false;
+			for (auto go : m_goList)
 			{
-				bool objectFound = false;
-				for (auto go : m_goList)
+				if (!go->active)
+					continue;
+				if (selectedPt == go->currentPt)
 				{
-					if (!go->active)
-						continue;
-					if (selectedPt == go->currentPt)
+					//Supposed to implement priority here
+					if (selected == NULL)
 					{
-						//Supposed to implement priority here
-						if (selected == NULL)
-						{
-							selected = go;
-							objectFound = true;
-							go->GiveAnimation(new AnimationJump());
-							if (go->type == GameObject::GO_VILLAGER)
-							{
-								go->direction = Vector3(0, 0, 1);
-							}
-							break;
-						}
-						else if (selected != go)
-						{
-							objectFound = true;
-							switch (selected->type)
-							{
-							case GameObject::GO_VILLAGER:
-							{
-								selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
-								selected->goTarget = go;
-								selected = NULL;
-								objectFound = true;
-							}
-							break;
-							default:
-								break;
-							}
-						}
-					}
-					if (objectFound)
-					{
+						selected = go;
+						objectFound = true;
+						go->GiveAnimation(new AnimationJump());
+						if (go->type == GameObject::GO_VILLAGER)
+							go->direction = Vector3(0, 0, 1);
 						break;
 					}
-				}
-				if (!objectFound)
-				{
-					if (selected != NULL)
+					else if (selected != go)
 					{
-						//If it is a villager
-						Villager* goVil = dynamic_cast<Villager*>(selected);
-						if (goVil)
+						objectFound = true;
+						if (dynamic_cast<Villager*>(selected))
 						{
-							selected->goTarget = NULL;
-
-							selected->target = GetGridPos(selectedPt);
 							selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
+							selected->goTarget = go;
+							selected = NULL;
+							objectFound = true;
 						}
-						//If it is a building
-						Building* goBuilding = dynamic_cast<Building*>(selected);
-						if (goBuilding)
+						else
 						{
-							if (goBuilding->eCurrState == Building::BLUEPRINT)
-							{
-								//Should be trying to contruct now
-								if (!goBuilding->bBuilt)
-									goBuilding->eCurrState = Building::CONSTRUCTING;
-								else
-									goBuilding->eCurrState = Building::COMPLETED;
-								bShowGrid = false;
-								EM->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, selected->pos);
-							}
-							
+							selected = go;
+							go->GiveAnimation(new AnimationJump());
+							if (go->type == GameObject::GO_VILLAGER)
+								go->direction = Vector3(0, 0, 1);
+							break;
 						}
-						selected = NULL;
-						goVillager->goTarget = NULL;
 					}
+				}
+				if (objectFound)
+					break;
+			}
+			if (!objectFound)
+			{
+				if (selected != NULL)
+				{
+					//If it is a villager
+					Villager* goVil = dynamic_cast<Villager*>(selected);
+					if (goVil)
+					{
+						selected->goTarget = NULL;
+
+						selected->target = GetGridPos(selectedPt);
+						selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
+					}
+					//If it is a building
+					Building* goBuilding = dynamic_cast<Building*>(selected);
+					if (goBuilding)
+					{
+						if (goBuilding->eCurrState == Building::BLUEPRINT)
+						{
+							//Should be trying to contruct now
+							if (!goBuilding->bBuilt)
+								goBuilding->eCurrState = Building::CONSTRUCTING;
+							else
+								goBuilding->eCurrState = Building::COMPLETED;
+							bShowGrid = false;
+							EM->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, selected->pos);
+						}
+
+					}
+					selected = NULL;
+					goVillager->goTarget = NULL;
 				}
 			}
 		}
@@ -3254,6 +3342,7 @@ void SceneSP::Update(double dt)
 		ChangeTimeOfDay();
 	else if ((fTimeOfDay <= 6.f || fTimeOfDay >= 18.f) && bDay) // 1800 to 0600 night
 		ChangeTimeOfDay();
+	SD->SetTimeOfDay(fTimeOfDay);
 	float SHADOW_LENGTH = 1.f;
 	if (bDay)
 	{
@@ -3602,6 +3691,7 @@ void SceneSP::Update(double dt)
 	SD->SetPopulationLimit(0);
 	SD->SetFoodLimit(0);
 	SD->SetWoodLimit(0);
+	SD->SetStoneLimit(100);
 	for (auto go : m_goList)
 	{
 		if (!go->active)
@@ -3612,11 +3702,11 @@ void SceneSP::Update(double dt)
 		Building* goB = dynamic_cast<Building*>(go);
 		if (goB)
 		{
-			if (bFullStoneResearch)
+			if (SceneData::GetInstance()->bFullStoneResearch)
 				goB->eCurrTier = Building::FULL_STONE;
-			else if (bStoneResearch)
+			else if (SceneData::GetInstance()->bStoneResearch)
 				goB->eCurrTier = Building::STONE;
-			else if (bWoodResearch)
+			else if (SceneData::GetInstance()->bWoodResearch)
 				goB->eCurrTier = Building::WOOD;
 			else
 				goB->eCurrTier = Building::STRAW;
@@ -3705,6 +3795,19 @@ void SceneSP::Update(double dt)
 		case GameObject::GO_TSUNAMI:
 		{
 			Tsunami* goTsunami = static_cast<Tsunami*>(go);
+			goTsunami->fParticleTimer_Cloud += (float)dt * m_speed;
+			if (goTsunami->fParticleTimer_Cloud > 0.1f)
+			{
+				goTsunami->fParticleTimer_Cloud = 0;
+				EffectCloud* cloud = new EffectCloud(
+					goTsunami->pos
+					, Math::RandFloatMinMax(0.5f, 1.2f)
+					, Vector3(1, 1, 1) * Math::RandFloatMinMax(1.6f, 2.4f)
+				);
+				cloud->vel *= 0.7;
+				cloud->acc *= 0.35;
+				EM->AddEffect(cloud);
+			}
 			if (goTsunami->tsunami_direction == Tsunami::DIRECTION_LEFT)
 			{
 				goTsunami->pos += Vector3(-SD->GetGridSize() * goTsunami->moveSpeed, 0, 0) * dt * m_speed;
@@ -3769,6 +3872,7 @@ void SceneSP::Update(double dt)
 
 	SD->SetFood(Math::Min(SD->GetFood(), SD->GetFoodLimit()));
 	SD->SetWood(Math::Min(SD->GetWood(), SD->GetWoodLimit()));
+	SD->SetStone(Math::Min(SD->GetStone(), SD->GetStoneLimit()));
 	if (prevSelect != selected)
 	{
 		UpdateSelectedUI();
@@ -3989,6 +4093,31 @@ void SceneSP::RenderGO(GameObject *go)
 			break;
 		case Building::CONSTRUCTING:
 			std::cout << "Altar being contructed??" << std::endl;
+			break;
+		case Building::BROKEN:
+			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);
+		}
+		modelStack.PopMatrix();
+	}
+	break;
+	case GameObject::GO_RESEARCHLAB:
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		if (go->animation != NULL)
+			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		//Current state of the building
+		switch (static_cast<Building*>(go)->eCurrState)
+		{
+		case Building::COMPLETED:
+			RenderMesh(meshList[GEO_ALTAR], bGodlights, 1.f);
+			break;
+		case Building::BLUEPRINT:
+			RenderMesh(meshList[GEO_ALTAR], false, 0.2f);
+			break;
+		case Building::CONSTRUCTING:
+			std::cout << "ResearchLab being contructed??" << std::endl;
 			break;
 		case Building::BROKEN:
 			RenderMesh(meshList[GEO_BROKEN_BUILDING], bGodlights, 1.f);

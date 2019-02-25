@@ -18,4 +18,5 @@ private:
 	};
 	CALAMITY_EARTHQUAKE_STATE state;
 	float fUIPopupTime;
+	float fEffectTimer_Dirt;
 };

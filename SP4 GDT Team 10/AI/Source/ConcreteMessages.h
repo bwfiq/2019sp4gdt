@@ -102,6 +102,12 @@ struct MessageAltarOffer : public Message
 	OFFER_TYPE type;
 };
 
+struct MessageResearch : public Message
+{
+	MessageResearch() {}
+	virtual ~MessageResearch() {}
+};
+
 struct MessageMoveButton : public Message
 {
 	MessageMoveButton() {}
