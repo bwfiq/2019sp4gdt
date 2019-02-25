@@ -84,6 +84,13 @@ struct MessageCalamityTsunami : public Message
 	std::vector<unsigned> lanes;
 };
 
+struct MessageCalamityTornado : public Message
+{
+	MessageCalamityTornado(float fPower) : fPower(fPower) {}
+	virtual ~MessageCalamityTornado() {}
+	float fPower;
+};
+
 
 struct MessageDisplayDailyRequirement : public Message
 {

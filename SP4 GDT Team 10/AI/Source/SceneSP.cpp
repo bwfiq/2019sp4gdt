@@ -25,10 +25,12 @@
 #include "EffectReticle.h"
 #include "EffectGridWarning.h"
 #include "EffectCloud.h"
+#include "EffectDirt.h"
 
 #include "CalamityManager.h"
 #include "CalamityEarthquake.h"
 #include "CalamityTsunami.h"
+#include "CalamityTornado.h"
 
 #include "SMManager.h"
 #include "MouseController.h"
@@ -48,6 +50,7 @@
 #include "Mountain.h"
 #include "Logs.h"
 #include "Tsunami.h"
+#include "Tornado.h"
 
 #include "AnimationJump.h"
 #include "AnimationWalk.h"
@@ -878,6 +881,18 @@ bool SceneSP::Handle(Message* message)
 		delete message;
 		return true;
 	}
+	MessageCalamityTornado* messageCalamityTornado = dynamic_cast<MessageCalamityTornado*>(message);
+	if (messageCalamityTornado)
+	{
+		GameObject* tor = FetchGO(GameObject::GO_TORNADO);
+		Tornado* tornado = static_cast<Tornado*>(tor);
+		tornado->fPower = 100.f;
+		tornado->collidedObjects.clear();
+		tornado->moveSpeed = Math::RandFloatMinMax(3, 3.25f);
+		tornado->pos = GetGridPos(GridPt(SD->GetNoGrid() + 8, 3));
+		delete message;
+		return true;
+	}
 	MessageCalamityEarthquake* messageCalamityEarthquake = dynamic_cast<MessageCalamityEarthquake*>(message);
 	if (messageCalamityEarthquake)
 	{
@@ -1152,6 +1167,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			case GameObject::GO_TSUNAMI:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
 				break;
+			case GameObject::GO_TORNADO:
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
+				break;
 			}
 
 			go->goTarget = NULL;
@@ -1208,6 +1226,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			break;
 		case GameObject::GO_TSUNAMI:
 			go = new Tsunami(type);
+			break;
+		case GameObject::GO_TORNADO:
+			go = new Tornado(type);
 			break;
 		default:
 			go = new GameObject(type);
@@ -3099,6 +3120,9 @@ void SceneSP::Update(double dt)
 	else if (KC->IsKeyPressed('O')) {
 		CM->AddToCalamityQueue(new CalamityTsunami());
 	}
+	else if (KC->IsKeyPressed('0')) {
+		CM->AddToCalamityQueue(new CalamityTornado());
+	}
 	if (KC->IsKeyPressed('U')) {
 		tempCamera = camera;
 		ChangeState(G_RESEARCHTREE);
@@ -3827,6 +3851,55 @@ void SceneSP::Update(double dt)
 				if ((go2->pos - goTsunami->pos).LengthSquared() <= goTsunami->scale.x * goTsunami->scale.x)
 				{
 					goTsunami->Collided(go2);
+				}
+			}
+		}
+		break;
+		case GameObject::GO_TORNADO:
+		{
+			Tornado* goTornado = static_cast<Tornado*>(go);
+			goTornado->fEffectTimer_Cloud += (float)dt * m_speed;
+			goTornado->fEffectTimer_Dirt += (float)dt * m_speed;
+			if (goTornado->fEffectTimer_Cloud > 0.08f)
+			{
+				goTornado->fEffectTimer_Cloud = 0;
+				EffectCloud* cloud = new EffectCloud(
+					goTornado->pos
+					, Math::RandFloatMinMax(0.8f, 1.2f)
+					, Vector3(1, 1, 1) * Math::RandFloatMinMax(0.3f, 0.5f)
+					, Vector3(1, 1, 1) * Math::RandFloatMinMax(1.2f, 1.5f)
+				);
+				cloud->vel *= 0.7;
+				cloud->acc *= 0.35;
+				cloud->acc += Vector3(0, 4, 0);
+				cloud->vel += Vector3(0, 2, 0);
+				EM->AddEffect(cloud);
+			}
+			if (goTornado->fEffectTimer_Dirt > 0.12f)
+			{
+				goTornado->fEffectTimer_Dirt = 0;
+				EffectDirt* dirt = new EffectDirt(
+					goTornado->pos + Vector3(0, -1, 0)
+					, Math::RandFloatMinMax(0.8f, 1.2f)
+					, Vector3(1, 1, 1) * Math::RandFloatMinMax(0.5f, 1.5f)
+				);
+				dirt->vel *= 5;
+				dirt->acc *= 5;
+				EM->AddEffect(dirt);
+			}
+			goTornado->pos += Vector3(-SD->GetGridSize() * goTornado->moveSpeed, 0, 0) * dt * m_speed;
+			if (goTornado->pos.x < GetGridPos(GridPt(-10, 0)).x)
+			{
+				goTornado->active = false;
+			}
+			//Check collision
+			for (auto go2 : m_goList)
+			{
+				if (!go2->active || go2 == go)
+					continue;
+				if ((go2->pos - goTornado->pos).LengthSquared() <= goTornado->scale.x * goTornado->scale.x)
+				{
+					goTornado->Collided(go2);
 				}
 			}
 		}
