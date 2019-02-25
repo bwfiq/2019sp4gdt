@@ -295,12 +295,18 @@
     </ClCompile>
     <ClCompile Include="Source\StatePig.cpp">
       <Filter>FSM</Filter>
-</ClCompile>
+    </ClCompile>
     <ClCompile Include="Source\Tsunami.cpp">
       <Filter>GameObjects\Calamity</Filter>
     </ClCompile>
     <ClCompile Include="Source\EffectDirt.cpp">
       <Filter>VisualEffects\EffectObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\CalamityTornado.cpp">
+      <Filter>Calamities\CalamityObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Tornado.cpp">
+      <Filter>GameObjects\Calamity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -552,12 +558,18 @@
     </ClInclude>
     <ClInclude Include="Source\Pig.h">
       <Filter>GameObjects\Other</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="Source\Tsunami.h">
       <Filter>GameObjects\Calamity</Filter>
     </ClInclude>
     <ClInclude Include="Source\EffectDirt.h">
       <Filter>VisualEffects\EffectObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CalamityTornado.h">
+      <Filter>Calamities\CalamityObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Tornado.h">
+      <Filter>GameObjects\Calamity</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
