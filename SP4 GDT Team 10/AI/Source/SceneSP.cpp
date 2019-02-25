@@ -4483,12 +4483,12 @@ void SceneSP::RenderPassMain()
 	ss.str("");
 	ss.precision(3);
 	ss << "Speed:" << m_speed;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 70, 6);
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 65, 6);
 
 	ss.str("");
 	ss.precision(5);
 	ss << "FPS:" << fps;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 70, 3);
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 65, 3);
 
 	//ss.str("");
 	//ss << "Graph " << 0;
@@ -4580,7 +4580,7 @@ void SceneSP::RenderPassMain()
 	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 0, 27);*/
 	ss.str("");
 	ss << "God Mode:" << bGodMode;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 70, 0);
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 65, 0);
 }
 
 void SceneSP::RenderSplashScreen()
