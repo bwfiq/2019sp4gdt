@@ -267,6 +267,23 @@ void EffectManager::DoPrefabEffect(EFFECT_PREFABS prefab, Vector3 goPos)
 		}
 		break;
 	}
+	case PREFAB_VILLAGER_DIE:
+	{
+		SceneData* SD = SceneData::GetInstance();
+		for (int i = 0; i < 5; ++i)
+		{
+			EffectDirt* newBlood = new EffectDirt(//i mean its dirt but eh
+				goPos + Vector3(Math::RandFloatMinMax(-0.25f, 0.25f), i*0.5f, Math::RandFloatMinMax(-0.25f, 0.25f)) * 0.5f
+				, Math::RandFloatMinMax(1.f, 1.75f)
+				, Vector3(1, 1, 1) * Math::RandFloatMinMax(0.75f, 1.5f)
+			);
+			newBlood->vel *= Math::RandFloatMinMax(1, 2);
+			newBlood->acc *= 2;
+			newBlood->mesh = SD->GetMesh("effect_blood");
+			this->AddEffect(newBlood);
+		}
+		break;
+	}
 	}
 }
 

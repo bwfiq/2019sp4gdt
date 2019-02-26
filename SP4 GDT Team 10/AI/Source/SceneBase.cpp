@@ -311,6 +311,8 @@ void SceneBase::Init()
 	meshList[GEO_EFFECT_DIRT]->textureArray[0] = LoadTGA("Image//brown.tga");
 	meshList[GEO_EFFECT_PANIC] = MeshBuilder::GenerateOBJ("effect_panic", "Obj//cloud.obj");
 	meshList[GEO_EFFECT_PANIC]->textureArray[0] = LoadTGA("Image//lightblue.tga");
+	meshList[GEO_EFFECT_BLOOD] = MeshBuilder::GenerateOBJ("effect_blood", "Obj//cloud.obj");
+	meshList[GEO_EFFECT_BLOOD]->textureArray[0] = LoadTGA("Image//red.tga");
 	meshList[GEO_EFFECT_RING] = MeshBuilder::GenerateRing("effect_ring", Color(1, 1, 1), 16, 1.f, 0.75f);
 	SceneData::GetInstance()->AddMesh(meshList[GEO_EFFECT_RING]);
 	for (int i = GEO_HAND_DEFAULT; i <= GEO_EFFECT_RING; ++i)

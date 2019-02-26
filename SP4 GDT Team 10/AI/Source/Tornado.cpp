@@ -7,6 +7,8 @@
 #include "Logs.h"
 #include "Environment.h"
 
+#include "EffectManager.h"
+
 Tornado::Tornado(GAMEOBJECT_TYPE typeValue)
 	: GameObject(typeValue)
 {
@@ -61,6 +63,7 @@ void Tornado::Collided(GameObject * go)
 	{	
 		//Chance to reduce the state of the GameObject
 		goVil->active = false;
+		EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_VILLAGER_DIE, goVil->pos);
 
 		//Reduce power of Tornado Wave
 		//NA
