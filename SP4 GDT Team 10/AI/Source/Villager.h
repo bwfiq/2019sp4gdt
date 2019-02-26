@@ -52,6 +52,8 @@ struct Villager : public GameObject
 
 	float fRecalculate;
 
+	float fEffectTimer_Panic;//a timer used to time the spawning of Panic effects (panic effect is EffectDirt btw)
+
 	virtual bool Handle(Message* msg);
 	virtual void Update(float dt);
 
