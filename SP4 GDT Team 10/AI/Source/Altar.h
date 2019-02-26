@@ -5,10 +5,20 @@
 
 struct Altar : public Building
 {
+	enum Calamity
+	{
+		TSUNAMI,
+		EARTHQUAKE,
+		TORNADO,
+		END_OF_THE_WORLD,
+		TOTAL
+	};
 	virtual bool Handle(Message* msg);
 
 	virtual void TheFunction(GameObject* go);
 	virtual void Update(float dt);
+
+	void SpawnCalamity(Calamity calamity);
 
 	Altar(GAMEOBJECT_TYPE typeValue = GO_NONE);
 	~Altar();
@@ -17,6 +27,9 @@ struct Altar : public Building
 
 	float fCountdown;
 	float fMaxCountdown;
+
+	float fGodMad;
+	bool bWorldEnded;
 };
 
 #endif

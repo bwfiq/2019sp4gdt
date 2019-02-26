@@ -311,6 +311,9 @@
     <ClCompile Include="Source\EffectRing.cpp">
       <Filter>VisualEffects\EffectObjects</Filter>
     </ClCompile>
+    <ClCompile Include="Source\CalamityWorldEnd.cpp">
+      <Filter>Calamities\CalamityObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -576,6 +579,9 @@
     </ClInclude>
     <ClInclude Include="Source\EffectRing.h">
       <Filter>VisualEffects\EffectObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CalamityWorldEnd.h">
+      <Filter>Calamities\CalamityObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

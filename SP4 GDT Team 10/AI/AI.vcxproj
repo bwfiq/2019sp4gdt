@@ -170,6 +170,7 @@
     <ClCompile Include="Source\CalamityManager.cpp" />
     <ClCompile Include="Source\CalamityTornado.cpp" />
     <ClCompile Include="Source\CalamityTsunami.cpp" />
+    <ClCompile Include="Source\CalamityWorldEnd.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\ChiefHut.cpp" />
     <ClCompile Include="Source\Date.cpp" />
@@ -250,6 +251,7 @@
     <ClInclude Include="Source\CalamityManager.h" />
     <ClInclude Include="Source\CalamityTornado.h" />
     <ClInclude Include="Source\CalamityTsunami.h" />
+    <ClInclude Include="Source\CalamityWorldEnd.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\ChiefHut.h" />
     <ClInclude Include="Source\ConcreteMessages.h" />

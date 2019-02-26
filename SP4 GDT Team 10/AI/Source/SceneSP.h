@@ -71,6 +71,9 @@ public:
 
 	void Reset();
 
+	void SaveToFile(std::string filename);
+	void LoadFromFile(std::string filename);
+
 protected:
 	std::vector<UIBase*> m_selectedUi;//this the UI responsible for wat comes up when u select stuff
 	std::vector<UIBase*> m_coreUi;//dis da UI that will be up during game states (like aaaaaaaaaaaaa during main menu this will contain the buttons, and during gameplay this will hav UIs that show resources???????)
@@ -112,6 +115,9 @@ protected:
 	//For using ctrl to select and rotate between villagers
 	std::vector<GameObject*> m_VillagerList; //List of villagers
 	int iCurrItrVillagers;
+
+	bool bWorldEnd;
+	float fWaterLevel;
 
 	GameObject* selected; //Gameobject selected by mouse click, can do actions from UI choices that pop up
 	GameObject* hovered;

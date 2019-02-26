@@ -84,6 +84,12 @@ struct MessageCalamityTsunami : public Message
 	std::vector<unsigned> lanes;
 };
 
+struct MessageCalamityWorldEnd : public Message
+{
+	MessageCalamityWorldEnd() {}
+	virtual ~MessageCalamityWorldEnd() {}
+};
+
 struct MessageCalamityTornado : public Message
 {
 	MessageCalamityTornado(float fPower) : fPower(fPower) {}

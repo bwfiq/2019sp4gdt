@@ -587,6 +587,9 @@ void SceneSP::Init()
 
 	iCurrItrVillagers = 0;
 
+	bWorldEnd = false;
+	fWaterLevel = 0.7f;
+
 	//Objects from maya, bottom of object to be translated down
 	goVillager = FetchGO(GameObject::GO_VILLAGER);
 	goVillager->scale.y = 1.f;
@@ -884,6 +887,13 @@ bool SceneSP::Handle(Message* message)
 			tsunami->moveSpeed = Math::RandFloatMinMax(3, 3.25f);
 			tsunami->pos = GetGridPos(GridPt(SD->GetNoGrid() + 8, laneNum));
 		}
+		delete message;
+		return true;
+	}
+	MessageCalamityWorldEnd* messageCalamityWorldEnd = dynamic_cast<MessageCalamityWorldEnd*>(message);
+	if (messageCalamityWorldEnd)
+	{
+		bWorldEnd = true;
 		delete message;
 		return true;
 	}
@@ -3520,6 +3530,11 @@ void SceneSP::Update(double dt)
 
 	fSeaDeltaY = 0.0625f + 0.0625f * cosf(SD->GetElapsedTime());
 
+	if (bWorldEnd)
+	{
+		fWaterLevel += dt * 0.01f;
+	}
+
 	//goals
 	switch (SD->GetCurrMonth())
 	{
@@ -3850,7 +3865,7 @@ void SceneSP::Update(double dt)
 	SD->SetPopulationLimit(0);
 	SD->SetFoodLimit(0);
 	SD->SetWoodLimit(0);
-	SD->SetStoneLimit(100);
+	SD->SetStoneLimit(0);
 	m_VillagerList.clear();
 	for (auto go : m_goList)
 	{
@@ -4538,7 +4553,7 @@ void SceneSP::RenderPassMain()
 	modelStack.PopMatrix();
 
 	modelStack.PushMatrix();
-	modelStack.Translate(fSeaDeltaX, fSeaDeltaY + (fYPos - 1.f) + 0.7f, fSeaDeltaZ);
+	modelStack.Translate(fSeaDeltaX, fSeaDeltaY + (fYPos - 1.f) + fWaterLevel, fSeaDeltaZ);
 	modelStack.Rotate(-90, 1, 0, 0);
 	modelStack.Scale(SEA_WIDTH, SEA_HEIGHT, SEA_HEIGHT);
 	RenderMesh(meshList[GEO_SEA], false, 0.75f);
