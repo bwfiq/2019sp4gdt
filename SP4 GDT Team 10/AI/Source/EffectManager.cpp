@@ -250,6 +250,23 @@ void EffectManager::DoPrefabEffect(EFFECT_PREFABS prefab, Vector3 goPos)
 		}
 		break;
 	}
+	case PREFAB_VILLAGER_PANIC:
+	{
+		SceneData* SD = SceneData::GetInstance();
+		for (int i = 0; i < 2; ++i)
+		{
+			EffectDirt* newPanic = new EffectDirt(//i mean its dirt but eh
+				goPos + Vector3(Math::RandFloatMinMax(-0.5f, 0.5f), Math::RandFloatMinMax(0.9f, 1.5f), Math::RandFloatMinMax(-0.5f, 0.5f)) * 0.5f
+				, Math::RandFloatMinMax(0.7f, 1.25f)
+				, Vector3(1, 1, 1) * Math::RandFloatMinMax(0.08f, 0.2f)
+			);
+			newPanic->vel *= 3;
+			newPanic->acc *= 6;
+			newPanic->mesh = SD->GetMesh("effect_panic");
+			this->AddEffect(newPanic);
+		}
+		break;
+	}
 	}
 }
 
