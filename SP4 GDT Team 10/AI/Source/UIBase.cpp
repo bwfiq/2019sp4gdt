@@ -2,6 +2,7 @@
 #include "Mesh.h"
 #include "MouseController.h"
 #include "Application.h"
+#include "UITween.h"
 
 UIBase::UIBase() :
 	bLightEnabled(false),
@@ -9,12 +10,52 @@ UIBase::UIBase() :
 	fRotation(0),
 	scale(1, 1, 1),
 	bIsDone(false),
-	bIsMouseHovered(false)
+	bIsMouseHovered(false),
+	currentTween(NULL)
 {
 }
 
 UIBase::~UIBase()
 {
+	if (currentTween != NULL)
+	{
+		delete currentTween;
+	}
+	while (!tween_queue.empty()) {
+		delete tween_queue.front();
+		tween_queue.pop();
+	}
+}
+
+void UIBase::UpdateTween(float dt)
+{
+	if (currentTween == NULL)
+	{
+		if (!tween_queue.empty())
+		{
+			currentTween = tween_queue.front();
+			tween_queue.pop();
+		}
+	}
+	else
+	{
+		currentTween->Update(dt);
+		if (currentTween->IsDone())
+		{
+			delete currentTween;
+			currentTween = NULL;
+			if (!tween_queue.empty())
+			{
+				currentTween = tween_queue.front();
+				tween_queue.pop();
+			}
+		}
+	}
+}
+
+void UIBase::AddTween(UITween * uiTween)
+{
+	tween_queue.push(uiTween);
 }
 
 bool UIBase::IsMouseHovered()

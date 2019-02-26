@@ -231,6 +231,7 @@
     <ClCompile Include="Source\UIReligionBar.cpp" />
     <ClCompile Include="Source\UIMenuButton.cpp" />
     <ClCompile Include="Source\UIResearchButton.cpp" />
+    <ClCompile Include="Source\UITween.cpp" />
     <ClCompile Include="Source\Utility.cpp" />
     <ClCompile Include="Source\Villager.cpp" />
     <ClCompile Include="Source\WoodShed.cpp" />
@@ -322,6 +323,7 @@
     <ClInclude Include="Source\UIReligionBar.h" />
     <ClInclude Include="Source\UIMenuButton.h" />
     <ClInclude Include="Source\UIResearchButton.h" />
+    <ClInclude Include="Source\UITween.h" />
     <ClInclude Include="Source\Utility.h" />
     <ClInclude Include="Source\Vertex.h" />
     <ClInclude Include="Source\Villager.h" />
