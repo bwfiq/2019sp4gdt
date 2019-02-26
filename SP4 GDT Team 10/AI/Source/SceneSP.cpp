@@ -736,7 +736,6 @@ void SceneSP::Init()
 bool SceneSP::Handle(Message* message)
 {
 	SceneData* SD = SceneData::GetInstance();
-	SceneData* SD = SceneData::GetInstance();
 	MessageWRU* messageWRU = dynamic_cast<MessageWRU*>(message);
 	if (messageWRU)
 	{
