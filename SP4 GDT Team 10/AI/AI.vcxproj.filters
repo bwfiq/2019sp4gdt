@@ -75,6 +75,9 @@
     <Filter Include="Game Saving">
       <UniqueIdentifier>{ebb4cf5c-aa7d-46d0-a8c1-a38a5f082007}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI\Tween">
+      <UniqueIdentifier>{a376c3c6-3bf0-4d53-bfc6-827a51af383c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -328,6 +331,9 @@
     </ClCompile>
     <ClCompile Include="Source\GameSave.cpp">
       <Filter>Game Saving</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UITween.cpp">
+      <Filter>UI\Tween</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -606,6 +612,9 @@
     </ClInclude>
     <ClInclude Include="Source\GameSave.h">
       <Filter>Game Saving</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\UITween.h">
+      <Filter>UI\Tween</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

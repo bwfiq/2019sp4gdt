@@ -19,6 +19,8 @@
 #include "UIReligionBar.h"
 #include "UIResearchButton.h"
 
+#include "UITween.h"
+
 #include "EffectManager.h"
 #include "EffectTrail.h"
 #include "EffectHand.h"
@@ -111,6 +113,24 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 		newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("quitbutton");
 		UIManager::GetInstance()->AddUI("quitbutton", newUI);
 		m_coreUi.push_back(newUI);
+
+		int increment = 0;
+		for (auto theUI : m_coreUi)//ill be for looping through the coreUIs to "easily" tween them
+		{
+			Vector3 origPos = theUI->pos;
+			theUI->pos.Set(2, origPos.y, origPos.z);
+			UITween* newTween = new UITween(
+				theUI
+				, 1.f
+				, UITween::ES_BACK
+				, UITween::ED_OUT
+				, 0
+				, 0.25f * increment
+			);
+			newTween->properties_goal["pos"] = origPos;
+			theUI->AddTween(newTween);
+			increment++;
+		}
 	}
 	break;
 	case G_OPTIONS:

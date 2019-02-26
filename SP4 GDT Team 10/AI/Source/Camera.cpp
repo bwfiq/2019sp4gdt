@@ -20,7 +20,7 @@ void Camera::Init(const Vector3& pos, const Vector3& target, const Vector3& up)
 	this->position = this->position_goal = this->default_position = pos;
 	this->target = this->target_goal = this->default_target = target;
 	this->up = this->default_up = up;
-	fCameraBorderMovespeed = 4.f;
+	fCameraBorderMovespeed = 10.f;
 	SetCameraAngle(VIEW_ANGLE_1);
 	bounds.Set(200, 0, 200);
 }
@@ -46,7 +46,7 @@ void Camera::Update(double dt)
 	int windowHeight = Application::GetInstance().GetWindowHeight();
 	float mouseScroll = (-MC->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) + 4) * 0.5f;
 	//Input stuff
-	if (MC->IsButtonUp(MouseController::RMB) &&
+	if (!MC->IsMouseOnUI() && MC->IsButtonUp(MouseController::RMB) &&
 		mousePos.x > 0 && mousePos.x < windowWidth &&
 		mousePos.y > 0 && mousePos.y < windowHeight)
 	{
@@ -54,28 +54,28 @@ void Camera::Update(double dt)
 		if (mousePos.x > windowWidth * 0.95f)
 		{
 			diff = position_velocity.x;
-			position_velocity.x = Math::Min(position_velocity.x + 20 * (float)dt, fCameraBorderMovespeed * mouseScroll);
+			position_velocity.x = Math::Min(position_velocity.x + 20 * (float)dt, fCameraBorderMovespeed);
 			diff = position_velocity.x - diff;
 			target_velocity.x += diff;
 		}
 		else if (mousePos.x < windowWidth * 0.05f)
 		{
 			diff = position_velocity.x;
-			position_velocity.x = Math::Max(position_velocity.x - 20 * (float)dt, -fCameraBorderMovespeed * mouseScroll);
+			position_velocity.x = Math::Max(position_velocity.x - 20 * (float)dt, -fCameraBorderMovespeed);
 			diff = position_velocity.x - diff;
 			target_velocity.x += diff;
 		}
 		if (mousePos.y > windowHeight * 0.95f)
 		{
 			diff = position_velocity.z;
-			position_velocity.z = Math::Min(position_velocity.z + 20 * (float)dt, fCameraBorderMovespeed * mouseScroll);
+			position_velocity.z = Math::Min(position_velocity.z + 20 * (float)dt, fCameraBorderMovespeed);
 			diff = position_velocity.z - diff;
 			target_velocity.z += diff;
 		}
 		else if (mousePos.y < windowHeight * 0.05f)
 		{
 			diff = position_velocity.z;
-			position_velocity.z = Math::Max(position_velocity.z - 20 * (float)dt, -fCameraBorderMovespeed * mouseScroll);
+			position_velocity.z = Math::Max(position_velocity.z - 20 * (float)dt, -fCameraBorderMovespeed);
 			diff = position_velocity.z - diff;
 			target_velocity.z += diff;
 		}
@@ -87,7 +87,7 @@ void Camera::Update(double dt)
 	}
 	if (!mouseDelta.IsZero())
 	{
-		mouseDelta *= -0.005f * mouseScroll;
+		mouseDelta *= -(0.007f + 0.0015f * mouseScroll);
 		if (MC->IsButtonDown(MouseController::RMB))
 		{
 			position_goal += mouseDelta;
@@ -103,25 +103,25 @@ void Camera::Update(double dt)
 	Vector3 keyboardMovementDelta;
 	if (KC->IsKeyPressed('W'))
 	{
-		float movement = -(0.25f + 0.5f * mouseScroll);
+		float movement = -(0.65f + 0.25f * mouseScroll);
 		keyboardMovementDelta.z += movement;
 		keyboardMovementDelta.z += movement;
 	}
 	else if (KC->IsKeyPressed('S'))
 	{
-		float movement = (0.25f + 0.5f * mouseScroll);
+		float movement = (0.65f + 0.25f * mouseScroll);
 		keyboardMovementDelta.z += movement;
 		keyboardMovementDelta.z += movement;
 	}
 	if (KC->IsKeyPressed('A'))
 	{
-		float movement = -(0.25f + 0.5f * mouseScroll);
+		float movement = -(0.65f + 0.25f * mouseScroll);
 		keyboardMovementDelta.x += movement;
 		keyboardMovementDelta.x += movement;
 	}
 	else if (KC->IsKeyPressed('D'))
 	{
-		float movement = (0.25f + 0.5f * mouseScroll);
+		float movement = (0.65f + 0.25f * mouseScroll);
 		keyboardMovementDelta.x += movement;
 		keyboardMovementDelta.x += movement;
 	}

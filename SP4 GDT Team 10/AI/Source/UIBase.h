@@ -4,9 +4,11 @@
 #include "SoundEngine.h"
 #include <vector>
 #include <string>
+#include <queue>
 //#include "UIComponent.h"
 #include "Vertex.h"
 class Mesh;
+class UITween;
 
 struct UIComponent {//yeaaaaaaaaaahhh this is garbo but wutevz
 public:
@@ -46,11 +48,16 @@ public:
 	bool bIsMouseHovered;
 
 	virtual void Update(float dt) = 0;
+	virtual void AddTween(UITween* uiTween);
 
 	//!!!!!! THIS THING ONLY CALCULATES THE MOUSE IN THE UIBASE, NOT THE INDIVIDUAL COMPONENT !!!!!!
 	bool IsMouseHovered();
 	bool IsMousePressed();
+
 protected:
+	std::queue<UITween*> tween_queue;
+	UITween* currentTween;
+	virtual void UpdateTween(float dt);
 private:
 	//virtual void Render() = 0;
 };
