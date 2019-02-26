@@ -1,6 +1,7 @@
 #pragma once
 #include "Mtx44.h"
 #include "Vector3.h"
+#include "SoundEngine.h"
 
 class AnimationBase {
 public:

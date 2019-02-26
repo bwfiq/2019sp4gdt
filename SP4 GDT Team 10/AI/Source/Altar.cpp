@@ -38,5 +38,6 @@ void Altar::TheFunction(GameObject * go)
 
 void Altar::Update(float dt)
 {
+	GameObject::Update(dt);
 	//Spawning of disasters
 }

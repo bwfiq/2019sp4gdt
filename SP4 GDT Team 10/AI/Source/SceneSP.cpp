@@ -77,6 +77,8 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 {
 	if (game_state == G_INPLAY)
 		tempCamera = camera; // save gamecam pos
+	CSoundEngine::GetInstance()->GetSoundEngine()->setSoundVolume(1.f);
+	//CSoundEngine::GetInstance()->PlayASound("bg");
 	for (auto UI : m_coreUi)
 		UI->bIsDone = true;
 	m_coreUi.clear();
@@ -92,7 +94,6 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 		camera.Init(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));	// splashscreen
 		SceneData::GetInstance()->SetMainMenuElapsedTime(0);
 		fMainMenuDelta = m_worldWidth * 0.5f;
-		CSoundEngine::GetInstance()->PlayASound("bg");
 
 		newUI = new UIMenuButton("", 0.775f, 0.6f);
 		newUI->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 0.f;
@@ -133,6 +134,8 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 		case G_RESEARCHTREE: // will not init camera for overlays but will add ui for all ingame states
 		case G_INGAMEOPTIONS:
 		{
+			CSoundEngine::GetInstance()->PlayASound("sea");
+
 			newUI = new UIReligionBar();
 			UIManager::GetInstance()->AddUI("uiReligionBar", newUI);
 			m_coreUi.push_back(newUI);
@@ -174,6 +177,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 
 			if (newstate == G_RESEARCHTREE)
 			{
+				CSoundEngine::GetInstance()->GetSoundEngine()->setSoundVolume(0.5f);
 				newUI = new UIOverlay("", 0.5f, 0.45f);
 				UIManager::GetInstance()->AddUI("overlay", newUI);
 				m_coreUi.push_back(newUI);
@@ -225,6 +229,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 			}
 			else if (newstate == G_INGAMEOPTIONS)
 			{
+				CSoundEngine::GetInstance()->GetSoundEngine()->setSoundVolume(0.5f);
 				newUI = new UIOverlay("", 0.5f, 0.45f);
 				UIManager::GetInstance()->AddUI("overlay", newUI);
 				m_coreUi.push_back(newUI);
@@ -728,8 +733,12 @@ void SceneSP::Init()
 
 	CSoundEngine::GetInstance()->Init();
 	CSoundEngine::GetInstance()->AddSound("bg", "Audio//bgmusic.mp3");
+	CSoundEngine::GetInstance()->AddSound("selection", "Audio//selection.wav");
+	CSoundEngine::GetInstance()->AddSound("sea", "Audio//sea.wav");
+	CSoundEngine::GetInstance()->AddSound("jump", "Audio//jump.wav");
+	CSoundEngine::GetInstance()->AddSound("gasp", "Audio//gasp.wav");
 
-	game_state = G_INPLAY;//to save the camera pos
+	game_state = G_INPLAY; // to save the camera pos
 	ChangeState(G_SPLASHSCREEN);
 }
 
@@ -3026,7 +3035,10 @@ void SceneSP::Update(double dt)
 		{
 			// triggers
 			if (UIM->GetUI("startbutton")->IsMousePressed())
+			{
 				ChangeState(G_INPLAY);
+				CSoundEngine::GetInstance()->PlayASound("selection");
+			}
 			if (UIM->GetUI("optionsbutton")->IsMousePressed())
 				ChangeState(G_OPTIONS);
 			if (UIM->GetUI("quitbutton")->IsMousePressed())
@@ -3132,14 +3144,14 @@ void SceneSP::Update(double dt)
 	CM->Update(dt);
 	EM->Update(dt);
 
-	/*if (MC->IsMouseOnUI())
+	if (MC->IsMouseOnUI())
 	{
 		Application::GetInstance().SetMouseVisiblity(true);
 	}
 	else
 	{
 		Application::GetInstance().SetMouseVisiblity(false);
-	}*/
+	}
 	if (KC->IsKeyPressed('P')) {
 		CM->AddToCalamityQueue(new CalamityEarthquake());
 		SD->SetReligionValue(((int)SD->GetReligionValue() % (int)SD->GetMaxReligionValue()) + 25);
@@ -3434,6 +3446,7 @@ void SceneSP::Update(double dt)
 			if (clickTimer > 0.3f)
 			{
 				selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("PickedUp");
+				CSoundEngine::GetInstance()->PlayASound("gasp");
 				selected->pickupPt = selected->currentPt;
 				clickTimer = 0.f;
 				hand->SetState(EffectHand::HAND_GRAB_OBJECT);
@@ -4604,11 +4617,9 @@ void SceneSP::RenderPassMain()
 		modelStack.PushMatrix();
 		modelStack.Translate(selected->pos.x, selected->pos.y + selected->scale.y * 0.7f, selected->pos.z);
 		modelStack.Scale(0.1, 0.1, 0.1);
-		RenderMesh(meshList[GEO_VILLAGER], false); // renders a red cube above GO if it is currently selected
+		//RenderMesh(meshList[GEO_VILLAGER], false); // renders a red cube above GO if it is currently selected
 		modelStack.PopMatrix();
 	}
-
-	UIManager::GetInstance()->Render(this);
 
 	//On screen text
 	std::ostringstream ss;
@@ -4616,104 +4627,18 @@ void SceneSP::RenderPassMain()
 	ss.str("");
 	ss.precision(3);
 	ss << "Speed:" << m_speed;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 65, 6);
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 67, 6);
 
 	ss.str("");
 	ss.precision(5);
 	ss << "FPS:" << fps;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 65, 3);
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 67, 3);
 
-	//ss.str("");
-	//ss << "Graph " << 0;
-	//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 50, 0);
-
-	// resources x=10
-	//ss.str("");
-	//ss << "Research:" << SD->GetResearchPoints();
-	//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 6);
-
-	//ss.str("");
-	//ss << "Food:" << SD->GetFood() << "/" << SD->GetFoodLimit();
-	//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 3);
-
-	//ss.str("");
-	//ss << "Population:" << SD->GetPopulation() << "/" << SD->GetPopulationLimit();
-	//RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 10, 0);
-
-	//time and month x=30
-	/*ss.str("");
-	ss << "Date: ";
-	switch (SD->GetCurrMonth())
-	{
-	case 1:
-		ss << "JAN";
-		break;
-	case 2:
-		ss << "FEB";
-		break;
-	case 3:
-		ss << "MAR";
-		break;
-	case 4:
-		ss << "APR";
-		break;
-	case 5:
-		ss << "MAY";
-		break;
-	case 6:
-		ss << "JUN";
-
-		break;
-	case 7:
-		ss << "JUL";
-		break;
-	case 8:
-		ss << "AUG";
-		break;
-	case 9:
-		ss << "SEP";
-		break;
-	case 10:
-		ss << "OCT";
-		break;
-	case 11:
-		ss << "NOV";
-		break;
-	case 12:
-		ss << "DEC";
-		break;
-	}
-	ss << " ";
-	ss << SD->GetCurrDay();
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 30, 3);
-
-	ss.str("");
-	ss << "Time: ";
-	float fractpart, intpart;
-	fractpart = modf(fTimeOfDay, &intpart);
-	if (intpart < 10)
-		ss << "0" << intpart;
-	else
-		ss << intpart;
-	ss << ":";
-	if ((int)(60 * fractpart) < 10)
-		ss << "0" << (int)(60 * fractpart);
-	else
-		ss << (int)(60 * fractpart);
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 30, 0);*/
-
-	/*ss.str("");
-	ss << "Current Goal:";
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 0, 30);
-	ss.str("");
-	if (bGoalAchieved)
-		ss << "ACHIEVED";
-	else
-		ss << "Fill the Religion Meter by offering food to the altar.";
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 0, 27);*/
 	ss.str("");
 	ss << "God Mode:" << bGodMode;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 65, 0);
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 67, 0);
+
+	UIManager::GetInstance()->Render(this);
 }
 
 void SceneSP::RenderSplashScreen()
