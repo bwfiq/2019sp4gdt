@@ -91,6 +91,8 @@ struct GameObject : public ObjectBase
 	GridPt currentPt;
 	GridPt pickupPt;
 
+	Vector3 minAABB, maxAABB;
+
 	/*
 	//Pathfinding
 	std::stack<Node*> path;

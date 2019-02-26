@@ -53,6 +53,7 @@ struct Villager : public GameObject
 	float fRecalculate;
 
 	virtual bool Handle(Message* msg);
+	virtual void Update(float dt);
 
 	void DoFunction();
 

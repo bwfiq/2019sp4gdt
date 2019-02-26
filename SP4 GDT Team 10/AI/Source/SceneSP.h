@@ -1,6 +1,9 @@
 #ifndef SCENE_SP_H
 #define SCENE_SP_H
 
+
+#define AABBRAY false
+
 #include "GameObject.h"
 #include <vector>
 #include "SceneBase.h"
@@ -44,6 +47,11 @@ public:
 	void RenderMainMenu();
 	void RenderOptions();
 	void RenderWorld();
+
+	GameObject* GetHoveredObject();
+	bool GetIntersectionAABB(Vector3 lineStart, Vector3 lineEnd, Vector3 minAABB, Vector3 maxAABB, Vector3 &hitPosition);
+	bool GetIsIntersecting(const float fDst1, const float fDst2, Vector3 lineStart, Vector3 lineEnd, Vector3 &hitPosition);
+	bool InBox(Vector3 hitPosition, Vector3 minAABB, Vector3 maxAABB, const int Axis);
 
 	void RenderGO(GameObject *go);
 	GameObject* FetchGO(GameObject::GAMEOBJECT_TYPE type);
@@ -101,7 +109,12 @@ protected:
 	Vector3 mousePos;
 	Camera tempCamera;
 
+	//For using ctrl to select and rotate between villagers
+	std::vector<GameObject*> m_VillagerList; //List of villagers
+	int iCurrItrVillagers;
+
 	GameObject* selected; //Gameobject selected by mouse click, can do actions from UI choices that pop up
+	GameObject* hovered;
 	GameObject* goChiefHut;
 	GameObject* goAltar;
 	GameObject* goResearchLab;

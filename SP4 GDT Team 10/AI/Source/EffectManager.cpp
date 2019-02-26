@@ -9,6 +9,7 @@
 #include "EffectCloud.h"
 #include "EffectDirt.h"
 #include "SceneData.h"
+#include "SceneSP.h"
 
 void EffectManager::Init()
 {
@@ -126,6 +127,11 @@ void EffectManager::Render(SceneBase * scene)
 		}
 		else
 		{
+			if (AABBRAY)
+			{
+				if (camera->GetCamViewAngle() != Camera::VIEW_TOPDOWN)
+					continue;
+			}
 			scene->modelStack.Translate(Effect->pos.x, Effect->pos.y, Effect->pos.z);
 			if (!Effect->rotation.IsZero())
 			{
@@ -164,6 +170,11 @@ bool EffectManager::AddEffect(EffectBase* effect)
 	//effect_list.push_back(effect);
 	effect_queue.push(effect);
 	return true;
+}
+
+void EffectManager::SetCamera(Camera * camera)
+{
+	this->camera = camera;
 }
 
 void EffectManager::DoPrefabEffect(EFFECT_PREFABS prefab, Vector3 goPos)
