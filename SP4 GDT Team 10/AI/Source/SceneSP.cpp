@@ -80,7 +80,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 {
 	if (game_state == G_INPLAY)
 		tempCamera = camera; // save gamecam pos
-	//CSoundEngine::GetInstance()->PlayASound("bg");
+	CSoundEngine::GetInstance()->GetSoundEngine()->setSoundVolume(1.f);
 	for (auto UI : m_coreUi)
 		UI->bIsDone = true;
 	m_coreUi.clear();
@@ -156,8 +156,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 		case G_RESEARCHTREE: // will not init camera for overlays but will add ui for all ingame states
 		case G_INGAMEOPTIONS:
 		{
-			CSoundEngine::GetInstance()->PlayASound("sea");
-			CSoundEngine::GetInstance()->SetVolumeOfSound("sea", 1.f);
+			CSoundEngine::GetInstance()->PlayASound("sea", true);
 
 			newUI = new UIReligionBar();
 			UIManager::GetInstance()->AddUI("uiReligionBar", newUI);
@@ -200,7 +199,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 
 			if (newstate == G_RESEARCHTREE)
 			{
-				CSoundEngine::GetInstance()->SetVolumeOfSound("sea", 0.5f);
+				CSoundEngine::GetInstance()->GetSoundEngine()->setSoundVolume(0.5f);
 				newUI = new UIOverlay("", 0.5f, 0.45f);
 				UIManager::GetInstance()->AddUI("overlay", newUI);
 				m_coreUi.push_back(newUI);
@@ -252,7 +251,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 			}
 			else if (newstate == G_INGAMEOPTIONS)
 			{
-				CSoundEngine::GetInstance()->SetVolumeOfSound("sea", 0.5f);
+				CSoundEngine::GetInstance()->GetSoundEngine()->setSoundVolume(0.5f);
 				newUI = new UIOverlay("", 0.5f, 0.45f);
 				UIManager::GetInstance()->AddUI("overlay", newUI);
 				m_coreUi.push_back(newUI);

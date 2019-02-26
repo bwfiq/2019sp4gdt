@@ -33,7 +33,7 @@ public:
 	// Remove a sound from this map
 	bool RemoveSound(const std::string& _soundIndex);
 	// Play a sound from this map
-	void PlayASound(const std::string& _soundIndex);
+	void PlayASound(const std::string& _soundIndex, bool loop = false);
 	// stop a sound from this map
 	void StopASound(const std::string& _soundIndex);
 	// get volume

@@ -111,13 +111,13 @@ bool CSoundEngine::RemoveSound(const std::string& _soundIndex)
 }
 
 // Play a sound from this map
-void CSoundEngine::PlayASound(const std::string& _soundIndex)
+void CSoundEngine::PlayASound(const std::string& _soundIndex, bool loop )
 {
 	std::string aSound = GetSound(_soundIndex);
 	if (!theSoundEngine->isCurrentlyPlaying(aSound.c_str()))
 	{
 		// Play a sound
-		ISoundMap[_soundIndex] = theSoundEngine->play2D(aSound.c_str(), false, false, true);
+		ISoundMap[_soundIndex] = theSoundEngine->play2D(aSound.c_str(), loop, false, true);
 	}
 }
 
