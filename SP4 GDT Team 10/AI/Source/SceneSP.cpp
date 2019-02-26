@@ -35,6 +35,7 @@
 #include "SMManager.h"
 #include "MouseController.h"
 #include "KeyboardController.h"
+#include "SoundEngine.h"
 
 #include "Villager.h"
 #include "Pig.h"
@@ -91,6 +92,8 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 		camera.Init(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));	// splashscreen
 		SceneData::GetInstance()->SetMainMenuElapsedTime(0);
 		fMainMenuDelta = m_worldWidth * 0.5f;
+		CSoundEngine::GetInstance()->PlayASound("bg");
+
 		newUI = new UIMenuButton("", 0.775f, 0.6f);
 		newUI->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 0.f;
 		newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("start");
@@ -726,6 +729,9 @@ void SceneSP::Init()
 
 	CalamityManager::GetInstance()->Init();
 
+	CSoundEngine::GetInstance()->Init();
+	CSoundEngine::GetInstance()->AddSound("bg", "Audio//bgmusic.mp3");
+
 	game_state = G_INPLAY;//to save the camera pos
 	ChangeState(G_SPLASHSCREEN);
 }
@@ -904,8 +910,9 @@ bool SceneSP::Handle(Message* message)
 		Tornado* tornado = static_cast<Tornado*>(tor);
 		tornado->fPower = 100.f;
 		tornado->collidedObjects.clear();
-		tornado->moveSpeed = Math::RandFloatMinMax(3, 3.25f);
+		tornado->moveSpeed = Math::RandFloatMinMax(2, 2.5f);
 		tornado->pos = GetGridPos(GridPt(SD->GetNoGrid() + 8, 3));
+		tornado->fElapsedTime = 0;
 		delete message;
 		return true;
 	}
@@ -4005,21 +4012,20 @@ void SceneSP::Update(double dt)
 		case GameObject::GO_TORNADO:
 		{
 			Tornado* goTornado = static_cast<Tornado*>(go);
-			goTornado->fEffectTimer_Cloud += (float)dt * m_speed;
-			goTornado->fEffectTimer_Dirt += (float)dt * m_speed;
-			if (goTornado->fEffectTimer_Cloud > 0.08f)
+			float timeIncrement = (float)dt*m_speed;
+			goTornado->fElapsedTime += timeIncrement;
+			goTornado->fEffectTimer_Cloud += timeIncrement;
+			goTornado->fEffectTimer_Dirt += timeIncrement;
+			if (goTornado->fEffectTimer_Cloud > 0.06f)
 			{
 				goTornado->fEffectTimer_Cloud = 0;
 				EffectCloud* cloud = new EffectCloud(
 					goTornado->pos
-					, Math::RandFloatMinMax(0.8f, 1.2f)
-					, Vector3(1, 1, 1) * Math::RandFloatMinMax(0.3f, 0.5f)
-					, Vector3(1, 1, 1) * Math::RandFloatMinMax(1.2f, 1.5f)
+					, Math::RandFloatMinMax(0.2f, 0.4f)
+					, Vector3(1, 1, 1) * Math::RandFloatMinMax(1.6f, 2.4f)
 				);
-				cloud->vel *= 0.7;
+				cloud->vel *= 0.9;
 				cloud->acc *= 0.35;
-				cloud->acc += Vector3(0, 4, 0);
-				cloud->vel += Vector3(0, 2, 0);
 				EM->AddEffect(cloud);
 			}
 			if (goTornado->fEffectTimer_Dirt > 0.12f)
@@ -4035,6 +4041,7 @@ void SceneSP::Update(double dt)
 				EM->AddEffect(dirt);
 			}
 			goTornado->pos += Vector3(-SD->GetGridSize() * goTornado->moveSpeed, 0, 0) * dt * m_speed;
+			goTornado->pos.z = cosf(goTornado->fElapsedTime) * (SD->GetNoGrid() * SD->GetGridSize() * 0.5f);
 			if (goTornado->pos.x < GetGridPos(GridPt(-10, 0)).x)
 			{
 				goTornado->active = false;

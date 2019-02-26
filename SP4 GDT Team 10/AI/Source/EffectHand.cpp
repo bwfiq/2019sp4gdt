@@ -48,11 +48,11 @@ void EffectHand::Update(float dt)
 				));
 			}*/
 			EffectRing* ring = new EffectRing(
-				Vector3()
-				, 0.25f
+				this->pos
+				, 0.4f
 				, Vector3(1, 1, 1) * 0.05f
-				, Vector3(1, 1, 1) * 3
-				, this
+				, Vector3(1, 1, 1) * 0.7f
+				, NULL
 			);
 			EffectManager::GetInstance()->AddEffect(ring);
 		}

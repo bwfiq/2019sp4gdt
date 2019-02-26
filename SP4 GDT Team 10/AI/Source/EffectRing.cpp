@@ -31,7 +31,7 @@ void EffectRing::Update(float dt)
 	SceneData* SD = SceneData::GetInstance();
 	fElapsedTime += dt;
 	float alpha = Math::Min(1.f, fElapsedTime / fLifetime);
-	float easedAlpha = EasingStyle::easeOutSine(alpha, 0, 1, 1);
+	float easedAlpha = EasingStyle::easeOutCubic(alpha, 0, 1, 1);
 	scale = startScale.lerped(endScale, easedAlpha);
 	this->fAlpha = Math::lerp(1.f, 0.f, easedAlpha);
 	if (lockedTo)

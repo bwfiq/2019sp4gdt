@@ -69,6 +69,9 @@
     <Filter Include="GameObjects\Calamity">
       <UniqueIdentifier>{69e82d0a-8298-4941-b50a-2c39b1520a3a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="SoundEngine">
+      <UniqueIdentifier>{f028f189-bb81-4093-b0d9-616547377b6b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -307,6 +310,9 @@
     </ClCompile>
     <ClCompile Include="Source\Tornado.cpp">
       <Filter>GameObjects\Calamity</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\SoundEngine.cpp">
+      <Filter>SoundEngine</Filter>
     </ClCompile>
     <ClCompile Include="Source\EffectRing.cpp">
       <Filter>VisualEffects\EffectObjects</Filter>
@@ -576,6 +582,9 @@
     </ClInclude>
     <ClInclude Include="Source\Tornado.h">
       <Filter>GameObjects\Calamity</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\SoundEngine.h">
+      <Filter>SoundEngine</Filter>
     </ClInclude>
     <ClInclude Include="Source\EffectRing.h">
       <Filter>VisualEffects\EffectObjects</Filter>
