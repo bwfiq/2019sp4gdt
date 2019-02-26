@@ -44,6 +44,13 @@ bool Villager::Handle(Message* msg)
 	return false;
 }
 
+void Villager::Update(float dt)
+{
+	GameObject::Update(dt);
+	//minAABB.y *= 2.222f;
+	maxAABB.y *= 4.444f;
+}
+
 
 void Villager::DoFunction()
 {

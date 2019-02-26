@@ -6,6 +6,7 @@
 
 #include "EffectManager.h"
 #include "EffectCloud.h"
+#include "EffectRing.h"
 
 EffectHand::EffectHand(Camera* cam) :
 	EffectBase()
@@ -40,12 +41,20 @@ void EffectHand::Update(float dt)
 		if (MC->IsButtonPressed(MouseController::RMB))
 		{
 			mesh = SD->GetMesh("hand_grab");
-			for (int i = 0; i < 5; ++i)
+			/*for (int i = 0; i < 5; ++i)
 			{
 				EffectManager::GetInstance()->AddEffect(new EffectCloud(
 					this->pos, Math::RandFloatMinMax(0.4, 0.8f)
 				));
-			}
+			}*/
+			EffectRing* ring = new EffectRing(
+				this->pos
+				, 0.4f
+				, Vector3(1, 1, 1) * 0.05f
+				, Vector3(1, 1, 1) * 0.7f
+				, NULL
+			);
+			EffectManager::GetInstance()->AddEffect(ring);
 		}
 		else if (MC->IsButtonReleased(MouseController::RMB))
 		{

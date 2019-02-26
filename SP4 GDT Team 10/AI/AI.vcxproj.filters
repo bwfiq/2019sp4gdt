@@ -314,6 +314,9 @@
     <ClCompile Include="Source\SoundEngine.cpp">
       <Filter>SoundEngine</Filter>
     </ClCompile>
+    <ClCompile Include="Source\EffectRing.cpp">
+      <Filter>VisualEffects\EffectObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -579,6 +582,9 @@
     </ClInclude>
     <ClInclude Include="Source\SoundEngine.h">
       <Filter>SoundEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\EffectRing.h">
+      <Filter>VisualEffects\EffectObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

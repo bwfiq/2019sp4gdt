@@ -59,7 +59,6 @@
 
 #define SEA_WIDTH	100.f
 #define SEA_HEIGHT	100.f
-
 SceneSP::SceneSP()
 {
 }
@@ -586,7 +585,10 @@ void SceneSP::Init()
 	Math::InitRNG();
 
 	selected = NULL;
+	hovered = NULL;
 	tempCamera.Init(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));
+
+	iCurrItrVillagers = 0;
 
 	//Objects from maya, bottom of object to be translated down
 	goVillager = FetchGO(GameObject::GO_VILLAGER);
@@ -720,6 +722,7 @@ void SceneSP::Init()
 	EffectManager::GetInstance()->AddEffect(reticle);
 	EffectManager::GetInstance()->AddEffect(reticle_cross);
 	EffectManager::GetInstance()->AddEffect(hand);
+	EffectManager::GetInstance()->SetCamera(&camera);
 
 	CalamityManager::GetInstance()->Init();
 
@@ -898,8 +901,9 @@ bool SceneSP::Handle(Message* message)
 		Tornado* tornado = static_cast<Tornado*>(tor);
 		tornado->fPower = 100.f;
 		tornado->collidedObjects.clear();
-		tornado->moveSpeed = Math::RandFloatMinMax(3, 3.25f);
+		tornado->moveSpeed = Math::RandFloatMinMax(2, 2.5f);
 		tornado->pos = GetGridPos(GridPt(SD->GetNoGrid() + 8, 3));
+		tornado->fElapsedTime = 0;
 		delete message;
 		return true;
 	}
@@ -2908,6 +2912,10 @@ void SceneSP::ProgressMonth()
 
 void SceneSP::Update(double dt)
 {
+	if (hovered != NULL)
+	{
+		std::cout << "There is a hovered obj" << std::endl;
+	}
 	if (Application::IsKeyPressed('R'))
 	{
 		Reset();
@@ -2937,6 +2945,11 @@ void SceneSP::Update(double dt)
 	MP->Update(dt);
 
 	mousePos = MP->GetIntersectionWithPlane(camera.position, Vector3(0, 0, 0), Vector3(0, 1, 0));
+	if (AABBRAY)
+	{
+		hovered = GetHoveredObject();
+	}
+
 	SD->SetMousePos_World(mousePos);
 	
 	UIM->Update(dt);
@@ -3217,6 +3230,26 @@ void SceneSP::Update(double dt)
 		}
 	}
 
+	if (KC->IsKeyPressed(VK_CONTROL))
+	{
+		if (selected == NULL || !selected->active || selected->type != GameObject::GO_VILLAGER)
+		{
+			iCurrItrVillagers = 0;
+		}
+		else
+		{
+			int temp = 0;
+			for (auto i : m_goList)
+			{
+				if (i == selected)
+					break;
+				++temp;
+			}
+			iCurrItrVillagers = (temp + 1) % m_VillagerList.size();
+		}
+		selected = m_VillagerList[iCurrItrVillagers];
+	}
+
 	Vector3 clickTarget = NULL;
 
 	static bool leftClick = false;
@@ -3231,80 +3264,163 @@ void SceneSP::Update(double dt)
 		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 		//std::cout << mousePos << std::endl;
 		GridPt selectedPt = GetPoint(mousePos);
-		if (isPointInGrid(selectedPt))
-			//std::cout << "Selected Grid: " << selectedPt.x << ", " << selectedPt.z << std::endl;
+		if (AABBRAY)
 		{
-			bool objectFound = false;
-			for (auto go : m_goList)
+			if (selected == NULL)
 			{
-				if (!go->active)
-					continue;
-				if (selectedPt == go->currentPt)
+				//If initially no selected
+				selected = hovered;
+				if (selected != NULL)
 				{
-					//Supposed to implement priority here
-					if (selected == NULL)
+					selected->GiveAnimation(new AnimationJump());
+					if (selected->type == GameObject::GO_VILLAGER)
+						selected->direction = Vector3(0, 0, 1);
+				}
+			}
+			else
+			{
+				//There is already a selected
+				if (selected == hovered)
+				{
+					selected = NULL;
+				}
+				else
+				{
+					//Click somewhere else
+					if (hovered != NULL)
 					{
-						selected = go;
-						objectFound = true;
-						go->GiveAnimation(new AnimationJump());
-						if (go->type == GameObject::GO_VILLAGER)
-							go->direction = Vector3(0, 0, 1);
-						break;
-					}
-					else if (selected != go)
-					{
-						objectFound = true;
+						//Clicked an object
 						if (dynamic_cast<Villager*>(selected))
 						{
+							//If selected is a Villager
 							selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
-							selected->goTarget = go;
+							selected->goTarget = hovered;
 							selected = NULL;
-							objectFound = true;
 						}
 						else
 						{
+							//If selected is not a Villager
+							selected = hovered;
+							selected->GiveAnimation(new AnimationJump());
+							if (selected->type == GameObject::GO_VILLAGER)
+								selected->direction = Vector3(0, 0, 1);
+						}
+					}
+					else
+					{
+						//Clicked empty space
+						if (isPointInGrid(selectedPt))
+						{				
+							//If it is a villager
+							Villager* goVil = dynamic_cast<Villager*>(selected);
+							if (goVil)
+							{
+								selected->goTarget = NULL;
+
+								selected->target = GetGridPos(selectedPt);
+								selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
+							}
+							else
+							{
+								//If it is a building
+								Building* goBuilding = dynamic_cast<Building*>(selected);
+								if (goBuilding)
+								{
+									if (goBuilding->eCurrState == Building::BLUEPRINT)
+									{
+										//Should be trying to contruct now
+										if (!goBuilding->bBuilt)
+											goBuilding->eCurrState = Building::CONSTRUCTING;
+										else
+											goBuilding->eCurrState = Building::COMPLETED;
+										bShowGrid = false;
+										EM->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, selected->pos);
+									}
+								}
+							}
+							selected = NULL;
+						}
+					}
+				}
+			}
+		}
+		else
+		{
+			if (isPointInGrid(selectedPt))
+				//std::cout << "Selected Grid: " << selectedPt.x << ", " << selectedPt.z << std::endl;
+			{
+				bool objectFound = false;
+				for (auto go : m_goList)
+				{
+					if (!go->active)
+						continue;
+					if (selectedPt == go->currentPt)
+					{
+						//Supposed to implement priority here
+						if (selected == NULL)
+						{
 							selected = go;
+							objectFound = true;
 							go->GiveAnimation(new AnimationJump());
 							if (go->type == GameObject::GO_VILLAGER)
 								go->direction = Vector3(0, 0, 1);
 							break;
 						}
-					}
-				}
-				if (objectFound)
-					break;
-			}
-			if (!objectFound)
-			{
-				if (selected != NULL)
-				{
-					//If it is a villager
-					Villager* goVil = dynamic_cast<Villager*>(selected);
-					if (goVil)
-					{
-						selected->goTarget = NULL;
-
-						selected->target = GetGridPos(selectedPt);
-						selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
-					}
-					//If it is a building
-					Building* goBuilding = dynamic_cast<Building*>(selected);
-					if (goBuilding)
-					{
-						if (goBuilding->eCurrState == Building::BLUEPRINT)
+						else if (selected != go)
 						{
-							//Should be trying to contruct now
-							if (!goBuilding->bBuilt)
-								goBuilding->eCurrState = Building::CONSTRUCTING;
+							objectFound = true;
+							if (dynamic_cast<Villager*>(selected))
+							{
+								selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
+								selected->goTarget = go;
+								selected = NULL;
+								objectFound = true;
+							}
 							else
-								goBuilding->eCurrState = Building::COMPLETED;
-							bShowGrid = false;
-							EM->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, selected->pos);
+							{
+								selected = go;
+								go->GiveAnimation(new AnimationJump());
+								if (go->type == GameObject::GO_VILLAGER)
+									go->direction = Vector3(0, 0, 1);
+								break;
+							}
 						}
-
 					}
-					selected = NULL;
-					goVillager->goTarget = NULL;
+					if (objectFound)
+						break;
+				}
+				if (!objectFound)
+				{
+					if (selected != NULL)
+					{
+						//If it is a villager
+						Villager* goVil = dynamic_cast<Villager*>(selected);
+						if (goVil)
+						{
+							selected->goTarget = NULL;
+
+							selected->target = GetGridPos(selectedPt);
+							selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("Idle");
+						}
+						//If it is a building
+						Building* goBuilding = dynamic_cast<Building*>(selected);
+						if (goBuilding)
+						{
+							if (goBuilding->eCurrState == Building::BLUEPRINT)
+							{
+								//Should be trying to contruct now
+								if (!goBuilding->bBuilt)
+									goBuilding->eCurrState = Building::CONSTRUCTING;
+								else
+									goBuilding->eCurrState = Building::COMPLETED;
+								bShowGrid = false;
+								EM->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, selected->pos);
+							}
+
+						}
+						selected = NULL;
+						goVillager->goTarget = NULL;
+					}
 				}
 			}
 		}
@@ -3454,18 +3570,23 @@ void SceneSP::Update(double dt)
 	//There is a currently selected object
 	if (selected != NULL)
 	{
-		Building* goBuilding = dynamic_cast<Building*>(selected);
-		if (goBuilding) //selected is of a building class
+		if (!selected->active)
+			selected = NULL;
+		if (selected != NULL)
 		{
-			if (goBuilding->eCurrState == Building::BLUEPRINT) //Building editor mode
+			Building* goBuilding = dynamic_cast<Building*>(selected);
+			if (goBuilding) //selected is of a building class
 			{
-				GridPt currentGrid = GetPoint(mousePos);
-				selected->pos = GetGridPos(currentGrid);
-				selected->pos.y += selected->scale.y * 0.5f;
-			}
-			else if (goBuilding->eCurrState != Building::CONSTRUCTING)//The building is either completed / half broken
-			{
-				//Pop up some ui or something, maybe somewhere else
+				if (goBuilding->eCurrState == Building::BLUEPRINT) //Building editor mode
+				{
+					GridPt currentGrid = GetPoint(mousePos);
+					selected->pos = GetGridPos(currentGrid);
+					selected->pos.y += selected->scale.y * 0.5f;
+				}
+				else if (goBuilding->eCurrState != Building::CONSTRUCTING)//The building is either completed / half broken
+				{
+					//Pop up some ui or something, maybe somewhere else
+				}
 			}
 		}
 	}
@@ -3738,6 +3859,7 @@ void SceneSP::Update(double dt)
 	SD->SetFoodLimit(0);
 	SD->SetWoodLimit(0);
 	SD->SetStoneLimit(100);
+	m_VillagerList.clear();
 	for (auto go : m_goList)
 	{
 		if (!go->active)
@@ -3759,6 +3881,7 @@ void SceneSP::Update(double dt)
 		{
 		case GameObject::GO_VILLAGER:
 			SD->SetPopulation(SD->GetPopulation() + 1);
+			m_VillagerList.push_back(go);
 			break;
 		case GameObject::GO_CHIEFHUT:
 		{	
@@ -3875,21 +3998,20 @@ void SceneSP::Update(double dt)
 		case GameObject::GO_TORNADO:
 		{
 			Tornado* goTornado = static_cast<Tornado*>(go);
-			goTornado->fEffectTimer_Cloud += (float)dt * m_speed;
-			goTornado->fEffectTimer_Dirt += (float)dt * m_speed;
-			if (goTornado->fEffectTimer_Cloud > 0.08f)
+			float timeIncrement = (float)dt*m_speed;
+			goTornado->fElapsedTime += timeIncrement;
+			goTornado->fEffectTimer_Cloud += timeIncrement;
+			goTornado->fEffectTimer_Dirt += timeIncrement;
+			if (goTornado->fEffectTimer_Cloud > 0.06f)
 			{
 				goTornado->fEffectTimer_Cloud = 0;
 				EffectCloud* cloud = new EffectCloud(
 					goTornado->pos
-					, Math::RandFloatMinMax(0.8f, 1.2f)
-					, Vector3(1, 1, 1) * Math::RandFloatMinMax(0.3f, 0.5f)
-					, Vector3(1, 1, 1) * Math::RandFloatMinMax(1.2f, 1.5f)
+					, Math::RandFloatMinMax(0.2f, 0.4f)
+					, Vector3(1, 1, 1) * Math::RandFloatMinMax(1.6f, 2.4f)
 				);
-				cloud->vel *= 0.7;
+				cloud->vel *= 0.9;
 				cloud->acc *= 0.35;
-				cloud->acc += Vector3(0, 4, 0);
-				cloud->vel += Vector3(0, 2, 0);
 				EM->AddEffect(cloud);
 			}
 			if (goTornado->fEffectTimer_Dirt > 0.12f)
@@ -3905,6 +4027,7 @@ void SceneSP::Update(double dt)
 				EM->AddEffect(dirt);
 			}
 			goTornado->pos += Vector3(-SD->GetGridSize() * goTornado->moveSpeed, 0, 0) * dt * m_speed;
+			goTornado->pos.z = cosf(goTornado->fElapsedTime) * (SD->GetNoGrid() * SD->GetGridSize() * 0.5f);
 			if (goTornado->pos.x < GetGridPos(GridPt(-10, 0)).x)
 			{
 				goTornado->active = false;
@@ -4746,6 +4869,84 @@ void SceneSP::RenderWorld()
 			continue;
 		RenderGO(go);
 	}
+}
+
+GameObject * SceneSP::GetHoveredObject()
+{
+	//Currently using the closer object, might change to closer intersection point
+	GameObject* currGo = NULL;
+	float lengthSquared = FLT_MAX;
+	for (auto go : m_goList)
+	{
+		if (!go->active)
+			continue;
+		Vector3 hitPos;
+		Vector3 goPos = go->pos;
+
+		Vector3 minAABB = goPos + go->minAABB;
+		Vector3 maxAABB = goPos + go->maxAABB;
+
+		if (GetIntersectionAABB(camera.position, mousePos, minAABB, maxAABB, hitPos) == true)
+		{
+			float distanceSquared = (go->pos - camera.position).LengthSquared();
+			if (currGo == NULL)
+			{
+				currGo = go;
+				lengthSquared = distanceSquared;
+			}
+			else if(lengthSquared > distanceSquared)
+			{
+				currGo = go;
+				lengthSquared = distanceSquared;
+			}
+		}
+	}
+	return currGo;
+}
+
+bool SceneSP::GetIntersectionAABB(Vector3 lineStart, Vector3 lineEnd, Vector3 minAABB, Vector3 maxAABB, Vector3 & hitPosition)
+{
+	if ((GetIsIntersecting(lineStart.x - minAABB.x, lineEnd.x - minAABB.x, lineStart, lineEnd, hitPosition) &&
+		InBox(hitPosition, minAABB, maxAABB, 1))
+		|| (GetIsIntersecting(lineStart.y - minAABB.y, lineEnd.y - minAABB.y, lineStart, lineEnd, hitPosition) &&
+			InBox(hitPosition, minAABB, maxAABB, 2))
+		|| (GetIsIntersecting(lineStart.z - minAABB.z, lineEnd.z - minAABB.z, lineStart, lineEnd, hitPosition) &&
+			InBox(hitPosition, minAABB, maxAABB, 3))
+		|| (GetIsIntersecting(lineStart.x - maxAABB.x, lineEnd.x - maxAABB.x, lineStart, lineEnd, hitPosition) &&
+			InBox(hitPosition, minAABB, maxAABB, 1))
+		|| (GetIsIntersecting(lineStart.y - maxAABB.y, lineEnd.y - maxAABB.y, lineStart, lineEnd, hitPosition) &&
+			InBox(hitPosition, minAABB, maxAABB, 2))
+		|| (GetIsIntersecting(lineStart.z - maxAABB.z, lineEnd.z - maxAABB.z, lineStart, lineEnd, hitPosition) &&
+			InBox(hitPosition, minAABB, maxAABB, 3)))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool SceneSP::GetIsIntersecting(const float fDst1, const float fDst2, Vector3 lineStart, Vector3 lineEnd, Vector3 & hitPosition)
+{
+	if ((fDst1*fDst2) >= 0.0f)
+	{
+		return false;
+	}
+	else if (fDst1 == fDst2)
+	{
+		return false;
+	}
+	//Intersection pos = startPos + dir * ((length of startPos - collisionPt) / (endPos - startPos)) //Note that fDst1 is a negative value
+	//Intersection pos = startPos + Entire Line * ratio of startPos to intersection / entire line
+	hitPosition = lineStart + (lineEnd - lineStart) * (-fDst1 / (fDst2 - fDst1));
+	return true;
+}
+
+bool SceneSP::InBox(Vector3 hitPosition, Vector3 minAABB, Vector3 maxAABB, const int Axis)
+{
+	if (Axis == 1 && hitPosition.z > minAABB.z && hitPosition.z < maxAABB.z && hitPosition.y > minAABB.y && hitPosition.y < maxAABB.y) return true;
+	if (Axis == 2 && hitPosition.z > minAABB.z && hitPosition.z < maxAABB.z && hitPosition.x > minAABB.x && hitPosition.x < maxAABB.x) return true;
+	if (Axis == 3 && hitPosition.x > minAABB.x && hitPosition.x < maxAABB.x && hitPosition.y > minAABB.y && hitPosition.y < maxAABB.y) return true;
+	return false;
 }
 
 void SceneSP::Render()
