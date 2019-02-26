@@ -8,6 +8,7 @@ AnimationJump::AnimationJump()
 	//Rotate.SetToRotation(90, 1, 0, 0);
 	currentYTranslation = 0;
 	type = A_JUMP;
+	CSoundEngine::GetInstance()->PlayASound("jump");
 }
 
 AnimationJump::~AnimationJump()

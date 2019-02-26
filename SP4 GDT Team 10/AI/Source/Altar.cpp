@@ -49,11 +49,11 @@ void Altar::TheFunction(GameObject * go)
 
 void Altar::Update(float dt)
 {
+	GameObject::Update(dt);
 	if (bWorldEnded)
 		return;
 	CalamityManager* CM = CalamityManager::GetInstance();
 	SceneData* SD = SceneData::GetInstance();
-
 	//Spawning of disasters
 	if (SD->GetReligionValue() <= 0)
 	{
