@@ -35,6 +35,7 @@
 #include "SMManager.h"
 #include "MouseController.h"
 #include "KeyboardController.h"
+#include "SoundEngine.h"
 
 #include "Villager.h"
 #include "Pig.h"
@@ -92,6 +93,8 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 		camera.Init(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));	// splashscreen
 		SceneData::GetInstance()->SetMainMenuElapsedTime(0);
 		fMainMenuDelta = m_worldWidth * 0.5f;
+		CSoundEngine::GetInstance()->PlayASound("bg");
+
 		newUI = new UIMenuButton("", 0.775f, 0.6f);
 		newUI->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 0.f;
 		newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("start");
@@ -720,12 +723,16 @@ void SceneSP::Init()
 
 	CalamityManager::GetInstance()->Init();
 
+	CSoundEngine::GetInstance()->Init();
+	CSoundEngine::GetInstance()->AddSound("bg", "Audio//bgmusic.mp3");
+
 	game_state = G_INPLAY;//to save the camera pos
 	ChangeState(G_SPLASHSCREEN);
 }
 
 bool SceneSP::Handle(Message* message)
 {
+	SceneData* SD = SceneData::GetInstance();
 	SceneData* SD = SceneData::GetInstance();
 	MessageWRU* messageWRU = dynamic_cast<MessageWRU*>(message);
 	if (messageWRU)
