@@ -26,6 +26,7 @@ public:
 	virtual void Update(double dt);
 
 	void SetCamShake(int shakeType, float intensity, float duration);
+	void SetCamBounds(Vector3 bounds);
 	CAMERA_VIEWANGLE GetCamViewAngle() { return viewAngle; };
 private:
 	enum CAMERA_SHAKE_TYPE {
@@ -51,6 +52,7 @@ private:
 	CAMERA_VIEWANGLE viewAngle;
 
 	Vector3 position_offset;//used for camera angle
+	Vector3 bounds;//for position & target boundary
 
 	void SetCameraAngle(CAMERA_VIEWANGLE viewAngle);
 

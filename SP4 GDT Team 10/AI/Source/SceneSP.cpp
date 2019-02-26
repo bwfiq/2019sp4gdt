@@ -84,6 +84,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 		UI->bIsDone = true;
 	m_coreUi.clear();
 	UIBase*	newUI;
+	float worldRadius = SceneData::GetInstance()->GetNoGrid() * SceneData::GetInstance()->GetGridSize() * 0.5f;
 	Application::GetInstance().SetMouseVisiblity(true);
 	switch (newstate)
 	{
@@ -131,6 +132,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 
 		//camera.Init(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));	// game
 		camera = tempCamera;
+		camera.SetCamBounds(Vector3(worldRadius + 5, 0, worldRadius + 5));
 		Application::GetInstance().SetMouseVisiblity(false);
 		case G_RESEARCHTREE: // will not init camera for overlays but will add ui for all ingame states
 		case G_INGAMEOPTIONS:
