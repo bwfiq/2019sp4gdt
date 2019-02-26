@@ -317,11 +317,10 @@
     <ClCompile Include="Source\EffectRing.cpp">
       <Filter>VisualEffects\EffectObjects</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="Source\CalamityWorldEnd.cpp">
-=======
+      <Filter>Calamities\CalamityObjects</Filter>
+    </ClCompile>
     <ClCompile Include="Source\CalamityBlizzard.cpp">
->>>>>>> a578e03c9322fc34502b615f4496f50f5bd092fb
       <Filter>Calamities\CalamityObjects</Filter>
     </ClCompile>
   </ItemGroup>
@@ -593,7 +592,6 @@
     <ClInclude Include="Source\EffectRing.h">
       <Filter>VisualEffects\EffectObjects</Filter>
     </ClInclude>
-
     <ClInclude Include="Source\CalamityWorldEnd.h">
       <Filter>Calamities\CalamityObjects</Filter>
 	</ClInclude>
