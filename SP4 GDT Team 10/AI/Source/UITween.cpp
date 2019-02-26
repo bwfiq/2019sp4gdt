@@ -14,7 +14,7 @@ UITween::UITween(UIBase* ui, float duration, UI_EASINGSTYLE easingStyle, UI_EASI
 	, bIsDone(false)
 	, ui(ui)
 {
-	fDuration -= delayTime;//if ders a delay time den il just subtract some elapsedtime
+	fElapsedTime -= delayTime;//if ders a delay time den il just subtract some elapsedtime
 	properties_start["pos"] = ui->pos;
 	properties_start["scale"] = ui->scale;
 	properties_goal["pos"] = NO_TWEEN_PLEZ;
@@ -53,7 +53,7 @@ void UITween::Update(float dt)
 		}
 		if (properties_goal["scale"] != NO_TWEEN_PLEZ)//probably could be optimised
 		{
-			ui->pos = properties_start["scale"].lerped(properties_goal["scale"], alpha_eased);
+			ui->scale = properties_start["scale"].lerped(properties_goal["scale"], alpha_eased);
 		}
 	}
 

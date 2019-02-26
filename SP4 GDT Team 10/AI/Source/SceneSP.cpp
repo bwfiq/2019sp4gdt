@@ -125,7 +125,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 				, UITween::ES_BACK
 				, UITween::ED_OUT
 				, 0
-				, 0.25f * increment
+				, 1 + 0.25f * increment
 			);
 			newTween->properties_goal["pos"] = origPos;
 			theUI->AddTween(newTween);
