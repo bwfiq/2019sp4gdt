@@ -61,6 +61,7 @@ void CalamityTsunami::Update(float dt)
 	}
 	else if (state == STATE_WARNING)
 	{
+		CSoundEngine::GetInstance()->PlayASound("waves");
 		if (fElapsedTime > fUIPopupTime + fWarnTime)
 		{
 			MessageCalamityTsunami* msg = new MessageCalamityTsunami();
@@ -81,7 +82,7 @@ void CalamityTsunami::Update(float dt)
 	}
 	else if (state == STATE_STOPPING)
 	{
-
+		CSoundEngine::GetInstance()->StopASound("waves");
 	}
 }
 

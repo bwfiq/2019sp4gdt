@@ -14,6 +14,7 @@ CSoundEngine::~CSoundEngine()
 {
 	// Clear out the sound map
 	soundMap.clear();
+	ISoundMap.clear();
 
 	// Delete the sound engine
 	if (theSoundEngine)
@@ -116,6 +117,38 @@ void CSoundEngine::PlayASound(const std::string& _soundIndex)
 	if (!theSoundEngine->isCurrentlyPlaying(aSound.c_str()))
 	{
 		// Play a sound
-		theSoundEngine->play2D(aSound.c_str(), false, false);
+		ISoundMap[_soundIndex] = theSoundEngine->play2D(aSound.c_str(), false, false, true);
+	}
+}
+
+// Stop a sound from this map
+void CSoundEngine::StopASound(const std::string& _soundIndex)
+{
+	std::string aSound = GetSound(_soundIndex);
+	if (theSoundEngine->isCurrentlyPlaying(aSound.c_str()))
+	{
+		// Stop and delete a sound
+		ISoundMap[_soundIndex]->stop();
+		ISoundMap[_soundIndex]->drop();
+	}
+}
+
+// Get volume of iSound = 0.f to 1.f
+float CSoundEngine::GetVolumeOfSound(const std::string & _soundIndex)
+{
+	std::string aSound = GetSound(_soundIndex);
+	if (theSoundEngine->isCurrentlyPlaying(aSound.c_str()))
+	{
+		return ISoundMap[_soundIndex]->getVolume();
+	}
+}
+
+// Set volume of iSound = 0.f to 1.f
+void CSoundEngine::SetVolumeOfSound(const std::string & _soundIndex, float vol)
+{
+	std::string aSound = GetSound(_soundIndex);
+	if (theSoundEngine->isCurrentlyPlaying(aSound.c_str()))
+	{
+		ISoundMap[_soundIndex]->setVolume(vol);
 	}
 }
