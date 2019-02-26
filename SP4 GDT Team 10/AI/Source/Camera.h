@@ -26,6 +26,7 @@ public:
 	virtual void Update(double dt);
 
 	void SetCamShake(int shakeType, float intensity, float duration);
+	CAMERA_VIEWANGLE GetCamViewAngle() { return viewAngle; };
 private:
 	enum CAMERA_SHAKE_TYPE {
 		SHAKE_NONE,

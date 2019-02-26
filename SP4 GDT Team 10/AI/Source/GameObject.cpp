@@ -19,7 +19,9 @@ GameObject::GameObject(GAMEOBJECT_TYPE typeValue)
 	currFrame(0),
 	iGridX(1),
 	iGridZ(1),
-	animation(NULL)
+	animation(NULL),
+	minAABB(-scale.x * 0.5f, -scale.y * 0.5f, -scale.z * 0.5f),
+	maxAABB(-minAABB.x, -minAABB.y, -minAABB.z)
 	//NTarget(NULL),
 	//steps(0),
 	//countDown(0),
@@ -104,4 +106,6 @@ void GameObject::Update(float dt)
 			animation = NULL;
 		}
 	}
+	minAABB.Set(-scale.x * 0.5f, -scale.y * 0.5f, -scale.z * 0.5f);
+	maxAABB.Set(scale.x * 0.5f, scale.y * 0.5f, scale.z * 0.5f);
 }

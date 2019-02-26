@@ -1,5 +1,6 @@
 #include "Altar.h"
 #include "ConcreteMessages.h"
+#include "SceneData.h"
 
 Altar::Altar(GAMEOBJECT_TYPE typeValue)
 	: Building(typeValue),
@@ -33,4 +34,9 @@ bool Altar::Handle(Message* msg)
 void Altar::TheFunction(GameObject * go)
 {
 	std::cout << "Altar Function" << std::endl;
+}
+
+void Altar::Update(float dt)
+{
+	//Spawning of disasters
 }
