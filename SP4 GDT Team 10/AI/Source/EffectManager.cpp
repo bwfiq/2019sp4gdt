@@ -98,11 +98,11 @@ void EffectManager::Render(SceneBase * scene)
 
 				scene->modelStack.PushMatrix();
 				scene->modelStack.Translate(pointA.x, pointA.y + 0.001f, pointA.z);
-				scene->modelStack.Rotate(180 / Math::PI * angle_x, 0.0f, 1.0f, 0.0f);
+				scene->modelStack.Rotate(180.f / Math::PI * angle_x, 0.0f, 1.0f, 0.0f);
 			
-				scene->modelStack.Rotate(180 / Math::PI * angle_y, 0.0f, 0.0f, 1.0f);
+				scene->modelStack.Rotate(180.f / Math::PI * angle_y, 0.0f, 0.0f, 1.0f);
 			
-				scene->modelStack.Scale(AtoB_Length,1,1);
+				scene->modelStack.Scale(AtoB_Length, 1, 1);
 				rendermesh(scene, Effect);
 
 				scene->modelStack.PopMatrix();
@@ -130,7 +130,10 @@ void EffectManager::Render(SceneBase * scene)
 			if (AABBRAY)
 			{
 				if (camera->GetCamViewAngle() != Camera::VIEW_TOPDOWN)
+				{
+					scene->modelStack.PopMatrix();
 					continue;
+				}
 			}
 			scene->modelStack.Translate(Effect->pos.x, Effect->pos.y, Effect->pos.z);
 			if (!Effect->rotation.IsZero())
@@ -212,16 +215,39 @@ void EffectManager::DoPrefabEffect(EFFECT_PREFABS prefab, Vector3 goPos)
 	case PREFAB_EARTHQUAKE_DEBRIS:
 	{
 		SceneData* SD = SceneData::GetInstance();
-		float worldRadius = (SD->GetNoGrid() * SD->GetGridSize());
+		float worldRadius = (SD->GetNoGrid() * SD->GetGridSize() * 0.5f);
 		EffectDirt* newDirt = new EffectDirt(
 			Vector3(Math::RandFloatMinMax(-worldRadius, worldRadius), -2, Math::RandFloatMinMax(-worldRadius, worldRadius)) //hardcoded for now
-			, Math::RandFloatMinMax(0.5f, 2.f)
-			, Vector3(1, 1, 1) * Math::RandFloatMinMax(1, 3)
-			, Vector3(1, 1, 1) * Math::RandFloatMinMax(0.2f, 0.5f)
+			, Math::RandFloatMinMax(0.5f, 1.f)
+			, Vector3(1, 1, 1) * Math::RandFloatMinMax(0.5f, 1.f)
+			, Vector3(1, 1, 1) * Math::RandFloatMinMax(0.1f, 0.3f)
 		);
 		newDirt->vel *= 9;
 		newDirt->acc *= 9;
 		this->AddEffect(newDirt);
+		break;
+	}
+	case PREFAB_BLIZZARD_CLOUDS:
+	{
+		SceneData* SD = SceneData::GetInstance();
+		Vector3 camPos = SD->GetCamPosition();
+		float worldRadius = (SD->GetNoGrid() * SD->GetGridSize() * 0.5f);
+		for (int i = 0; i < 5; ++i)
+		{
+			EffectCloud* newCloud = new EffectCloud(
+				camPos + Vector3(worldRadius * 2.25f, Math::RandFloatMinMax(-worldRadius * 0.2f, worldRadius * 1.2f) , Math::RandFloatMinMax(-worldRadius * 1.5f, worldRadius * 0.5f))
+				, Math::RandFloatMinMax(0.85f, 1.5f)
+				, Vector3(1, 1, 1) * Math::RandFloatMinMax(0.1f, 1.f)
+			);
+			newCloud->vel = Vector3(-worldRadius * Math::RandFloatMinMax(4, 12), worldRadius * Math::RandFloatMinMax(-0.25f, -1.f) , 0);
+			newCloud->acc = -newCloud->vel * 0.75f;
+			this->AddEffect(newCloud);
+			/*EffectTrail* newTrail = new EffectTrail(newCloud);
+			newCloud->AttachTrail(newTrail);
+			newTrail->SetTrailLifetime(Math::RandFloatMinMax(0.02f, 0.1f));
+			newTrail->bLightEnabled = true;
+			this->AddEffect(newTrail);*/
+		}
 		break;
 	}
 	}

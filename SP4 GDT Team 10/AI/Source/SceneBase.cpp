@@ -311,7 +311,7 @@ void SceneBase::Init()
 	meshList[GEO_EFFECT_DIRT]->textureArray[0] = LoadTGA("Image//brown.tga");
 	meshList[GEO_EFFECT_RING] = MeshBuilder::GenerateRing("effect_ring", Color(1, 1, 1), 16, 1.f, 0.75f);
 	SceneData::GetInstance()->AddMesh(meshList[GEO_EFFECT_RING]);
-	for (int i = GEO_EFFECT_CLOUD; i <= GEO_EFFECT_RING; ++i)
+	for (int i = GEO_HAND_DEFAULT; i <= GEO_EFFECT_RING; ++i)
 	{
 		meshList[i]->material.kDiffuse.Set(1, 1, 1);
 		meshList[i]->material.kAmbient.Set(0.25f, 0.25f, 0.25f);

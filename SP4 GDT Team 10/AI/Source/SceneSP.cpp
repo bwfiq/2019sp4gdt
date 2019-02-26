@@ -31,6 +31,7 @@
 #include "CalamityEarthquake.h"
 #include "CalamityTsunami.h"
 #include "CalamityTornado.h"
+#include "CalamityBlizzard.h"
 
 #include "SMManager.h"
 #include "MouseController.h"
@@ -981,6 +982,20 @@ bool SceneSP::Handle(Message* message)
 					}
 				}
 			}
+		}
+		delete message;
+		return true;
+	}
+	MessageCalamityBlizzard* messageCalamityBlizzard = dynamic_cast<MessageCalamityBlizzard*>(message);
+	if (messageCalamityBlizzard)
+	{
+		if (messageCalamityBlizzard->type == MessageCalamityBlizzard::INTENSE)
+		{
+
+		}
+		else if (messageCalamityBlizzard->type == MessageCalamityBlizzard::STOPPING)
+		{
+
 		}
 		delete message;
 		return true;
@@ -3149,6 +3164,9 @@ void SceneSP::Update(double dt)
 	}
 	else if (KC->IsKeyPressed('0')) {
 		CM->AddToCalamityQueue(new CalamityTornado());
+	}
+	else if (KC->IsKeyPressed('9')) {
+		CM->AddToCalamityQueue(new CalamityBlizzard());
 	}
 	if (KC->IsKeyPressed('U')) {
 		tempCamera = camera;
