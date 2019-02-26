@@ -166,6 +166,7 @@
     <ClCompile Include="Source\Building.cpp" />
     <ClCompile Include="Source\Bush.cpp" />
     <ClCompile Include="Source\CalamityBase.cpp" />
+    <ClCompile Include="Source\CalamityBlizzard.cpp" />
     <ClCompile Include="Source\CalamityEarthquake.cpp" />
     <ClCompile Include="Source\CalamityManager.cpp" />
     <ClCompile Include="Source\CalamityTornado.cpp" />
@@ -248,6 +249,7 @@
     <ClInclude Include="Source\Building.h" />
     <ClInclude Include="Source\Bush.h" />
     <ClInclude Include="Source\CalamityBase.h" />
+    <ClInclude Include="Source\CalamityBlizzard.h" />
     <ClInclude Include="Source\CalamityEarthquake.h" />
     <ClInclude Include="Source\CalamityManager.h" />
     <ClInclude Include="Source\CalamityTornado.h" />

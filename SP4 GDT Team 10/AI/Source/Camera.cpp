@@ -184,6 +184,7 @@ void Camera::Update(double dt)
 	target_goal = position_goal + view;
 
 	SceneData::GetInstance()->SetCamPosition(this->position);
+	SceneData::GetInstance()->SetCamTarget(this->target);
 }
 
 void Camera::SetCamShake(int shakeType, float intensity, float duration)
