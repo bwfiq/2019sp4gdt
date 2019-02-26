@@ -64,6 +64,7 @@ void Tsunami::Collided(GameObject * go)
 		//Chance to reduce the state of the GameObject
 		goVil->active = false;
 		EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_VILLAGER_DIE, goVil->pos);
+		CSoundEngine::GetInstance()->PlayASound("death");
 
 		//Reduce power of Tsunami Wave
 		//NA

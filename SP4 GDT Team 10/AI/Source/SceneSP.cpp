@@ -746,6 +746,7 @@ void SceneSP::Init()
 	CSoundEngine::GetInstance()->AddSound("rumble",		"Audio//rumble.wav");
 	CSoundEngine::GetInstance()->AddSound("earthquake",	"Audio//earthquake.wav");
 	CSoundEngine::GetInstance()->AddSound("waves",		"Audio//waves.wav");
+	CSoundEngine::GetInstance()->AddSound("death",		"Audio//death.wav");
 
 	game_state = G_INPLAY; // to save the camera pos
 	ChangeState(G_SPLASHSCREEN);
