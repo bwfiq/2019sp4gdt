@@ -21,7 +21,8 @@ void Camera::Init(const Vector3& pos, const Vector3& target, const Vector3& up)
 	this->target = this->target_goal = this->default_target = target;
 	this->up = this->default_up = up;
 	fCameraBorderMovespeed = 4.f;
-	SetCameraAngle(VIEW_TOPDOWN);
+	SetCameraAngle(VIEW_ANGLE_1);
+	bounds.Set(200, 0, 200);
 }
 
 void Camera::Reset()
@@ -166,6 +167,32 @@ void Camera::Update(double dt)
 		if (target_velocity.IsZero() || origVel.Dot(target_velocity.Normalized()) < -0.9f)
 			target_velocity.SetZero();
 	}
+
+	//constrains/boundaries
+	Vector3 boundaryCrossedDistance;//how much was the boundaries crossed
+	//if (position_goal.x < -bounds.x)
+	//	position_goal.x = -bounds.x;
+	//else if(position_goal.x > bounds.x)
+	//	position_goal.x = bounds.x;
+	//if (position_goal.z < -bounds.z)
+	//	position_goal.z = -bounds.z;
+	//else if (position_goal.z > bounds.z)
+	//	position_goal.z = bounds.z;
+	if (position_goal.x < -bounds.x)
+		boundaryCrossedDistance.x += (position_goal.x + bounds.x);
+	else if(position_goal.x > bounds.x)
+		boundaryCrossedDistance.x += (position_goal.x - bounds.x);
+	if (position_goal.z < -bounds.z)
+		boundaryCrossedDistance.z += (position_goal.z + bounds.z);
+	else if (position_goal.z > bounds.z)
+		boundaryCrossedDistance.z += (position_goal.z - bounds.z);
+	if (!boundaryCrossedDistance.IsZero())
+	{
+		position_goal -= boundaryCrossedDistance;
+		target_goal -= boundaryCrossedDistance;
+	}
+
+
 	Vector3 position_goal_with_zoom = position_goal + Vector3(0, position_goal.y, 0) * mouseScroll + this->position_offset;
 	if (position != position_goal_with_zoom)
 	{
@@ -197,6 +224,11 @@ void Camera::SetCamShake(int shakeType, float intensity, float duration)
 	this->shakeType = (CAMERA_SHAKE_TYPE)shakeType;
 	this->fShakeIntensity = intensity;
 	this->fShakeDuration = duration;
+}
+
+void Camera::SetCamBounds(Vector3 bounds)
+{
+	this->bounds = bounds;
 }
 
 void Camera::SetCameraAngle(CAMERA_VIEWANGLE viewAngle)

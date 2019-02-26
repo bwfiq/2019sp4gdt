@@ -97,6 +97,15 @@ void StateIdle::Update(double dt, GameObject* m_go)
 			MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::RANDOM_TARGET, 2 * 2 + 2 * 2);
 			PostOffice::GetInstance()->Send("Scene", messagewru);
 		}
+		if (m_go->animation != NULL && m_go->animation->type == AnimationBase::A_PANIC)
+		{
+			goVillager->fEffectTimer_Panic += dt;
+			if (goVillager->fEffectTimer_Panic > 0.2f)
+			{
+				goVillager->fEffectTimer_Panic = 0;
+				EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_VILLAGER_PANIC, goVillager->pos + Vector3(0, goVillager->scale.y, 0));
+			}
+		}
 		return;
 	}
 	Pig* goPig = dynamic_cast<Pig*>(m_go);
@@ -452,6 +461,16 @@ void StatePath::Update(double dt, GameObject * m_go)
 					m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 					return;
 				}
+			}
+		}
+
+		if (m_go->animation != NULL && m_go->animation->type == AnimationBase::A_PANIC)
+		{
+			goVillager->fEffectTimer_Panic += dt;
+			if (goVillager->fEffectTimer_Panic > 0.2f)
+			{
+				goVillager->fEffectTimer_Panic = 0;
+				EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_VILLAGER_PANIC, goVillager->pos + Vector3(0, goVillager->scale.y, 0));
 			}
 		}
 
