@@ -78,7 +78,6 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 {
 	if (game_state == G_INPLAY)
 		tempCamera = camera; // save gamecam pos
-	CSoundEngine::GetInstance()->GetSoundEngine()->setSoundVolume(1.f);
 	//CSoundEngine::GetInstance()->PlayASound("bg");
 	for (auto UI : m_coreUi)
 		UI->bIsDone = true;
@@ -138,6 +137,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 		case G_INGAMEOPTIONS:
 		{
 			CSoundEngine::GetInstance()->PlayASound("sea");
+			CSoundEngine::GetInstance()->SetVolumeOfSound("sea", 1.f);
 
 			newUI = new UIReligionBar();
 			UIManager::GetInstance()->AddUI("uiReligionBar", newUI);
@@ -180,7 +180,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 
 			if (newstate == G_RESEARCHTREE)
 			{
-				CSoundEngine::GetInstance()->GetSoundEngine()->setSoundVolume(0.5f);
+				CSoundEngine::GetInstance()->SetVolumeOfSound("sea", 0.5f);
 				newUI = new UIOverlay("", 0.5f, 0.45f);
 				UIManager::GetInstance()->AddUI("overlay", newUI);
 				m_coreUi.push_back(newUI);
@@ -232,7 +232,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 			}
 			else if (newstate == G_INGAMEOPTIONS)
 			{
-				CSoundEngine::GetInstance()->GetSoundEngine()->setSoundVolume(0.5f);
+				CSoundEngine::GetInstance()->SetVolumeOfSound("sea", 0.5f);
 				newUI = new UIOverlay("", 0.5f, 0.45f);
 				UIManager::GetInstance()->AddUI("overlay", newUI);
 				m_coreUi.push_back(newUI);
@@ -649,7 +649,7 @@ void SceneSP::Init()
 	goAltar->pos.y = goAltar->scale.y * 0.5f;
 	Altar* altar = static_cast<Altar*>(goAltar);
 	altar->bBuilt = true;
-	altar->iFoodOffered = 0;
+	altar->iFoodOffered = 100;
 
 	goBush = FetchGO(GameObject::GO_BUSH);
 	goBush->pos = GetGridPos(GridPt(1, 1));
@@ -738,11 +738,14 @@ void SceneSP::Init()
 	CalamityManager::GetInstance()->Init();
 
 	CSoundEngine::GetInstance()->Init();
-	CSoundEngine::GetInstance()->AddSound("bg", "Audio//bgmusic.mp3");
-	CSoundEngine::GetInstance()->AddSound("selection", "Audio//selection.wav");
-	CSoundEngine::GetInstance()->AddSound("sea", "Audio//sea.wav");
-	CSoundEngine::GetInstance()->AddSound("jump", "Audio//jump.wav");
-	CSoundEngine::GetInstance()->AddSound("gasp", "Audio//gasp.wav");
+	CSoundEngine::GetInstance()->AddSound("bg",			"Audio//bgmusic.mp3");
+	CSoundEngine::GetInstance()->AddSound("selection",	"Audio//selection.wav");
+	CSoundEngine::GetInstance()->AddSound("sea",		"Audio//sea.wav");
+	CSoundEngine::GetInstance()->AddSound("jump",		"Audio//jump.wav");
+	CSoundEngine::GetInstance()->AddSound("gasp",		"Audio//gasp.wav");
+	CSoundEngine::GetInstance()->AddSound("rumble",		"Audio//rumble.wav");
+	CSoundEngine::GetInstance()->AddSound("earthquake",	"Audio//earthquake.wav");
+	CSoundEngine::GetInstance()->AddSound("waves",		"Audio//waves.wav");
 
 	game_state = G_INPLAY; // to save the camera pos
 	ChangeState(G_SPLASHSCREEN);

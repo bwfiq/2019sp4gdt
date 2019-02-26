@@ -42,6 +42,7 @@ void CalamityEarthquake::Update(float dt)
 	}
 	else if (state == STATE_STARTING)
 	{
+		CSoundEngine::GetInstance()->PlayASound("earthquake");
 		if (fElapsedTime > fCalamityDuration * 0.5f)
 		{
 			PO->Send("Scene"
@@ -71,7 +72,7 @@ void CalamityEarthquake::Update(float dt)
 	}
 	else if (state == STATE_STOPPING)
 	{
-
+		CSoundEngine::GetInstance()->StopASound("earthquake");
 	}
 }
 

@@ -43,6 +43,7 @@ void CalamityManager::SwitchToNextCalamity()
 	if (currCalamity != NULL)
 	{
 		currCalamity->Exit();
+		CSoundEngine::GetInstance()->StopASound("rumble");
 		delete currCalamity;
 	}
 	if (calamityQueue.empty())
@@ -53,6 +54,7 @@ void CalamityManager::SwitchToNextCalamity()
 	{
 		currCalamity = calamityQueue.front();
 		calamityQueue.pop();
+		CSoundEngine::GetInstance()->PlayASound("rumble");
 		currCalamity->Enter();
 	}
 }

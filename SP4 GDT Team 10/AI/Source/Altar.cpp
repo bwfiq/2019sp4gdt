@@ -11,7 +11,7 @@
 
 Altar::Altar(GAMEOBJECT_TYPE typeValue)
 	: Building(typeValue),
-	iFoodOffered(0),
+	iFoodOffered(100),
 	fMaxCountdown(20),
 	fCountdown(20),
 	fGodMad(100),

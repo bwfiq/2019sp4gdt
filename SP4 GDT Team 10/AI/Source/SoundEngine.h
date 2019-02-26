@@ -13,6 +13,7 @@ protected:
 
 	// The library map of all the sounds created
 	std::map<std::string, std::string> soundMap;
+	std::map<std::string, ISound*> ISoundMap;
 
 public:
 	// Constructor
@@ -33,5 +34,11 @@ public:
 	bool RemoveSound(const std::string& _soundIndex);
 	// Play a sound from this map
 	void PlayASound(const std::string& _soundIndex);
+	// stop a sound from this map
+	void StopASound(const std::string& _soundIndex);
+	// get volume
+	float GetVolumeOfSound(const std::string& _soundIndex);
+	// set volume
+	void SetVolumeOfSound(const std::string& _soundIndex, float vol);
 };
 

@@ -41,5 +41,8 @@ void UIMessagePopup::Update(float dt)
 	else
 		uiComponents_list[COMPONENT_OUTLINEBAR].mesh = SD->GetMesh("greenquad");
 	if (fElapsedTime > fDuration)
+	{
 		bIsDone = true;
+		//CSoundEngine::GetInstance()->StopASound("rumble");
+	}
 }
