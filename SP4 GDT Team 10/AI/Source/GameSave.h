@@ -7,12 +7,6 @@
 #include <iostream>
 #include <fstream>
 
-//Json file stuff
-#include <cstdlib>
-#include <rapidjson/document.h>
-#include <rapidjson/writer.h>
-#include <rapidjson/stringbuffer.h>
-#include <rapidjson/rapidjson.h>
 
 class GameSave
 {
@@ -22,6 +16,7 @@ public:
 
 	std::string filename;
 
+	void LoadGame();
 	void SaveGame();
 
 	template<typename T>

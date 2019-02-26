@@ -3195,6 +3195,10 @@ void SceneSP::Update(double dt)
 	{
 		gameSave.SaveGame();
 	}
+	if (KC->IsKeyPressed('L'))
+	{
+		gameSave.LoadGame();
+	}
 	if (KC->IsKeyPressed('U'))
 	{
 		tempCamera = camera;
