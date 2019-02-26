@@ -15,6 +15,7 @@ struct Tornado : public GameObject
 	float fPower; //Strength of the wave
 	float fEffectTimer_Cloud;
 	float fEffectTimer_Dirt;
+	float fElapsedTime;
 
 	void Collided(GameObject* go);
 
