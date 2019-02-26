@@ -2863,6 +2863,7 @@ void SceneSP::Reset()
 	for (auto UI : m_selectedUi)
 		UI->bIsDone = true;
 	m_selectedUi.clear();
+	CSoundEngine::GetInstance()->GetSoundEngine()->stopAllSounds();
 	ChangeState(G_MAINMENU);
 }
 
