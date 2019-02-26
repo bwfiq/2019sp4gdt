@@ -72,6 +72,9 @@
     <Filter Include="SoundEngine">
       <UniqueIdentifier>{f028f189-bb81-4093-b0d9-616547377b6b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game Saving">
+      <UniqueIdentifier>{ebb4cf5c-aa7d-46d0-a8c1-a38a5f082007}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -322,6 +325,9 @@
     </ClCompile>
     <ClCompile Include="Source\CalamityBlizzard.cpp">
       <Filter>Calamities\CalamityObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GameSave.cpp">
+      <Filter>Game Saving</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -594,9 +600,12 @@
     </ClInclude>
     <ClInclude Include="Source\CalamityWorldEnd.h">
       <Filter>Calamities\CalamityObjects</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="Source\CalamityBlizzard.h">
       <Filter>Calamities\CalamityObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GameSave.h">
+      <Filter>Game Saving</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

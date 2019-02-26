@@ -89,7 +89,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)/Common/Source;$(SolutionDir)/glew/include;$(SolutionDir)/glfw/include;$(SolutionDir)/irrklang/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)/Common/Source;$(SolutionDir)/glew/include;$(SolutionDir)/glfw/include;$(SolutionDir)/irrklang/include;$(SolutionDir)/rapidjson-master\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -188,6 +188,7 @@
     <ClCompile Include="Source\EffectTrail.cpp" />
     <ClCompile Include="Source\Environment.cpp" />
     <ClCompile Include="Source\GameObject.cpp" />
+    <ClCompile Include="Source\GameSave.cpp" />
     <ClCompile Include="Source\Granary.cpp" />
     <ClCompile Include="Source\Graph.cpp" />
     <ClCompile Include="Source\Grid.cpp" />
@@ -272,6 +273,7 @@
     <ClInclude Include="Source\EffectTrail.h" />
     <ClInclude Include="Source\Environment.h" />
     <ClInclude Include="Source\GameObject.h" />
+    <ClInclude Include="Source\GameSave.h" />
     <ClInclude Include="Source\Geometry.h" />
     <ClInclude Include="Source\Granary.h" />
     <ClInclude Include="Source\Graph.h" />

@@ -3178,11 +3178,18 @@ void SceneSP::Update(double dt)
 	else if (KC->IsKeyPressed('9')) {
 		CM->AddToCalamityQueue(new CalamityBlizzard());
 	}
-	if (KC->IsKeyPressed('U')) {
+
+	if (KC->IsKeyPressed('S'))
+	{
+		gameSave.SaveGame();
+	}
+	if (KC->IsKeyPressed('U'))
+	{
 		tempCamera = camera;
 		ChangeState(G_RESEARCHTREE);
 	}
-	if (KC->IsKeyPressed('Y')) {
+	if (KC->IsKeyPressed('Y')) 
+	{
 		tempCamera = camera;
 		ChangeState(G_INGAMEOPTIONS);
 	}

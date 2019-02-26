@@ -13,6 +13,7 @@
 #include "MousePicker.h"
 
 #include "Grid.h"
+#include "GameSave.h"
 
 class UIBase;
 class EffectReticle;
@@ -71,8 +72,6 @@ public:
 
 	void Reset();
 
-	void SaveToFile(std::string filename);
-	void LoadFromFile(std::string filename);
 
 protected:
 	std::vector<UIBase*> m_selectedUi;//this the UI responsible for wat comes up when u select stuff
@@ -138,6 +137,7 @@ protected:
 	GameObject* goWoodshed;
 	GameObject* goPig;
 
+	GameSave gameSave;
 };
 
 #endif
