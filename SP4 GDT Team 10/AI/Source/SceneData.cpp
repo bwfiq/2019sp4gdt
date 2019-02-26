@@ -217,6 +217,11 @@ void SceneData::SetCamPosition(Vector3 camPos)
 	camPosition = camPos;
 }
 
+void SceneData::SetCamTarget(Vector3 camTarget)
+{
+	this->camTarget = camTarget;
+}
+
 Vector3 SceneData::GetMousePos_World()
 {
 	return this->mousePos_World;
@@ -225,6 +230,11 @@ Vector3 SceneData::GetMousePos_World()
 Vector3 SceneData::GetCamPosition()
 {
 	return camPosition;
+}
+
+Vector3 SceneData::GetCamTarget()
+{
+	return this->camTarget;
 }
 
 void SceneData::SetMainMenuElapsedTime(float time)

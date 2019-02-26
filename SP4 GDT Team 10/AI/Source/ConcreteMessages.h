@@ -77,11 +77,30 @@ struct MessageCalamityEarthquake : public Message
 	EARTHQUAKE_TYPE type;
 };
 
+struct MessageCalamityBlizzard : public Message
+{
+	enum BLIZZARD_TYPE
+	{
+		INTENSE,
+		STOPPING
+	};
+	MessageCalamityBlizzard(float fPower, BLIZZARD_TYPE type) : fPower(fPower), type(type) {}
+	virtual ~MessageCalamityBlizzard() {}
+	float fPower;
+	BLIZZARD_TYPE type;
+};
+
 struct MessageCalamityTsunami : public Message
 {
 	MessageCalamityTsunami() {}
 	virtual ~MessageCalamityTsunami() {}
 	std::vector<unsigned> lanes;
+};
+
+struct MessageCalamityWorldEnd : public Message
+{
+	MessageCalamityWorldEnd() {}
+	virtual ~MessageCalamityWorldEnd() {}
 };
 
 struct MessageCalamityTornado : public Message

@@ -166,10 +166,12 @@
     <ClCompile Include="Source\Building.cpp" />
     <ClCompile Include="Source\Bush.cpp" />
     <ClCompile Include="Source\CalamityBase.cpp" />
+    <ClCompile Include="Source\CalamityBlizzard.cpp" />
     <ClCompile Include="Source\CalamityEarthquake.cpp" />
     <ClCompile Include="Source\CalamityManager.cpp" />
     <ClCompile Include="Source\CalamityTornado.cpp" />
     <ClCompile Include="Source\CalamityTsunami.cpp" />
+    <ClCompile Include="Source\CalamityWorldEnd.cpp" />
     <ClCompile Include="Source\Camera.cpp" />
     <ClCompile Include="Source\ChiefHut.cpp" />
     <ClCompile Include="Source\Date.cpp" />
@@ -247,10 +249,12 @@
     <ClInclude Include="Source\Building.h" />
     <ClInclude Include="Source\Bush.h" />
     <ClInclude Include="Source\CalamityBase.h" />
+    <ClInclude Include="Source\CalamityBlizzard.h" />
     <ClInclude Include="Source\CalamityEarthquake.h" />
     <ClInclude Include="Source\CalamityManager.h" />
     <ClInclude Include="Source\CalamityTornado.h" />
     <ClInclude Include="Source\CalamityTsunami.h" />
+    <ClInclude Include="Source\CalamityWorldEnd.h" />
     <ClInclude Include="Source\Camera.h" />
     <ClInclude Include="Source\ChiefHut.h" />
     <ClInclude Include="Source\ConcreteMessages.h" />

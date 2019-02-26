@@ -15,6 +15,7 @@ public:
 	EffectBase* toTrace;
 
 	virtual void Update(float dt);
+	virtual void SetTrailLifetime(float lifeTime);
 protected:
 private:
 	//virtual void Render() = 0;
