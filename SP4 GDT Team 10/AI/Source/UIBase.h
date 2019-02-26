@@ -49,6 +49,8 @@ public:
 
 	virtual void Update(float dt) = 0;
 	virtual void AddTween(UITween* uiTween);
+	virtual UITween* GetTween();
+	virtual void SetTweenDone();
 
 	//!!!!!! THIS THING ONLY CALCULATES THE MOUSE IN THE UIBASE, NOT THE INDIVIDUAL COMPONENT !!!!!!
 	bool IsMouseHovered();

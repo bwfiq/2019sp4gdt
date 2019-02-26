@@ -53,9 +53,21 @@ void UIBase::UpdateTween(float dt)
 	}
 }
 
-void UIBase::AddTween(UITween * uiTween)
+void UIBase::AddTween(UITween* uiTween)
 {
-	tween_queue.push(uiTween);
+	if (uiTween != NULL)
+		tween_queue.push(uiTween);
+}
+
+UITween* UIBase::GetTween()
+{
+	return currentTween;
+}
+
+void UIBase::SetTweenDone()
+{
+	if(currentTween != NULL)
+		currentTween->SetIsDone(true);
 }
 
 bool UIBase::IsMouseHovered()

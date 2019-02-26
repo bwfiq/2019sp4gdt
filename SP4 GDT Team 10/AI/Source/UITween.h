@@ -35,7 +35,9 @@ public:
 	);
 	~UITween();
 
+	void SetElapsedTime(float time);
 	bool IsDone();
+	void SetIsDone(bool done);
 	void Update(float dt);
 
 	std::map<std::string, Vector3> properties_goal;

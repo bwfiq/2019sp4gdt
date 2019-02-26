@@ -115,7 +115,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 		m_coreUi.push_back(newUI);
 
 		int increment = 0;
-		for (auto theUI : m_coreUi)//ill be for looping through the coreUIs to "easily" tween them
+		for (auto theUI : m_coreUi) // It'll be for looping through the coreUIs to "easily" tween them
 		{
 			Vector3 origPos = theUI->pos;
 			theUI->pos.Set(2, origPos.y, origPos.z);
@@ -3071,18 +3071,20 @@ void SceneSP::Update(double dt)
 	break;
 	case G_MAINMENU:
 	{
-		if (SD->GetMainMenuElapsedTime() < 1.f)
+		if (SD->GetMainMenuElapsedTime() < 1.f) // logo animation
 		{
-
 			if (MC->IsButtonPressed(MouseController::LMB))//if LMB pressed, skip
 			{
 				SD->SetMainMenuElapsedTime(1);
 				fMainMenuDelta = m_worldWidth * 0.3f;
+				UIM->GetUI("startbutton")->GetTween()->SetElapsedTime(0);
+				UIM->GetUI("optionsbutton")->GetTween()->SetElapsedTime(-0.25f);
+				UIM->GetUI("quitbutton")->GetTween()->SetElapsedTime(-0.5f);
 			}
 			SD->SetMainMenuElapsedTime(SD->GetMainMenuElapsedTime() + dt);
 			fMainMenuDelta = Math::lerp(m_worldWidth * 0.5f, m_worldWidth * 0.3f, Math::Min(1.f, EasingStyle::easeInOutSine(SD->GetMainMenuElapsedTime(), 0, 1.f, 1.f)));
 		}
-		else
+		else if (UIM->GetUI("quitbutton")->GetTween() == NULL) // final (aft buttons and logo animation)
 		{
 			// triggers
 			if (UIM->GetUI("startbutton")->IsMousePressed())
@@ -3107,6 +3109,15 @@ void SceneSP::Update(double dt)
 				UIM->GetUI("quitbutton")->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 1.f;
 			else
 				UIM->GetUI("quitbutton")->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 0.f;
+		}
+		else // buttons animation
+		{
+			if (MC->IsButtonPressed(MouseController::LMB))//if LMB pressed, skip
+			{
+				UIM->GetUI("startbutton")->SetTweenDone();
+				UIM->GetUI("optionsbutton")->SetTweenDone();
+				UIM->GetUI("quitbutton")->SetTweenDone();
+			}
 		}
 		return;
 	}
