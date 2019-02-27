@@ -169,6 +169,7 @@
     <ClCompile Include="Source\CalamityBlizzard.cpp" />
     <ClCompile Include="Source\CalamityEarthquake.cpp" />
     <ClCompile Include="Source\CalamityManager.cpp" />
+    <ClCompile Include="Source\CalamityMeteorShower.cpp" />
     <ClCompile Include="Source\CalamityTornado.cpp" />
     <ClCompile Include="Source\CalamityTsunami.cpp" />
     <ClCompile Include="Source\CalamityWorldEnd.cpp" />
@@ -200,6 +201,7 @@
     <ClCompile Include="Source\Maze.cpp" />
     <ClCompile Include="Source\Mesh.cpp" />
     <ClCompile Include="Source\MeshBuilder.cpp" />
+    <ClCompile Include="Source\Meteor.cpp" />
     <ClCompile Include="Source\Mountain.cpp" />
     <ClCompile Include="Source\MousePicker.cpp" />
     <ClCompile Include="Source\Pig.cpp" />
@@ -254,6 +256,7 @@
     <ClInclude Include="Source\CalamityBlizzard.h" />
     <ClInclude Include="Source\CalamityEarthquake.h" />
     <ClInclude Include="Source\CalamityManager.h" />
+    <ClInclude Include="Source\CalamityMeteorShower.h" />
     <ClInclude Include="Source\CalamityTornado.h" />
     <ClInclude Include="Source\CalamityTsunami.h" />
     <ClInclude Include="Source\CalamityWorldEnd.h" />
@@ -289,6 +292,7 @@
     <ClInclude Include="Source\Mesh.h" />
     <ClInclude Include="Source\MeshBuilder.h" />
     <ClInclude Include="Source\Message.h" />
+    <ClInclude Include="Source\Meteor.h" />
     <ClInclude Include="Source\Mountain.h" />
     <ClInclude Include="Source\MousePicker.h" />
     <ClInclude Include="Source\Node.h" />

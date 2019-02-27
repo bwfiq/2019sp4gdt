@@ -20,6 +20,7 @@ UIBase::~UIBase()
 	if (currentTween != NULL)
 	{
 		delete currentTween;
+		currentTween = NULL;
 	}
 	while (!tween_queue.empty()) {
 		delete tween_queue.front();

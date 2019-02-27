@@ -34,6 +34,7 @@
 #include "CalamityTsunami.h"
 #include "CalamityTornado.h"
 #include "CalamityBlizzard.h"
+#include "CalamityMeteorShower.h"
 
 #include "SMManager.h"
 #include "MouseController.h"
@@ -55,6 +56,7 @@
 #include "Logs.h"
 #include "Tsunami.h"
 #include "Tornado.h"
+#include "Meteor.h"
 
 #include "AnimationJump.h"
 #include "AnimationWalk.h"
@@ -84,6 +86,9 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 	for (auto UI : m_coreUi)
 		UI->bIsDone = true;
 	m_coreUi.clear();
+	/*for (auto UI : m_selectedUi)
+		UI->bIsDone = true;
+	m_selectedUi.clear();*/
 	UIBase*	newUI;
 	float worldRadius = SceneData::GetInstance()->GetNoGrid() * SceneData::GetInstance()->GetGridSize() * 0.5f;
 	Application::GetInstance().SetMouseVisiblity(true);
@@ -195,7 +200,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 			UIManager::GetInstance()->AddUI("ui_Text_DailyRequirement", newUI);
 			m_coreUi.push_back(newUI);
 
-			UpdateSelectedUI();
+			//UpdateSelectedUI();
 
 			if (newstate == G_RESEARCHTREE)
 			{
@@ -209,43 +214,23 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 				m_coreUi.push_back(newUI);*/
 
 				//first column
-				newUI = new UIResearchButton("", 0.25f, 0.65f);
+				newUI = new UIResearchButton("", 0.25f, 0.45f);
 				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("woodResearch");
 				if (SceneData::GetInstance()->bWoodResearch)
 					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 				UIManager::GetInstance()->AddUI("WoodResearch", newUI);
 				m_coreUi.push_back(newUI);
-				newUI = new UIResearchButton("", 0.25f, 0.45f);
+				newUI = new UIResearchButton("", 0.45f, 0.45f);
 				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("stoneResearch");
 				if (SceneData::GetInstance()->bStoneResearch)
 					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 				UIManager::GetInstance()->AddUI("StoneResearch", newUI);
 				m_coreUi.push_back(newUI);
-				newUI = new UIResearchButton("", 0.25f, 0.25f);
+				newUI = new UIResearchButton("", 0.65f, 0.45f);
 				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("fullStoneResearch");
 				if (SceneData::GetInstance()->bFullStoneResearch)
 					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 				UIManager::GetInstance()->AddUI("FullStoneResearch", newUI);
-				m_coreUi.push_back(newUI);
-
-				//second column
-				newUI = new UIResearchButton("", 0.5f, 0.65f);
-				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("whitequad");
-				if (SceneData::GetInstance()->bAnimalHunting)
-					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
-				UIManager::GetInstance()->AddUI("animalHunting", newUI);
-				m_coreUi.push_back(newUI);
-				newUI = new UIResearchButton("", 0.5f, 0.45f);
-				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("whitequad");
-				if (SceneData::GetInstance()->bAnimalTaming)
-					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
-				UIManager::GetInstance()->AddUI("animalTaming", newUI);
-				m_coreUi.push_back(newUI);
-				newUI = new UIResearchButton("", 0.5f, 0.25f);
-				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("whitequad");
-				if (SceneData::GetInstance()->bAnimalBreeding)
-					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
-				UIManager::GetInstance()->AddUI("animalBreeding", newUI);
 				m_coreUi.push_back(newUI);
 
 			}
@@ -732,10 +717,6 @@ void SceneSP::Init()
 	SceneData::GetInstance()->bStoneResearch = false;
 	SceneData::GetInstance()->bFullStoneResearch = false;
 
-	SceneData::GetInstance()->bAnimalHunting = false;
-	SceneData::GetInstance()->bAnimalTaming = false;
-	SceneData::GetInstance()->bAnimalBreeding = false;
-
 	//go->vel.Set(1, 0, 0);
 	MousePicker::GetInstance()->Init();
 	MousePicker::GetInstance()->SetProjectionStack(projectionStack);
@@ -759,16 +740,24 @@ void SceneSP::Init()
 
 	CSoundEngine::GetInstance()->Init();
 	CSoundEngine::GetInstance()->AddSound("bg",			"Audio//bgmusic.mp3");
-	CSoundEngine::GetInstance()->AddSound("selection",	"Audio//selection.wav");
 	CSoundEngine::GetInstance()->AddSound("sea",		"Audio//sea.wav");
+	CSoundEngine::GetInstance()->AddSound("selection",	"Audio//selection.wav");
+	CSoundEngine::GetInstance()->AddSound("step",		"Audio//step.wav");
 	CSoundEngine::GetInstance()->AddSound("jump",		"Audio//jump.wav");
 	CSoundEngine::GetInstance()->AddSound("gasp",		"Audio//gasp.wav");
+	CSoundEngine::GetInstance()->AddSound("grunt",		"Audio//grunt.wav");
 	CSoundEngine::GetInstance()->AddSound("rumble",		"Audio//rumble.wav");
 	CSoundEngine::GetInstance()->AddSound("earthquake",	"Audio//earthquake.wav");
 	CSoundEngine::GetInstance()->AddSound("waves",		"Audio//waves.wav");
 	CSoundEngine::GetInstance()->AddSound("death",		"Audio//death.wav");
 	CSoundEngine::GetInstance()->AddSound("mining",		"Audio//mining.wav");
 	CSoundEngine::GetInstance()->AddSound("chopping",	"Audio//chopping.wav");
+	CSoundEngine::GetInstance()->AddSound("oink1",		"Audio//oink1.wav");
+	CSoundEngine::GetInstance()->AddSound("oink2",		"Audio//oink2.wav");
+	CSoundEngine::GetInstance()->AddSound("munching",	"Audio//munching.wav");
+	CSoundEngine::GetInstance()->AddSound("hunting",	"Audio//hunting.wav");
+	CSoundEngine::GetInstance()->AddSound("rustling",	"Audio//rustling.wav");
+	CSoundEngine::GetInstance()->AddSound("building",	"Audio//building.wav");
 
 	game_state = G_INPLAY; // to save the camera pos
 	ChangeState(G_SPLASHSCREEN);
@@ -918,6 +907,21 @@ bool SceneSP::Handle(Message* message)
 		delete message;
 		return true;
 	}
+	MessageWarnGrids* messageWarnGrids = dynamic_cast<MessageWarnGrids*>(message);
+	if (messageWarnGrids)
+	{
+		Vector3 gridSize(SD->GetGridSize(), SD->GetGridSize(), 1.f);
+		for (auto grid : messageWarnGrids->grids)
+		{
+			EffectGridWarning* warningEffect = new EffectGridWarning(
+				GetGridPos(grid)
+				, gridSize
+			);
+			EffectManager::GetInstance()->AddEffect(warningEffect);
+		}
+		delete message;
+		return true;
+	}
 	MessageCalamityTsunami* messageCalamityTsunami = dynamic_cast<MessageCalamityTsunami*>(message);
 	if (messageCalamityTsunami)
 	{
@@ -930,6 +934,24 @@ bool SceneSP::Handle(Message* message)
 			tsunami->tsunami_direction = Tsunami::DIRECTION_LEFT;
 			tsunami->moveSpeed = Math::RandFloatMinMax(3, 3.25f);
 			tsunami->pos = GetGridPos(GridPt(SD->GetNoGrid() + 8, laneNum));
+		}
+		delete message;
+		return true;
+	}
+	MessageCalamityMeteorShower* messageCalamityMeteorShower = dynamic_cast<MessageCalamityMeteorShower*>(message);
+	if (messageCalamityMeteorShower)
+	{
+		for (auto grid : messageCalamityMeteorShower->meteorSpawnGrids)
+		{
+			GameObject* met = FetchGO(GameObject::GO_METEOR);
+			Meteor* goMeteor = static_cast<Meteor*>(met);
+			goMeteor->fPower = 100.f;
+			goMeteor->collidedObjects.clear();
+			goMeteor->moveSpeed = Math::RandFloatMinMax(1.5f, 2.5f);
+			Vector3 gridPos = GetGridPos(grid);
+			Vector3 meteorGeneratedPos = gridPos + Vector3(SD->GetGridSize() * Math::RandFloatMinMax(-2.5f, 2.5f), Math::RandIntMinMax(10, 15) , SD->GetGridSize() * Math::RandFloatMinMax(-2.5f, 2.5f));
+			goMeteor->pos = meteorGeneratedPos;
+			goMeteor->vel = (gridPos - meteorGeneratedPos).Normalized() * goMeteor->moveSpeed;
 		}
 		delete message;
 		return true;
@@ -1269,6 +1291,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			case GameObject::GO_TORNADO:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
 				break;
+			case GameObject::GO_METEOR:
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
+				break;
 			}
 
 			go->goTarget = NULL;
@@ -1328,6 +1353,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			break;
 		case GameObject::GO_TORNADO:
 			go = new Tornado(type);
+			break;
+		case GameObject::GO_METEOR:
+			go = new Meteor(type);
 			break;
 		default:
 			go = new GameObject(type);
@@ -2824,6 +2852,8 @@ void SceneSP::UpdateSelectedUI()
 		UI->AddTween(newTween);
 		++increment;
 	}
+	/*for (auto UI : m_selectedUi)
+		UI->bIsDone = true;*/
 	m_selectedUi.clear();
 	reticle->selected = selected;
 	if (selected == NULL) return;
@@ -3074,8 +3104,65 @@ void SceneSP::Update(double dt)
 
 	SD->SetMousePos_World(mousePos);
 	
-	UIM->Update(dt);
+	//debug stuff
+	if (Application::IsKeyPressed(VK_OEM_MINUS))
+	{
+		m_speed = Math::Max(0.f, m_speed - 0.1f);
+	}
+	if (Application::IsKeyPressed(VK_OEM_PLUS))
+	{
+		m_speed += 0.1f;
+	}
+	if (KC->IsKeyPressed('G'))
+	{
+		bShowGrid = !bShowGrid;
+	}
+	if (KC->IsKeyPressed('T'))
+	{
+		bGodMode = !bGodMode;
+	}
 
+	// ui updates
+	UIM->Update(dt);
+	// goals
+	switch (SD->GetCurrMonth())
+	{
+	case 1:
+		bGoalAchieved = SD->GetFood() >= 1;
+		break;
+	case 2:
+		bGoalAchieved = SD->GetWood() >= 1;
+		break;
+	default:
+		break;
+	}
+	if (UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement") != NULL)
+	{
+		for (int i = 0; i <= UIGameText::COMPONENT_TEXT_5 - UIGameText::COMPONENT_TEXT_1; ++i)
+		{
+			UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_1 + i].text = ""; // clear ui
+		}
+		if (bGoalAchieved)
+			UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_5].text = "ACHIEVED";
+		else
+		{
+			switch (SD->GetCurrMonth())
+			{
+			case 1:
+				UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_5].text = "Collect";
+				UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_4].text = "20 Food";
+				break;
+			case 2:
+				UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_5].text = "Collect";
+				UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_4].text = "20 Wood";
+				break;
+			default:
+				UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_5].text = "No Goal";
+				break;
+			}
+		}
+	}
+	
 	switch (game_state)
 	{
 	case G_SPLASHSCREEN:
@@ -3231,28 +3318,6 @@ void SceneSP::Update(double dt)
 			UIManager::GetInstance()->GetUI("FullStoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//fullstonehouse.tga");
 		}
-
-		if (UIM->GetUI("animalHunting")->IsMousePressed() &&
-			((SD->GetFood() >= 5 && !SceneData::GetInstance()->bAnimalHunting) || bGodMode))
-		{
-			SD->SetFood(SD->GetFood() - 5);
-			SceneData::GetInstance()->bAnimalHunting = true;
-			UIManager::GetInstance()->GetUI("animalHunting")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
-		}
-		else if (SceneData::GetInstance()->bAnimalHunting && UIM->GetUI("animalTaming")->IsMousePressed() &&
-			((SD->GetFood() >= 10 && !SceneData::GetInstance()->bAnimalTaming) || bGodMode))
-		{
-			SD->SetFood(SD->GetFood() - 10);
-			SceneData::GetInstance()->bAnimalTaming = true;
-			UIManager::GetInstance()->GetUI("animalTaming")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
-		}
-		else if (SceneData::GetInstance()->bAnimalTaming && UIM->GetUI("animalBreeding")->IsMousePressed() &&
-			((SD->GetFood() >= 20 && !SceneData::GetInstance()->bAnimalBreeding) || bGodMode))
-		{
-			SD->SetFood(SD->GetFood() - 20);
-			SceneData::GetInstance()->bAnimalBreeding = true;
-			UIManager::GetInstance()->GetUI("animalBreeding")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
-		}
 		return;
 	}
 	break;
@@ -3285,32 +3350,25 @@ void SceneSP::Update(double dt)
 	{
 		Application::GetInstance().SetMouseVisiblity(false);
 	}
-	if (KC->IsKeyPressed('P')) {
+	if (KC->IsKeyPressed('P') && bGodMode)
 		CM->AddToCalamityQueue(new CalamityEarthquake());
-		SD->SetReligionValue(((int)SD->GetReligionValue() % (int)SD->GetMaxReligionValue()) + 25);
-	}
-	else if (KC->IsKeyPressed('O')) {
+	//SD->SetReligionValue(((int)SD->GetReligionValue() % (int)SD->GetMaxReligionValue()) + 25);
+	else if (KC->IsKeyPressed('O') && bGodMode)
 		CM->AddToCalamityQueue(new CalamityTsunami());
-	}
-	else if (KC->IsKeyPressed('0')) {
+	else if (KC->IsKeyPressed('0') && bGodMode)
 		CM->AddToCalamityQueue(new CalamityTornado());
-	}
-	else if (KC->IsKeyPressed('9')) {
+	else if (KC->IsKeyPressed('9') && bGodMode)
 		CM->AddToCalamityQueue(new CalamityBlizzard());
-	}
+	else if (KC->IsKeyPressed('8') && bGodMode)
+		CM->AddToCalamityQueue(new CalamityMeteorShower());
 
 	if (KC->IsKeyPressed('S'))
-	{
 		gameSave.SaveGame();
-	}
 	if (KC->IsKeyPressed('L'))
-	{
 		gameSave.LoadGame();
-	}
 	if (KC->IsKeyPressed('C'))
-	{
 		gameSave.ResetGame();
-	}
+
 	if (KC->IsKeyPressed('U'))
 	{
 		tempCamera = camera;
@@ -3321,21 +3379,13 @@ void SceneSP::Update(double dt)
 		tempCamera = camera;
 		ChangeState(G_INGAMEOPTIONS);
 	}
-	if (Application::IsKeyPressed(VK_OEM_MINUS))
-	{
-		m_speed = Math::Max(0.f, m_speed - 0.1f);
-	}
-	if (Application::IsKeyPressed(VK_OEM_PLUS))
-	{
-		m_speed += 0.1f;
-	}
 
 	float LSPEED = 10.0f;
 	float temp34 = fYPos;
-	if (Application::IsKeyPressed('I'))
+	if (Application::IsKeyPressed('I') && bGodMode)
 		fYPos += 0.01f;
 		//lights[0].position.z -= (float)(LSPEED * dt);
-	if (Application::IsKeyPressed('K'))
+	if (Application::IsKeyPressed('K') && bGodMode)
 		fYPos -= 0.01f;
 		//lights[0].position.z += (float)(LSPEED * dt);
 	if (Application::IsKeyPressed('J'))
@@ -3350,35 +3400,14 @@ void SceneSP::Update(double dt)
 	if (fYPos != temp34)
 		std::cout << fYPos << std::endl;
 
-	if (Application::IsKeyPressed('Z'))
+	if (Application::IsKeyPressed('Z') && bGodMode)
 		lights[0].type = Light::LIGHT_POINT;
-	else if (Application::IsKeyPressed('X'))
+	else if (Application::IsKeyPressed('X') && bGodMode)
 		lights[0].type = Light::LIGHT_DIRECTIONAL;
-	else if (Application::IsKeyPressed('C'))
-		lights[0].type = Light::LIGHT_SPOT;
+	else if (Application::IsKeyPressed('C') && bGodMode)
+		lights[0].type = Light::LIGHT_SPOT;	
 
-	//Input Section
-	static bool bPState = false;
-	if (!bPState && Application::IsKeyPressed('P'))
-	{
-		bPState = true;
-	}
-	else if (bPState && !Application::IsKeyPressed('P'))
-	{
-		bPState = false;
-		std::cout << "P UP" << std::endl;
-	}
-
-	if (KC->IsKeyPressed('G'))
-	{
-		bShowGrid = !bShowGrid;
-	}
-	if (KC->IsKeyPressed('T'))
-	{
-		bGodMode = !bGodMode;
-	}
-
-	if (KC->IsKeyPressed('B'))
+	if (KC->IsKeyPressed('B') && bGodMode)
 	{
 		if (selected == NULL)
 		{
@@ -3692,46 +3721,8 @@ void SceneSP::Update(double dt)
 	fSeaDeltaY = 0.0625f + 0.0625f * cosf(SD->GetElapsedTime());
 
 	if (bWorldEnd)
-	{
 		fWaterLevel += dt * 0.01f;
-	}
 
-	//goals
-	switch (SD->GetCurrMonth())
-	{
-	case 1:
-		bGoalAchieved = SD->GetFood() >= 1;
-		break;
-	case 2:
-		bGoalAchieved = SD->GetWood() >= 1;
-		break;
-	default:
-		bGoalAchieved = false;
-		break;
-	}
-	for (int i = 0; i <= UIGameText::COMPONENT_TEXT_5 - UIGameText::COMPONENT_TEXT_1; ++i)
-	{
-		UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_1 + i].text = ""; // clear ui
-	}
-	if (bGoalAchieved)
-		UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_5].text = "ACHIEVED";
-	else
-	{
-		switch (SD->GetCurrMonth())
-		{
-		case 1:
-			UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_5].text = "Collect";
-			UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_4].text = "20 Food";
-			break;
-		case 2:
-			UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_5].text = "Collect";
-			UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_4].text = "20 Wood";
-			break;
-		default:
-			UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_5].text = "No Goal";
-			break;
-		}
-	}
 
 	ProjectileManager::GetInstance()->Update(dt * m_speed);
 
@@ -4110,7 +4101,7 @@ void SceneSP::Update(double dt)
 		case GameObject::GO_ALTAR:
 		{
 			Altar* goAltar = static_cast<Altar*>(go);
-			static const float MAX_FOOD_TIMER = 1.f; //Rate for food to be decreased
+			static const float MAX_FOOD_TIMER = 3.f; //Rate for food to be decreased
 			static float fFoodtimer = MAX_FOOD_TIMER;
 			if (goAltar->iFoodOffered > 0)
 			{
@@ -4208,6 +4199,37 @@ void SceneSP::Update(double dt)
 				if ((go2->pos - goTornado->pos).LengthSquared() <= goTornado->scale.x * goTornado->scale.x)
 				{
 					goTornado->Collided(go2);
+				}
+			}
+		}
+		break;
+		case GameObject::GO_METEOR:
+		{
+			Meteor* goMeteor = static_cast<Meteor*>(go);
+			float timeIncrement = (float)dt*m_speed;
+			goMeteor->fEffectTimer_Fire += timeIncrement;
+			if (goMeteor->fEffectTimer_Fire > 0.09f)
+			{
+				goMeteor->fEffectTimer_Fire = 0;
+				EM->DoPrefabEffect(EffectManager::PREFAB_METEOR_FIRE, goMeteor->pos);
+			}
+			goMeteor->pos += goMeteor->vel * dt * m_speed;
+			if (goMeteor->pos.y <= 0)
+			{
+				EM->DoPrefabEffect(EffectManager::PREFAB_METEOR_IMPACT, goMeteor->pos);
+				PostOffice::GetInstance()->Send("Scene",
+					new MessageCameraShake(MessageCameraShake::SHAKE_METEOR, Math::RandFloatMinMax(0.5f, 1.25f), Math::RandFloatMinMax(0.3f, 0.35f))
+				);
+				goMeteor->active = false;
+			}
+			//Check collision
+			for (auto go2 : m_goList)
+			{
+				if (!go2->active || go2 == go)
+					continue;
+				if ((go2->pos - goMeteor->pos).LengthSquared() <= goMeteor->scale.x * goMeteor->scale.x)
+				{
+					goMeteor->Collided(go2);
 				}
 			}
 		}
@@ -4613,6 +4635,17 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.Rotate(180, 0, 1, 0);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_TSUNAMI], bGodlights, 1.f);
+		modelStack.PopMatrix();
+	}
+	break;
+	case GameObject::GO_METEOR:
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		if (go->animation != NULL)
+			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_EFFECT_DIRT], bGodlights, 1.f);
 		modelStack.PopMatrix();
 	}
 	break;

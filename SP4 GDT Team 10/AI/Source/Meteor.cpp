@@ -1,6 +1,6 @@
-#include "Tsunami.h"
+#include "Meteor.h"
 #include "ConcreteMessages.h"
-#include "PostOffice.h"
+
 
 #include "Villager.h"
 #include "Building.h"
@@ -9,21 +9,21 @@
 
 #include "EffectManager.h"
 
-Tsunami::Tsunami(GAMEOBJECT_TYPE typeValue)
+Meteor::Meteor(GAMEOBJECT_TYPE typeValue)
 	: GameObject(typeValue)
 {
 	//GameObject(typeValue);
-	std::cout << "Tsunami Constructor" << std::endl;
+	std::cout << "Meteor Constructor" << std::endl;
 
 	fPower = 100.f;
-	fParticleTimer_Cloud = 0;
+	fEffectTimer_Fire = 0;
 }
 
-Tsunami::~Tsunami()
+Meteor::~Meteor()
 {
 }
 
-void Tsunami::Update(float dt)
+void Meteor::Update(float dt)
 {
 	GameObject::Update(dt);
 
@@ -43,7 +43,7 @@ void Tsunami::Update(float dt)
 	}
 }
 
-void Tsunami::Collided(GameObject * go)
+void Meteor::Collided(GameObject * go)
 {
 	for (auto goCollided : collidedObjects)
 	{
@@ -53,9 +53,9 @@ void Tsunami::Collided(GameObject * go)
 			return;
 		}
 	}
-	std::cout << "Colliding tsunami" << std::endl;
+	std::cout << "Colliding Meteor" << std::endl;
 
-	//Set go as collided with this tsunami once
+	//Set go as collided with this Meteor once
 	collidedObjects.push_back(go);
 
 	Villager* goVil = dynamic_cast<Villager*>(go);
@@ -66,7 +66,7 @@ void Tsunami::Collided(GameObject * go)
 		EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_VILLAGER_DIE, goVil->pos);
 		CSoundEngine::GetInstance()->PlayASound("death");
 
-		//Reduce power of Tsunami Wave
+		//Reduce power of Meteor Wave
 		//NA
 		return;
 	}
@@ -110,15 +110,12 @@ void Tsunami::Collided(GameObject * go)
 			}
 		}
 
-		//Reduce power of Tsunami Wave
+		//Reduce power of Meteor Wave
 		if (go->type == GameObject::GO_LOGS)
 			fPower -= 30.f;
 		else
 			fPower -= 10.f;
-		
-		/*PostOffice::GetInstance()->Send("Scene",
-			new MessageCameraShake(MessageCameraShake::SHAKE_DESTRUCTION, Math::RandFloatMinMax(0.5f, 1.f), Math::RandFloatMinMax(0.4f, 0.5f))
-		);*/
+
 		return;
 	}
 	Environment* goEnvironment = dynamic_cast<Environment*>(go);
@@ -127,7 +124,7 @@ void Tsunami::Collided(GameObject * go)
 		//Chance to reduce the state of the GameObject
 		//NA
 
-		//Reduce power of Tsunami Wave
+		//Reduce power of Meteor Wave
 		switch (goEnvironment->type)
 		{
 		case GO_TREE:
@@ -139,11 +136,11 @@ void Tsunami::Collided(GameObject * go)
 		}
 		return;
 	}
-
+	
 	//Some other type of GO
 }
 
-bool Tsunami::Handle(Message* msg)
+bool Meteor::Handle(Message* msg)
 {
 	MessageObject* messageObject = dynamic_cast<MessageObject*>(msg);
 	switch (messageObject->type)
@@ -160,7 +157,7 @@ bool Tsunami::Handle(Message* msg)
 	return false;
 }
 
-void Tsunami::TheFunction(GameObject * go)
+void Meteor::TheFunction(GameObject * go)
 {
-	std::cout << "Tsunami Function" << std::endl;
+	std::cout << "Meteor Function" << std::endl;
 }

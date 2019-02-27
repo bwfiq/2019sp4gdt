@@ -100,6 +100,7 @@ UIGameButton::~UIGameButton()
 
 void UIGameButton::Update(float dt)
 {
+	UIBase::UpdateTween(dt);
 	PostOffice* PO = PostOffice::GetInstance();
 	if (this->currentTween == NULL && this->IsMousePressed())
 	{
@@ -143,7 +144,6 @@ void UIGameButton::Update(float dt)
 			break;
 		}
 	}
-	UIBase::UpdateTween(dt);
 }
 
 void UIGameButton::SetText(std::string text)

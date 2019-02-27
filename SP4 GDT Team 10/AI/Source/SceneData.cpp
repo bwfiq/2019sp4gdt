@@ -260,8 +260,8 @@ float SceneData::GetTimeOfDay()
 std::string SceneData::GetTimeOfDay_string()
 {
 	float fractpart, intpart;
-	std::string tod;
 	fractpart = modf(fTimeOfDay, &intpart);
+	std::string tod;
 	if (intpart < 10)
 		tod += "0" + std::to_string((int)intpart);
 	else
