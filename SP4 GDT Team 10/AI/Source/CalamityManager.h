@@ -14,6 +14,7 @@ public:
 	void AddToCalamityQueue(CalamityBase* cal);
 
 	CalamityBase* GetCurrCalamity();
+	std::queue<CalamityBase*> GetCalamityQueue();
 private:
 	CalamityManager();
 	~CalamityManager();

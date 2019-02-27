@@ -6,6 +6,7 @@ Logs::Logs(GAMEOBJECT_TYPE typeValue)
 {
 	//GameObject(typeValue);
 	std::cout << "Logs Constructor" << std::endl;
+	buildingName = "Logs";
 }
 
 Logs::~Logs()

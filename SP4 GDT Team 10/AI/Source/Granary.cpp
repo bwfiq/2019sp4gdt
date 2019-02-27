@@ -7,6 +7,7 @@ Granary::Granary(GAMEOBJECT_TYPE typeValue)
 {
 	//GameObject(typeValue);
 	std::cout << "Granary Constructor" << std::endl;
+	buildingName = "Granary";
 }
 
 Granary::~Granary()

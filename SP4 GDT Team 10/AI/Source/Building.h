@@ -32,6 +32,8 @@ struct Building : public GameObject
 	float fBuildTime;
 	float fRepairTime;
 
+	std::string buildingName;
+
 	virtual bool Handle(Message* msg);
 
 	virtual void Update(float dt);

@@ -260,8 +260,8 @@ float SceneData::GetTimeOfDay()
 std::string SceneData::GetTimeOfDay_string()
 {
 	float fractpart, intpart;
-	std::string tod;
 	fractpart = modf(fTimeOfDay, &intpart);
+	std::string tod;
 	if (intpart < 10)
 		tod += "0" + std::to_string((int)intpart);
 	else
@@ -299,6 +299,16 @@ Mesh * SceneData::GetMesh(const std::string & meshName)
 		return meshList[meshName];
 
 	return NULL;
+}
+
+std::vector<GameObject*>* SceneData::GetGOList()
+{
+	return this->m_goList;
+}
+
+void SceneData::SetGOList(std::vector<GameObject*>* goList)
+{
+	this->m_goList = goList;
 }
 
 SceneData::SceneData()

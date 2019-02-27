@@ -4,7 +4,11 @@
 #include "SceneData.h"
 
 CalamityTsunami::CalamityTsunami() :
-	CalamityBase()
+	CalamityBase(),
+	state(STATE_NONE),
+	fUIPopupTime(0),
+	fWarnTime(0),
+	fDuration(0)
 {
 }
 

@@ -7,6 +7,7 @@ ChiefHut::ChiefHut(GAMEOBJECT_TYPE typeValue)
 {
 	//GameObject(typeValue);
 	std::cout << "ChiefHut Constructor" << std::endl;
+	buildingName = "Chief Hut";
 }
 
 ChiefHut::~ChiefHut()

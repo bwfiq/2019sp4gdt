@@ -62,6 +62,7 @@ void StateIdle::Enter(GameObject* m_go)
 
 	std::cout << "Clearing existing m_go path" << std::endl;
 
+	CSoundEngine::GetInstance()->StopASound("step");
 	while (!m_go->path.empty())
 	{
 		m_go->path.pop_back();
@@ -154,6 +155,7 @@ void StatePath::Enter(GameObject * m_go)
 		{
 		case Villager::HEALTHY:
 			m_go->GiveAnimation(new AnimationWalk());
+			CSoundEngine::GetInstance()->PlayASound("grunt");
 			break;
 		case Villager::PANIC:
 			m_go->GiveAnimation(new AnimationPanic());
@@ -167,6 +169,15 @@ void StatePath::Enter(GameObject * m_go)
 	Pig* goPig = dynamic_cast<Pig*>(m_go);
 	if (goPig)
 	{
+		switch (rand() % 4)
+		{
+		case 0: // 1 in 4 chance
+			CSoundEngine::GetInstance()->PlayASound("oink2");
+			break;
+		default:
+			CSoundEngine::GetInstance()->PlayASound("oink1");
+			break;
+		}
 		switch (goPig->movement)
 		{
 		case Pig::WALKING:
@@ -621,6 +632,8 @@ void StateForaging::Enter(GameObject * m_go)
 	m_go->direction.Set(-1, 0, -1);
 	m_go->direction.Normalize();
 
+	CSoundEngine::GetInstance()->PlayASound("rustling", true);
+
 	SceneData* SD = SceneData::GetInstance();
 	goVil->mEquipment = SD->GetMesh("basket");
 	goVil->GiveAnimation(new AnimationForage());
@@ -675,6 +688,7 @@ void StateForaging::Exit(GameObject * m_go)
 	Villager* goVil = static_cast<Villager*>(m_go);
 	goVil->fActionTimer = 0;
 
+	CSoundEngine::GetInstance()->StopASound("rustling");
 	m_go->scale *= 5;
 	m_go->pos.y = m_go->scale.y * 0.5f;
 	m_go->ClearAnimation();
@@ -704,6 +718,7 @@ void StateHunting::Enter(GameObject * m_go)
 	m_go->direction.Set(-1, 0, -1);
 	m_go->direction.Normalize();
 
+	CSoundEngine::GetInstance()->PlayASound("hunting", false);
 	SceneData* SD = SceneData::GetInstance();
 	goVil->mEquipment = SD->GetMesh("basket");
 	goVil->GiveAnimation(new AnimationChopping());
@@ -764,6 +779,7 @@ void StateHunting::Exit(GameObject * m_go)
 	Villager* goVil = static_cast<Villager*>(m_go);
 	goVil->fActionTimer = 0;
 
+	CSoundEngine::GetInstance()->StopASound("hunting");
 	m_go->scale *= 5;
 	m_go->pos.y = m_go->scale.y * 0.5f;
 	m_go->ClearAnimation();
@@ -947,7 +963,7 @@ void StateConstructing::Enter(GameObject* m_go)
 		m_go->direction.Set(-1, 0, -1);
 		m_go->direction.Normalize();
 
-
+		CSoundEngine::GetInstance()->PlayASound("building", true);
 		goVil->mEquipment = SD->GetMesh("hammer");
 		m_go->GiveAnimation(new AnimationConstructing());
 	}
@@ -1007,6 +1023,7 @@ void StateConstructing::Exit(GameObject* m_go)
 	Villager* goVil = static_cast<Villager*>(m_go);
 	goVil->fActionTimer = 0;
 
+	CSoundEngine::GetInstance()->StopASound("building");
 	m_go->scale *= 5;
 	m_go->pos.y = m_go->scale.y * 0.5f;
 	m_go->ClearAnimation();
