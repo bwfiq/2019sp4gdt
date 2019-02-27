@@ -14,7 +14,8 @@ Villager::Villager(GAMEOBJECT_TYPE typeValue)
 	fIdleTimer(3),
 	mEquipment(NULL),
 	fRecalculate(1.5f),
-	fEffectTimer_Panic(0)
+	fEffectTimer_Panic(0),
+	fEffectTimer_Fight(0)
 {
 	//GameObject(typeValue);
 	for (int i = 0; i < STAT_TOTAL; ++i)

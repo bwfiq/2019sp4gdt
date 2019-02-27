@@ -744,6 +744,12 @@ void StateHunting::Update(double dt, GameObject * m_go)
 		else
 		{
 			vGo->fActionTimer -= dt;
+			vGo->fEffectTimer_Fight += dt;
+			if (vGo->fEffectTimer_Fight > 0.08f)
+			{
+				vGo->fEffectTimer_Fight = 0;
+				EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_VILLAGER_FIGHT, vGo->pos);
+			}
 		}
 	}
 	else
