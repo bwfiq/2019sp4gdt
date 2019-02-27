@@ -1217,6 +1217,7 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 				}
 				goVil->fActionTimer = 0.f;
 				goVil->mEquipment = NULL;
+				go->m_currState = go->m_nextState = SMManager::GetInstance()->GetSM(go->smID)->GetState("Idle");
 			}
 				break;
 			case GameObject::GO_PIG:
@@ -3379,7 +3380,7 @@ void SceneSP::Update(double dt)
 		}
 	}
 
-	if (KC->IsKeyPressed(VK_CONTROL))
+	if (KC->IsKeyPressed(VK_CONTROL) && !m_VillagerList.empty())
 	{
 		if (selected == NULL || !selected->active || selected->type != GameObject::GO_VILLAGER)
 		{
