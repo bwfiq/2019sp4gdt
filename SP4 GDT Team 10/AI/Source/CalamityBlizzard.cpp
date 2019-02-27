@@ -4,7 +4,10 @@
 #include "EffectManager.h"
 
 CalamityBlizzard::CalamityBlizzard() :
-	CalamityBase()
+	CalamityBase(),
+	state(STATE_NONE),
+	fUIPopupTime(0),
+	fEffectTimer_BlizzardCloud(0)
 {
 }
 

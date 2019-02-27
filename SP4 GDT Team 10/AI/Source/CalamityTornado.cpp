@@ -4,7 +4,10 @@
 #include "EffectManager.h"
 
 CalamityTornado::CalamityTornado() :
-	CalamityBase()
+	CalamityBase(),
+	state(STATE_NONE),
+	fUIPopupTime(0),
+	fEffectTimer_Dirt(0)
 {
 }
 

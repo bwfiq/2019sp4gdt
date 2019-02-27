@@ -7,6 +7,7 @@ House::House(GAMEOBJECT_TYPE typeValue)
 {
 	//GameObject(typeValue);
 	std::cout << "House Constructor" << std::endl;
+	buildingName = "House";
 }
 
 House::~House()

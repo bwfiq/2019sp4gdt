@@ -11,7 +11,7 @@ public:
 	virtual void Enter();
 	virtual void Update(float dt);
 	virtual void Exit();
-private:
+public:
 	enum CALAMITY_TSUNAMI_STATE {
 		STATE_NONE,
 		STATE_WARNING,

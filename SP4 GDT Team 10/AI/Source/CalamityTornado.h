@@ -9,7 +9,8 @@ public:
 	virtual void Enter();
 	virtual void Update(float dt);
 	virtual void Exit();
-private:
+public:
+
 	enum CALAMITY_TORNADO_STATE {
 		STATE_NONE,
 		STATE_STARTING,

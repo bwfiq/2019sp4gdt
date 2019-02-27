@@ -301,6 +301,16 @@ Mesh * SceneData::GetMesh(const std::string & meshName)
 	return NULL;
 }
 
+std::vector<GameObject*>* SceneData::GetGOList()
+{
+	return this->m_goList;
+}
+
+void SceneData::SetGOList(std::vector<GameObject*>* goList)
+{
+	this->m_goList = goList;
+}
+
 SceneData::SceneData()
 {
 }
