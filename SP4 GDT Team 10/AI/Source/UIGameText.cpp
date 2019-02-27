@@ -7,7 +7,7 @@
 #include "Villager.h"
 #include "Bush.h"
 
-UIGameText::UIGameText(TEXT_TYPE textType, GameObject* go) :
+UIGameText::UIGameText(TEXT_TYPE textType, float x, float y, GameObject* go) :
 	UIBase()
 {
 	SceneData* SD = SceneData::GetInstance();
@@ -330,11 +330,6 @@ void UIGameText::Update(float dt)
 			uiComponents_list[COMPONENT_TEXT_1].text = "Appeased";
 			uiComponents_list[COMPONENT_TEXT_1].textColor.Set(0, 0.8f, 0);
 		}
-	}
-		break;
-	case TEXT_SELECTED_RLAB:
-	{
-		//uiComponents_list[COMPONENT_TEXT_3].text = std::to_string((int)SD->GetResearchPoints());
 	}
 		break;
 	}

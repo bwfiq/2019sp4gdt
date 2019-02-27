@@ -13,6 +13,8 @@ public:
 		BUTTON_SELECTED_CHIEFHUT_BUILD,
 		BUTTON_SELECTED_RLAB,
 
+		BUTTON_RESEARCH_COST,
+
 		BUTTON_BUILD_LOGS,
 		BUTTON_BUILD_GRANARY,
 		BUTTON_BUILD_WOODSHED,
@@ -20,7 +22,7 @@ public:
 
 		BUTTON_TOTAL
 	};
-	UIGameButton(BUTTON_TYPE buttonType, unsigned order = 0, GameObject* go = NULL);
+	UIGameButton(BUTTON_TYPE buttonType, float x = 0, float y=0, unsigned order = 0, GameObject* go = NULL);
 	~UIGameButton();
 
 	virtual void Update(float dt);

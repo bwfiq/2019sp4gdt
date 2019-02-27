@@ -212,23 +212,54 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 				m_coreUi.push_back(newUI);*/
 
 				//first column
-				newUI = new UIResearchButton("", 0.25f, 0.45f);
+				newUI = new UIResearchButton("", 0.3f, 0.45f);
 				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("woodResearch");
 				if (SceneData::GetInstance()->bWoodResearch)
 					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 				UIManager::GetInstance()->AddUI("WoodResearch", newUI);
 				m_coreUi.push_back(newUI);
-				newUI = new UIResearchButton("", 0.45f, 0.45f);
+				newUI = new UIGameButton(UIGameButton::BUTTON_RESEARCH_COST, 0.3f, 0.25f);
+				if (SceneData::GetInstance()->bWoodResearch)
+					newUI->uiComponents_list[UIGameButton::COMPONENT_TEXT].text = "UNLOCKED";
+				else
+					newUI->uiComponents_list[UIGameButton::COMPONENT_TEXT].text = "10 WOOD";
+				UIManager::GetInstance()->AddUI("WoodResearchCost", newUI);
+				m_coreUi.push_back(newUI);
+
+				newUI = new UIResearchButton("", 0.5f, 0.45f);
 				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("stoneResearch");
 				if (SceneData::GetInstance()->bStoneResearch)
 					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 				UIManager::GetInstance()->AddUI("StoneResearch", newUI);
 				m_coreUi.push_back(newUI);
-				newUI = new UIResearchButton("", 0.65f, 0.45f);
+				newUI = new UIGameButton(UIGameButton::BUTTON_RESEARCH_COST, 0.5f, 0.25f);
+				if (SceneData::GetInstance()->bStoneResearch)
+					newUI->uiComponents_list[UIGameButton::COMPONENT_TEXT].text = "UNLOCKED";
+				else
+					newUI->uiComponents_list[UIGameButton::COMPONENT_TEXT].text = "10 W, 10 S";
+				UIManager::GetInstance()->AddUI("StoneResearchCost", newUI);
+				m_coreUi.push_back(newUI);
+
+				newUI = new UIResearchButton("", 0.7f, 0.45f);
 				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("fullStoneResearch");
 				if (SceneData::GetInstance()->bFullStoneResearch)
 					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 				UIManager::GetInstance()->AddUI("FullStoneResearch", newUI);
+				m_coreUi.push_back(newUI);
+				newUI = new UIGameButton(UIGameButton::BUTTON_RESEARCH_COST, 0.7f, 0.25f);
+				if (SceneData::GetInstance()->bFullStoneResearch)
+					newUI->uiComponents_list[UIGameButton::COMPONENT_TEXT].text = "UNLOCKED";
+				else
+					newUI->uiComponents_list[UIGameButton::COMPONENT_TEXT].text = "20 STONE";
+				UIManager::GetInstance()->AddUI("FullStoneResearchCost", newUI);
+				m_coreUi.push_back(newUI);
+
+				newUI = new UIGameButton(UIGameButton::BUTTON_RESEARCH_COST, 0.5f, 0.65f);
+				newUI->scale.Set(300, 75);
+				newUI->uiComponents_list[UIGameButton::COMPONENT_TEXT].text = "Research Tree";
+				newUI->uiComponents_list[UIGameButton::COMPONENT_TEXT].pos.Set(0.15f, 0.5f);
+				newUI->uiComponents_list[UIGameButton::COMPONENT_TEXT].textSize = newUI->scale.y * 0.4f;
+				UIManager::GetInstance()->AddUI("ResearchHeader", newUI);
 				m_coreUi.push_back(newUI);
 
 			}
@@ -1135,19 +1166,19 @@ bool SceneSP::Handle(Message* message)
 			return false;
 		}
 		std::vector<UIBase*> m_buildUIs;
-		UIBase* newUI = new UIGameButton(UIGameButton::BUTTON_BUILD_LOGS, 0);
+		UIBase* newUI = new UIGameButton(UIGameButton::BUTTON_BUILD_LOGS, 0, 0, 0);
 		UIManager::GetInstance()->AddUI("uiBuild_Logs", newUI);
 		m_selectedUi.push_back(newUI);
 		m_buildUIs.push_back(newUI);
-		newUI = new UIGameButton(UIGameButton::BUTTON_BUILD_GRANARY, 1);
+		newUI = new UIGameButton(UIGameButton::BUTTON_BUILD_GRANARY, 0, 0, 1);
 		UIManager::GetInstance()->AddUI("uiBuild_Granary", newUI);
 		m_selectedUi.push_back(newUI);
 		m_buildUIs.push_back(newUI);
-		newUI = new UIGameButton(UIGameButton::BUTTON_BUILD_HOUSE, 2);
+		newUI = new UIGameButton(UIGameButton::BUTTON_BUILD_HOUSE, 0, 0, 2);
 		UIManager::GetInstance()->AddUI("uiBuild_House", newUI);
 		m_selectedUi.push_back(newUI);
 		m_buildUIs.push_back(newUI);
-		newUI = new UIGameButton(UIGameButton::BUTTON_BUILD_WOODSHED, 3);
+		newUI = new UIGameButton(UIGameButton::BUTTON_BUILD_WOODSHED, 0, 0, 3);
 		UIManager::GetInstance()->AddUI("uiBuild_Woodshed", newUI);
 		m_selectedUi.push_back(newUI);
 		m_buildUIs.push_back(newUI);
@@ -2824,10 +2855,10 @@ void SceneSP::UpdateSelectedUI()
 		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_ALTAR);
 		UIManager::GetInstance()->AddUI("uiSelected_Altar_Info", newUI);
 		m_selectedUi.push_back(newUI);
-		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_GENERAL_MOVE, 0);
+		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_GENERAL_MOVE, 0, 0, 0);
 		UIManager::GetInstance()->AddUI("uiSelected_Altar_Move", newUI);
 		m_selectedUi.push_back(newUI);
-		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_ALTAR_OFFER, 1);
+		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_ALTAR_OFFER, 0, 0, 1);
 		UIManager::GetInstance()->AddUI("uiSelected_Altar_Offer", newUI);
 		m_selectedUi.push_back(newUI);
 	}
@@ -2836,37 +2867,37 @@ void SceneSP::UpdateSelectedUI()
 		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_RLAB);
 		UIManager::GetInstance()->AddUI("uiSelected_RLab_Info", newUI);
 		m_selectedUi.push_back(newUI);
-		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_GENERAL_MOVE, 0);
+		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_GENERAL_MOVE, 0, 0, 0);
 		UIManager::GetInstance()->AddUI("uiSelected_RLab_Move", newUI);
 		m_selectedUi.push_back(newUI);
-		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_RLAB, 1);
+		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_RLAB, 0, 0, 1);
 		UIManager::GetInstance()->AddUI("uiSelected_RLab", newUI);
 		m_selectedUi.push_back(newUI);
 	}
 	else if (dynamic_cast<Building*>(selected))
 	{
-		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_BUILDING, selected);
+		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_BUILDING, 0, 0, selected);
 		UIManager::GetInstance()->AddUI("uiSelected_Building_Info", newUI);
 		m_selectedUi.push_back(newUI);
-		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_GENERAL_MOVE, 0, selected);
+		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_GENERAL_MOVE, 0, 0, 0, selected);
 		UIManager::GetInstance()->AddUI("uiSelected_Building_Move", newUI);
 		m_selectedUi.push_back(newUI);
 		if (selected->type == GameObject::GO_CHIEFHUT)
 		{
-			newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_CHIEFHUT_BUILD, 1, selected);
+			newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_CHIEFHUT_BUILD, 0, 0, 1, selected);
 			UIManager::GetInstance()->AddUI("uiSelected_Chiefhut_Build", newUI);
 			m_selectedUi.push_back(newUI);
 		}
 	}
 	else if (dynamic_cast<Villager*>(selected))
 	{
-		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_VILLAGER, selected);
+		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_VILLAGER, 0, 0, selected);
 		UIManager::GetInstance()->AddUI("uiSelected_Villager_Info", newUI);
 		m_selectedUi.push_back(newUI);
 	}
 	else if (dynamic_cast<Environment*>(selected))
 	{
-		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_ENVIRONMENT, selected);
+		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_ENVIRONMENT, 0, 0, selected);
 		UIManager::GetInstance()->AddUI("uiSelected_Environment_Info", newUI);
 		m_selectedUi.push_back(newUI);
 	}
@@ -3252,29 +3283,34 @@ void SceneSP::Update(double dt)
 		if (KC->IsKeyPressed('U'))
 			ChangeState(G_INPLAY);
 		// research
-		if (UIM->GetUI("WoodResearch")->IsMousePressed() &&
+		if	((UIM->GetUI("WoodResearch")->IsMousePressed() || UIM->GetUI("WoodResearchCost")->IsMousePressed()) &&
 			((SD->GetWood() >= 10 && !SceneData::GetInstance()->bWoodResearch) || bGodMode))
 		{
 			SD->SetWood(SD->GetWood() - 10);
 			SceneData::GetInstance()->bWoodResearch = true;
-			UIManager::GetInstance()->GetUI("WoodResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+			UIM->GetUI("WoodResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+			UIM->GetUI("WoodResearchCost")->uiComponents_list[UIGameButton::COMPONENT_TEXT].text = "UNLOCKED";
 			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//house.tga");
 		}
-		else if (SceneData::GetInstance()->bWoodResearch && UIM->GetUI("StoneResearch")->IsMousePressed() &&
+		else if (SceneData::GetInstance()->bWoodResearch && 
+			 (UIM->GetUI("StoneResearch")->IsMousePressed() || UIM->GetUI("StoneResearchCost")->IsMousePressed()) &&
 			((SD->GetWood() >= 10 && SD->GetStone() >= 10 && !SceneData::GetInstance()->bStoneResearch) || bGodMode))
 		{
 			SD->SetWood(SD->GetWood() - 10);
 			SD->SetStone(SD->GetStone() - 10);
 			SceneData::GetInstance()->bStoneResearch = true;
 			UIManager::GetInstance()->GetUI("StoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+			UIM->GetUI("StoneResearchCost")->uiComponents_list[UIGameButton::COMPONENT_TEXT].text = "UNLOCKED";
 			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//stonehouse.tga");
 		}
-		else if (SceneData::GetInstance()->bStoneResearch && UIM->GetUI("FullStoneResearch")->IsMousePressed() &&
+		else if (SceneData::GetInstance()->bStoneResearch &&
+			 (UIM->GetUI("FullStoneResearch")->IsMousePressed() || UIM->GetUI("FullStoneResearchCost")->IsMousePressed()) &&
 			((SD->GetStone() >= 20 && !SceneData::GetInstance()->bFullStoneResearch) || bGodMode))
 		{
 			SD->SetStone(SD->GetStone() - 20);
 			SceneData::GetInstance()->bFullStoneResearch = true;
 			UIManager::GetInstance()->GetUI("FullStoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
+			UIM->GetUI("FullStoneResearchCost")->uiComponents_list[UIGameButton::COMPONENT_TEXT].text = "UNLOCKED";
 			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//fullstonehouse.tga");
 		}
 		return;
