@@ -3555,10 +3555,10 @@ void SceneSP::Update(double dt)
 					}
 					else
 					{
-						//Clicked empty space
+						// Clicked a grid point
 						if (isPointInGrid(selectedPt))
 						{				
-							//If it is a villager
+							// If it is a villager
 							Villager* goVil = dynamic_cast<Villager*>(selected);
 							if (goVil)
 							{
@@ -3569,7 +3569,7 @@ void SceneSP::Update(double dt)
 							}
 							else
 							{
-								//If it is a building
+								// If it is a building
 								Building* goBuilding = dynamic_cast<Building*>(selected);
 								if (goBuilding)
 								{
@@ -3684,10 +3684,10 @@ void SceneSP::Update(double dt)
 			if (clickTimer > 0.3f)
 			{
 				selected->m_nextState = SMManager::GetInstance()->GetSM(selected->smID)->GetState("PickedUp");
-				CSoundEngine::GetInstance()->PlayASound("gasp");
 				selected->pickupPt = selected->currentPt;
 				clickTimer = 0.f;
 				hand->SetState(EffectHand::HAND_GRAB_OBJECT);
+				CSoundEngine::GetInstance()->PlayASound("gasp");
 				leftClick = false;
 			}
 		}

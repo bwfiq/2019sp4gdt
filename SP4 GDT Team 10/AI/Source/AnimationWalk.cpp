@@ -43,7 +43,7 @@ void AnimationWalk::Update(float dt)
 	TranslateOffset.SetToTranslation(0, 1, 0);
 	RevertTranslateOffset.SetToTranslation(0, -1, 0);
 	Translate.SetToTranslation(0, currentYTranslation, 0);
-	CSoundEngine::GetInstance()->PlayASound("step",true);
+	//CSoundEngine::GetInstance()->PlayASound("step",true);
 	//Set current transformation
 	AnimationBase::Update(dt);
 }
