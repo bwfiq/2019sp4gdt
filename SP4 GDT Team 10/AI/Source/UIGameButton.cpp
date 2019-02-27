@@ -154,6 +154,7 @@ void UIGameButton::Update(float dt)
 				, new MessageBuildBuildings(GameObject::GO_WOODSHED));
 			break;
 		}
+		CSoundEngine::GetInstance()->PlayASound("selection");
 	}
 }
 

@@ -771,24 +771,24 @@ void SceneSP::Init()
 
 	CSoundEngine::GetInstance()->Init();
 	CSoundEngine::GetInstance()->AddSound("bg",			"Audio//bgmusic.mp3");
-	CSoundEngine::GetInstance()->AddSound("sea",		"Audio//sea.wav");
-	CSoundEngine::GetInstance()->AddSound("selection",	"Audio//selection.wav");
-	CSoundEngine::GetInstance()->AddSound("step",		"Audio//step.wav");
-	CSoundEngine::GetInstance()->AddSound("jump",		"Audio//jump.wav");
+	CSoundEngine::GetInstance()->AddSound("building",	"Audio//building.wav");
+	CSoundEngine::GetInstance()->AddSound("chopping",	"Audio//chopping.wav");
+	CSoundEngine::GetInstance()->AddSound("death",		"Audio//death.wav");
+	CSoundEngine::GetInstance()->AddSound("earthquake",	"Audio//earthquake.wav");
 	CSoundEngine::GetInstance()->AddSound("gasp",		"Audio//gasp.wav");
 	CSoundEngine::GetInstance()->AddSound("grunt",		"Audio//grunt.wav");
-	CSoundEngine::GetInstance()->AddSound("rumble",		"Audio//rumble.wav");
-	CSoundEngine::GetInstance()->AddSound("earthquake",	"Audio//earthquake.wav");
-	CSoundEngine::GetInstance()->AddSound("waves",		"Audio//waves.wav");
-	CSoundEngine::GetInstance()->AddSound("death",		"Audio//death.wav");
+	CSoundEngine::GetInstance()->AddSound("hunting",	"Audio//hunting.wav");
+	CSoundEngine::GetInstance()->AddSound("jump",		"Audio//jump.wav");
 	CSoundEngine::GetInstance()->AddSound("mining",		"Audio//mining.wav");
-	CSoundEngine::GetInstance()->AddSound("chopping",	"Audio//chopping.wav");
+	CSoundEngine::GetInstance()->AddSound("munching",	"Audio//munching.wav");
 	CSoundEngine::GetInstance()->AddSound("oink1",		"Audio//oink1.wav");
 	CSoundEngine::GetInstance()->AddSound("oink2",		"Audio//oink2.wav");
-	CSoundEngine::GetInstance()->AddSound("munching",	"Audio//munching.wav");
-	CSoundEngine::GetInstance()->AddSound("hunting",	"Audio//hunting.wav");
+	CSoundEngine::GetInstance()->AddSound("rumble",		"Audio//rumble.wav");
 	CSoundEngine::GetInstance()->AddSound("rustling",	"Audio//rustling.wav");
-	CSoundEngine::GetInstance()->AddSound("building",	"Audio//building.wav");
+	CSoundEngine::GetInstance()->AddSound("sea",		"Audio//sea.wav");
+	CSoundEngine::GetInstance()->AddSound("selection",	"Audio//jump.wav");
+	CSoundEngine::GetInstance()->AddSound("step",		"Audio//step.wav");
+	CSoundEngine::GetInstance()->AddSound("waves",		"Audio//waves.wav");
 
 	game_state = G_INPLAY; // to save the camera pos
 	ChangeState(G_SPLASHSCREEN);
@@ -3285,9 +3285,15 @@ void SceneSP::Update(double dt)
 				CSoundEngine::GetInstance()->PlayASound("selection");
 			}
 			if (UIM->GetUI("optionsbutton")->IsMousePressed())
+			{
 				ChangeState(G_OPTIONS);
+				CSoundEngine::GetInstance()->PlayASound("selection");
+			}
 			if (UIM->GetUI("quitbutton")->IsMousePressed())
+			{
 				Application::GetInstance().QuitGame();
+				CSoundEngine::GetInstance()->PlayASound("selection");
+			}
 			// hover effects
 			if (UIM->GetUI("startbutton")->IsMouseHovered())
 				UIM->GetUI("startbutton")->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 1.f;
@@ -3318,7 +3324,10 @@ void SceneSP::Update(double dt)
 	{
 		// triggers
 		if (UIM->GetUI("backbutton")->IsMousePressed())
+		{
 			ChangeState(G_MAINMENU);
+			CSoundEngine::GetInstance()->PlayASound("selection");
+		}
 		return;
 	}
 	break;
@@ -3335,6 +3344,7 @@ void SceneSP::Update(double dt)
 			UIM->GetUI("WoodResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 			UIM->GetUI("WoodResearchCost")->uiComponents_list[UIGameButton::COMPONENT_TEXT].text = "UNLOCKED";
 			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//house.tga");
+			CSoundEngine::GetInstance()->PlayASound("selection");
 		}
 		else if (SceneData::GetInstance()->bWoodResearch && 
 			 (UIM->GetUI("StoneResearch")->IsMousePressed() || UIM->GetUI("StoneResearchCost")->IsMousePressed()) &&
@@ -3346,6 +3356,7 @@ void SceneSP::Update(double dt)
 			UIManager::GetInstance()->GetUI("StoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 			UIM->GetUI("StoneResearchCost")->uiComponents_list[UIGameButton::COMPONENT_TEXT].text = "UNLOCKED";
 			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//stonehouse.tga");
+			CSoundEngine::GetInstance()->PlayASound("selection");
 		}
 		else if (SceneData::GetInstance()->bStoneResearch &&
 			 (UIM->GetUI("FullStoneResearch")->IsMousePressed() || UIM->GetUI("FullStoneResearchCost")->IsMousePressed()) &&
@@ -3356,6 +3367,7 @@ void SceneSP::Update(double dt)
 			UIManager::GetInstance()->GetUI("FullStoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 			UIM->GetUI("FullStoneResearchCost")->uiComponents_list[UIGameButton::COMPONENT_TEXT].text = "UNLOCKED";
 			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//fullstonehouse.tga");
+			CSoundEngine::GetInstance()->PlayASound("selection");
 		}
 		return;
 	}
@@ -3366,7 +3378,10 @@ void SceneSP::Update(double dt)
 			ChangeState(G_INPLAY);
 		// button pressin
 		if (UIM->GetUI("backbutton")->IsMousePressed())
+		{
 			ChangeState(G_INPLAY);
+			CSoundEngine::GetInstance()->PlayASound("selection");
+		}
 		return;
 	}
 	break;
@@ -3478,6 +3493,7 @@ void SceneSP::Update(double dt)
 			iCurrItrVillagers = (temp + 1) % m_VillagerList.size();
 		}
 		selected = m_VillagerList[iCurrItrVillagers];
+		CSoundEngine::GetInstance()->PlayASound("selection");
 	}
 
 	Vector3 clickTarget = NULL;
@@ -3565,6 +3581,7 @@ void SceneSP::Update(double dt)
 											goBuilding->eCurrState = Building::COMPLETED;
 										bShowGrid = false;
 										EM->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, selected->pos);
+										CSoundEngine::GetInstance()->PlayASound("selection");
 									}
 								}
 							}
@@ -3645,6 +3662,7 @@ void SceneSP::Update(double dt)
 									goBuilding->eCurrState = Building::COMPLETED;
 								bShowGrid = false;
 								EM->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, selected->pos);
+								CSoundEngine::GetInstance()->PlayASound("selection");
 							}
 
 						}
@@ -3761,7 +3779,6 @@ void SceneSP::Update(double dt)
 
 	if (bWorldEnd)
 		fWaterLevel += dt * 0.01f;
-
 
 	ProjectileManager::GetInstance()->Update(dt * m_speed);
 
