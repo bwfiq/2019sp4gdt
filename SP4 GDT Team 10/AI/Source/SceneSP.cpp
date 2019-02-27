@@ -84,6 +84,9 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 	for (auto UI : m_coreUi)
 		UI->bIsDone = true;
 	m_coreUi.clear();
+	for (auto UI : m_selectedUi)
+		UI->bIsDone = true;
+	m_selectedUi.clear();
 	UIBase*	newUI;
 	float worldRadius = SceneData::GetInstance()->GetNoGrid() * SceneData::GetInstance()->GetGridSize() * 0.5f;
 	Application::GetInstance().SetMouseVisiblity(true);
@@ -209,43 +212,23 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 				m_coreUi.push_back(newUI);*/
 
 				//first column
-				newUI = new UIResearchButton("", 0.25f, 0.65f);
+				newUI = new UIResearchButton("", 0.25f, 0.45f);
 				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("woodResearch");
 				if (SceneData::GetInstance()->bWoodResearch)
 					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 				UIManager::GetInstance()->AddUI("WoodResearch", newUI);
 				m_coreUi.push_back(newUI);
-				newUI = new UIResearchButton("", 0.25f, 0.45f);
+				newUI = new UIResearchButton("", 0.45f, 0.45f);
 				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("stoneResearch");
 				if (SceneData::GetInstance()->bStoneResearch)
 					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 				UIManager::GetInstance()->AddUI("StoneResearch", newUI);
 				m_coreUi.push_back(newUI);
-				newUI = new UIResearchButton("", 0.25f, 0.25f);
+				newUI = new UIResearchButton("", 0.65f, 0.45f);
 				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("fullStoneResearch");
 				if (SceneData::GetInstance()->bFullStoneResearch)
 					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 				UIManager::GetInstance()->AddUI("FullStoneResearch", newUI);
-				m_coreUi.push_back(newUI);
-
-				//second column
-				newUI = new UIResearchButton("", 0.5f, 0.65f);
-				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("whitequad");
-				if (SceneData::GetInstance()->bAnimalHunting)
-					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
-				UIManager::GetInstance()->AddUI("animalHunting", newUI);
-				m_coreUi.push_back(newUI);
-				newUI = new UIResearchButton("", 0.5f, 0.45f);
-				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("whitequad");
-				if (SceneData::GetInstance()->bAnimalTaming)
-					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
-				UIManager::GetInstance()->AddUI("animalTaming", newUI);
-				m_coreUi.push_back(newUI);
-				newUI = new UIResearchButton("", 0.5f, 0.25f);
-				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("whitequad");
-				if (SceneData::GetInstance()->bAnimalBreeding)
-					newUI->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
-				UIManager::GetInstance()->AddUI("animalBreeding", newUI);
 				m_coreUi.push_back(newUI);
 
 			}
@@ -2826,6 +2809,8 @@ void SceneSP::UpdateSelectedUI()
 		UI->AddTween(newTween);
 		++increment;
 	}
+	/*for (auto UI : m_selectedUi)
+		UI->bIsDone = true;*/
 	m_selectedUi.clear();
 	reticle->selected = selected;
 	if (selected == NULL) return;
@@ -3224,28 +3209,6 @@ void SceneSP::Update(double dt)
 			SceneData::GetInstance()->bFullStoneResearch = true;
 			UIManager::GetInstance()->GetUI("FullStoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//fullstonehouse.tga");
-		}
-
-		if (UIM->GetUI("animalHunting")->IsMousePressed() &&
-			((SD->GetFood() >= 5 && !SceneData::GetInstance()->bAnimalHunting) || bGodMode))
-		{
-			SD->SetFood(SD->GetFood() - 5);
-			SceneData::GetInstance()->bAnimalHunting = true;
-			UIManager::GetInstance()->GetUI("animalHunting")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
-		}
-		else if (SceneData::GetInstance()->bAnimalHunting && UIM->GetUI("animalTaming")->IsMousePressed() &&
-			((SD->GetFood() >= 10 && !SceneData::GetInstance()->bAnimalTaming) || bGodMode))
-		{
-			SD->SetFood(SD->GetFood() - 10);
-			SceneData::GetInstance()->bAnimalTaming = true;
-			UIManager::GetInstance()->GetUI("animalTaming")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
-		}
-		else if (SceneData::GetInstance()->bAnimalTaming && UIM->GetUI("animalBreeding")->IsMousePressed() &&
-			((SD->GetFood() >= 20 && !SceneData::GetInstance()->bAnimalBreeding) || bGodMode))
-		{
-			SD->SetFood(SD->GetFood() - 20);
-			SceneData::GetInstance()->bAnimalBreeding = true;
-			UIManager::GetInstance()->GetUI("animalBreeding")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 		}
 		return;
 	}
@@ -4100,7 +4063,7 @@ void SceneSP::Update(double dt)
 		case GameObject::GO_ALTAR:
 		{
 			Altar* goAltar = static_cast<Altar*>(go);
-			static const float MAX_FOOD_TIMER = 1.f; //Rate for food to be decreased
+			static const float MAX_FOOD_TIMER = 3.f; //Rate for food to be decreased
 			static float fFoodtimer = MAX_FOOD_TIMER;
 			if (goAltar->iFoodOffered > 0)
 			{
