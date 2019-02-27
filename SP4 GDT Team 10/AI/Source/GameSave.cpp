@@ -33,7 +33,7 @@
 using namespace rapidjson;
 GameSave::GameSave()
 {
-	filename = "temp.json";
+	filename = "output.json";
 	gameFile.SetObject();
 }
 
@@ -52,8 +52,6 @@ bool GameSave::LoadGame()
 	{
 		std::cout << "hi, file does not exist, rapidjson" << std::endl;
 		fp = fopen("default.json", "rb"); // non-Windows use "r"
-
-		return false;
 	}
 	else
 	{
@@ -1859,7 +1857,6 @@ GameObject * GameSave::LoadPig(rapidjson::Value & pigValue)
 	goPig->active = true;
 
 	return goPig;
-}
 }
 
 CalamityBase* GameSave::LoadCalamity(rapidjson::Value& calamityValue)
