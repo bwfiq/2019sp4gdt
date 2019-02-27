@@ -286,15 +286,16 @@ void EffectManager::DoPrefabEffect(EFFECT_PREFABS prefab, Vector3 goPos)
 	}
 	case PREFAB_VILLAGER_FIGHT:
 	{
-		for (int i = 0; i < 2; ++i)
+		//for (int i = 0; i < 3; ++i)
 		{
 			EffectCloud* newCloud = new EffectCloud(
-				goPos + Vector3(Math::RandFloatMinMax(-0.5f, 0.5f), Math::RandFloatMinMax(0.f, 1.f), Math::RandFloatMinMax(-0.5f, 0.5f)) * 0.75f
-				, Math::RandFloatMinMax(0.3f, 0.5f)
-				, Vector3(1, 1, 1) * Math::RandFloatMinMax(0.8f, 1.f)
+				goPos + Vector3(Math::RandFloatMinMax(-0.5f, 0.5f), Math::RandFloatMinMax(0.1f, 0.5f), Math::RandFloatMinMax(-0.5f, 0.5f)) * 0.75f
+				, Math::RandFloatMinMax(0.25f, 0.5f)
+				, Vector3(1, 1, 1) * Math::RandFloatMinMax(0.9f, 1.3f)
+				, Vector3(1, 1, 1) * Math::RandFloatMinMax(0.1f, 0.2f)
 			);
-			newCloud->vel *= 0.25f;
-			newCloud->acc *= 0.25f;
+			newCloud->vel *= 0.65f;
+			newCloud->acc *= 1.25f;
 			this->AddEffect(newCloud);
 		}
 		break;
