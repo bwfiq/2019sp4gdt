@@ -6,6 +6,8 @@ Pig::Pig(GAMEOBJECT_TYPE typeValue)
 	state(WILD),
 	fEnergy(50),
 	fIdleTimer(3),
+	iFoodAmount(10), 
+	fTimer(1),
 	movement(WALKING)
 {
 	std::cout << "Pig Constructor" << std::endl;

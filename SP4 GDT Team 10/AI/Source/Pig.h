@@ -26,6 +26,8 @@ struct Pig : public GameObject
 	float fActionTimer;
 	float fIdleTimer;
 	float fEnergy;
+	float fTimer;
+	int iFoodAmount;
 
 	State state;
 	Movement movement;
