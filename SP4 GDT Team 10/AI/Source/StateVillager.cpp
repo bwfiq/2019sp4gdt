@@ -71,7 +71,6 @@ void StateIdle::Enter(GameObject* m_go)
 void StateIdle::Update(double dt, GameObject* m_go)
 {
 
-
 	if (m_go->goTarget != NULL || m_go->target != NULL)
 	{
 		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Path");
@@ -418,15 +417,21 @@ void StatePath::Update(double dt, GameObject * m_go)
 						case GameObject::GO_BUSH:
 							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Foraging");
 							return;
+							break;
 						case GameObject::GO_TREE:
 							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("ChopTree");
 							return;
+							break;
 						case GameObject::GO_MOUNTAIN:
 							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Mining");
 							return;
+							break;
 						case GameObject::GO_HOUSE:
 							m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
 							return;
+							break;
+						default:
+							break;
 						}
 					}
  					Pig* goPig = dynamic_cast<Pig*>(m_go->goTarget);
@@ -434,6 +439,8 @@ void StatePath::Update(double dt, GameObject * m_go)
 					{
 						//If it is a pig
 						//Use bools for actions to be done
+						m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Hunting");
+						return;
 					}
 					/* //For Enemies
 					case GameObject::GO_ENEMY:
@@ -660,6 +667,89 @@ void StateForaging::Update(double dt, GameObject * m_go)
 }
 
 void StateForaging::Exit(GameObject * m_go)
+{
+	Villager* goVil = static_cast<Villager*>(m_go);
+	goVil->fActionTimer = 0;
+
+	m_go->scale *= 5;
+	m_go->pos.y = m_go->scale.y * 0.5f;
+	m_go->ClearAnimation();
+	goVil->mEquipment = NULL;
+}
+
+//StateHunting
+StateHunting::StateHunting(const std::string & stateID)
+	: State(stateID)
+{
+}
+
+StateHunting::~StateHunting()
+{
+}
+
+void StateHunting::Enter(GameObject * m_go)
+{
+	std::cout << "Enter StateHunting State" << std::endl;
+	Villager* goVil = static_cast<Villager*>(m_go);
+	goVil->fActionTimer = static_cast<Pig*>(m_go->goTarget)->fTimer;
+	m_go->scale *= 0.2f;
+	m_go->goTarget->scale *= 0.2f;
+	m_go->pos.x += m_go->goTarget->scale.x * 0.3f;
+	m_go->pos.y = m_go->scale.y * 0.5f;
+	m_go->pos.z += m_go->goTarget->scale.z * 0.3f;
+	m_go->direction.Set(-1, 0, -1);
+	m_go->direction.Normalize();
+
+	SceneData* SD = SceneData::GetInstance();
+	goVil->mEquipment = SD->GetMesh("basket");
+	goVil->GiveAnimation(new AnimationChopping());
+}
+
+void StateHunting::Update(double dt, GameObject * m_go)
+{
+
+	if (m_go->goTarget == NULL ||!m_go->goTarget->active)
+	{
+		m_go->goTarget = NULL;
+		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+		return;
+	}
+	//In StateHunting, the goTarget must be a pig class
+	if (m_go->goTarget->type != GameObject::GO_PIG)
+	{
+		std::cout << "Wrong State : Hunting" << std::endl;
+		return;
+	}
+
+	Pig* pigGo = static_cast<Pig*>(m_go->goTarget);
+	Villager* vGo = static_cast<Villager*>(m_go);
+	if (pigGo->state == Pig::WILD)
+	{
+		if (vGo->fActionTimer <= 0.f)
+		{
+			//Insert gathering time here
+			vGo->iFoodStored = Math::Min((vGo->fStats[Villager::HUNTING] * pigGo->iFoodAmount) + vGo->iFoodStored, (float)vGo->iMaxFoodStored);
+			pigGo->m_nextState = SMManager::GetInstance()->GetSM(pigGo->smID)->GetState("Dying");
+			m_go->goTarget = NULL;
+
+			MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_NEAREST_GRANARY, 1);
+			PostOffice::GetInstance()->Send("Scene", messagewru);
+			m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+			return;
+		}
+		else
+		{
+			vGo->fActionTimer -= dt;
+		}
+	}
+	else
+	{
+		m_go->goTarget = NULL;
+		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+	}
+}
+
+void StateHunting::Exit(GameObject * m_go)
 {
 	Villager* goVil = static_cast<Villager*>(m_go);
 	goVil->fActionTimer = 0;

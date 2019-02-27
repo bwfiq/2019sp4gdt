@@ -12,6 +12,7 @@ Dosomething
 ChopTree
 Foraging
 Attack
+Hunting
 
 Picked up
 Dead
@@ -75,6 +76,19 @@ class StateForaging : public State
 public:
 	StateForaging(const std::string &stateID);
 	virtual ~StateForaging();
+	
+
+	//To be implemented by concrete states
+	virtual void Enter(GameObject* m_go);
+	virtual void Update(double dt, GameObject* m_go);
+	virtual void Exit(GameObject* m_go);
+};
+
+class StateHunting : public State
+{
+public:
+	StateHunting(const std::string &stateID);
+	virtual ~StateHunting();
 	
 
 	//To be implemented by concrete states

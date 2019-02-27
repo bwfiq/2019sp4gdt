@@ -44,4 +44,6 @@ void AnimationPanic::Update(float dt)
 	Translate.SetToTranslation(dir.x, currentYTranslation, dir.z);
 	//Set current transformation
 	AnimationBase::Update(dt);
+
+	
 }
