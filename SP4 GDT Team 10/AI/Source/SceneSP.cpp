@@ -1144,18 +1144,41 @@ bool SceneSP::Handle(Message* message)
 			delete message;
 			return false;
 		}
+		std::vector<UIBase*> m_buildUIs;
 		UIBase* newUI = new UIGameButton(UIGameButton::BUTTON_BUILD_LOGS, 0);
 		UIManager::GetInstance()->AddUI("uiBuild_Logs", newUI);
 		m_selectedUi.push_back(newUI);
+		m_buildUIs.push_back(newUI);
 		newUI = new UIGameButton(UIGameButton::BUTTON_BUILD_GRANARY, 1);
 		UIManager::GetInstance()->AddUI("uiBuild_Granary", newUI);
 		m_selectedUi.push_back(newUI);
+		m_buildUIs.push_back(newUI);
 		newUI = new UIGameButton(UIGameButton::BUTTON_BUILD_HOUSE, 2);
 		UIManager::GetInstance()->AddUI("uiBuild_House", newUI);
 		m_selectedUi.push_back(newUI);
+		m_buildUIs.push_back(newUI);
 		newUI = new UIGameButton(UIGameButton::BUTTON_BUILD_WOODSHED, 3);
 		UIManager::GetInstance()->AddUI("uiBuild_Woodshed", newUI);
 		m_selectedUi.push_back(newUI);
+		m_buildUIs.push_back(newUI);
+		int increment = 0;
+		for (auto UI : m_buildUIs)
+		{
+			Vector3 origPos = UI->pos;
+			//UI->pos.Set(UI->pos.x, 1.3f, UI->pos.z);
+			UI->pos.Set(1.35f, UI->pos.y, UI->pos.z);
+			UITween* newTween = new UITween(
+				UI
+				, 0.35f
+				, UITween::ES_CUBIC
+				, UITween::ED_OUT
+				, 0
+				, increment * 0.075f
+			);
+			newTween->properties_goal["pos"] = origPos;
+			UI->AddTween(newTween);
+			++increment;
+		}
 		UIManager::GetInstance()->GetUI("uiSelected_Chiefhut_Build")->bActive = false;
 
 		delete message;
@@ -2783,8 +2806,23 @@ void SceneSP::AStarSingleGrid(GameObject * go, GridPt target)
 
 void SceneSP::UpdateSelectedUI()
 {
+	int increment = 0;
 	for (auto UI : m_selectedUi)
-		UI->bIsDone = true;
+	{
+		//UI->bIsDone = true;
+		UITween* newTween = new UITween(
+			UI
+			, 0.5f
+			, UITween::ES_BACK
+			, UITween::ED_IN
+			, 0
+			, increment * 0.05f
+			, UITween::CALLBACK_SET_UI_DONE
+		);
+		newTween->properties_goal["pos"] = Vector3(UI->pos.x + 0.5f, UI->pos.y, UI->pos.z);
+		UI->AddTween(newTween);
+		++increment;
+	}
 	m_selectedUi.clear();
 	reticle->selected = selected;
 	if (selected == NULL) return;
@@ -2842,6 +2880,30 @@ void SceneSP::UpdateSelectedUI()
 		UIManager::GetInstance()->AddUI("uiSelected_Environment_Info", newUI);
 		m_selectedUi.push_back(newUI);
 	}
+	this->DoSelectedUITween();
+}
+
+void SceneSP::DoSelectedUITween()
+{
+	// apply tweens to the selected UI << START >>
+	int increment = 0;
+	for (auto UI : m_selectedUi)
+	{
+		Vector3 origPos = UI->pos;
+		UI->pos.Set(1.35f, UI->pos.y, UI->pos.z);
+		UITween* newTween = new UITween(
+			UI
+			, 0.3f
+			, UITween::ES_CUBIC
+			, UITween::ED_OUT
+			, 0
+			, increment * 0.075f
+		);
+		newTween->properties_goal["pos"] = origPos;
+		UI->AddTween(newTween);
+		++increment;
+	}
+	// apply tweens to the selected UI << END >>
 }
 
 void SceneSP::Reset()

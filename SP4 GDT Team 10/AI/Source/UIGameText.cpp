@@ -291,6 +291,7 @@ void UIGameText::Update(float dt)
 	}
 		break;
 	}
+	UIBase::UpdateTween(dt);
 }
 
 void UIGameText::SetText(std::string text)

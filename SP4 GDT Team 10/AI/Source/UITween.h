@@ -9,7 +9,7 @@ class UIBase;
 
 class UITween {
 public:
-	enum UI_EASINGSTYLE {
+	enum TWEEN_EASINGSTYLE {
 		ES_LINEAR,
 		ES_CUBIC,
 		ES_SINE,
@@ -17,21 +17,28 @@ public:
 
 		ES_TOTAL
 	};
-	enum UI_EASINGDIRECTION {
+	enum TWEEN_EASINGDIRECTION {
 		ED_OUT,
 		ED_IN,
 		ED_INOUT,
 
 		ED_TOTAL
 	};
+	enum TWEEN_CALLBACK {
+		CALLBACK_NONE,
+		CALLBACK_SET_UI_DONE,
+
+		CALLBACK_TOTAL
+	};
 	UITween(
 		UIBase* ui,
 		float duration,
-		UI_EASINGSTYLE easingStyle = ES_LINEAR,
-		UI_EASINGDIRECTION easingDirection = ED_OUT,
+		TWEEN_EASINGSTYLE easingStyle = ES_LINEAR,
+		TWEEN_EASINGDIRECTION easingDirection = ED_OUT,
 		int repeatCount = 0,
 		//bool reverses = false,
-		float delayTime = 0
+		float delayTime = 0,
+		TWEEN_CALLBACK callBack = CALLBACK_NONE
 	);
 	~UITween();
 
@@ -47,11 +54,14 @@ protected:
 	float fDuration;
 	int iRepeatCount, iRepeatRequired;
 	//bool bReverses;
-	UI_EASINGSTYLE easingStyle;
-	UI_EASINGDIRECTION easingDirection;
+	TWEEN_EASINGSTYLE easingStyle;
+	TWEEN_EASINGDIRECTION easingDirection;
+	TWEEN_CALLBACK callBack;
 	std::map<std::string, Vector3> properties_start;
 	bool bIsDone;
 
 	float(*easingFunction)(float, float, float, float);
+
+	void TweenCallback();
 private:
 };
