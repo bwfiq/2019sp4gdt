@@ -84,9 +84,9 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 	for (auto UI : m_coreUi)
 		UI->bIsDone = true;
 	m_coreUi.clear();
-	for (auto UI : m_selectedUi)
+	/*for (auto UI : m_selectedUi)
 		UI->bIsDone = true;
-	m_selectedUi.clear();
+	m_selectedUi.clear();*/
 	UIBase*	newUI;
 	float worldRadius = SceneData::GetInstance()->GetNoGrid() * SceneData::GetInstance()->GetGridSize() * 0.5f;
 	Application::GetInstance().SetMouseVisiblity(true);
@@ -198,7 +198,7 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 			UIManager::GetInstance()->AddUI("ui_Text_DailyRequirement", newUI);
 			m_coreUi.push_back(newUI);
 
-			UpdateSelectedUI();
+			//UpdateSelectedUI();
 
 			if (newstate == G_RESEARCHTREE)
 			{
@@ -3063,8 +3063,65 @@ void SceneSP::Update(double dt)
 
 	SD->SetMousePos_World(mousePos);
 	
-	UIM->Update(dt);
+	//debug stuff
+	if (Application::IsKeyPressed(VK_OEM_MINUS))
+	{
+		m_speed = Math::Max(0.f, m_speed - 0.1f);
+	}
+	if (Application::IsKeyPressed(VK_OEM_PLUS))
+	{
+		m_speed += 0.1f;
+	}
+	if (KC->IsKeyPressed('G'))
+	{
+		bShowGrid = !bShowGrid;
+	}
+	if (KC->IsKeyPressed('T'))
+	{
+		bGodMode = !bGodMode;
+	}
 
+	// ui updates
+	UIM->Update(dt);
+	// goals
+	switch (SD->GetCurrMonth())
+	{
+	case 1:
+		bGoalAchieved = SD->GetFood() >= 1;
+		break;
+	case 2:
+		bGoalAchieved = SD->GetWood() >= 1;
+		break;
+	default:
+		break;
+	}
+	if (UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement") != NULL)
+	{
+		for (int i = 0; i <= UIGameText::COMPONENT_TEXT_5 - UIGameText::COMPONENT_TEXT_1; ++i)
+		{
+			UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_1 + i].text = ""; // clear ui
+		}
+		if (bGoalAchieved)
+			UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_5].text = "ACHIEVED";
+		else
+		{
+			switch (SD->GetCurrMonth())
+			{
+			case 1:
+				UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_5].text = "Collect";
+				UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_4].text = "20 Food";
+				break;
+			case 2:
+				UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_5].text = "Collect";
+				UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_4].text = "20 Wood";
+				break;
+			default:
+				UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_5].text = "No Goal";
+				break;
+			}
+		}
+	}
+	
 	switch (game_state)
 	{
 	case G_SPLASHSCREEN:
@@ -3252,32 +3309,23 @@ void SceneSP::Update(double dt)
 	{
 		Application::GetInstance().SetMouseVisiblity(false);
 	}
-	if (KC->IsKeyPressed('P')) {
+	if (KC->IsKeyPressed('P') && bGodMode)
 		CM->AddToCalamityQueue(new CalamityEarthquake());
-		SD->SetReligionValue(((int)SD->GetReligionValue() % (int)SD->GetMaxReligionValue()) + 25);
-	}
-	else if (KC->IsKeyPressed('O')) {
+		//SD->SetReligionValue(((int)SD->GetReligionValue() % (int)SD->GetMaxReligionValue()) + 25);
+	else if (KC->IsKeyPressed('O') && bGodMode)
 		CM->AddToCalamityQueue(new CalamityTsunami());
-	}
-	else if (KC->IsKeyPressed('0')) {
+	else if (KC->IsKeyPressed('0') && bGodMode)
 		CM->AddToCalamityQueue(new CalamityTornado());
-	}
-	else if (KC->IsKeyPressed('9')) {
+	else if (KC->IsKeyPressed('9') && bGodMode)
 		CM->AddToCalamityQueue(new CalamityBlizzard());
-	}
 
 	if (KC->IsKeyPressed('S'))
-	{
 		gameSave.SaveGame();
-	}
 	if (KC->IsKeyPressed('L'))
-	{
 		gameSave.LoadGame();
-	}
 	if (KC->IsKeyPressed('C'))
-	{
 		gameSave.ResetGame();
-	}
+
 	if (KC->IsKeyPressed('U'))
 	{
 		tempCamera = camera;
@@ -3288,21 +3336,13 @@ void SceneSP::Update(double dt)
 		tempCamera = camera;
 		ChangeState(G_INGAMEOPTIONS);
 	}
-	if (Application::IsKeyPressed(VK_OEM_MINUS))
-	{
-		m_speed = Math::Max(0.f, m_speed - 0.1f);
-	}
-	if (Application::IsKeyPressed(VK_OEM_PLUS))
-	{
-		m_speed += 0.1f;
-	}
 
 	float LSPEED = 10.0f;
 	float temp34 = fYPos;
-	if (Application::IsKeyPressed('I'))
+	if (Application::IsKeyPressed('I') && bGodMode)
 		fYPos += 0.01f;
 		//lights[0].position.z -= (float)(LSPEED * dt);
-	if (Application::IsKeyPressed('K'))
+	if (Application::IsKeyPressed('K') && bGodMode)
 		fYPos -= 0.01f;
 		//lights[0].position.z += (float)(LSPEED * dt);
 	if (Application::IsKeyPressed('J'))
@@ -3317,35 +3357,14 @@ void SceneSP::Update(double dt)
 	if (fYPos != temp34)
 		std::cout << fYPos << std::endl;
 
-	if (Application::IsKeyPressed('Z'))
+	if (Application::IsKeyPressed('Z') && bGodMode)
 		lights[0].type = Light::LIGHT_POINT;
-	else if (Application::IsKeyPressed('X'))
+	else if (Application::IsKeyPressed('X') && bGodMode)
 		lights[0].type = Light::LIGHT_DIRECTIONAL;
-	else if (Application::IsKeyPressed('C'))
-		lights[0].type = Light::LIGHT_SPOT;
+	else if (Application::IsKeyPressed('C') && bGodMode)
+		lights[0].type = Light::LIGHT_SPOT;	
 
-	//Input Section
-	static bool bPState = false;
-	if (!bPState && Application::IsKeyPressed('P'))
-	{
-		bPState = true;
-	}
-	else if (bPState && !Application::IsKeyPressed('P'))
-	{
-		bPState = false;
-		std::cout << "P UP" << std::endl;
-	}
-
-	if (KC->IsKeyPressed('G'))
-	{
-		bShowGrid = !bShowGrid;
-	}
-	if (KC->IsKeyPressed('T'))
-	{
-		bGodMode = !bGodMode;
-	}
-
-	if (KC->IsKeyPressed('B'))
+	if (KC->IsKeyPressed('B') && bGodMode)
 	{
 		if (selected == NULL)
 		{
@@ -3659,46 +3678,8 @@ void SceneSP::Update(double dt)
 	fSeaDeltaY = 0.0625f + 0.0625f * cosf(SD->GetElapsedTime());
 
 	if (bWorldEnd)
-	{
 		fWaterLevel += dt * 0.01f;
-	}
 
-	//goals
-	switch (SD->GetCurrMonth())
-	{
-	case 1:
-		bGoalAchieved = SD->GetFood() >= 1;
-		break;
-	case 2:
-		bGoalAchieved = SD->GetWood() >= 1;
-		break;
-	default:
-		bGoalAchieved = false;
-		break;
-	}
-	for (int i = 0; i <= UIGameText::COMPONENT_TEXT_5 - UIGameText::COMPONENT_TEXT_1; ++i)
-	{
-		UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_1 + i].text = ""; // clear ui
-	}
-	if (bGoalAchieved)
-		UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_5].text = "ACHIEVED";
-	else
-	{
-		switch (SD->GetCurrMonth())
-		{
-		case 1:
-			UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_5].text = "Collect";
-			UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_4].text = "20 Food";
-			break;
-		case 2:
-			UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_5].text = "Collect";
-			UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_4].text = "20 Wood";
-			break;
-		default:
-			UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement")->uiComponents_list[UIGameText::COMPONENT_TEXT_5].text = "No Goal";
-			break;
-		}
-	}
 
 	ProjectileManager::GetInstance()->Update(dt * m_speed);
 
