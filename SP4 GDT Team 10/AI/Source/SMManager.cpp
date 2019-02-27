@@ -44,6 +44,7 @@ StateMachine* SMManager::GetSM(const std::string& smID)
 		SMVillager->AddState(new StateInHut("InHut"));
 		SMVillager->AddState(new StateConstructing("Constructing"));
 		SMVillager->AddState(new StateMining("Mining"));
+		SMVillager->AddState(new StateHunting("Hunting"));
 		this->AddSM(SMVillager);
 		return SMVillager;
 	}
@@ -53,6 +54,7 @@ StateMachine* SMManager::GetSM(const std::string& smID)
 		SMPig->AddState(new StateIdle("Idle"));
 		SMPig->AddState(new StatePath("Path"));
 		SMPig->AddState(new StateEating("Eating"));
+		SMPig->AddState(new StateDying("Dying"));
 		this->AddSM(SMPig);
 		return SMPig;
 	}

@@ -26,4 +26,17 @@ public:
 	virtual void Exit(GameObject* m_go);
 };
 
+class StateDying : public State
+{
+public:
+	StateDying(const std::string &stateID);
+	virtual ~StateDying();
+	
+
+	//To be implemented by concrete states
+	virtual void Enter(GameObject* m_go);
+	virtual void Update(double dt, GameObject* m_go);
+	virtual void Exit(GameObject* m_go);
+};
+
 #endif

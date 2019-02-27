@@ -76,7 +76,8 @@ void StateEating::Update(double dt, GameObject * m_go)
 		if (goPig->fActionTimer <= 0.f)
 		{
 			//Insert gathering time here
-			goPig->fEnergy+= 40;
+			goPig->fEnergy += 40;
+			goPig->iFoodAmount += bushGo->iFoodAmount;
 			bushGo->eCurrState = Bush::DEPLETED;
 			m_go->goTarget = NULL;
 			m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
@@ -103,4 +104,41 @@ void StateEating::Exit(GameObject * m_go)
 	m_go->pos.y = m_go->scale.y * 0.5f;
 	m_go->ClearAnimation();
 	//goVil->mEquipment = NULL;
+}
+
+//StateDying
+StateDying::StateDying(const std::string & stateID)
+	: State(stateID)
+{
+}
+
+StateDying::~StateDying()
+{
+}
+
+void StateDying::Enter(GameObject * m_go)
+{
+	std::cout << "Enter Dying State" << std::endl;
+	std::cout << "Clearing existing m_go path" << std::endl;
+
+	while (!m_go->path.empty())
+	{
+		m_go->path.pop_back();
+	}
+}
+
+void StateDying::Update(double dt, GameObject * m_go)
+{
+	Pig* goPig = dynamic_cast<Pig*>(m_go);
+	if (goPig)
+	{
+		goPig->fEnergy = 0;
+		goPig->active = false;
+		EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_VILLAGER_DIE, goPig->pos);
+		CSoundEngine::GetInstance()->PlayASound("death");
+	}
+}
+
+void StateDying::Exit(GameObject * m_go)
+{
 }

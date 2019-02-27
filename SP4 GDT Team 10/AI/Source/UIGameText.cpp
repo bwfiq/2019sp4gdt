@@ -4,6 +4,8 @@
 #include "ConcreteMessages.h"
 #include "GameObject.h"
 #include "Building.h"
+#include "Villager.h"
+#include "Bush.h"
 
 UIGameText::UIGameText(TEXT_TYPE textType, GameObject* go) :
 	UIBase()
@@ -197,6 +199,8 @@ UIGameText::UIGameText(TEXT_TYPE textType, GameObject* go) :
 		
 		break;
 	case TEXT_SELECTED_VILLAGER:
+	{
+		Villager* goVil = dynamic_cast<Villager*>(go);
 		pos.Set(1, 0.25f);
 		scale.Set(250, 250);
 		anchorPoint.Set(1, 0);
@@ -208,8 +212,38 @@ UIGameText::UIGameText(TEXT_TYPE textType, GameObject* go) :
 		}
 		uiComponents_list[COMPONENT_TEXT_5].textSize *= 1.3f;
 		uiComponents_list[COMPONENT_TEXT_5].text = "Villager";
-		uiComponents_list[COMPONENT_TEXT_5].pos.x += 0.08f;
-		break;
+		//uiComponents_list[COMPONENT_TEXT_5].pos.x += 0.02f;
+		//villager fsm state, enum state(healthy, etc), enum stat(mining, etc)
+		uiComponents_list[COMPONENT_TEXT_4].text = "v Info v";
+		uiComponents_list[COMPONENT_TEXT_4].pos.x += 0.04f;
+		for (int i = 0; i <= COMPONENT_TEXT_3 - COMPONENT_TEXT_1; ++i)
+		{
+			uiComponents_list[COMPONENT_TEXT_1 + i].textSize *= 0.75f;
+			uiComponents_list[COMPONENT_TEXT_1 + i].pos.x -= 0.1f;
+		}
+		uiComponents_list[COMPONENT_TEXT_3].text = "Action:";
+		uiComponents_list[COMPONENT_TEXT_2].text = "Stat:";
+		uiComponents_list[COMPONENT_TEXT_1].text = "State: ";
+		switch (goVil->eCurrState)
+		{
+		case Villager::HEALTHY:
+			uiComponents_list[COMPONENT_TEXT_1].text += "Healthy";
+			break;
+		case Villager::PANIC:
+			uiComponents_list[COMPONENT_TEXT_1].text += "Panic";
+			break;
+		case Villager::TIRED:
+			uiComponents_list[COMPONENT_TEXT_1].text += "Tired";
+			break;
+		case Villager::SICKLY:
+			uiComponents_list[COMPONENT_TEXT_1].text += "Sickly";
+			break;
+		case Villager::DYING:
+			uiComponents_list[COMPONENT_TEXT_1].text += "Dying";
+			break;
+		}
+	}
+	break;
 	case TEXT_SELECTED_ENVIRONMENT:
 		pos.Set(1, 0.25f);
 		scale.Set(250, 250);
@@ -230,6 +264,19 @@ UIGameText::UIGameText(TEXT_TYPE textType, GameObject* go) :
 			uiComponents_list[COMPONENT_TEXT_5].pos.x += 0.22f;
 			uiComponents_list[COMPONENT_TEXT_3].text = "Food";
 			uiComponents_list[COMPONENT_TEXT_3].textColor.Set(99.f / 255.f, 170.f / 255.f, 71.f / 255.f);
+			uiComponents_list[COMPONENT_TEXT_2].textSize *= 0.75f;
+			uiComponents_list[COMPONENT_TEXT_2].text = "State: ";
+
+			Bush* goBush = dynamic_cast<Bush*>(go);
+			switch (goBush->eCurrState)
+			{
+			case Bush::LUSH:
+				uiComponents_list[COMPONENT_TEXT_2].text += "Lush";
+				break;
+			case Bush::DEPLETED:
+				uiComponents_list[COMPONENT_TEXT_2].text += "Depleted";
+				break;
+			}
 		}
 		else if (go->type == GameObject::GO_MOUNTAIN)
 		{
@@ -291,6 +338,7 @@ void UIGameText::Update(float dt)
 	}
 		break;
 	}
+	UIBase::UpdateTween(dt);
 }
 
 void UIGameText::SetText(std::string text)
