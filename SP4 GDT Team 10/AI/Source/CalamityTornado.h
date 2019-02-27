@@ -10,12 +10,12 @@ public:
 	virtual void Update(float dt);
 	virtual void Exit();
 private:
-	enum CALAMITY_EARTHQUAKE_STATE {
+	enum CALAMITY_TORNADO_STATE {
 		STATE_NONE,
 		STATE_STARTING,
 		STATE_STOPPING
 	};
-	CALAMITY_EARTHQUAKE_STATE state;
+	CALAMITY_TORNADO_STATE state;
 	float fUIPopupTime;
 	float fEffectTimer_Dirt;
 };
