@@ -566,6 +566,13 @@ rapidjson::Value GameSave::SaveCalamity(CalamityBase * go)
 		//Something
 		calamityName.SetString("Blizzard", allocator);
 		aCalamity.AddMember("Name", calamityName, allocator);
+
+		Value blizzardStuff(kObjectType);
+		blizzardStuff.AddMember("UI Timer", cBlizzard->fUIPopupTime, allocator);
+		blizzardStuff.AddMember("Blizzard Cloud Timer", cBlizzard->fEffectTimer_BlizzardCloud, allocator);
+		blizzardStuff.AddMember("State", cBlizzard->state, allocator);
+
+		aCalamity.AddMember("Earthquake Values", blizzardStuff, allocator);
 	}
 	else if (cEarthquake)
 	{
