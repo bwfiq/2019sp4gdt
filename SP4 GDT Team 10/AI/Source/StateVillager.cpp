@@ -540,6 +540,8 @@ void StateChopTree::Enter(GameObject * m_go)
 	m_go->direction.Set(-1, 0, -1);
 	m_go->direction.Normalize();
 
+	CSoundEngine::GetInstance()->PlayASound("chopping", true);
+
 	SceneData* SD = SceneData::GetInstance();
 	goVil->mEquipment = SD->GetMesh("hatchet");
 	m_go->GiveAnimation(new AnimationChopping());
@@ -591,6 +593,8 @@ void StateChopTree::Exit(GameObject * m_go)
 	m_go->pos.y = m_go->scale.y * 0.5f;
 	Villager* goVil = static_cast<Villager*>(m_go);
 	goVil->mEquipment = NULL;
+
+	CSoundEngine::GetInstance()->StopASound("chopping");
 
 	m_go->ClearAnimation();
 }
@@ -1029,6 +1033,8 @@ void StateMining::Enter(GameObject* m_go)
 	m_go->direction.Set(-1, 0, -1);
 	m_go->direction.Normalize();
 
+	CSoundEngine::GetInstance()->PlayASound("mining", true);
+
 	goVil->mEquipment = SD->GetMesh("pickaxe");
 	m_go->GiveAnimation(new AnimationConstructing());
 }
@@ -1079,6 +1085,8 @@ void StateMining::Exit(GameObject* m_go)
 	m_go->pos.y = m_go->scale.y * 0.5f;
 	Villager* goVil = static_cast<Villager*>(m_go);
 	goVil->mEquipment = NULL;
+
+	CSoundEngine::GetInstance()->StopASound("mining");
 
 	m_go->ClearAnimation();
 }
