@@ -335,6 +335,12 @@
     <ClCompile Include="Source\UITween.cpp">
       <Filter>UI\Tween</Filter>
     </ClCompile>
+    <ClCompile Include="Source\CalamityMeteorShower.cpp">
+      <Filter>Calamities\CalamityObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Meteor.cpp">
+      <Filter>GameObjects\Calamity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -615,6 +621,12 @@
     </ClInclude>
     <ClInclude Include="Source\UITween.h">
       <Filter>UI\Tween</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\CalamityMeteorShower.h">
+      <Filter>Calamities\CalamityObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Meteor.h">
+      <Filter>GameObjects\Calamity</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -138,8 +138,23 @@ void Camera::Update(double dt)
 		position += randShake;
 		target += randShake * 0.5f;
 	}
-		
-		break;
+	break;
+	case SHAKE_DESTRUCTION:
+	case SHAKE_METEOR:
+	{
+		float alpha = (fShakeInitialDuration - fShakeDuration) / fShakeInitialDuration;
+		float alphaReversed = 1.f - alpha;
+		float randFloat = Math::RandFloatMinMax(-fShakeIntensity, fShakeIntensity) * alphaReversed;
+		Vector3 randShake(randFloat, randFloat, randFloat);
+		position += randShake;
+		target += randShake * 0.5f;
+		fShakeDuration -= dt;
+		if (fShakeDuration <= 0)
+		{
+			this->shakeType = SHAKE_NONE;
+		}
+	}
+	break;
 	case SHAKE_NONE:
 		break;
 	}
@@ -223,7 +238,7 @@ void Camera::SetCamShake(int shakeType, float intensity, float duration)
 	}
 	this->shakeType = (CAMERA_SHAKE_TYPE)shakeType;
 	this->fShakeIntensity = intensity;
-	this->fShakeDuration = duration;
+	this->fShakeDuration = this->fShakeInitialDuration = duration;
 }
 
 void Camera::SetCamBounds(Vector3 bounds)

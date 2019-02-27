@@ -40,6 +40,7 @@ struct GameObject : public ObjectBase
 
 		GO_TSUNAMI,
 		GO_TORNADO,
+		GO_METEOR,
 
 		GO_TOTAL, //must be last
 	};

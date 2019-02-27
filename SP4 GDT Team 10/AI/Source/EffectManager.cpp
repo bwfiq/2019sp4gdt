@@ -300,6 +300,53 @@ void EffectManager::DoPrefabEffect(EFFECT_PREFABS prefab, Vector3 goPos)
 		}
 		break;
 	}
+	case PREFAB_METEOR_FIRE:
+	{
+		SceneData* SD = SceneData::GetInstance();
+		EffectDirt* newFire = new EffectDirt( //PRETEND THIS IS FIRE
+			goPos + Vector3(Math::RandFloatMinMax(-1, 1), Math::RandFloatMinMax(-1, 1), Math::RandFloatMinMax(-1, 1)) * 0.25f
+			, Math::RandFloatMinMax(0.5f, 1.f)
+			, Vector3(1, 1, 1) * Math::RandFloatMinMax(1.f, 1.5f)
+			//, Vector3(1, 1, 1) * Math::RandFloatMinMax(0.1f, 0.3f)
+		);
+		newFire->mesh = SceneData::GetInstance()->GetMesh("effect_blood");
+		newFire->bLightEnabled = false;
+		//newFire->vel *= 9;
+		//newFire->acc *= 9;
+		this->AddEffect(newFire);
+		break;
+	}
+	case PREFAB_METEOR_IMPACT:
+	{
+		SceneData* SD = SceneData::GetInstance();
+		for (int i = 0; i < 4; ++i)
+		{
+			EffectDirt* newFire = new EffectDirt( //PRETEND THIS IS FIRE
+				goPos + Vector3(Math::RandFloatMinMax(-1, 1), Math::RandFloatMinMax(-1, 1), Math::RandFloatMinMax(-1, 1)) * 1.5f
+				, Math::RandFloatMinMax(1.5f, 2.5f)
+				, Vector3(1, 1, 1) * Math::RandFloatMinMax(1.5f, 2.f)
+				//, Vector3(1, 1, 1) * Math::RandFloatMinMax(0.1f, 0.3f)
+			);
+			newFire->mesh = SceneData::GetInstance()->GetMesh("effect_blood");
+			newFire->bLightEnabled = false;
+			newFire->vel *= 8;
+			newFire->vel.y = fabsf(newFire->vel.y);
+			newFire->acc *= 4;
+			newFire->acc.y = -fabsf(newFire->acc.y);
+			this->AddEffect(newFire);
+		}
+		for (int i = 0; i < 8; ++i)
+		{
+			EffectCloud* newCloud = new EffectCloud(
+				goPos + Vector3(Math::RandFloatMinMax(-0.5f, 0.5f), -0.5f + Math::RandFloatMinMax(0.f, 0.5f), Math::RandFloatMinMax(-0.5f, 0.5f)) * 1.5f
+				, Math::RandFloatMinMax(0.25f, 1.5f)
+				, Vector3(1, 1, 1) * Math::RandFloatMinMax(2.f, 4.f)
+			);
+			newCloud->vel += Vector3(0, 1, 0);
+			this->AddEffect(newCloud);
+		}
+		break;
+	}
 	}
 }
 

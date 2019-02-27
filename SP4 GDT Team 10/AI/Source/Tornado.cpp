@@ -6,6 +6,7 @@
 #include "Building.h"
 #include "Logs.h"
 #include "Environment.h"
+#include "PostOffice.h"
 
 #include "EffectManager.h"
 
@@ -65,6 +66,7 @@ void Tornado::Collided(GameObject * go)
 		goVil->active = false;
 		EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_VILLAGER_DIE, goVil->pos);
 		CSoundEngine::GetInstance()->PlayASound("death");
+		
 
 		//Reduce power of Tornado Wave
 		//NA
@@ -116,6 +118,9 @@ void Tornado::Collided(GameObject * go)
 		else
 			fPower -= 10.f;
 
+		/*PostOffice::GetInstance()->Send("Scene",
+			new MessageCameraShake(MessageCameraShake::SHAKE_DESTRUCTION, Math::RandFloatMinMax(0.5f, 1.f), Math::RandFloatMinMax(0.4f, 0.5f))
+		);*/
 		return;
 	}
 	Environment* goEnvironment = dynamic_cast<Environment*>(go);

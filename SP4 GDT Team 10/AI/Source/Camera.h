@@ -32,6 +32,8 @@ private:
 	enum CAMERA_SHAKE_TYPE {
 		SHAKE_NONE,
 		SHAKE_EARTHQUAKE,
+		SHAKE_METEOR,
+		SHAKE_DESTRUCTION,
 
 		SHAKE_TOTAL
 	};
@@ -49,6 +51,7 @@ private:
 	CAMERA_SHAKE_TYPE shakeType;
 	float fShakeIntensity;
 	float fShakeDuration;
+	float fShakeInitialDuration;
 	CAMERA_VIEWANGLE viewAngle;
 
 	Vector3 position_offset;//used for camera angle
