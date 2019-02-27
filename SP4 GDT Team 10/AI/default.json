@@ -66,7 +66,7 @@
                 },
                 "Altar Values": {
                     "Food Offered": 100,
-                    "Countdown": 19,
+                    "Countdown": 19.0,
                     "Max Countdown": 20.0,
                     "God Mad Countdown": 100.0,
                     "World Ended": false
