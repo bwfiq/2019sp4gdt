@@ -1,0 +1,144 @@
+{
+    "Villagers": {
+        "Number": 1,
+        "Villager": [
+            {
+                "Efficiency": 1.0,
+                "Wood": 0,
+                "Stone": 0,
+                "Food": 0,
+                "State": 0,
+                "Stats": [
+                    {
+                        "Hunting": 1.0,
+                        "Foraging": 1.0,
+                        "Woodcutting": 1.0,
+                        "Building": 1.0,
+                        "Breeding": 1.0,
+                        "Combat": 1.0,
+                        "Mining": 1.0
+                    }
+                ],
+                "Pos": {
+                    "x": 4.0,
+                    "y": 0.5,
+                    "z": 5.0
+                }
+            }
+        ]
+    },
+    "Pigs": {
+        "Number": 0,
+        "Pig": []
+    },
+    "Buildings": {
+        "Number": 2,
+        "Building": [
+            {
+                "Name": "Chief Hut",
+                "Type": 8,
+                "State": 0,
+                "Tier": 0,
+                "Built": true,
+                "Build Time": 4.0,
+                "Repair Time": 4.0,
+                "Pos": {
+                    "x": 1.0,
+                    "y": 0.25,
+                    "z": 0.0
+                },
+                "Chief Values": {
+                    "Housing Space": 2
+                }
+            },
+            {
+                "Name": "Altar",
+                "Type": 9,
+                "State": 0,
+                "Tier": 0,
+                "Built": true,
+                "Build Time": 4.0,
+                "Repair Time": 4.0,
+                "Pos": {
+                    "x": -1.0,
+                    "y": 0.5,
+                    "z": -5.0
+                },
+                "Altar Values": {
+                    "Food Offered": 100,
+                    "Countdown": 19.0,
+                    "Max Countdown": 20.0,
+                    "God Mad Countdown": 100.0,
+                    "World Ended": false
+                }
+            }
+        ]
+    },
+    "Environments": {
+        "Number": 4,
+        "Environment": [
+            {
+                "Type": 16,
+                "Timer": 5.0,
+                "Pos": {
+                    "x": -6.0,
+                    "y": 0.5,
+                    "z": -6.0
+                },
+                "Bush Values": {
+                    "Food Amount": 10,
+                    "State": 0
+                }
+            },
+            {
+                "Type": 17,
+                "Timer": 5.0,
+                "Pos": {
+                    "x": -5.0,
+                    "y": 0.6000000238418579,
+                    "z": 1.0
+                },
+                "Tree Values": {
+                    "Wood Amount": 10,
+                    "State": 0
+                }
+            },
+            {
+                "Type": 17,
+                "Timer": 2.0,
+                "Pos": {
+                    "x": -5.0,
+                    "y": 0.6000000238418579,
+                    "z": 2.0
+                },
+                "Tree Values": {
+                    "Wood Amount": 10,
+                    "State": 0
+                }
+            },
+            {
+                "Type": 18,
+                "Timer": 4.0,
+                "Pos": {
+                    "x": -4.0,
+                    "y": 0.75,
+                    "z": 1.0
+                },
+                "Mountain Values": {
+                    "Stone Amount": 11,
+                    "Stone Gain": 5
+                }
+            }
+        ]
+    },
+    "CalamityGO": {
+        "Number": 0,
+        "Calamities GO": []
+    },
+    "Calamities": {
+        "Number": 0,
+        "Calamities": [],
+        "Number Queue": 0,
+        "CalamitiesQ": []
+    }
+}

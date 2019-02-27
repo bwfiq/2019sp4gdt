@@ -34,6 +34,7 @@
 #include "CalamityTsunami.h"
 #include "CalamityTornado.h"
 #include "CalamityBlizzard.h"
+#include "CalamityMeteorShower.h"
 
 #include "SMManager.h"
 #include "MouseController.h"
@@ -55,6 +56,7 @@
 #include "Logs.h"
 #include "Tsunami.h"
 #include "Tornado.h"
+#include "Meteor.h"
 
 #include "AnimationJump.h"
 #include "AnimationWalk.h"
@@ -936,6 +938,21 @@ bool SceneSP::Handle(Message* message)
 		delete message;
 		return true;
 	}
+	MessageWarnGrids* messageWarnGrids = dynamic_cast<MessageWarnGrids*>(message);
+	if (messageWarnGrids)
+	{
+		Vector3 gridSize(SD->GetGridSize(), SD->GetGridSize(), 1.f);
+		for (auto grid : messageWarnGrids->grids)
+		{
+			EffectGridWarning* warningEffect = new EffectGridWarning(
+				GetGridPos(grid)
+				, gridSize
+			);
+			EffectManager::GetInstance()->AddEffect(warningEffect);
+		}
+		delete message;
+		return true;
+	}
 	MessageCalamityTsunami* messageCalamityTsunami = dynamic_cast<MessageCalamityTsunami*>(message);
 	if (messageCalamityTsunami)
 	{
@@ -948,6 +965,24 @@ bool SceneSP::Handle(Message* message)
 			tsunami->tsunami_direction = Tsunami::DIRECTION_LEFT;
 			tsunami->moveSpeed = Math::RandFloatMinMax(3, 3.25f);
 			tsunami->pos = GetGridPos(GridPt(SD->GetNoGrid() + 8, laneNum));
+		}
+		delete message;
+		return true;
+	}
+	MessageCalamityMeteorShower* messageCalamityMeteorShower = dynamic_cast<MessageCalamityMeteorShower*>(message);
+	if (messageCalamityMeteorShower)
+	{
+		for (auto grid : messageCalamityMeteorShower->meteorSpawnGrids)
+		{
+			GameObject* met = FetchGO(GameObject::GO_METEOR);
+			Meteor* goMeteor = static_cast<Meteor*>(met);
+			goMeteor->fPower = 100.f;
+			goMeteor->collidedObjects.clear();
+			goMeteor->moveSpeed = Math::RandFloatMinMax(1.5f, 2.5f);
+			Vector3 gridPos = GetGridPos(grid);
+			Vector3 meteorGeneratedPos = gridPos + Vector3(SD->GetGridSize() * Math::RandFloatMinMax(-2.5f, 2.5f), Math::RandIntMinMax(10, 15) , SD->GetGridSize() * Math::RandFloatMinMax(-2.5f, 2.5f));
+			goMeteor->pos = meteorGeneratedPos;
+			goMeteor->vel = (gridPos - meteorGeneratedPos).Normalized() * goMeteor->moveSpeed;
 		}
 		delete message;
 		return true;
@@ -1287,6 +1322,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			case GameObject::GO_TORNADO:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
 				break;
+			case GameObject::GO_METEOR:
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * 1.f, 1.f, SceneData::GetInstance()->GetGridSize() * 1.f);
+				break;
 			}
 
 			go->goTarget = NULL;
@@ -1346,6 +1384,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			break;
 		case GameObject::GO_TORNADO:
 			go = new Tornado(type);
+			break;
+		case GameObject::GO_METEOR:
+			go = new Meteor(type);
 			break;
 		default:
 			go = new GameObject(type);
@@ -3001,7 +3042,7 @@ void SceneSP::ChangeTimeOfDay()
 				}
 				go->pos = GetGridPos(tempPt);
 				go->pos.y = go->scale.y * 0.5f;
-				goVillager->GiveAnimation(new AnimationJump());
+				go->GiveAnimation(new AnimationJump());
 			}
 
 			int rand = Math::RandInt();
@@ -3017,7 +3058,7 @@ void SceneSP::ChangeTimeOfDay()
 				}
 				go->pos = GetGridPos(tempPt);
 				go->pos.y = go->scale.y * 0.5f;
-				goVillager->GiveAnimation(new AnimationJump());
+				go->GiveAnimation(new AnimationJump());
 			}
 		}
 	}
@@ -3347,13 +3388,15 @@ void SceneSP::Update(double dt)
 	}
 	if (KC->IsKeyPressed('P') && bGodMode)
 		CM->AddToCalamityQueue(new CalamityEarthquake());
-		//SD->SetReligionValue(((int)SD->GetReligionValue() % (int)SD->GetMaxReligionValue()) + 25);
+	//SD->SetReligionValue(((int)SD->GetReligionValue() % (int)SD->GetMaxReligionValue()) + 25);
 	else if (KC->IsKeyPressed('O') && bGodMode)
 		CM->AddToCalamityQueue(new CalamityTsunami());
 	else if (KC->IsKeyPressed('0') && bGodMode)
 		CM->AddToCalamityQueue(new CalamityTornado());
 	else if (KC->IsKeyPressed('9') && bGodMode)
 		CM->AddToCalamityQueue(new CalamityBlizzard());
+	else if (KC->IsKeyPressed('8') && bGodMode)
+		CM->AddToCalamityQueue(new CalamityMeteorShower());
 
 	if (KC->IsKeyPressed('S'))
 		gameSave.SaveGame();
@@ -4196,6 +4239,37 @@ void SceneSP::Update(double dt)
 			}
 		}
 		break;
+		case GameObject::GO_METEOR:
+		{
+			Meteor* goMeteor = static_cast<Meteor*>(go);
+			float timeIncrement = (float)dt*m_speed;
+			goMeteor->fEffectTimer_Fire += timeIncrement;
+			if (goMeteor->fEffectTimer_Fire > 0.09f)
+			{
+				goMeteor->fEffectTimer_Fire = 0;
+				EM->DoPrefabEffect(EffectManager::PREFAB_METEOR_FIRE, goMeteor->pos);
+			}
+			goMeteor->pos += goMeteor->vel * dt * m_speed;
+			if (goMeteor->pos.y <= 0)
+			{
+				EM->DoPrefabEffect(EffectManager::PREFAB_METEOR_IMPACT, goMeteor->pos);
+				PostOffice::GetInstance()->Send("Scene",
+					new MessageCameraShake(MessageCameraShake::SHAKE_METEOR, Math::RandFloatMinMax(0.5f, 1.25f), Math::RandFloatMinMax(0.3f, 0.35f))
+				);
+				goMeteor->active = false;
+			}
+			//Check collision
+			for (auto go2 : m_goList)
+			{
+				if (!go2->active || go2 == go)
+					continue;
+				if ((go2->pos - goMeteor->pos).LengthSquared() <= goMeteor->scale.x * goMeteor->scale.x)
+				{
+					goMeteor->Collided(go2);
+				}
+			}
+		}
+		break;
 		default:
 			break;
 		}
@@ -4597,6 +4671,17 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.Rotate(180, 0, 1, 0);
 		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
 		RenderMesh(meshList[GEO_TSUNAMI], bGodlights, 1.f);
+		modelStack.PopMatrix();
+	}
+	break;
+	case GameObject::GO_METEOR:
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		if (go->animation != NULL)
+			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		RenderMesh(meshList[GEO_EFFECT_DIRT], bGodlights, 1.f);
 		modelStack.PopMatrix();
 	}
 	break;

@@ -6,6 +6,7 @@
 #include <vector>
 
 class UIGameButton;
+struct GridPt;
 
 struct MessageWRU : public Message
 {
@@ -49,6 +50,8 @@ struct MessageCameraShake : public Message
 	enum SHAKE_TYPE
 	{
 		SHAKE_EARTHQUAKE,
+		SHAKE_METEOR,
+		SHAKE_DESTRUCTION,
 	};
 	MessageCameraShake(SHAKE_TYPE type, float intensity, float duration = 0.f) : type(type), intensity(intensity), duration(duration) {}
 	virtual ~MessageCameraShake() {}
@@ -62,6 +65,13 @@ struct MessageWarnLane : public Message
 	MessageWarnLane() {}
 	virtual ~MessageWarnLane() {}
 	std::vector<unsigned> lanes;
+};
+
+struct MessageWarnGrids : public Message
+{
+	MessageWarnGrids(std::vector<GridPt> grids) : grids(grids) {}
+	virtual ~MessageWarnGrids() {}
+	std::vector<GridPt> grids;
 };
 
 struct MessageCalamityEarthquake : public Message
@@ -88,6 +98,13 @@ struct MessageCalamityBlizzard : public Message
 	virtual ~MessageCalamityBlizzard() {}
 	float fPower;
 	BLIZZARD_TYPE type;
+};
+
+struct MessageCalamityMeteorShower : public Message
+{
+	MessageCalamityMeteorShower(std::vector<GridPt> meteorSpawnGrids) : meteorSpawnGrids(meteorSpawnGrids) {}
+	virtual ~MessageCalamityMeteorShower() {}
+	std::vector<GridPt> meteorSpawnGrids;
 };
 
 struct MessageCalamityTsunami : public Message

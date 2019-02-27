@@ -37,6 +37,7 @@ public:
 
 	rapidjson::Value SaveVector3(Vector3 vector);
 	rapidjson::Value SaveVillager(GameObject* go);
+	rapidjson::Value SavePig(GameObject* go);
 	rapidjson::Value SaveBuilding(GameObject* go);
 	rapidjson::Value SaveEnvironment(GameObject* go);
 	rapidjson::Value SaveCalamityGo(GameObject* go);
@@ -47,7 +48,8 @@ public:
 	GameObject* LoadBuilding(rapidjson::Value& buildingValue);
 	GameObject* LoadEnvironment(rapidjson::Value& environmentValue);
 	GameObject* LoadCalamityGo(rapidjson::Value& calamityGOValue);
-	GameObject* LoadCalamity(rapidjson::Value& calamityValue);
+	GameObject* LoadPig(rapidjson::Value& pigValue);
+	CalamityBase* LoadCalamity(rapidjson::Value& calamityValue);
 
 	template<typename T>
 	void SaveData(T) {
