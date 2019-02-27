@@ -28,6 +28,11 @@ CalamityBase * CalamityManager::GetCurrCalamity()
 	return this->currCalamity;
 }
 
+std::queue<CalamityBase*> CalamityManager::GetCalamityQueue()
+{
+	return this->calamityQueue;
+}
+
 CalamityManager::CalamityManager()
 {
 

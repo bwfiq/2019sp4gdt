@@ -604,6 +604,7 @@ void SceneSP::Init()
 	SceneData::GetInstance()->SetElapsedTime(0);
 	SceneData::GetInstance()->SetReligionValue(0.f);
 	SceneData::GetInstance()->SetMaxReligionValue(100.f);
+	SceneData::GetInstance()->SetGOList(&m_goList);
 	PostOffice::GetInstance()->Register("Scene", this);
 
 	//Physics code here
@@ -1194,6 +1195,7 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 				}
 				goVil->fActionTimer = 0.f;
 				goVil->mEquipment = NULL;
+				go->m_currState = go->m_nextState = SMManager::GetInstance()->GetSM(go->smID)->GetState("Idle");
 			}
 				break;
 			case GameObject::GO_PIG:
@@ -1944,7 +1946,6 @@ void SceneSP::AStarSingleGrid(GameObject * go, GridPt target)
 			{
 				m_shortestPath.push_back(curr);
 				curr = m_previous[GetGridIndex(curr)];
-				std::cout << "hi" << std::endl;
 			}
 		}
 		else
@@ -1957,7 +1958,6 @@ void SceneSP::AStarSingleGrid(GameObject * go, GridPt target)
 			{
 				m_shortestPath.push_back(curr);
 				curr = m_previous[GetGridIndex(curr)];
-				std::cout << "hi" << std::endl;
 			}
 		}
 	}
@@ -1971,7 +1971,6 @@ void SceneSP::AStarSingleGrid(GameObject * go, GridPt target)
 		{
 			m_shortestPath.push_back(curr);
 			curr = m_previous[GetGridIndex(curr)];
-			std::cout << "hi" << std::endl;
 		}
 	}
 
@@ -3089,6 +3088,14 @@ void SceneSP::Update(double dt)
 			// triggers
 			if (UIM->GetUI("startbutton")->IsMousePressed())
 			{
+				if (gameSave.LoadGame())
+				{
+					std::cout << "File Loaded Successfully" << std::endl;
+				}
+				else
+				{
+					std::cout << "File not Found" << std::endl;
+				}
 				ChangeState(G_INPLAY);
 				CSoundEngine::GetInstance()->PlayASound("selection");
 			}
@@ -3235,6 +3242,10 @@ void SceneSP::Update(double dt)
 	if (KC->IsKeyPressed('L'))
 	{
 		gameSave.LoadGame();
+	}
+	if (KC->IsKeyPressed('C'))
+	{
+		gameSave.ResetGame();
 	}
 	if (KC->IsKeyPressed('U'))
 	{

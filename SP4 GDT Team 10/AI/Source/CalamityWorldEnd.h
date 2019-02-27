@@ -9,7 +9,7 @@ public:
 	virtual void Enter();
 	virtual void Update(float dt);
 	virtual void Exit();
-private:
+public:
 	float fUIPopupTime;
 	float fEffectTimer_Dirt;
 };

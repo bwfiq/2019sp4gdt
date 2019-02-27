@@ -19,6 +19,7 @@ Altar::Altar(GAMEOBJECT_TYPE typeValue)
 {
 	//GameObject(typeValue);
 	std::cout << "Altar Constructor" << std::endl;
+	buildingName = "Altar";
 }
 
 Altar::~Altar()

@@ -7,6 +7,7 @@ WoodShed::WoodShed(GAMEOBJECT_TYPE typeValue)
 {
 	//GameObject(typeValue);
 	std::cout << "WoodShed Constructor" << std::endl;
+	buildingName = "WoodShed";
 }
 
 WoodShed::~WoodShed()

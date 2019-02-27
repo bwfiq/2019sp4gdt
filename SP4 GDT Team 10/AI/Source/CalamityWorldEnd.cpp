@@ -4,7 +4,9 @@
 #include "EffectManager.h"
 
 CalamityWorldEnd::CalamityWorldEnd() :
-	CalamityBase()
+	CalamityBase(),
+	fUIPopupTime(0),
+	fEffectTimer_Dirt(0)
 {
 }
 

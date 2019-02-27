@@ -7,7 +7,8 @@ Building::Building(GAMEOBJECT_TYPE typeValue)
 	eCurrTier(STRAW),
 	bBuilt(false),
 	fBuildTime(4),
-	fRepairTime(4)
+	fRepairTime(4),
+	buildingName("Building")
 {
 	//GameObject(typeValue);
 	std::cout << "Building Constructor" << std::endl;

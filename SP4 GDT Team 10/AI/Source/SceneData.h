@@ -5,6 +5,7 @@
 #include "Vector3.h"
 #include <map>
 #include <string>
+#include "GameObject.h"
 
 class Mesh;
 
@@ -71,6 +72,9 @@ public:
 	void RemoveMesh(const std::string& meshName);
 	Mesh* GetMesh(const std::string& meshName);
 
+	std::vector<GameObject*>* GetGOList();
+	void SetGOList(std::vector<GameObject*>* goList);
+
 	// Research
 	bool bWoodResearch;
 	bool bStoneResearch;
@@ -104,6 +108,8 @@ private:
 	float fReligionValue, fMaxReligionValue;
 	int iFood, iFoodLimit, iPopulation, iPopulationLimit, iWood, iWoodLimit, iStone, iStoneLimit, iCurrMonth, iCurrDay;
 	float fTimeOfDay;
+
+	std::vector<GameObject*>* m_goList;
 };
 
 #endif

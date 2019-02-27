@@ -3,7 +3,8 @@
 
 CalamityBase::CalamityBase() :
 	bActive(true),
-	fElapsedTime(0)
+	fElapsedTime(0),
+	fCalamityDuration(0)
 {
 }
 
