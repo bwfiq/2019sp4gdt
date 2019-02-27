@@ -2903,7 +2903,7 @@ void SceneSP::UpdateSelectedUI()
 		UIManager::GetInstance()->AddUI("uiSelected_Altar_Offer", newUI);
 		m_selectedUi.push_back(newUI);
 	}
-	else if (selected->type == GameObject::GO_RESEARCHLAB)
+	/*else if (selected->type == GameObject::GO_RESEARCHLAB)
 	{
 		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_RLAB);
 		UIManager::GetInstance()->AddUI("uiSelected_RLab_Info", newUI);
@@ -2911,10 +2911,7 @@ void SceneSP::UpdateSelectedUI()
 		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_GENERAL_MOVE, 0, 0, 0);
 		UIManager::GetInstance()->AddUI("uiSelected_RLab_Move", newUI);
 		m_selectedUi.push_back(newUI);
-		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_RLAB, 0, 0, 1);
-		UIManager::GetInstance()->AddUI("uiSelected_RLab", newUI);
-		m_selectedUi.push_back(newUI);
-	}
+	}*/
 	else if (dynamic_cast<Building*>(selected))
 	{
 		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_BUILDING, 0, 0, selected);
@@ -2927,6 +2924,12 @@ void SceneSP::UpdateSelectedUI()
 		{
 			newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_CHIEFHUT_BUILD, 0, 0, 1, selected);
 			UIManager::GetInstance()->AddUI("uiSelected_Chiefhut_Build", newUI);
+			m_selectedUi.push_back(newUI);
+		}
+		else if (selected->type == GameObject::GO_RESEARCHLAB)
+		{
+			newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_RLAB, 0, 0, 1);
+			UIManager::GetInstance()->AddUI("uiSelected_RLab", newUI);
 			m_selectedUi.push_back(newUI);
 		}
 	}
