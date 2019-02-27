@@ -2981,7 +2981,7 @@ void SceneSP::ChangeTimeOfDay()
 				}
 				go->pos = GetGridPos(tempPt);
 				go->pos.y = go->scale.y * 0.5f;
-				goVillager->GiveAnimation(new AnimationJump());
+				go->GiveAnimation(new AnimationJump());
 			}
 
 			int rand = Math::RandInt();
@@ -2997,7 +2997,7 @@ void SceneSP::ChangeTimeOfDay()
 				}
 				go->pos = GetGridPos(tempPt);
 				go->pos.y = go->scale.y * 0.5f;
-				goVillager->GiveAnimation(new AnimationJump());
+				go->GiveAnimation(new AnimationJump());
 			}
 		}
 	}

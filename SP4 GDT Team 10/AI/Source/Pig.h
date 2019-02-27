@@ -15,12 +15,13 @@ struct Pig : public GameObject
 	{
 		WILD,
 		TAME,
-		TOTAL,
+		TOTAL
 	};
 	enum Movement
 	{
 		WALKING,
 		ROLLING,
+		MOVEMENT_TOTAL
 	};
 
 	float fActionTimer;

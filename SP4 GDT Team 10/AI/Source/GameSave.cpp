@@ -2,7 +2,9 @@
 
 #include "GameSave.h"
 #include "SceneData.h"
+
 #include "Villager.h"
+#include "Pig.h"
 #include "Building.h"
 #include "Altar.h"
 #include "Environment.h"
@@ -19,6 +21,8 @@
 #include "Tsunami.h"
 #include "Tornado.h"
 
+#include "SMManager.h"
+
 #include "CalamityManager.h"
 #include "CalamityEarthquake.h"
 #include "CalamityBlizzard.h"
@@ -29,7 +33,7 @@
 using namespace rapidjson;
 GameSave::GameSave()
 {
-	filename = "output.json";
+	filename = "temp.json";
 	gameFile.SetObject();
 }
 
@@ -39,18 +43,22 @@ GameSave::~GameSave()
 
 bool GameSave::LoadGame()
 {
+	SceneData* SD = SceneData::GetInstance();
+
 	struct stat statbuffer;
+	FILE* fp;
 
 	if (stat(filename.c_str(), &statbuffer) != 0)
 	{
 		std::cout << "hi, file does not exist, rapidjson" << std::endl;
+		fp = fopen("default.json", "rb"); // non-Windows use "r"
+
 		return false;
 	}
 	else
-
 	{
-		FILE* fp = fopen(filename.c_str(), "rb"); // non-Windows use "r"
-
+		fp = fopen(filename.c_str(), "rb"); // non-Windows use "r"
+	}
 		char readBuffer[65536];
 		FileReadStream is(fp, readBuffer, sizeof(readBuffer));
 
@@ -63,23 +71,29 @@ bool GameSave::LoadGame()
 			std::cout << GetParseError_En(errorCode) << std::endl;
 			return false;
 		}
-		StringBuffer buffer;
-		PrettyWriter<StringBuffer> writer(buffer);
-		gameFile.Accept(writer);
-		std::cout << buffer.GetString() << std::endl;
+		//StringBuffer buffer;
+		//PrettyWriter<StringBuffer> writer(buffer);
+		//gameFile.Accept(writer);
+		//std::cout << buffer.GetString() << std::endl;
 
-		Vector3 temp;
 		Value objVillagers(kObjectType);
 		Value objBuildings(kObjectType);
 		Value objEnvironments(kObjectType);
 		Value objCalamityGO(kObjectType);
 		Value objCalamities(kObjectType);
+
+		int numVil = 0;
+		int numBuilding = 0;
+		int numEnvironment = 0;
+		int numCalamitiesGO = 0;
+		int numCalamities = 0;
+		int numCalamitiesQ = 0;
 		
 		if (gameFile.IsObject())
 		{
-			/*if (gameFile.HasMember("Villagers"))
+			if (gameFile.HasMember("Villagers"))
 			{
-				objVillagers = gameFile.FindMember("Villagers");
+				objVillagers = gameFile["Villagers"];
 			}
 			else
 			{
@@ -88,7 +102,7 @@ bool GameSave::LoadGame()
 			}
 			if (gameFile.HasMember("Buildings"))
 			{
-				objBuildings = gameFile.FindMember("Buildings");
+				objBuildings = gameFile["Buildings"];
 			}
 			else
 			{
@@ -97,7 +111,7 @@ bool GameSave::LoadGame()
 			}
 			if (gameFile.HasMember("Environments"))
 			{
-				objEnvironments = gameFile.FindMember("Environments");
+				objEnvironments = gameFile["Environments"];
 			}
 			else
 			{
@@ -106,7 +120,7 @@ bool GameSave::LoadGame()
 			}
 			if (gameFile.HasMember("CalamityGO"))
 			{
-				objCalamityGO = gameFile.FindMember("CalamityGO");
+				objCalamityGO = gameFile["CalamityGO"];
 			}
 			else
 			{
@@ -115,13 +129,13 @@ bool GameSave::LoadGame()
 			}
 			if (gameFile.HasMember("Calamities"))
 			{
-				objCalamities = gameFile.FindMember("Calamities");
+				objCalamities = gameFile["Calamities"];
 			}
 			else
 			{
 				std::cout << "Cannot find Calamities Data" << std::endl;
 				return false;
-			}*/
+			}
 		}
 		else
 		{
@@ -129,10 +143,161 @@ bool GameSave::LoadGame()
 			return false;
 		}
 
-		//Value obj = gameFile.Get
+		std::vector<GameObject*>* m_goList = SD->GetGOList();
+		while (!m_goList->empty())
+		{
+			GameObject* temp = m_goList->back();
+			m_goList->pop_back();
+			delete temp;
+		}
+		
+		//Guards to check for json file error
+		if (objVillagers.HasMember("Number"))
+		{
+			numVil = objVillagers["Number"].GetInt();
+		}
+		else
+		{
+			std::cout << "Cannot find Number in Villagers OBJ" << std::endl;
+			return false;
+		}
 
-		//Vector3 temp = LoadVector3(gameFile["Villagers"]["Villager"]["Pos"]);
-	}
+		if (objBuildings.HasMember("Number"))
+		{
+			numBuilding = objBuildings["Number"].GetInt();
+		}
+		else
+		{
+			std::cout << "Cannot find Number in Buildings OBJ" << std::endl;
+			return false;
+		}
+		
+		if (objEnvironments.HasMember("Number"))
+		{
+			numEnvironment = objEnvironments["Number"].GetInt();
+		}
+		else
+		{
+			std::cout << "Cannot find Number in Environments OBJ" << std::endl;
+			return false;
+		}
+
+		if (objCalamityGO.HasMember("Number"))
+		{
+			numCalamitiesGO = objCalamityGO["Number"].GetInt();
+		}
+		else
+		{
+			std::cout << "Cannot find Number in CalamityGO OBJ" << std::endl;
+			return false;
+		}
+
+		if (objCalamities.HasMember("Number"))
+		{
+			numCalamities = objCalamities["Number"].GetInt();
+		}
+		else
+		{
+			std::cout << "Cannot find Number in Calamities OBJ" << std::endl;
+			return false;
+		}
+
+		if (objCalamities.HasMember("Number Queue"))
+		{
+			numCalamitiesQ = objCalamities["Number Queue"].GetInt();
+		}
+		else
+		{
+			std::cout << "Cannot find Number Queue in Calamities OBJ" << std::endl;
+			return false;
+		}
+
+		//Loading all the stuff
+
+		//Load Villagers
+		if (objVillagers.HasMember("Villager"))
+		{
+			for (int i = 0; i < numVil; ++i)
+			{
+				m_goList->push_back(LoadVillager(objVillagers["Villager"][i]));
+			}
+		}
+		else
+		{
+			std::cout << "Cannot find Villager in Villagers OBJ" << std::endl;
+			return false;
+		}
+
+		//Load Buildings
+		if (objBuildings.HasMember("Building"))
+		{
+			for (int i = 0; i < numBuilding; ++i)
+			{
+				m_goList->push_back(LoadBuilding(objBuildings["Building"][i]));
+			}
+		}
+		else
+		{
+			std::cout << "Cannot find Building in Buildings OBJ" << std::endl;
+			return false;
+		}
+		
+		//Load Environments
+		if (objEnvironments.HasMember("Environment"))
+		{
+			for (int i = 0; i < numEnvironment; ++i)
+			{
+				m_goList->push_back(LoadEnvironment(objEnvironments["Environment"][i]));
+			}
+		}
+		else
+		{
+			std::cout << "Cannot find Environment in Environments OBJ" << std::endl;
+			return false;
+		}
+		
+		//Load CalamitiesGO
+		if (objCalamityGO.HasMember("Calamities GO"))
+		{
+			for (int i = 0; i < numCalamitiesGO; ++i)
+			{
+				//m_goList->push_back(LoadCalamityGo(objCalamityGO["Calamities GO"][i]));
+			}
+		}
+		else
+		{
+			std::cout << "Cannot find Calamities GO in CalamityGO OBJ" << std::endl;
+			return false;
+		}
+
+		//Load Calamities
+		if (objCalamities.HasMember("Calamities"))
+		{
+			for (int i = 0; i < numCalamities; ++i)
+			{
+				//LoadCalamity(objCalamities["Calamities"][i]);
+			}
+		}
+		else
+		{
+			std::cout << "Cannot find Calamities in Calamities OBJ" << std::endl;
+			return false;
+		}
+		
+		//Load CalamitiesQ
+		if (objCalamities.HasMember("CalamitiesQ"))
+		{
+			for (int i = 0; i < numCalamitiesQ; ++i)
+			{
+				//LoadCalamity(objCalamities["CalamitiesQ"][i]);
+			}
+		}
+		else
+		{
+			std::cout << "Cannot find CalamitiesQ in Calamities OBJ" << std::endl;
+			return false;
+		}
+	
 	return true;
 }
 void GameSave::SaveGame()
@@ -153,24 +318,28 @@ void GameSave::SaveGame()
 	//d.AddMember("order", 4, allocator);
 
 	Value objVillagers(kObjectType);
+	Value objPigs(kObjectType);
 	Value objBuildings(kObjectType);
 	Value objEnvironments(kObjectType);
 	Value objCalamityGO(kObjectType);
 	Value objCalamities(kObjectType);
 
 	int numVil = 0;
+	int numPig = 0;
 	int numBuilding = 0;
 	int numEnvironment = 0;
 	int numCalamitiesGO = 0;
 	int numCalamities = 0;
 	int numCalamitiesQ = 0;
 	Value villagers(kArrayType);
+	Value pigs(kArrayType);
 	Value buildings(kArrayType);
 	Value environments(kArrayType);
 	Value calamitiesGO(kArrayType);
 	Value calamities(kArrayType);
 	Value calamitiesQ(kArrayType);
 	
+	//Save all GameObjects
 	for (auto go : *m_goList)
 	{
 		if (!go->active)
@@ -182,6 +351,14 @@ void GameSave::SaveGame()
 		{
 			villagers.PushBack(SaveVillager(go), allocator);
 			++numVil;
+
+			continue;
+		}
+		Pig* goPig = dynamic_cast<Pig*>(go);
+		if (goPig)
+		{
+			pigs.PushBack(SavePig(go), allocator);
+			++numPig;
 
 			continue;
 		}
@@ -218,11 +395,15 @@ void GameSave::SaveGame()
 			continue;
 		}
 	}
+
+	//Save current Calamity
 	if (CM->GetCurrCalamity() != NULL)
 	{
 		calamities.PushBack(SaveCalamity(CM->GetCurrCalamity()), allocator);
 		++numCalamities;
 	}
+
+	//Save Calamity Queue
 	std::queue<CalamityBase*> calamityQueue = CM->GetCalamityQueue();
 	while (!calamityQueue.empty())
 	{
@@ -233,6 +414,9 @@ void GameSave::SaveGame()
 
 	objVillagers.AddMember("Number", numVil, allocator);
 	objVillagers.AddMember("Villager", villagers, allocator);
+
+	objPigs.AddMember("Number", numPig, allocator);
+	objPigs.AddMember("Pig", pigs, allocator);
 
 	objBuildings.AddMember("Number", numBuilding, allocator);
 	objBuildings.AddMember("Building", buildings, allocator);
@@ -250,6 +434,7 @@ void GameSave::SaveGame()
 	objCalamities.AddMember("CalamitiesQ", calamitiesQ, allocator);
 
 	gameFile.AddMember("Villagers", objVillagers, allocator);
+	gameFile.AddMember("Pigs", objPigs, allocator);
 	gameFile.AddMember("Buildings", objBuildings, allocator);
 	gameFile.AddMember("Environments", objEnvironments, allocator);
 	gameFile.AddMember("CalamityGO", objCalamityGO, allocator);
@@ -378,6 +563,24 @@ rapidjson::Value GameSave::SaveVillager(GameObject * go)
 	return aVillager;
 }
 
+rapidjson::Value GameSave::SavePig(GameObject * go)
+{
+	Document::AllocatorType& allocator = gameFile.GetAllocator();
+	Pig* goPig = static_cast<Pig*>(go);
+	Value aPig(kObjectType);
+	aPig.AddMember("State", goPig->state, allocator);
+	aPig.AddMember("Movement", goPig->movement, allocator);
+	aPig.AddMember("Food", goPig->iFoodAmount, allocator);
+	aPig.AddMember("Timer", goPig->fTimer, allocator);
+	aPig.AddMember("Energy", goPig->fEnergy, allocator);
+	aPig.AddMember("Idle Timer", goPig->fIdleTimer, allocator);
+	aPig.AddMember("Action Timer", goPig->fActionTimer, allocator);
+
+
+	aPig.AddMember("Pos", SaveVector3(goPig->pos), allocator);
+	return aPig;
+}
+
 rapidjson::Value GameSave::SaveBuilding(GameObject * go)
 {
 	Document::AllocatorType& allocator = gameFile.GetAllocator();
@@ -447,7 +650,7 @@ rapidjson::Value GameSave::SaveBuilding(GameObject * go)
 		Value houseStuff(kObjectType);
 		houseStuff.AddMember("Housing Space", goHouse->iHousingSpace, allocator);
 
-		aBuilding.AddMember("Altar Values", houseStuff, allocator);
+		aBuilding.AddMember("House Values", houseStuff, allocator);
 	}
 	else if (goLab)
 	{
@@ -506,8 +709,6 @@ rapidjson::Value GameSave::SaveCalamityGo(GameObject * go)
 	Document::AllocatorType& allocator = gameFile.GetAllocator();
 
 	Value aCalamityGO(kObjectType);
-
-
 
 	Tsunami* goTsunami = dynamic_cast<Tsunami*>(go);
 	Tornado* goTornado = dynamic_cast<Tornado*>(go);
@@ -646,44 +847,1022 @@ rapidjson::Value GameSave::SaveCalamity(CalamityBase * go)
 
 Vector3 GameSave::LoadVector3(rapidjson::Value& vectorValue)
 {
-	if (!vectorValue.IsObject())
-	{
-		std::cout << "Vector3 value is not obj" << std::endl;
-	}
 	//return Vector3(, vectorValue.FindMember("y"), vectorValue.FindMember("z"));
 	Vector3 temp;
-	temp.x = vectorValue["x"].GetFloat();
-	temp.y = vectorValue["y"].GetFloat();
-	temp.z = vectorValue["z"].GetFloat();
+
+	//Loading x
+	if (vectorValue.HasMember("x"), vectorValue["x"].IsFloat())
+	{
+		temp.x = vectorValue["x"].GetFloat();
+	}
+	else
+	{
+		std::cout << "Error Loading Vector3 x" << std::endl;
+		return NULL;
+	}
+
+	//Loading y
+	if (vectorValue.HasMember("y"), vectorValue["y"].IsFloat())
+	{
+		temp.y = vectorValue["y"].GetFloat();
+	}
+	else
+	{
+		std::cout << "Error Loading Vector3 y" << std::endl;
+		return NULL;
+	}
+
+	//Loading z
+	if (vectorValue.HasMember("z"), vectorValue["z"].IsFloat())
+	{
+		temp.z = vectorValue["z"].GetFloat();
+	}
+	else
+	{
+		std::cout << "Error Loading Vector3 z" << std::endl;
+		return NULL;
+	}
 	return temp;
 }
 
-GameObject * GameSave::LoadVillager(rapidjson::Value& villagerValue)
+GameObject* GameSave::LoadVillager(rapidjson::Value& villagerValue)
 {
-	Villager* goVil = new Villager();
+	Villager* goVil = NULL;
+	if (villagerValue.IsObject())
+	{
+		goVil = new Villager(GameObject::GO_VILLAGER);
+	}
+	else
+	{
+		std::cout << "Error with villagerValue type" << std::endl;
+		return nullptr;
+	}
 
-	goVil->fEfficiency = villagerValue["Efficiency"].GetFloat();
+	//Loading Efficiency
+	if (villagerValue.HasMember("Efficiency") && villagerValue["Efficiency"].IsFloat())
+	{
+		goVil->fEfficiency = villagerValue["Efficiency"].GetFloat();
+	}
+	else
+	{
+		std::cout << "Error Loading villager Efficiency" << std::endl;
+		if (goVil != NULL)
+		{
+			delete goVil;
+			goVil = NULL;
+		}
+		return nullptr;
+	}
 
+	//Loading Wood
+	if (villagerValue.HasMember("Wood") && villagerValue["Wood"].IsInt())
+	{
+		goVil->iWoodStored = villagerValue["Wood"].GetInt();
+	}
+	else
+	{
+		std::cout << "Error Loading villager Wood" << std::endl;
+		if (goVil != NULL)
+		{
+			delete goVil;
+			goVil = NULL;
+		}
+		return nullptr;
+	}
+
+	//Loading Stone
+	if (villagerValue.HasMember("Stone") && villagerValue["Stone"].IsInt())
+	{
+		goVil->iStoneStored = villagerValue["Stone"].GetInt();
+	}
+	else
+	{
+		std::cout << "Error Loading villager Stone" << std::endl;
+		if (goVil != NULL)
+		{
+			delete goVil;
+			goVil = NULL;
+		}
+		return nullptr;
+	}
+
+	//Loading Food
+	if (villagerValue.HasMember("Food") && villagerValue["Food"].IsInt())
+	{
+		goVil->iFoodStored = villagerValue["Food"].GetInt();
+	}
+	else
+	{
+		std::cout << "Error Loading villager Food" << std::endl;
+		if (goVil != NULL)
+		{
+			delete goVil;
+			goVil = NULL;
+		}
+		return nullptr;
+	}
+
+	//Loading State
+	if (villagerValue.HasMember("State") && villagerValue["State"].IsInt())
+	{
+		goVil->eCurrState = (Villager::STATES)(villagerValue["State"].GetInt());
+	}
+	else
+	{
+		std::cout << "Error Loading villager State" << std::endl;
+		if (goVil != NULL)
+		{
+			delete goVil;
+			goVil = NULL;
+		}
+		return nullptr;
+	}
+
+	//Loading State
+	if (villagerValue.HasMember("Pos") && villagerValue["Pos"].IsObject())
+	{
+		goVil->pos = LoadVector3(villagerValue["Pos"]);
+		if (goVil->pos == NULL)
+		{
+			std::cout << "Error Loading Vector3 Villager Pos" << std::endl;
+			delete goVil;
+			goVil = NULL;
+			return nullptr;
+		}
+	}
+	else
+	{
+		std::cout << "Error Loading villager Pos" << std::endl;
+		if (goVil != NULL)
+		{
+			delete goVil;
+			goVil = NULL;
+		}
+		return nullptr;
+	}
+
+	if (villagerValue.HasMember("Stats") && villagerValue["Stats"].IsArray())
+	{
+		if (villagerValue["Stats"][0].IsObject())
+		{
+			goVil->fStats[Villager::HUNTING] = villagerValue["Stats"][0]["Hunting"].GetFloat();
+			goVil->fStats[Villager::FORAGING] = villagerValue["Stats"][0]["Foraging"].GetFloat();
+			goVil->fStats[Villager::WOODCUTTING] = villagerValue["Stats"][0]["Woodcutting"].GetFloat();
+			goVil->fStats[Villager::BUILDING] = villagerValue["Stats"][0]["Building"].GetFloat();
+			goVil->fStats[Villager::BREEDING] = villagerValue["Stats"][0]["Breeding"].GetFloat();
+			goVil->fStats[Villager::COMBAT] = villagerValue["Stats"][0]["Combat"].GetFloat();
+			goVil->fStats[Villager::MINING] = villagerValue["Stats"][0]["Mining"].GetFloat();
+		}
+	}
+	else
+	{
+		std::cout << "Error Loading villager Stats" << std::endl;
+		if (goVil != NULL)
+		{
+			delete goVil;
+			goVil = NULL;
+		}
+		return nullptr;
+	}
+
+	goVil->smID = "VillagerSM";
+	goVil->m_currState = goVil->m_nextState = SMManager::GetInstance()->GetSM(goVil->smID)->GetState("Idle");
+	goVil->active = true;
+
+	return goVil;
+}
+
+GameObject* GameSave::LoadBuilding(rapidjson::Value& buildingValue)
+{
+	std::string name;
+	if (buildingValue["Name"].IsString())
+	{
+		name = buildingValue["Name"].GetString();
+	}
+	else
+	{
+		std::cout << "Error Loading building name" << std::endl;
+		return nullptr;
+	}
+	GameObject::GAMEOBJECT_TYPE type;
+	if (buildingValue.HasMember("Type") && buildingValue["Type"].IsInt())
+	{
+		type = (GameObject::GAMEOBJECT_TYPE)(buildingValue["Type"].GetInt());
+		if ((int)(type) >= (int)(GameObject::GO_TOTAL))
+		{
+			std::cout << "Error Building Type" << std::endl;
+			return nullptr;
+		}
+	}
+	else
+	{
+		std::cout << "Error Loading Building, Unkown type";
+		return nullptr;
+	}
+	Building* go = NULL;
+	if (name == "Chief Hut")
+	{
+		ChiefHut* goChiefhut = new ChiefHut(GameObject::GO_CHIEFHUT);
+		
+		//Loading Chief Values
+		if (buildingValue.HasMember("Chief Values") && buildingValue["Chief Values"].IsObject())
+		{
+			//Loading Housing Space
+			if (buildingValue["Chief Values"].HasMember("Housing Space") && buildingValue["Chief Values"]["Housing Space"].IsInt())
+			{
+				goChiefhut->iHousingSpace = buildingValue["Chief Values"]["Housing Space"].GetInt();
+			}
+			else
+			{
+				std::cout << "Error Loading Chief values housing space" << std::endl;
+				if (goChiefhut != NULL)
+				{
+					delete goChiefhut;
+					goChiefhut = NULL;
+				}
+				return nullptr;
+			}
+		}
+		else
+		{
+			std::cout << "Error Loading Chief values" << std::endl;
+			if (goChiefhut != NULL)
+			{
+				delete goChiefhut;
+				goChiefhut = NULL;
+			}
+			return nullptr;
+		}
+		go = goChiefhut;
+	}
+	else if (name == "House")
+	{
+		House* goHouse = new House(GameObject::GO_HOUSE);
+
+		//Loading House Values
+		if (buildingValue.HasMember("House Values") && buildingValue["House Values"].IsObject())
+		{
+			//Loading Housing Space
+			if (buildingValue["House Values"].HasMember("Housing Space") && buildingValue["House Values"]["Housing Space"].IsInt())
+			{
+				goHouse->iHousingSpace = buildingValue["House Values"]["Housing Space"].GetInt();
+			}
+			else
+			{
+				std::cout << "Error Loading House Values housing space" << std::endl;
+				if (goHouse != NULL)
+				{
+					delete goHouse;
+					goHouse = NULL;
+				}
+				return nullptr;
+			}
+		}
+		else
+		{
+			std::cout << "Error Loading House values" << std::endl;
+			if (goHouse != NULL)
+			{
+				delete goHouse;
+				goHouse = NULL;
+			}
+			return nullptr;
+		}
+		go = goHouse;
+	}
+	else if (name == "Granary")
+	{
+		Granary* goGranary = new Granary(GameObject::GO_GRANARY);
+
+		//Loading Granary Values
+		if (buildingValue.HasMember("Granary Values") && buildingValue["Granary Values"].IsObject())
+		{
+			//Loading Food Capacity
+			if (buildingValue["Granary Values"].HasMember("Food Capacity") && buildingValue["Granary Values"]["Food Capacity"].IsInt())
+			{
+				goGranary->foodCapacity = buildingValue["Granary Values"]["Food Capacity"].GetInt();
+			}
+			else
+			{
+				std::cout << "Error Loading Granary Values Food Capacity" << std::endl;
+				if (goGranary != NULL)
+				{
+					delete goGranary;
+					goGranary = NULL;
+				}
+				return nullptr;
+			}
+		}
+		else
+		{
+			std::cout << "Error Loading Granary Values" << std::endl;
+			if (goGranary != NULL)
+			{
+				delete goGranary;
+				goGranary = NULL;
+			}
+			return nullptr;
+		}
+		go = goGranary;
+	}
+	else if (name == "WoodShed")
+	{
+		WoodShed* goWoodShed = new WoodShed(GameObject::GO_WOODSHED);
+
+		//Loading Woodshed Values
+		if (buildingValue.HasMember("Woodshed Values") && buildingValue["Woodshed Values"].IsObject())
+		{
+			//Loading Wood Capacity
+			if (buildingValue["Woodshed Values"].HasMember("Wood Capacity") && buildingValue["Woodshed Values"]["Wood Capacity"].IsInt())
+			{
+				goWoodShed->woodCapacity = buildingValue["Woodshed Values"]["Wood Capacity"].GetInt();
+			}
+			else
+			{
+				std::cout << "Error Loading Woodshed Values Wood Capacity" << std::endl;
+				if (goWoodShed != NULL)
+				{
+					delete goWoodShed;
+					goWoodShed = NULL;
+				}
+				return nullptr;
+			}
+		}
+		else
+		{
+			std::cout << "Error Loading Woodshed Values" << std::endl;
+			if (goWoodShed != NULL)
+			{
+				delete goWoodShed;
+				goWoodShed = NULL;
+			}
+			return nullptr;
+		}
+		go = goWoodShed;
+	}
+	else if (name == "Logs")
+	{
+		Logs* goLogs = new Logs(GameObject::GO_LOGS);
+		
+		//Loading Log Values
+		if (buildingValue.HasMember("Log Values") && buildingValue["Log Values"].IsObject())
+		{
+		}
+		else
+		{
+			std::cout << "Error Loading Log Values" << std::endl;
+			if (goLogs != NULL)
+			{
+				delete goLogs;
+				goLogs = NULL;
+			}
+			return nullptr;
+		}
+		go = goLogs;
+	}
+	else if (name == "Research Lab")
+	{
+		ResearchLab* goLab = new ResearchLab(GameObject::GO_RESEARCHLAB);
+
+		//Loading Lab Values
+		if (buildingValue.HasMember("Lab Values") && buildingValue["Lab Values"].IsObject())
+		{
+		}
+		else
+		{
+			std::cout << "Error Loading Lab Values" << std::endl;
+			if (goLab != NULL)
+			{
+				delete goLab;
+				goLab = NULL;
+			}
+			return nullptr;
+		}
+		go = goLab;
+	}
+	else if (name == "Altar")
+	{
+		Altar* goAltar = new Altar(GameObject::GO_ALTAR);
+
+		//Loading Altar Values
+		if (buildingValue.HasMember("Altar Values") && buildingValue["Altar Values"].IsObject())
+		{
+			//Loading Food Offered
+			if (buildingValue["Altar Values"].HasMember("Food Offered") && buildingValue["Altar Values"]["Food Offered"].IsInt())
+			{
+				goAltar->iFoodOffered = buildingValue["Altar Values"]["Food Offered"].GetInt();
+			}
+			else
+			{
+				std::cout << "Error Loading Altar Values Food Offered" << std::endl;
+				if (goAltar != NULL)
+				{
+					delete goAltar;
+					goAltar = NULL;
+				}
+				return nullptr;
+			}
+
+			//Loading Countdown
+			if (buildingValue["Altar Values"].HasMember("Countdown") && buildingValue["Altar Values"]["Countdown"].IsFloat())
+			{
+				goAltar->fCountdown = buildingValue["Altar Values"]["Countdown"].GetFloat();
+			}
+			else
+			{
+				std::cout << "Error Loading Altar Values Countdown" << std::endl;
+				if (goAltar != NULL)
+				{
+					delete goAltar;
+					goAltar = NULL;
+				}
+				return nullptr;
+			}
+
+			//Loading Max Countdown
+			if (buildingValue["Altar Values"].HasMember("Max Countdown") && buildingValue["Altar Values"]["Max Countdown"].IsFloat())
+			{
+				goAltar->fMaxCountdown = buildingValue["Altar Values"]["Max Countdown"].GetFloat();
+			}
+			else
+			{
+				std::cout << "Error Loading Altar Values Max Countdown" << std::endl;
+				if (goAltar != NULL)
+				{
+					delete goAltar;
+					goAltar = NULL;
+				}
+				return nullptr;
+			}
+
+			//Loading God Mad Countdown
+			if (buildingValue["Altar Values"].HasMember("God Mad Countdown") && buildingValue["Altar Values"]["God Mad Countdown"].IsFloat())
+			{
+				goAltar->fGodMad = buildingValue["Altar Values"]["God Mad Countdown"].GetFloat();
+			}
+			else
+			{
+				std::cout << "Error Loading Altar Values God Mad Countdown" << std::endl;
+				if (goAltar != NULL)
+				{
+					delete goAltar;
+					goAltar = NULL;
+				}
+				return nullptr;
+			}
+
+			//Loading World Ended
+			if (buildingValue["Altar Values"].HasMember("World Ended") && buildingValue["Altar Values"]["World Ended"].IsBool())
+			{
+				goAltar->bWorldEnded = buildingValue["Altar Values"]["World Ended"].GetBool();
+			}
+			else
+			{
+				std::cout << "Error Loading Altar Values World Ended" << std::endl;
+				if (goAltar != NULL)
+				{
+					delete goAltar;
+					goAltar = NULL;
+				}
+				return nullptr;
+			}
+		}
+		else
+		{
+			std::cout << "Error Loading Altar Values" << std::endl;
+			if (goAltar != NULL)
+			{
+				delete goAltar;
+				goAltar = NULL;
+			}
+			return nullptr;
+		}
+		go = goAltar;
+	}
+	else
+	{
+		std::cout << "Error Loading building, Unknown building name";
+		if (go != NULL)
+		{
+			delete go;
+			go = NULL;
+		}
+		return nullptr;
+	}
+	//"Type": 9,
+	//	"State" : 0,
+	//	"Tier" : 0,
+	//	"Built" : true,
+	//	"Build Time" : 4.0,
+	//	"Repair Time" : 4.0,
+	//	"Pos" : {
+	//	"x": -1.0,
+	//		"y" : 0.5,
+	//		"z" : -5.0
+	//},
+
+	//Loading State
+	if (buildingValue.HasMember("State") && buildingValue["State"].IsInt() && buildingValue["State"].GetInt() < (int)(Building::STATES_TOTAL))
+	{
+		go->eCurrState = (Building::STATES)(buildingValue["State"].GetInt());
+	}
+	else
+	{
+		std::cout << "Error Loading State" << std::endl;
+		if (go != NULL)
+		{
+			delete go;
+			go = NULL;
+		}
+		return nullptr;
+	}
+
+	//Loading Tier
+	if (buildingValue.HasMember("Tier") && buildingValue["Tier"].IsInt() && buildingValue["Tier"].GetInt() < (int)(Building::TIER_TOTAL))
+	{
+		go->eCurrTier = (Building::TIER)(buildingValue["Tier"].GetInt());
+	}
+	else
+	{
+		std::cout << "Error Loading Tier" << std::endl;
+		if (go != NULL)
+		{
+			delete go;
+			go = NULL;
+		}
+		return nullptr;
+	}
+
+	//Loading Built
+	if (buildingValue.HasMember("Built") && buildingValue["Built"].IsBool())
+	{
+		go->bBuilt = buildingValue["Built"].GetBool();
+	}
+	else
+	{
+		std::cout << "Error Loading Built" << std::endl;
+		if (go != NULL)
+		{
+			delete go;
+			go = NULL;
+		}
+		return nullptr;
+	}
+
+	//Loading Build Time
+	if (buildingValue.HasMember("Build Time") && buildingValue["Build Time"].IsFloat())
+	{
+		go->fBuildTime = buildingValue["Build Time"].GetFloat();
+	}
+	else
+	{
+		std::cout << "Error Loading Build Time" << std::endl;
+		if (go != NULL)
+		{
+			delete go;
+			go = NULL;
+		}
+		return nullptr;
+	}
+
+	//Loading Repair Time
+	if (buildingValue.HasMember("Repair Time") && buildingValue["Repair Time"].IsFloat())
+	{
+		go->fRepairTime = buildingValue["Repair Time"].GetFloat();
+	}
+	else
+	{
+		std::cout << "Error Loading Repair Time" << std::endl;
+		if (go != NULL)
+		{
+			delete go;
+			go = NULL;
+		}
+		return nullptr;
+	}
+
+	//Loading Pos
+	if (buildingValue.HasMember("Pos") && buildingValue["Pos"].IsObject())
+	{
+		go->pos = LoadVector3(buildingValue["Pos"]);
+		if (go->pos == NULL)
+		{
+			std::cout << "Error Loading Vector3 Building Pos" << std::endl;
+
+			delete go;
+			go = NULL;
+			return nullptr;
+		}
+	}
+	else
+	{
+		std::cout << "Error Loading Repair Time" << std::endl;
+		if (go != NULL)
+		{
+			delete go;
+			go = NULL;
+		}
+		return nullptr;
+	}
+
+	if (go == NULL)
+	{
+		std::cout << "Error, building is NULL";
+		return nullptr;
+	}
+	go->active = true;
+	return go;
+}
+
+GameObject* GameSave::LoadEnvironment(rapidjson::Value& environmentValue)
+{
+	Environment* go = NULL;
+
+	if (!environmentValue.IsObject())
+	{
+		std::cout << "environmentValue is not a Object" << std::endl;
+		return NULL;
+	}
+
+	//Loading Type
+	GameObject::GAMEOBJECT_TYPE type;
+	if (environmentValue.HasMember("Type") && environmentValue["Type"].IsInt() && environmentValue["Type"].GetInt() < (int)(GameObject::GO_TOTAL))
+	{
+		type = (GameObject::GAMEOBJECT_TYPE)(environmentValue["Type"].GetInt());
+	}
+	else
+	{
+		std::cout << "Error Loading Environment Type" << std::endl;
+		return nullptr;
+	}
+
+	//new GameObject based on type
+	switch (type)
+	{
+	case GameObject::GO_BUSH:
+	{	
+		Bush* goBush = new Bush(type);
+
+		//Loading Bush Values
+		if (environmentValue.HasMember("Bush Values") && environmentValue["Bush Values"].IsObject())
+		{
+			//Loading Food Amount
+			if (environmentValue["Bush Values"].HasMember("Food Amount") && environmentValue["Bush Values"]["Food Amount"].IsInt())
+			{
+				goBush->iFoodAmount = environmentValue["Bush Values"]["Food Amount"].GetInt();
+			}
+			else
+			{
+				std::cout << "Error Loading Bush Values Food Amount" << std::endl;
+				if (goBush != NULL)
+				{
+					delete goBush;
+					goBush = NULL;
+				}
+				return nullptr;
+			}
+
+			//Loading State
+			if (environmentValue["Bush Values"].HasMember("State") && environmentValue["Bush Values"]["State"].IsInt() && environmentValue["Bush Values"]["State"].GetInt() < (int)(Bush::STATES_TOTAL))
+			{
+				goBush->eCurrState = (Bush::STATES)(environmentValue["Bush Values"]["State"].GetInt());
+			}
+			else
+			{
+				std::cout << "Error Loading Bush Values State" << std::endl;
+				if (goBush != NULL)
+				{
+					delete goBush;
+					goBush = NULL;
+				}
+				return nullptr;
+			}
+		}
+		else
+		{
+			std::cout << "Error Loading Bush Values" << std::endl;
+			if (goBush != NULL)
+			{
+				delete goBush;
+				goBush = NULL;
+			}
+			return nullptr;
+		}
+		go = goBush; 
+	}
+		break;
+	case GameObject::GO_MOUNTAIN:
+	{	
+		Mountain* goMountain = new Mountain(type);
+
+		//Loading Mountain Values
+		if (environmentValue.HasMember("Mountain Values") && environmentValue["Mountain Values"].IsObject())
+		{
+			//Loading Stone Amount
+			if (environmentValue["Mountain Values"].HasMember("Stone Amount") && environmentValue["Mountain Values"]["Stone Amount"].IsInt())
+			{
+				goMountain->iStoneAmount = environmentValue["Mountain Values"]["Stone Amount"].GetInt();
+			}
+			else
+			{
+				std::cout << "Error Loading Mountain Values Stone Amount" << std::endl;
+				if (goMountain != NULL)
+				{
+					delete goMountain;
+					goMountain = NULL;
+				}
+				return nullptr;
+			}
+
+			//Loading Stone Gain
+			if (environmentValue["Mountain Values"].HasMember("Stone Gain") && environmentValue["Mountain Values"]["Stone Gain"].IsInt())
+			{
+				goMountain->iStoneGain = environmentValue["Mountain Values"]["Stone Gain"].GetInt();
+			}
+			else
+			{
+				std::cout << "Error Loading Mountain Values Stone Gain" << std::endl;
+				if (goMountain != NULL)
+				{
+					delete goMountain;
+					goMountain = NULL;
+				}
+				return nullptr;
+			}
+		}
+		else
+		{
+			std::cout << "Error Loading Mountain Values" << std::endl;
+			if (goMountain != NULL)
+			{
+				delete goMountain;
+				goMountain = NULL;
+			}
+			return nullptr;
+		}
+		go = goMountain; 
+	}
+		break;
+	case GameObject::GO_TREE:
+	{
+		Tree* goTree = new Tree(type);
+
+		//Loading Tree Values
+		if (environmentValue.HasMember("Tree Values") && environmentValue["Tree Values"].IsObject())
+		{
+			//Loading Wood Amount
+			if (environmentValue["Tree Values"].HasMember("Wood Amount") && environmentValue["Tree Values"]["Wood Amount"].IsInt())
+			{
+				goTree->iWoodAmount = environmentValue["Tree Values"]["Wood Amount"].GetInt();
+			}
+			else
+			{
+				std::cout << "Error Loading Tree Values Wood Amount" << std::endl;
+				if (goTree != NULL)
+				{
+					delete goTree;
+					goTree = NULL;
+				}
+				return nullptr;
+			}
+
+			//Loading State
+			if (environmentValue["Tree Values"].HasMember("State") && environmentValue["Tree Values"]["State"].IsInt() && environmentValue["Tree Values"]["State"].GetInt() < (int)(Tree::STATES_TOTAL))
+			{
+				goTree->eCurrState = (Tree::STATES)(environmentValue["Tree Values"]["State"].GetInt());
+			}
+			else
+			{
+				std::cout << "Error Loading Tree Values State" << std::endl;
+				if (goTree != NULL)
+				{
+					delete goTree;
+					goTree = NULL;
+				}
+				return nullptr;
+			}
+		}
+		else
+		{
+			std::cout << "Error Loading Tree Values" << std::endl;
+			if (goTree != NULL)
+			{
+				delete goTree;
+				goTree = NULL;
+			}
+			return nullptr;
+		}
+		go = goTree;
+	}
+		break;
+	default:
+		std::cout << "Error Environment Type" << std::endl;
+		return nullptr;
+	}
+
+	if (go == NULL)
+	{
+		std::cout << "Error Loading GameObject" << std::endl;
+		return nullptr;
+	}
+
+	if (environmentValue.HasMember("Timer") && environmentValue["Timer"].IsFloat())
+	{
+		go->fTimer = environmentValue["Timer"].GetFloat();
+	}
+	else
+	{
+		std::cout << "Error Loading Environment Timer"<<std::endl;
+		if (go != NULL)
+		{
+			delete go;
+			go = NULL;
+		}
+		return nullptr;
+	}
+
+	if (environmentValue.HasMember("Pos") && environmentValue["Pos"].IsObject())
+	{
+		go->pos = LoadVector3(environmentValue["Pos"]);
+	}
+	else
+	{
+		std::cout << "Error Loading Environment Pos" << std::endl;
+		if (go != NULL)
+		{
+			delete go;
+			go = NULL;
+		}
+		return nullptr;
+	}
+	go->active = true;
+	return go;
+}
+
+
+GameObject* GameSave::LoadCalamityGo(rapidjson::Value& calamityGOValue)
+{
 	return nullptr;
 }
 
-GameObject * GameSave::LoadBuilding(rapidjson::Value& buildingValue)
+GameObject * GameSave::LoadPig(rapidjson::Value & pigValue)
 {
-	return nullptr;
+	Pig* goPig = NULL;
+	if (pigValue.IsObject())
+	{
+		goPig = new Pig(GameObject::GO_PIG);
+	}
+	else
+	{
+		std::cout << "Error with pigValue type" << std::endl;
+		return nullptr;
+	}
+
+	//Loading Food
+	if (pigValue.HasMember("Food") && pigValue["Food"].IsInt())
+	{
+		goPig->iFoodAmount = pigValue["Food"].GetInt();
+	}
+	else
+	{
+		std::cout << "Error Loading pig Food" << std::endl;
+		if (goPig != NULL)
+		{
+			delete goPig;
+			goPig = NULL;
+		}
+		return nullptr;
+	}
+
+	//Loading Food
+	if (pigValue.HasMember("Timer") && pigValue["Timer"].IsFloat())
+	{
+		goPig->fTimer = pigValue["Timer"].GetFloat();
+	}
+	else
+	{
+		std::cout << "Error Loading pig Timer" << std::endl;
+		if (goPig != NULL)
+		{
+			delete goPig;
+			goPig = NULL;
+		}
+		return nullptr;
+	}
+
+	//Loading Energy
+	if (pigValue.HasMember("Energy") && pigValue["Energy"].IsFloat())
+	{
+		goPig->fEnergy = pigValue["Energy"].GetFloat();
+	}
+	else
+	{
+		std::cout << "Error Loading pig Energy" << std::endl;
+		if (goPig != NULL)
+		{
+			delete goPig;
+			goPig = NULL;
+		}
+		return nullptr;
+	}
+
+	//Loading Idle Timer
+	if (pigValue.HasMember("Idle Timer") && pigValue["Idle Timer"].IsFloat())
+	{
+		goPig->fIdleTimer = pigValue["Idle Timer"].GetFloat();
+	}
+	else
+	{
+		std::cout << "Error Loading pig Idle Timer" << std::endl;
+		if (goPig != NULL)
+		{
+			delete goPig;
+			goPig = NULL;
+		}
+		return nullptr;
+	}
+
+	//Loading Action Timer
+	if (pigValue.HasMember("Action Timer") && pigValue["Action Timer"].IsFloat())
+	{
+		goPig->fEnergy = pigValue["Action Timer"].GetFloat();
+	}
+	else
+	{
+		std::cout << "Error Loading pig Action Timer" << std::endl;
+		if (goPig != NULL)
+		{
+			delete goPig;
+			goPig = NULL;
+		}
+		return nullptr;
+	}
+
+	//Loading State
+	if (pigValue.HasMember("State") && pigValue["State"].IsInt())
+	{
+		goPig->state = (Pig::State)(pigValue["State"].GetInt());
+	}
+	else
+	{
+		std::cout << "Error Loading pig State" << std::endl;
+		if (goPig != NULL)
+		{
+			delete goPig;
+			goPig = NULL;
+		}
+		return nullptr;
+	}
+
+	//Loading Movement
+	if (pigValue.HasMember("Movement") && pigValue["Movement"].IsInt())
+	{
+		goPig->movement = (Pig::Movement)(pigValue["Movement"].GetInt());
+	}
+	else
+	{
+		std::cout << "Error Loading pig Movement" << std::endl;
+		if (goPig != NULL)
+		{
+			delete goPig;
+			goPig = NULL;
+		}
+		return nullptr;
+	}
+
+	//Loading Pos
+	if (pigValue.HasMember("Pos") && pigValue["Pos"].IsObject())
+	{
+		goPig->pos = LoadVector3(pigValue["Pos"]);
+		if (goPig->pos == NULL)
+		{
+			std::cout << "Error Loading Vector3 Pig Pos" << std::endl;
+			delete goPig;
+			goPig = NULL;
+			return nullptr;
+		}
+	}
+	else
+	{
+		std::cout << "Error Loading villager Pos" << std::endl;
+		if (goPig != NULL)
+		{
+			delete goPig;
+			goPig = NULL;
+		}
+		return nullptr;
+	}
+
+
+	goPig->smID = "PigSM";
+	goPig->m_currState = goPig->m_nextState = SMManager::GetInstance()->GetSM(goPig->smID)->GetState("Idle");
+	goPig->active = true;
+
+	return goPig;
+}
 }
 
-GameObject * GameSave::LoadEnvironment(rapidjson::Value& environmentValue)
-{
-	return nullptr;
-}
-
-
-GameObject * GameSave::LoadCalamityGo(rapidjson::Value& calamityGOValue)
-{
-	return nullptr;
-}
-
-GameObject * GameSave::LoadCalamity(rapidjson::Value& calamityValue)
+CalamityBase* GameSave::LoadCalamity(rapidjson::Value& calamityValue)
 {
 	return nullptr;
 }
