@@ -783,6 +783,7 @@ void SceneSP::Init()
 	CSoundEngine::GetInstance()->AddSound("munching",	"Audio//munching.wav");
 	CSoundEngine::GetInstance()->AddSound("oink1",		"Audio//oink1.wav");
 	CSoundEngine::GetInstance()->AddSound("oink2",		"Audio//oink2.wav");
+	CSoundEngine::GetInstance()->AddSound("place",		"Audio//place.wav");
 	CSoundEngine::GetInstance()->AddSound("rumble",		"Audio//rumble.wav");
 	CSoundEngine::GetInstance()->AddSound("rustling",	"Audio//rustling.wav");
 	CSoundEngine::GetInstance()->AddSound("sea",		"Audio//sea.wav");
@@ -3581,7 +3582,7 @@ void SceneSP::Update(double dt)
 											goBuilding->eCurrState = Building::COMPLETED;
 										bShowGrid = false;
 										EM->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, selected->pos);
-										CSoundEngine::GetInstance()->PlayASound("selection");
+										CSoundEngine::GetInstance()->PlayASound("place");
 									}
 								}
 							}
@@ -3662,7 +3663,7 @@ void SceneSP::Update(double dt)
 									goBuilding->eCurrState = Building::COMPLETED;
 								bShowGrid = false;
 								EM->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, selected->pos);
-								CSoundEngine::GetInstance()->PlayASound("selection");
+								CSoundEngine::GetInstance()->PlayASound("place");
 							}
 
 						}
