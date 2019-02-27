@@ -786,7 +786,7 @@ void SceneSP::Init()
 	CSoundEngine::GetInstance()->AddSound("rumble",		"Audio//rumble.wav");
 	CSoundEngine::GetInstance()->AddSound("rustling",	"Audio//rustling.wav");
 	CSoundEngine::GetInstance()->AddSound("sea",		"Audio//sea.wav");
-	CSoundEngine::GetInstance()->AddSound("selection",	"Audio//jump.wav");
+	CSoundEngine::GetInstance()->AddSound("selection",	"Audio//selection.wav");
 	CSoundEngine::GetInstance()->AddSound("step",		"Audio//step.wav");
 	CSoundEngine::GetInstance()->AddSound("waves",		"Audio//waves.wav");
 
