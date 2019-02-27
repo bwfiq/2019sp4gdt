@@ -47,6 +47,7 @@ void StateEating::Enter(GameObject * m_go)
 	m_go->pos.z += m_go->goTarget->scale.z * 0.3f;
 	m_go->direction.Set(-1, 0, -1);
 	m_go->direction.Normalize();
+	CSoundEngine::GetInstance()->PlayASound("munching", true);
 
 	//SceneData* SD = SceneData::GetInstance();
 	//goVil->mEquipment = SD->GetMesh("basket");
@@ -103,6 +104,7 @@ void StateEating::Exit(GameObject * m_go)
 	m_go->scale *= 5;
 	m_go->pos.y = m_go->scale.y * 0.5f;
 	m_go->ClearAnimation();
+	CSoundEngine::GetInstance()->StopASound("munching");
 	//goVil->mEquipment = NULL;
 }
 

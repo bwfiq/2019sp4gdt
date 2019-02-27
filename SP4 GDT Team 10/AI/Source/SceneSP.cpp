@@ -714,10 +714,6 @@ void SceneSP::Init()
 	SceneData::GetInstance()->bStoneResearch = false;
 	SceneData::GetInstance()->bFullStoneResearch = false;
 
-	SceneData::GetInstance()->bAnimalHunting = false;
-	SceneData::GetInstance()->bAnimalTaming = false;
-	SceneData::GetInstance()->bAnimalBreeding = false;
-
 	//go->vel.Set(1, 0, 0);
 	MousePicker::GetInstance()->Init();
 	MousePicker::GetInstance()->SetProjectionStack(projectionStack);
@@ -741,16 +737,24 @@ void SceneSP::Init()
 
 	CSoundEngine::GetInstance()->Init();
 	CSoundEngine::GetInstance()->AddSound("bg",			"Audio//bgmusic.mp3");
-	CSoundEngine::GetInstance()->AddSound("selection",	"Audio//selection.wav");
 	CSoundEngine::GetInstance()->AddSound("sea",		"Audio//sea.wav");
+	CSoundEngine::GetInstance()->AddSound("selection",	"Audio//selection.wav");
+	CSoundEngine::GetInstance()->AddSound("step",		"Audio//step.wav");
 	CSoundEngine::GetInstance()->AddSound("jump",		"Audio//jump.wav");
 	CSoundEngine::GetInstance()->AddSound("gasp",		"Audio//gasp.wav");
+	CSoundEngine::GetInstance()->AddSound("grunt",		"Audio//grunt.wav");
 	CSoundEngine::GetInstance()->AddSound("rumble",		"Audio//rumble.wav");
 	CSoundEngine::GetInstance()->AddSound("earthquake",	"Audio//earthquake.wav");
 	CSoundEngine::GetInstance()->AddSound("waves",		"Audio//waves.wav");
 	CSoundEngine::GetInstance()->AddSound("death",		"Audio//death.wav");
 	CSoundEngine::GetInstance()->AddSound("mining",		"Audio//mining.wav");
 	CSoundEngine::GetInstance()->AddSound("chopping",	"Audio//chopping.wav");
+	CSoundEngine::GetInstance()->AddSound("oink1",		"Audio//oink1.wav");
+	CSoundEngine::GetInstance()->AddSound("oink2",		"Audio//oink2.wav");
+	CSoundEngine::GetInstance()->AddSound("munching",	"Audio//munching.wav");
+	CSoundEngine::GetInstance()->AddSound("hunting",	"Audio//hunting.wav");
+	CSoundEngine::GetInstance()->AddSound("rustling",	"Audio//rustling.wav");
+	CSoundEngine::GetInstance()->AddSound("building",	"Audio//building.wav");
 
 	game_state = G_INPLAY; // to save the camera pos
 	ChangeState(G_SPLASHSCREEN);

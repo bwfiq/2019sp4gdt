@@ -75,13 +75,6 @@ public:
 	bool bWoodResearch;
 	bool bStoneResearch;
 	bool bFullStoneResearch;
-
-	bool bAnimalHunting;
-	bool bAnimalTaming;
-	bool bAnimalBreeding;
-
-	bool bWoodCutting;
-	bool bStoneMining;
 private:
 	SceneData();
 	~SceneData();
