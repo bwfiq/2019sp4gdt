@@ -3142,7 +3142,7 @@ void SceneSP::Update(double dt)
 	{
 		std::cout << "There is a hovered obj" << std::endl;
 	}
-	if (Application::IsKeyPressed('R'))
+	if (Application::IsKeyPressed('R') && bGodMode)
 	{
 		Reset();
 		Sleep(100);
@@ -3179,11 +3179,11 @@ void SceneSP::Update(double dt)
 	SD->SetMousePos_World(mousePos);
 	
 	//debug stuff
-	if (Application::IsKeyPressed(VK_OEM_MINUS))
+	if (Application::IsKeyPressed(VK_OEM_MINUS) && bGodMode)
 	{
 		m_speed = Math::Max(0.f, m_speed - 0.1f);
 	}
-	if (Application::IsKeyPressed(VK_OEM_PLUS))
+	if (Application::IsKeyPressed(VK_OEM_PLUS) && bGodMode)
 	{
 		m_speed += 0.1f;
 	}
@@ -3199,17 +3199,23 @@ void SceneSP::Update(double dt)
 	// ui updates
 	UIM->Update(dt);
 	// goals
-	switch (SD->GetCurrMonth())
+	if (!bGoalAchieved)
 	{
-	case 1:
-		bGoalAchieved = SD->GetFood() >= 1;
-		break;
-	case 2:
-		bGoalAchieved = SD->GetWood() >= 1;
-		break;
-	default:
-		break;
+		switch (SD->GetCurrMonth())
+		{
+		case 1:
+			bGoalAchieved = SD->GetFood() >= 20;
+			break;
+		case 2:
+			bGoalAchieved = SD->GetWood() >= 20;
+			break;
+		default:
+			break;
+		}
+		if (KC->IsKeyPressed('E') && bGodMode) // press E in debug mode to set goal to done
+			bGoalAchieved = true;
 	}
+	
 	if (UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement") != NULL)
 	{
 		for (int i = 0; i <= UIGameText::COMPONENT_TEXT_5 - UIGameText::COMPONENT_TEXT_1; ++i)
@@ -4942,31 +4948,27 @@ void SceneSP::RenderPassMain()
 
 	}
 
-	if (selected != NULL)
-	{
-		modelStack.PushMatrix();
-		modelStack.Translate(selected->pos.x, selected->pos.y + selected->scale.y * 0.7f, selected->pos.z);
-		modelStack.Scale(0.1, 0.1, 0.1);
-		//RenderMesh(meshList[GEO_VILLAGER], false); // renders a red cube above GO if it is currently selected
-		modelStack.PopMatrix();
-	}
-
 	//On screen text
 	std::ostringstream ss;
 
 	ss.str("");
 	ss.precision(3);
 	ss << "Speed:" << m_speed;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 67, 6);
+	if (bGodMode)
+		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 67, 6);
 
 	ss.str("");
 	ss.precision(5);
 	ss << "FPS:" << fps;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 67, 3);
+	if (bGodMode)
+		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 67, 3);
 
 	ss.str("");
-	ss << "God Mode:" << bGodMode;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 67, 0);
+	if (bGodMode)
+		ss << "[T] Player Mode";
+	else
+		ss << "[T] Debug Mode";
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 2, 67, 0);
 
 	UIManager::GetInstance()->Render(this);
 }
