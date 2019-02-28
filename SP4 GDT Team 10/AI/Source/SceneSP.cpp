@@ -28,6 +28,7 @@
 #include "EffectGridWarning.h"
 #include "EffectCloud.h"
 #include "EffectDirt.h"
+#include "EffectRing.h"
 
 #include "CalamityManager.h"
 #include "CalamityEarthquake.h"
@@ -4270,6 +4271,22 @@ void SceneSP::Update(double dt)
 				cloud->vel *= 0.9;
 				cloud->acc *= 0.35;
 				EM->AddEffect(cloud);
+				for (int j = 0; j < 2; ++j) 
+				{
+					EffectRing* ring = new EffectRing(
+						goTornado->pos + Vector3(0, Math::RandFloatMinMax(-0.15f,0.5f), 0)
+						, Math::RandFloatMinMax(0.4f, 0.475f)
+						, Vector3(1, 1, 1) * 0.04f
+						, Vector3(1, 1, 1) * Math::RandFloatMinMax(0.1f, 1.75f)
+						, NULL
+					);
+					ring->startAlpha = ring->endAlpha = 1.f;
+					ring->rotation.Set(Math::RandFloatMinMax(-20, 20), 0, Math::RandFloatMinMax(-20, 20));
+					ring->vel.Set(0, Math::RandFloatMinMax(5, 10), 0);
+					ring->acc = -ring->vel * 1.f;
+					ring->bLightEnabled = true;
+					EffectManager::GetInstance()->AddEffect(ring);
+				}
 			}
 			if (goTornado->fEffectTimer_Dirt > 0.12f)
 			{

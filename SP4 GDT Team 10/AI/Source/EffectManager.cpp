@@ -3,11 +3,14 @@
 #include "GL/glew.h"
 #include "SceneBase.h"
 #include "Application.h"
+
 #include "EffectTrail.h"
 #include "EffectHand.h"
 #include "EffectReticle.h"
 #include "EffectCloud.h"
 #include "EffectDirt.h"
+#include "EffectRing.h"
+
 #include "SceneData.h"
 #include "SceneSP.h"
 
@@ -345,6 +348,15 @@ void EffectManager::DoPrefabEffect(EFFECT_PREFABS prefab, Vector3 goPos)
 			newCloud->vel += Vector3(0, 1, 0);
 			this->AddEffect(newCloud);
 		}
+		EffectRing* ring = new EffectRing(
+			goPos + Vector3(0, 0.5f, 0)
+			, Math::RandFloatMinMax(0.8f, 1.75f)
+			, Vector3(1, 1, 1)
+			, Vector3(1, 1, 1) * 6.f
+			, NULL
+		);
+		ring->startAlpha = 0.9f;
+		EffectManager::GetInstance()->AddEffect(ring);
 		break;
 	}
 	}
