@@ -60,7 +60,8 @@ bool GameSave::LoadGame()
 	{
 		fp = fopen(filename.c_str(), "rb"); // non-Windows use "r"
 	}
-		char readBuffer[65536];
+
+		char readBuffer[65536*5];
 		FileReadStream is(fp, readBuffer, sizeof(readBuffer));
 
 		gameFile.ParseStream(is);
@@ -82,6 +83,7 @@ bool GameSave::LoadGame()
 		Value objEnvironments(kObjectType);
 		Value objCalamityGO(kObjectType);
 		Value objCalamities(kObjectType);
+		Value objResources(kObjectType);
 
 		int numVil = 0;
 		int numBuilding = 0;
@@ -90,8 +92,17 @@ bool GameSave::LoadGame()
 		int numCalamities = 0;
 		int numCalamitiesQ = 0;
 		
+		
 		if (gameFile.IsObject())
 		{
+			if (gameFile.HasMember("Resources"))
+			{
+				objResources = gameFile["Resources"];
+			}
+			else
+			{
+				std::cout << "error loading resources" << std::endl;
+			}
 			if (gameFile.HasMember("Villagers"))
 			{
 				objVillagers = gameFile["Villagers"];
@@ -216,55 +227,81 @@ bool GameSave::LoadGame()
 		//Loading all the stuff
 
 		//Load time date
-		if (objVillagers.HasMember("Day") && objVillagers["Day"].IsInt())
+		if (gameFile.HasMember("Day") && gameFile["Day"].IsInt())
 		{
-			SD->SetCurrDay(objVillagers["Day"].GetInt());
+			SD->SetCurrDay(gameFile["Day"].GetInt());
 		}
 		else
 		{
-			std::cout << "error loading day";
+			std::cout << "error loading day" << std::endl;
 		}
-		if (objVillagers.HasMember("Month") && objVillagers["Month"].IsInt())
+		if (gameFile.HasMember("Month") && gameFile["Month"].IsInt())
 		{
-			SD->SetCurrMonth(objVillagers["Month"].GetInt());
-		}
-		else
-		{
-			std::cout << "error loading Month";
-		}
-		if (objVillagers.HasMember("Time Of Day") && objVillagers["Time Of Day"].IsFloat())
-		{
-			SD->SetTimeOfDay(objVillagers["Time Of Day"].GetFloat());
+			SD->SetCurrMonth(gameFile["Month"].GetInt());
 		}
 		else
 		{
-			std::cout << "error loading Time Of Day";
+			std::cout << "error loading Month" << std::endl;
+		}
+		if (gameFile.HasMember("Time Of Day") && gameFile["Time Of Day"].IsFloat())
+		{
+			SD->SetTimeOfDay(gameFile["Time Of Day"].GetFloat());
+		}
+		else
+		{
+			std::cout << "error loading Time Of Day" << std::endl;
 		}
 		
 		//Load Research
-		if (objVillagers.HasMember("Full Stone Research") && objVillagers["Full Stone Research"].IsBool())
+		if (gameFile.HasMember("Full Stone Research") && gameFile["Full Stone Research"].IsBool())
 		{
-			SD->bFullStoneResearch = (objVillagers["Full Stone Research"].GetBool());	
+			SD->bFullStoneResearch = (gameFile["Full Stone Research"].GetBool());
 		}
 		else
 		{
-			std::cout << "error loading Full Stone Research";
+			std::cout << "error loading Full Stone Research"<<std::endl;
 		}
-		if (objVillagers.HasMember("Stone Research") && objVillagers["Stone Research"].IsBool())
+		if (gameFile.HasMember("Stone Research") && gameFile["Stone Research"].IsBool())
 		{
-			SD->bStoneResearch = (objVillagers["Stone Research"].GetBool());
-		}
-		else
-		{
-			std::cout << "error loading Stone Research";
-		}
-		if (objVillagers.HasMember("Wood Research") && objVillagers["Wood Research"].IsBool())
-		{
-			SD->bFullStoneResearch = (objVillagers["Wood Research"].GetBool());
+			SD->bStoneResearch = (gameFile["Stone Research"].GetBool());
 		}
 		else
 		{
-			std::cout << "error loading Wood Research";
+			std::cout << "error loading Stone Research" << std::endl;
+		}
+		if (gameFile.HasMember("Wood Research") && gameFile["Wood Research"].IsBool())
+		{
+			SD->bFullStoneResearch = (gameFile["Wood Research"].GetBool());
+		}
+		else
+		{
+			std::cout << "error loading Wood Research" << std::endl;
+		}
+
+		//Load Resources
+		if (objResources.HasMember("Food") && objResources["Food"].IsInt())
+		{
+			SD->SetFood(objResources["Food"].GetInt());
+		}
+		else
+		{
+			std::cout << "Error loading food" << std::endl;
+		}
+		if (objResources.HasMember("Stone") && objResources["Stone"].IsInt())
+		{
+			SD->SetStone(objResources["Stone"].GetInt());
+		}
+		else
+		{
+			std::cout << "Error loading Stone" << std::endl;
+		}
+		if (objResources.HasMember("Wood") && objResources["Wood"].IsInt())
+		{
+			SD->SetWood(objResources["Wood"].GetInt());
+		}
+		else
+		{
+			std::cout << "Error loading Wood" << std::endl;
 		}
 
 		//Load Villagers
@@ -397,7 +434,8 @@ bool GameSave::LoadEverything()
 	Value objBuildings(kObjectType);
 	Value objEnvironments(kObjectType);
 	Value objCalamityGO(kObjectType);
-	Value objCalamities(kObjectType);
+	Value objCalamities(kObjectType);		
+	Value objResources(kObjectType);
 
 	int numVil = 0;
 	int numBuilding = 0;
@@ -530,6 +568,83 @@ bool GameSave::LoadEverything()
 	}
 
 	//Loading all the stuff
+	//Load time date
+	if (objVillagers.HasMember("Day") && objVillagers["Day"].IsInt())
+	{
+		SD->SetCurrDay(objVillagers["Day"].GetInt());
+	}
+	else
+	{
+		std::cout << "error loading day";
+	}
+	if (objVillagers.HasMember("Month") && objVillagers["Month"].IsInt())
+	{
+		SD->SetCurrMonth(objVillagers["Month"].GetInt());
+	}
+	else
+	{
+		std::cout << "error loading Month";
+	}
+	if (objVillagers.HasMember("Time Of Day") && objVillagers["Time Of Day"].IsFloat())
+	{
+		SD->SetTimeOfDay(objVillagers["Time Of Day"].GetFloat());
+	}
+	else
+	{
+		std::cout << "error loading Time Of Day";
+	}
+
+	//Load Research
+	if (objVillagers.HasMember("Full Stone Research") && objVillagers["Full Stone Research"].IsBool())
+	{
+		SD->bFullStoneResearch = (objVillagers["Full Stone Research"].GetBool());
+	}
+	else
+	{
+		std::cout << "error loading Full Stone Research";
+	}
+	if (objVillagers.HasMember("Stone Research") && objVillagers["Stone Research"].IsBool())
+	{
+		SD->bStoneResearch = (objVillagers["Stone Research"].GetBool());
+	}
+	else
+	{
+		std::cout << "error loading Stone Research";
+	}
+	if (objVillagers.HasMember("Wood Research") && objVillagers["Wood Research"].IsBool())
+	{
+		SD->bFullStoneResearch = (objVillagers["Wood Research"].GetBool());
+	}
+	else
+	{
+		std::cout << "error loading Wood Research";
+	}
+
+	//Load Resources
+	if (objResources.HasMember("Food") && objResources["Food"].IsInt())
+	{
+		SD->SetFood(objResources["Food"].GetInt());
+	}
+	else
+	{
+		std::cout << "Error loading food" << std::endl;
+	}
+	if (objResources.HasMember("Stone") && objResources["Stone"].IsInt())
+	{
+		SD->SetStone(objResources["Stone"].GetInt());
+	}
+	else
+	{
+		std::cout << "Error loading Stone" << std::endl;
+	}
+	if (objResources.HasMember("Wood") && objResources["Wood"].IsInt())
+	{
+		SD->SetWood(objResources["Wood"].GetInt());
+	}
+	else
+	{
+		std::cout << "Error loading Wood" << std::endl;
+	}
 
 	//Load Villagers
 	if (objVillagers.HasMember("Villager"))
@@ -646,6 +761,7 @@ void GameSave::SaveGame()
 	Value objEnvironments(kObjectType);
 	Value objCalamityGO(kObjectType);
 	Value objCalamities(kObjectType);
+	Value objResources(kObjectType);
 
 	int numVil = 0;
 	int numPig = 0;
@@ -766,12 +882,17 @@ void GameSave::SaveGame()
 	objCalamities.AddMember("Number Queue", numCalamitiesQ, allocator);
 	objCalamities.AddMember("CalamitiesQ", calamitiesQ, allocator);
 
+	objResources.AddMember("Food", SD->GetFood(), allocator);
+	objResources.AddMember("Stone", SD->GetStone(), allocator);
+	objResources.AddMember("Wood", SD->GetWood(), allocator);
+
 	gameFile.AddMember("Day", SD->GetCurrDay(), allocator);
 	gameFile.AddMember("Month", SD->GetCurrMonth(), allocator);
 	gameFile.AddMember("Time Of Day", SD->GetTimeOfDay(), allocator);
 	gameFile.AddMember("Full Stone Research", SD->bFullStoneResearch, allocator);
 	gameFile.AddMember("Stone Research", SD->bStoneResearch, allocator);
 	gameFile.AddMember("Wood Research", SD->bWoodResearch, allocator);
+	gameFile.AddMember("Resources", objResources, allocator);
 	gameFile.AddMember("Villagers", objVillagers, allocator);
 	gameFile.AddMember("Pigs", objPigs, allocator);
 	gameFile.AddMember("Buildings", objBuildings, allocator);

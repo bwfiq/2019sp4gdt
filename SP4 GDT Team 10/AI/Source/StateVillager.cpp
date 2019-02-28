@@ -935,19 +935,13 @@ void StateInHut::Update(double dt, GameObject* m_go)
 	if (goBuilding)
 	{
 		//IMPORTANT!! MUST BE CHANGED, TEMPORARY CODE FOR CHANING BUILDING'S STATE
-		if (!goBuilding->active)
-		{
-			m_go->goTarget = NULL;
-			m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
-			return;
-		}
-		m_go->goTarget = NULL;
-		goBuilding->eCurrState = Building::BROKEN;
+
 		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 	}
 	else
 	{
 		std::cout << "Wrong State : InHut" << std::endl;
+		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 		return;
 	}
 }

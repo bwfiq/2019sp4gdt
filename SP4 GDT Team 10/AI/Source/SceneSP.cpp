@@ -3215,13 +3215,13 @@ void SceneSP::ChangeTimeOfDay()
 		{
 			int iDifference = SD->GetPopulationLimit() - SD->GetPopulation();
 			GameObject* go = NULL;
-			
+			Villager* goVil = NULL;
 			//If more then 10 empty spaces, at least 1 will spawn
 			if (iDifference > 10)
 			{
 				go = FetchGO(GameObject::GO_VILLAGER);
 				
-				go->scale.y = 1.f;
+				go->scale.y = Math::RandFloatMinMax(0.4f, 0.6f);
 				GridPt tempPt;
 				tempPt.Set(Math::RandIntMinMax(0, SD->GetNoGrid() - 1), Math::RandIntMinMax(0, SD->GetNoGrid() - 1));
 				while (!m_grid[GetGridIndex(tempPt)] == Grid::TILE_EMPTY)
@@ -3231,13 +3231,20 @@ void SceneSP::ChangeTimeOfDay()
 				go->pos = GetGridPos(tempPt);
 				go->pos.y = go->scale.y * 0.5f;
 				go->GiveAnimation(new AnimationJump());
+				goVil = dynamic_cast<Villager*>(go);
+				for (int i = 0; i < Villager::STAT_TOTAL; ++i)
+				{
+					goVil->fStats[i] = Math::RandFloatMinMax(0.5f, 1.5f);
+				}
+				EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, go->pos);
 			}
 
 			int rand = Math::RandInt();
 			if (rand % 2 == 0)
 			{
 				go = FetchGO(GameObject::GO_VILLAGER);
-				go->scale.y = 1.f;
+				
+				go->scale.y = Math::RandFloatMinMax(0.4f, 0.6f);
 				GridPt tempPt;
 				tempPt.Set(Math::RandIntMinMax(0, SD->GetNoGrid() - 1), Math::RandIntMinMax(0, SD->GetNoGrid() - 1));
 				while (!m_grid[GetGridIndex(tempPt)] == Grid::TILE_EMPTY)
@@ -3247,6 +3254,12 @@ void SceneSP::ChangeTimeOfDay()
 				go->pos = GetGridPos(tempPt);
 				go->pos.y = go->scale.y * 0.5f;
 				go->GiveAnimation(new AnimationJump());
+				goVil = dynamic_cast<Villager*>(go);
+				for (int i = 0; i < Villager::STAT_TOTAL; ++i)
+				{
+					goVil->fStats[i] = Math::RandFloatMinMax(0.5f, 1.5f);
+				}
+				EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, go->pos);
 			}
 		}
 		int totalGridAmts = SD->GetNoGrid() * SD->GetNoGrid();
@@ -3266,8 +3279,8 @@ void SceneSP::ChangeTimeOfDay()
 
 				Tree* spawnedGO = dynamic_cast<Tree*>(FetchGO(GameObject::GO_TREE));
 				spawnedGO->eCurrState = Tree::FULL;
-				spawnedGO->fTimer = 5;
-				spawnedGO->iWoodAmount = 10;
+				spawnedGO->fTimer = Math::RandFloatMinMax(3.5f, 6.5f);
+				spawnedGO->iWoodAmount = Math::RandIntMinMax(8, 14);
 				spawnedGO->pos = GetGridPos(tempPt);
 				spawnedGO->pos.y = spawnedGO->scale.y * 0.5f;
 				EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, spawnedGO->pos);
@@ -3288,9 +3301,9 @@ void SceneSP::ChangeTimeOfDay()
 					break;
 
 				Mountain* spawnedGO = dynamic_cast<Mountain*>(FetchGO(GameObject::GO_MOUNTAIN));
-				spawnedGO->iStoneAmount = 11;
-				spawnedGO->iStoneGain = 5;
-				spawnedGO->fTimer = 4;
+				spawnedGO->iStoneAmount = Math::RandIntMinMax(8, 15);
+				spawnedGO->iStoneGain = Math::RandIntMinMax(5, 8);
+				spawnedGO->fTimer = Math::RandFloatMinMax(3.5f, 7.5f);
 				spawnedGO->pos = GetGridPos(tempPt);
 				spawnedGO->pos.y = spawnedGO->scale.y * 0.5f;
 				EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, spawnedGO->pos);
@@ -3312,8 +3325,8 @@ void SceneSP::ChangeTimeOfDay()
 
 				Bush* spawnedGO = dynamic_cast<Bush*>(FetchGO(GameObject::GO_BUSH));
 				spawnedGO->eCurrState = Bush::LUSH;
-				spawnedGO->fTimer = 5;
-				spawnedGO->iFoodAmount = 10;
+				spawnedGO->fTimer = Math::RandFloatMinMax(3.5f, 6.5f);
+				spawnedGO->iFoodAmount = Math::RandIntMinMax(5, 10);
 				spawnedGO->pos = GetGridPos(tempPt);
 				spawnedGO->pos.y = spawnedGO->scale.y * 0.5f;
 				EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, spawnedGO->pos);
@@ -3380,6 +3393,7 @@ void SceneSP::ChangeTimeOfDay()
 				{
 					someoneDied = true;
 					go->active = false;
+					EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_VILLAGER_DIE, go->pos);
 				}
 			}
 			if (!someoneDied)
@@ -3392,6 +3406,7 @@ void SceneSP::ChangeTimeOfDay()
 					{
 						go->active = false;
 						someoneDied = true;
+						EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_VILLAGER_DIE, go->pos);
 						continue;
 					}
 					Villager* goVil = static_cast<Villager*>(go);
@@ -5530,6 +5545,10 @@ GameObject * SceneSP::GetHoveredObject()
 			}
 		}
 	}
+	if (currGo == NULL)
+	{
+		SceneData::GetInstance()->aabbHitPoint.Set(0, -50, 0);
+	}
 	return currGo;
 }
 
@@ -5548,9 +5567,9 @@ bool SceneSP::GetIntersectionAABB(Vector3 lineStart, Vector3 lineEnd, Vector3 mi
 		|| (GetIsIntersecting(lineStart.z - maxAABB.z, lineEnd.z - maxAABB.z, lineStart, lineEnd, hitPosition) &&
 			InBox(hitPosition, minAABB, maxAABB, 3)))
 	{
+		SceneData::GetInstance()->aabbHitPoint = hitPosition;
 		return true;
 	}
-
 	return false;
 }
 

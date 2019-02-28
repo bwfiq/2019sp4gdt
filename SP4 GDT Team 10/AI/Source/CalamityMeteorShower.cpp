@@ -25,10 +25,11 @@ void CalamityMeteorShower::Enter()
 	this->meteorGridPts.clear();
 	for (int i = 0; i < Math::RandIntMinMax(noGrid * 0.45f, noGrid * 0.75f); ++i)
 	{
-		GridPt newGrid(Math::RandIntMinMax(0, noGrid), Math::RandIntMinMax(0, noGrid));
+		GridPt newGrid;
 		bool hasGridInVector = false;
 		do
 		{
+			newGrid = GridPt(Math::RandIntMinMax(0, noGrid), Math::RandIntMinMax(0, noGrid));
 			hasGridInVector = false;
 			for (auto otherGrid : this->meteorGridPts)
 			{
