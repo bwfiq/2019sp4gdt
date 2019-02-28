@@ -72,6 +72,11 @@ public:
 	void UpdateSelectedUI();
 	void DoSelectedUITween();
 
+	GameObject* GetChiefHut();
+	GameObject* GetAltar();
+	GameObject* GetResearchLab();
+
+
 	void Reset();
 
 

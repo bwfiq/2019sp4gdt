@@ -287,6 +287,7 @@ void EffectManager::DoPrefabEffect(EFFECT_PREFABS prefab, Vector3 goPos)
 		}
 		break;
 	}
+	case PREFAB_VILLAGER_BUILDING:
 	case PREFAB_VILLAGER_FIGHT:
 	{
 		//for (int i = 0; i < 3; ++i)

@@ -692,6 +692,7 @@ void StateForaging::Update(double dt, GameObject * m_go)
 			m_go->goTarget = NULL;
 
 			MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_NEAREST_GRANARY, 1);
+			EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_COMPLETEOBJECT, bushGo->pos);
 			PostOffice::GetInstance()->Send("Scene", messagewru);
 			m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 			return;
@@ -1027,6 +1028,12 @@ void StateConstructing::Update(double dt, GameObject* m_go)
 			else
 			{
 				vGo->fActionTimer -= dt * vGo->fEfficiency * vGo->fStats[Villager::BUILDING];
+				vGo->fEffectTimer_Fight += dt;
+				if (vGo->fEffectTimer_Fight > 0.38f)
+				{
+					vGo->fEffectTimer_Fight = 0;
+					EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_VILLAGER_FIGHT, goBuilding->pos);
+				}
 			}
 		}
 		else
@@ -1114,6 +1121,7 @@ void StateMining::Update(double dt, GameObject* m_go)
 			mountainGo->active = false;
 		}
 
+		EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_COMPLETEOBJECT, mountainGo->pos);
 		MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_NEAREST_STONESHED, 1);
 		PostOffice::GetInstance()->Send("Scene", messagewru);
 		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");

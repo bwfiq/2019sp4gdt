@@ -683,6 +683,9 @@ void SceneSP::Init()
 
 	selected = NULL;
 	hovered = NULL;
+	goChiefHut = NULL;
+	goAltar = NULL;
+	goResearchLab = NULL;
 	tempCamera.Init(Vector3(0, 2, 2), Vector3(0, 0, 0), Vector3(0, 1, 0));
 
 	iCurrItrVillagers = 0;
@@ -3126,6 +3129,21 @@ void SceneSP::DoSelectedUITween()
 	// apply tweens to the selected UI << END >>
 }
 
+GameObject * SceneSP::GetChiefHut()
+{
+	return this->goChiefHut;
+}
+
+GameObject * SceneSP::GetAltar()
+{
+	return this->goAltar;
+}
+
+GameObject * SceneSP::GetResearchLab()
+{
+	return this->goResearchLab;
+}
+
 void SceneSP::Reset()
 {
 	//Cleanup GameObjects
@@ -3169,6 +3187,8 @@ void SceneSP::ChangeTimeOfDay()
 		//bGodlights = false;
 		SceneData* SD = SceneData::GetInstance();
 		SD->SetCurrDay(SD->GetCurrDay() + 1);
+		int iAmountOfTrees, iAmountOfBushes, iAmountOfMountains;
+		iAmountOfTrees = iAmountOfBushes = iAmountOfMountains = 0;
 		//Resetting objects that need to be reset
 		for (auto go : m_goList)
 		{
@@ -3176,8 +3196,17 @@ void SceneSP::ChangeTimeOfDay()
 				continue;
 			if (go->type == GameObject::GO_BUSH)
 			{
+				++iAmountOfBushes;
 				if (static_cast<Bush*>(go)->eCurrState == Bush::DEPLETED)
 					static_cast<Bush*>(go)->eCurrState = Bush::LUSH;
+			}
+			else if (go->type == GameObject::GO_MOUNTAIN)
+			{
+				++iAmountOfMountains;
+			}
+			else if (go->type == GameObject::GO_TREE)
+			{
+				++iAmountOfTrees;
 			}
 		}
 
@@ -3220,6 +3249,77 @@ void SceneSP::ChangeTimeOfDay()
 				go->GiveAnimation(new AnimationJump());
 			}
 		}
+		int totalGridAmts = SD->GetNoGrid() * SD->GetNoGrid();
+		if (iAmountOfTrees < 8)
+		{
+			for (int i = 0; i < Math::RandIntMinMax(-1, 3); ++i)
+			{
+				GridPt tempPt;
+				int trySpawnCount = 0;
+				do
+				{
+					tempPt.Set(Math::RandIntMinMax(0, SD->GetNoGrid() - 1), Math::RandIntMinMax(0, SD->GetNoGrid() - 1));
+					trySpawnCount++;
+				} while (!m_grid[GetGridIndex(tempPt)] == Grid::TILE_EMPTY && trySpawnCount < totalGridAmts);
+				if (trySpawnCount >= totalGridAmts)
+					break;
+
+				Tree* spawnedGO = dynamic_cast<Tree*>(FetchGO(GameObject::GO_TREE));
+				spawnedGO->eCurrState = Tree::FULL;
+				spawnedGO->fTimer = 5;
+				spawnedGO->iWoodAmount = 10;
+				spawnedGO->pos = GetGridPos(tempPt);
+				spawnedGO->pos.y = spawnedGO->scale.y * 0.5f;
+				EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, spawnedGO->pos);
+			}
+		}
+		if (iAmountOfMountains < 8)
+		{
+			for (int i = 0; i < Math::RandIntMinMax(-1, 2); ++i)
+			{
+				GridPt tempPt;
+				int trySpawnCount = 0;
+				do
+				{
+					tempPt.Set(Math::RandIntMinMax(0, SD->GetNoGrid() - 1), Math::RandIntMinMax(0, SD->GetNoGrid() - 1));
+					trySpawnCount++;
+				} while (!m_grid[GetGridIndex(tempPt)] == Grid::TILE_EMPTY && trySpawnCount < totalGridAmts);
+				if (trySpawnCount >= totalGridAmts)
+					break;
+
+				Mountain* spawnedGO = dynamic_cast<Mountain*>(FetchGO(GameObject::GO_MOUNTAIN));
+				spawnedGO->iStoneAmount = 11;
+				spawnedGO->iStoneGain = 5;
+				spawnedGO->fTimer = 4;
+				spawnedGO->pos = GetGridPos(tempPt);
+				spawnedGO->pos.y = spawnedGO->scale.y * 0.5f;
+				EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, spawnedGO->pos);
+			}
+		}
+		if (iAmountOfBushes < 4)
+		{
+			for (int i = 0; i < Math::RandIntMinMax(-1, 2); ++i)
+			{
+				GridPt tempPt;
+				int trySpawnCount = 0;
+				do
+				{
+					tempPt.Set(Math::RandIntMinMax(0, SD->GetNoGrid() - 1), Math::RandIntMinMax(0, SD->GetNoGrid() - 1));
+					trySpawnCount++;
+				} while (!m_grid[GetGridIndex(tempPt)] == Grid::TILE_EMPTY && trySpawnCount < totalGridAmts);
+				if (trySpawnCount >= totalGridAmts)
+					break;
+
+				Bush* spawnedGO = dynamic_cast<Bush*>(FetchGO(GameObject::GO_BUSH));
+				spawnedGO->eCurrState = Bush::LUSH;
+				spawnedGO->fTimer = 5;
+				spawnedGO->iFoodAmount = 10;
+				spawnedGO->pos = GetGridPos(tempPt);
+				spawnedGO->pos.y = spawnedGO->scale.y * 0.5f;
+				EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, spawnedGO->pos);
+			}
+		}
+
 	}
 	else // nighttime reset
 	{
@@ -4463,6 +4563,7 @@ void SceneSP::Update(double dt)
 			{
 				SD->SetPopulationLimit(SD->GetPopulationLimit() + goHouse->iHousingSpace * 0.5f);
 			}
+			goChiefHut = go;
 		}
 			break;
 		case GameObject::GO_HOUSE:
@@ -4513,6 +4614,7 @@ void SceneSP::Update(double dt)
 		case GameObject::GO_ALTAR:
 		{
 			Altar* goAltar = static_cast<Altar*>(go);
+			this->goAltar = go;
 			static const float MAX_FOOD_TIMER = 3.f; //Rate for food to be decreased
 			static float fFoodtimer = MAX_FOOD_TIMER;
 			if (goAltar->iFoodOffered > 0)
@@ -4530,6 +4632,9 @@ void SceneSP::Update(double dt)
 			SD->SetReligionValue(Math::Min(100.f, (float)(static_cast<Altar*>(go)->iFoodOffered)));
 		}
 		break;
+		case GameObject::GO_RESEARCHLAB:
+			this->goResearchLab = go;
+			break;
 		case GameObject::GO_TSUNAMI:
 		{
 			Tsunami* goTsunami = static_cast<Tsunami*>(go);
