@@ -341,6 +341,9 @@
     <ClCompile Include="Source\Meteor.cpp">
       <Filter>GameObjects\Calamity</Filter>
     </ClCompile>
+    <ClCompile Include="Source\StoneShed.cpp">
+      <Filter>GameObjects\Buildings</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -627,6 +630,9 @@
     </ClInclude>
     <ClInclude Include="Source\Meteor.h">
       <Filter>GameObjects\Calamity</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\StoneShed.h">
+      <Filter>GameObjects\Buildings</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

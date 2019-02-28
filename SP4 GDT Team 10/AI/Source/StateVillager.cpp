@@ -371,7 +371,7 @@ void StatePath::Update(double dt, GameObject * m_go)
 								return;
 							case GameObject::GO_GRANARY:
 								//m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
-								SD->SetFood(SD->GetFood() + static_cast<Villager*>(m_go)->iFoodStored);
+								SD->SetFood(Math::Min(SD->GetFoodLimit(), SD->GetFood() + static_cast<Villager*>(m_go)->iFoodStored));
 
 								static_cast<Villager*>(m_go)->iFoodStored = 0;
 
@@ -387,14 +387,27 @@ void StatePath::Update(double dt, GameObject * m_go)
 								m_go->goTarget = NULL;
 								m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 								return;
+							case GameObject::GO_STONESHED:
+								//m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
+								SD->SetStone(Math::Min(SD->GetStoneLimit(), SD->GetStone() + static_cast<Villager*>(m_go)->iStoneStored));
+
+								static_cast<Villager*>(m_go)->iStoneStored = 0;
+
+								m_go->goTarget = NULL;
+								m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
+								return;
 							case GameObject::GO_HOUSE:
 								m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
 								return;
-							case GameObject::GO_CHIEFHUT: // should be stone storage
+							case GameObject::GO_CHIEFHUT:
 						//m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("InHut");
-								SD->SetStone(SD->GetStone() + static_cast<Villager*>(m_go)->iStoneStored);
+								SD->SetStone(Math::Min(SD->GetStoneLimit(), SD->GetStone() + static_cast<Villager*>(m_go)->iStoneStored));
+								SD->SetFood(Math::Min(SD->GetFoodLimit(), SD->GetFood() + static_cast<Villager*>(m_go)->iFoodStored));
+								SD->SetWood(Math::Min(SD->GetWoodLimit(), SD->GetWood() + static_cast<Villager*>(m_go)->iWoodStored));
 
 								static_cast<Villager*>(m_go)->iStoneStored = 0;
+								static_cast<Villager*>(m_go)->iFoodStored = 0;
+								static_cast<Villager*>(m_go)->iWoodStored = 0;
 
 								m_go->goTarget = NULL;
 								m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
@@ -1089,7 +1102,7 @@ void StateMining::Update(double dt, GameObject* m_go)
 			mountainGo->active = false;
 		}
 
-		MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_CHIEFHUT, 1);
+		MessageWRU* messagewru = new MessageWRU(m_go, MessageWRU::FIND_NEAREST_STONESHED, 1);
 		PostOffice::GetInstance()->Send("Scene", messagewru);
 		m_go->m_nextState = SMManager::GetInstance()->GetSM(m_go->smID)->GetState("Idle");
 		//m_go->goTarget = NULL;

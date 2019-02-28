@@ -278,6 +278,8 @@ void SceneBase::Init()
 
 	meshList[GEO_BUILDING] = MeshBuilder::GenerateOBJ("building", "Obj//house.obj");
 	meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//strawhouse.tga");
+	meshList[GEO_BROKEN_BUILDING] = MeshBuilder::GenerateOBJ("brokenbuilding", "Obj//brokenhouse.obj");
+	meshList[GEO_BROKEN_BUILDING]->textureArray[0] = LoadTGA("Image//brokenhouse.tga");
 	meshList[GEO_GRANARY] = MeshBuilder::GenerateOBJ("granary", "Obj//granary.obj");
 	meshList[GEO_GRANARY]->textureArray[0] = LoadTGA("Image//granary.tga");
 	meshList[GEO_BROKEN_GRANARY] = MeshBuilder::GenerateOBJ("brokengranary", "Obj//brokengranary.obj");
@@ -286,8 +288,10 @@ void SceneBase::Init()
 	meshList[GEO_WOODSHED]->textureArray[0] = LoadTGA("Image//woodshed.tga");
 	meshList[GEO_BROKEN_WOODSHED] = MeshBuilder::GenerateOBJ("brokenwoodshed", "Obj//brokenwoodshed.obj");
 	meshList[GEO_BROKEN_WOODSHED]->textureArray[0] = LoadTGA("Image//woodshed.tga");
-	meshList[GEO_BROKEN_BUILDING] = MeshBuilder::GenerateOBJ("brokenbuilding", "Obj//brokenhouse.obj");
-	meshList[GEO_BROKEN_BUILDING]->textureArray[0] = LoadTGA("Image//brokenhouse.tga");
+	meshList[GEO_STONESHED] = MeshBuilder::GenerateOBJ("stoneshed", "Obj//stoneshed.obj");
+	meshList[GEO_STONESHED]->textureArray[0] = LoadTGA("Image//stoneshed.tga");
+	meshList[GEO_BROKEN_STONESHED] = MeshBuilder::GenerateOBJ("brokenstoneshed", "Obj//brokenstoneshed.obj");
+	meshList[GEO_BROKEN_STONESHED]->textureArray[0] = LoadTGA("Image//stoneshed.tga");
 	meshList[GEO_LOGS] = MeshBuilder::GenerateOBJ("logs", "Obj//logs.obj");
 	meshList[GEO_LOGS]->textureArray[0] = LoadTGA("Image//logs.tga");
 

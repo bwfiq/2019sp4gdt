@@ -163,6 +163,16 @@ UIGameText::UIGameText(TEXT_TYPE textType, float x, float y, GameObject* go) :
 			uiComponents_list[COMPONENT_TEXT_2].text = "limit";
 			uiComponents_list[COMPONENT_TEXT_2].pos.x += 0.095f;
 		}
+		else if (go->type == GameObject::GO_STONESHED)
+		{
+			uiComponents_list[COMPONENT_TEXT_5].text = "Stoneshed";
+			uiComponents_list[COMPONENT_TEXT_3].textSize *= 0.85f;
+			uiComponents_list[COMPONENT_TEXT_3].text = "Increases stone";
+			uiComponents_list[COMPONENT_TEXT_3].pos.x -= 0.055f;
+			uiComponents_list[COMPONENT_TEXT_2].textSize *= 0.85f;
+			uiComponents_list[COMPONENT_TEXT_2].text = "limit";
+			uiComponents_list[COMPONENT_TEXT_2].pos.x += 0.095f;
+		}
 		else if (go->type == GameObject::GO_RESEARCHLAB)
 		{
 			uiComponents_list[COMPONENT_TEXT_5].text = "Research Lab";

@@ -45,6 +45,7 @@
 #include "Pig.h"
 #include "Granary.h"
 #include "WoodShed.h"
+#include "StoneShed.h"
 #include "House.h"
 #include "Building.h"
 #include "ChiefHut.h"
@@ -860,6 +861,33 @@ bool SceneSP::Handle(Message* message)
 			}
 		}
 		break;
+		case MessageWRU::FIND_NEAREST_STONESHED:
+		{
+			GridPt currGrid = messageWRU->go->currentPt;
+			int iDistance = INT_MAX;
+			GameObject* currTarget = NULL;
+			for (auto go : m_goList)
+			{
+				if (!go->active || go->type != GameObject::GO_STONESHED)
+					continue;
+				GridPt goGrid = go->currentPt;
+				int iTotalDist = (goGrid.x - currGrid.x) * (goGrid.x - currGrid.x) + (goGrid.z - currGrid.z) * (goGrid.z - currGrid.z);
+				if (iTotalDist < iDistance)
+				{
+					iDistance = iTotalDist;
+					currTarget = go;
+				}
+			}
+			if (currTarget != NULL)
+			{
+				messageWRU->go->goTarget = currTarget;
+			}
+			else
+			{
+				messageWRU->go->goTarget = goChiefHut;
+			}
+		}
+		break;
 		case MessageWRU::FIND_NEAREST_LUSH_BUSH:
 		{
 			GridPt currGrid = messageWRU->go->currentPt;
@@ -1218,6 +1246,10 @@ bool SceneSP::Handle(Message* message)
 		UIManager::GetInstance()->AddUI("uiBuild_Woodshed", newUI);
 		m_selectedUi.push_back(newUI);
 		m_buildUIs.push_back(newUI);
+		newUI = new UIGameButton(UIGameButton::BUTTON_BUILD_STONESHED, 0, 0, 4);
+		UIManager::GetInstance()->AddUI("uiBuild_StoneShed", newUI);
+		m_selectedUi.push_back(newUI);
+		m_buildUIs.push_back(newUI);
 		int increment = 0;
 		for (auto UI : m_buildUIs)
 		{
@@ -1293,6 +1325,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			case GameObject::GO_WOODSHED:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * .7f, 1.f, SceneData::GetInstance()->GetGridSize() * .7f);
 				break;
+			case GameObject::GO_STONESHED:
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * .7f, 1.f, SceneData::GetInstance()->GetGridSize() * .7f);
+				break;
 			case GameObject::GO_HOUSE:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * .7f, 1.f, SceneData::GetInstance()->GetGridSize() * .7f);
 				break;
@@ -1358,6 +1393,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			break;
 		case GameObject::GO_WOODSHED:
 			go = new WoodShed(type);
+			break;
+		case GameObject::GO_STONESHED:
+			go = new StoneShed(type);
 			break;
 		case GameObject::GO_CHIEFHUT:
 			go = new ChiefHut(type);
@@ -4135,6 +4173,9 @@ void SceneSP::Update(double dt)
 		case GameObject::GO_WOODSHED:
 			SD->SetWoodLimit(SD->GetWoodLimit() + static_cast<WoodShed*>(go)->woodCapacity);
 			break;
+		case GameObject::GO_STONESHED:
+			SD->SetStoneLimit(SD->GetStoneLimit() + static_cast<StoneShed*>(go)->stoneCapacity);
+			break;
 		case GameObject::GO_MOUNTAIN:
 		{
 			Mountain* mountainGo = static_cast<Mountain*>(go);
@@ -4515,6 +4556,32 @@ void SceneSP::RenderGO(GameObject *go)
 			break;
 		case Building::BROKEN:
 			RenderMesh(meshList[GEO_BROKEN_WOODSHED], bGodlights, 1.f);
+		}
+		modelStack.PopMatrix();
+	}
+	break;
+	case GameObject::GO_STONESHED:
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		if (go->animation != NULL)
+			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
+		modelStack.Rotate(-90, 0, 1, 0);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		//Current state of the building
+		switch (static_cast<Building*>(go)->eCurrState)
+		{
+		case Building::COMPLETED:
+			RenderMesh(meshList[GEO_STONESHED], bGodlights, 1.f);
+			break;
+		case Building::BLUEPRINT:
+			RenderMesh(meshList[GEO_STONESHED], false, 0.2f);
+			break;
+		case Building::CONSTRUCTING:
+			RenderMesh(meshList[GEO_STONESHED], false, 0.6f);
+			break;
+		case Building::BROKEN:
+			RenderMesh(meshList[GEO_BROKEN_STONESHED], bGodlights, 1.f);
 		}
 		modelStack.PopMatrix();
 	}

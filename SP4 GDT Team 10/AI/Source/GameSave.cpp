@@ -15,6 +15,7 @@
 #include "Logs.h"
 #include "ResearchLab.h"
 #include "WoodShed.h"
+#include "StoneShed.h"
 #include "Bush.h"
 #include "Mountain.h"
 #include "Tree.h"
@@ -617,6 +618,7 @@ rapidjson::Value GameSave::SaveBuilding(GameObject * go)
 	ChiefHut* goChief = dynamic_cast<ChiefHut*>(goBuilding);
 	Granary* goGranary = dynamic_cast<Granary*>(goBuilding);
 	WoodShed* goWood = dynamic_cast<WoodShed*>(goBuilding);
+	StoneShed* goStone = dynamic_cast<StoneShed*>(goBuilding);
 	Logs* goLogs = dynamic_cast<Logs*>(goBuilding);
 	House* goHouse = dynamic_cast<House*>(goBuilding);
 	ResearchLab* goLab = dynamic_cast<ResearchLab*>(goBuilding);
@@ -652,6 +654,13 @@ rapidjson::Value GameSave::SaveBuilding(GameObject * go)
 		woodStuff.AddMember("Wood Capacity", goWood->woodCapacity, allocator);
 
 		aBuilding.AddMember("Woodshed Values", woodStuff, allocator);
+	}
+	else if (goStone)
+	{
+		Value stoneStuff(kObjectType);
+		stoneStuff.AddMember("Stone Capacity", goStone->stoneCapacity, allocator);
+
+		aBuilding.AddMember("StoneShed Values", stoneStuff, allocator);
 	}
 	else if (goLogs)
 	{
@@ -1278,6 +1287,41 @@ GameObject* GameSave::LoadBuilding(rapidjson::Value& buildingValue)
 			return nullptr;
 		}
 		go = goWoodShed;
+	}
+	else if (name == "StoneShed")
+	{
+	StoneShed* goStoneShed = new StoneShed(GameObject::GO_STONESHED);
+
+	//Loading Woodshed Values
+	if (buildingValue.HasMember("Stoneshed Values") && buildingValue["Stoneshed Values"].IsObject())
+	{
+		//Loading Wood Capacity
+		if (buildingValue["Stoneshed Values"].HasMember("Stone Capacity") && buildingValue["Stoneshed Values"]["Stone Capacity"].IsInt())
+		{
+			goStoneShed->stoneCapacity = buildingValue["Stoneshed Values"]["Stone Capacity"].GetInt();
+		}
+		else
+		{
+			std::cout << "Error Loading Woodshed Values Stone Capacity" << std::endl;
+			if (goStoneShed != NULL)
+			{
+				delete goStoneShed;
+				goStoneShed = NULL;
+			}
+			return nullptr;
+		}
+	}
+	else
+	{
+		std::cout << "Error Loading Woodshed Values" << std::endl;
+		if (goStoneShed != NULL)
+		{
+			delete goStoneShed;
+			goStoneShed = NULL;
+		}
+		return nullptr;
+	}
+	go = goStoneShed;
 	}
 	else if (name == "Logs")
 	{
