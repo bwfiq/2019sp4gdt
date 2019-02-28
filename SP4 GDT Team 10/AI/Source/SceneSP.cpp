@@ -3507,6 +3507,11 @@ void SceneSP::Update(double dt)
 	else if (Application::IsKeyPressed('C') && bGodMode)
 		lights[0].type = Light::LIGHT_SPOT;	
 
+	if (KC->IsKeyPressed('V') && bGodMode)
+	{
+		gameSave.LoadEverything();
+	}
+
 	if (KC->IsKeyPressed('B') && bGodMode)
 	{
 		if (selected == NULL)
