@@ -1293,16 +1293,16 @@ GameObject* GameSave::LoadBuilding(rapidjson::Value& buildingValue)
 	StoneShed* goStoneShed = new StoneShed(GameObject::GO_STONESHED);
 
 	//Loading Woodshed Values
-	if (buildingValue.HasMember("Stoneshed Values") && buildingValue["Stoneshed Values"].IsObject())
+	if (buildingValue.HasMember("StoneShed Values") && buildingValue["StoneShed Values"].IsObject())
 	{
 		//Loading Wood Capacity
-		if (buildingValue["Stoneshed Values"].HasMember("Stone Capacity") && buildingValue["Stoneshed Values"]["Stone Capacity"].IsInt())
+		if (buildingValue["StoneShed Values"].HasMember("Stone Capacity") && buildingValue["StoneShed Values"]["Stone Capacity"].IsInt())
 		{
-			goStoneShed->stoneCapacity = buildingValue["Stoneshed Values"]["Stone Capacity"].GetInt();
+			goStoneShed->stoneCapacity = buildingValue["StoneShed Values"]["Stone Capacity"].GetInt();
 		}
 		else
 		{
-			std::cout << "Error Loading Woodshed Values Stone Capacity" << std::endl;
+			std::cout << "Error Loading StoneShed Values Stone Capacity" << std::endl;
 			if (goStoneShed != NULL)
 			{
 				delete goStoneShed;
@@ -1313,7 +1313,7 @@ GameObject* GameSave::LoadBuilding(rapidjson::Value& buildingValue)
 	}
 	else
 	{
-		std::cout << "Error Loading Woodshed Values" << std::endl;
+		std::cout << "Error Loading Stoneshed Values" << std::endl;
 		if (goStoneShed != NULL)
 		{
 			delete goStoneShed;
