@@ -43,5 +43,8 @@ void UIMenuButton::Update(float dt)
 		uiComponents_list[COMPONENT_OUTLINEBAR].scale.Set(1 + 0.2f / ratio, 1.2f);
 		uiComponents_list[COMPONENT_TEXT].textSize = scale.y;
 	}
+	uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = (float)IsMouseHovered();
+	if (IsMousePressed())
+		CSoundEngine::GetInstance()->PlayASound("selection");
 	UIBase::UpdateTween(dt);
 }

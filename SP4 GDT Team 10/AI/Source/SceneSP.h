@@ -2,7 +2,7 @@
 #define SCENE_SP_H
 
 
-#define AABBRAY false
+//#define AABBRAY false
 
 #include "GameObject.h"
 #include <vector>

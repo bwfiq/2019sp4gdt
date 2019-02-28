@@ -106,17 +106,14 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 		fMainMenuDelta = m_worldWidth * 0.5f;
 
 		newUI = new UIMenuButton("", 0.775f, 0.6f);
-		newUI->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 0.f;
 		newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("start");
 		UIManager::GetInstance()->AddUI("startbutton", newUI);
 		m_coreUi.push_back(newUI);
 		newUI = new UIMenuButton("", 0.775f, 0.45f);
-		newUI->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 0.f;
 		newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("optionsbutton");
 		UIManager::GetInstance()->AddUI("optionsbutton", newUI);
 		m_coreUi.push_back(newUI);
 		newUI = new UIMenuButton("", 0.775f, 0.3f);
-		newUI->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 0.f;
 		newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("quitbutton");
 		UIManager::GetInstance()->AddUI("quitbutton", newUI);
 		m_coreUi.push_back(newUI);
@@ -142,9 +139,17 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 	break;
 	case G_OPTIONS:
 	{
-		camera.Init(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));	// splashscreen
-		newUI = new UIMenuButton("back", 0.5f, 0.5f);
+		camera.Init(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));	// ortho
+		newUI = new UIMenuButton("", 0.5f, 0.5f);
+		newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("backbutton");
 		UIManager::GetInstance()->AddUI("backbutton", newUI);
+		m_coreUi.push_back(newUI);
+		newUI = new UIMenuButton("", 0.35f, 0.65f);
+		if(SceneData::GetInstance()->AABBRAY)
+			newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("objselectionaabb");
+		else
+			newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("objselectiongrid");
+		UIManager::GetInstance()->AddUI("objselectionbutton", newUI);
 		m_coreUi.push_back(newUI);
 	}
 	break;
@@ -273,8 +278,16 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 				newUI = new UIOverlay("", 0.5f, 0.45f);
 				UIManager::GetInstance()->AddUI("overlay", newUI);
 				m_coreUi.push_back(newUI);
-				newUI = new UIMenuButton("back", 0.5f, 0.5f);
+				newUI = new UIMenuButton("", 0.5f, 0.5f);
+				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("backbutton");
 				UIManager::GetInstance()->AddUI("backbutton", newUI);
+				m_coreUi.push_back(newUI);
+				newUI = new UIMenuButton("", 0.35f, 0.65f);
+				if (SceneData::GetInstance()->AABBRAY)
+					newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("objselectionaabb");
+				else
+					newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("objselectiongrid");
+				UIManager::GetInstance()->AddUI("objselectionbutton", newUI);
 				m_coreUi.push_back(newUI);
 			}
 		}
@@ -3171,7 +3184,7 @@ void SceneSP::Update(double dt)
 	MP->Update(dt);
 
 	mousePos = MP->GetIntersectionWithPlane(camera.position, Vector3(0, 0, 0), Vector3(0, 1, 0));
-	if (AABBRAY)
+	if (SceneData::GetInstance()->AABBRAY)
 	{
 		hovered = GetHoveredObject();
 	}
@@ -3328,31 +3341,15 @@ void SceneSP::Update(double dt)
 					std::cout << "File not Found" << std::endl;
 				}
 				ChangeState(G_INPLAY);
-				CSoundEngine::GetInstance()->PlayASound("selection");
 			}
 			if (UIM->GetUI("optionsbutton")->IsMousePressed())
 			{
 				ChangeState(G_OPTIONS);
-				CSoundEngine::GetInstance()->PlayASound("selection");
 			}
 			if (UIM->GetUI("quitbutton")->IsMousePressed())
 			{
 				Application::GetInstance().QuitGame();
-				CSoundEngine::GetInstance()->PlayASound("selection");
 			}
-			// hover effects
-			if (UIM->GetUI("startbutton")->IsMouseHovered())
-				UIM->GetUI("startbutton")->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 1.f;
-			else
-				UIM->GetUI("startbutton")->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 0.f;
-			if (UIM->GetUI("optionsbutton")->IsMouseHovered())
-				UIM->GetUI("optionsbutton")->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 1.f;
-			else
-				UIM->GetUI("optionsbutton")->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 0.f;
-			if (UIM->GetUI("quitbutton")->IsMouseHovered())
-				UIM->GetUI("quitbutton")->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 1.f;
-			else
-				UIM->GetUI("quitbutton")->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 0.f;
 		}
 		else // buttons animation
 		{
@@ -3372,7 +3369,14 @@ void SceneSP::Update(double dt)
 		if (UIM->GetUI("backbutton")->IsMousePressed())
 		{
 			ChangeState(G_MAINMENU);
-			CSoundEngine::GetInstance()->PlayASound("selection");
+		}
+		if (UIM->GetUI("objselectionbutton")->IsMousePressed())
+		{
+			SceneData::GetInstance()->AABBRAY = !SceneData::GetInstance()->AABBRAY;
+			if (SceneData::GetInstance()->AABBRAY)
+				UIM->GetUI("objselectionbutton")->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("objselectionaabb");
+			else
+				UIM->GetUI("objselectionbutton")->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("objselectiongrid");
 		}
 		return;
 	}
@@ -3390,7 +3394,6 @@ void SceneSP::Update(double dt)
 			UIM->GetUI("WoodResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 			UIM->GetUI("WoodResearchCost")->uiComponents_list[UIGameButton::COMPONENT_TEXT].text = "UNLOCKED";
 			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//house.tga");
-			CSoundEngine::GetInstance()->PlayASound("selection");
 		}
 		else if (SceneData::GetInstance()->bWoodResearch && 
 			 (UIM->GetUI("StoneResearch")->IsMousePressed() || UIM->GetUI("StoneResearchCost")->IsMousePressed()) &&
@@ -3402,7 +3405,6 @@ void SceneSP::Update(double dt)
 			UIManager::GetInstance()->GetUI("StoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 			UIM->GetUI("StoneResearchCost")->uiComponents_list[UIGameButton::COMPONENT_TEXT].text = "UNLOCKED";
 			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//stonehouse.tga");
-			CSoundEngine::GetInstance()->PlayASound("selection");
 		}
 		else if (SceneData::GetInstance()->bStoneResearch &&
 			 (UIM->GetUI("FullStoneResearch")->IsMousePressed() || UIM->GetUI("FullStoneResearchCost")->IsMousePressed()) &&
@@ -3413,7 +3415,6 @@ void SceneSP::Update(double dt)
 			UIManager::GetInstance()->GetUI("FullStoneResearch")->uiComponents_list[UIResearchButton::COMPONENT_TICK].alpha = 1.f;
 			UIM->GetUI("FullStoneResearchCost")->uiComponents_list[UIGameButton::COMPONENT_TEXT].text = "UNLOCKED";
 			meshList[GEO_BUILDING]->textureArray[0] = LoadTGA("Image//fullstonehouse.tga");
-			CSoundEngine::GetInstance()->PlayASound("selection");
 		}
 		return;
 	}
@@ -3426,7 +3427,14 @@ void SceneSP::Update(double dt)
 		if (UIM->GetUI("backbutton")->IsMousePressed())
 		{
 			ChangeState(G_INPLAY);
-			CSoundEngine::GetInstance()->PlayASound("selection");
+		}
+		if (UIM->GetUI("objselectionbutton")->IsMousePressed())
+		{
+			SceneData::GetInstance()->AABBRAY = !SceneData::GetInstance()->AABBRAY;
+			if (SceneData::GetInstance()->AABBRAY)
+				UIM->GetUI("objselectionbutton")->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("objselectionaabb");
+			else
+				UIM->GetUI("objselectionbutton")->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("objselectiongrid");
 		}
 		return;
 	}
@@ -3556,7 +3564,7 @@ void SceneSP::Update(double dt)
 		float posY = (h - static_cast<float>(y)) / h * m_worldHeight;
 		//std::cout << mousePos << std::endl;
 		GridPt selectedPt = GetPoint(mousePos);
-		if (AABBRAY)
+		if (SceneData::GetInstance()->AABBRAY)
 		{
 			if (selected == NULL)
 			{
