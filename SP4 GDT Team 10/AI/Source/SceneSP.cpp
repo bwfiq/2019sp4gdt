@@ -1013,6 +1013,26 @@ bool SceneSP::Handle(Message* message)
 		delete message;
 		return true;
 	}
+	MessageCalamityEnd* messageCalamityEnd = dynamic_cast<MessageCalamityEnd*>(message);
+	if (messageCalamityEnd)
+	{
+		for (auto go : m_goList)
+		{
+			if (!go->active || go->type != GameObject::GO_VILLAGER)
+				continue;
+			Villager* goVil = static_cast<Villager*>(go);
+			//make villagers calm down
+			goVil->eCurrState = (Villager::STATES)(Math::RandIntMinMax((int)Villager::TIRED, (int)Villager::DYING));
+
+			if (goVil->animation != NULL)
+			{
+				if (goVil->animation->type == AnimationBase::A_PANIC)
+				{
+					goVil->ClearAnimation();
+				}
+			}
+		}
+	}
 	MessageCalamityTsunami* messageCalamityTsunami = dynamic_cast<MessageCalamityTsunami*>(message);
 	if (messageCalamityTsunami)
 	{
@@ -1025,6 +1045,15 @@ bool SceneSP::Handle(Message* message)
 			tsunami->tsunami_direction = Tsunami::DIRECTION_LEFT;
 			tsunami->moveSpeed = Math::RandFloatMinMax(3, 3.25f);
 			tsunami->pos = GetGridPos(GridPt(SD->GetNoGrid() + 8, laneNum));
+		}
+		for (auto go : m_goList)
+		{
+			if (!go->active || go->type != GameObject::GO_VILLAGER)
+				continue;
+			Villager* goVil = static_cast<Villager*>(go);
+			//make villagers panic
+			goVil->eCurrState = Villager::PANIC;
+			goVil->GiveAnimation(new AnimationPanic());
 		}
 		delete message;
 		return true;
@@ -1044,6 +1073,15 @@ bool SceneSP::Handle(Message* message)
 			goMeteor->pos = meteorGeneratedPos;
 			goMeteor->vel = (gridPos - meteorGeneratedPos).Normalized() * goMeteor->moveSpeed;
 		}
+		for (auto go : m_goList)
+		{
+			if (!go->active || go->type != GameObject::GO_VILLAGER)
+				continue;
+			Villager* goVil = static_cast<Villager*>(go);
+			//make villagers panic
+			goVil->eCurrState = Villager::PANIC;
+			goVil->GiveAnimation(new AnimationPanic());
+		}
 		delete message;
 		return true;
 	}
@@ -1051,6 +1089,15 @@ bool SceneSP::Handle(Message* message)
 	if (messageCalamityWorldEnd)
 	{
 		bWorldEnd = true;
+		for (auto go : m_goList)
+		{
+			if (!go->active || go->type != GameObject::GO_VILLAGER)
+				continue;
+			Villager* goVil = static_cast<Villager*>(go);
+			//make villagers panic
+			goVil->eCurrState = Villager::PANIC;
+			goVil->GiveAnimation(new AnimationPanic());
+		}
 		delete message;
 		return true;
 	}
@@ -1064,6 +1111,15 @@ bool SceneSP::Handle(Message* message)
 		tornado->moveSpeed = Math::RandFloatMinMax(2, 2.5f);
 		tornado->pos = GetGridPos(GridPt(SD->GetNoGrid() + 8, 3));
 		tornado->fElapsedTime = 0;
+		for (auto go : m_goList)
+		{
+			if (!go->active || go->type != GameObject::GO_VILLAGER)
+				continue;
+			Villager* goVil = static_cast<Villager*>(go);
+			//make villagers panic
+			goVil->eCurrState = Villager::PANIC;
+			goVil->GiveAnimation(new AnimationPanic());
+		}
 		delete message;
 		return true;
 	}
@@ -1131,7 +1187,7 @@ bool SceneSP::Handle(Message* message)
 				if (goVil)
 				{
 					//make villagers calm down
-					goVil->eCurrState = Villager::TIRED;
+					goVil->eCurrState = (Villager::STATES)(Math::RandIntMinMax((int)Villager::TIRED, (int) Villager::DYING));
 
 					if (goVil->animation != NULL)
 					{
@@ -3157,6 +3213,32 @@ void SceneSP::ChangeTimeOfDay()
 		//bGodlights = true;
 		SceneData* SD = SceneData::GetInstance();
 		SD->SetFood(Math::Max(0, SD->GetFood() - SD->GetPopulation() * 5));// 5 food is eaten per Villager
+	
+		//Costs extra food for tired/sick/dying/panic villagers
+		for (auto go : m_goList)
+		{
+			if (!go->active || go->type != GameObject::GO_VILLAGER)
+				continue;
+
+			Villager* goVil = static_cast<Villager*>(go);
+
+			if (goVil->eCurrState != Villager::HEALTHY)
+			{
+				//If they are not healthy
+				//Exception for panic
+				if (goVil->eCurrState == Villager::PANIC)
+				{
+					SD->SetFood(Math::Max(0, SD->GetFood() - 2));
+				}
+				else
+				{
+					int newState = Math::Max(0, (int)(goVil->eCurrState - 1));
+					int extraCost = newState * 2 + 2;
+					SD->SetFood(Math::Max(0, SD->GetFood() - extraCost));
+				}
+				
+			}
+		}
 	}
 }
 
@@ -4200,9 +4282,31 @@ void SceneSP::Update(double dt)
 		}
 		switch (go->type)
 		{
-		case GameObject::GO_VILLAGER:
+		case GameObject::GO_VILLAGER:		
+		{
+			Villager* goVil = static_cast<Villager*>(go);
 			SD->SetPopulation(SD->GetPopulation() + 1);
 			m_VillagerList.push_back(go);
+
+			switch (goVil->eCurrState)
+			{
+			case Villager::HEALTHY:
+				goVil->fEfficiency = 1.2f;
+				break;
+			case Villager::PANIC:
+				goVil->fEfficiency = 1.0f;
+				break;
+			case Villager::TIRED:
+				goVil->fEfficiency = 0.8f;
+				break;
+			case Villager::SICKLY:
+				goVil->fEfficiency = 0.6f;
+				break;
+			case Villager::DYING:
+				goVil->fEfficiency = 0.4f;
+				break;
+			}
+		}
 			break;
 		case GameObject::GO_CHIEFHUT:
 		{	

@@ -27,10 +27,12 @@ struct Villager : public GameObject
 	enum STATES
 	{
 		HEALTHY = 0,
-		PANIC,
+		
 		TIRED,
 		SICKLY,
 		DYING,
+		
+		PANIC,
 		STATES_TOTAL //Should not have any enums below this
 	};
 

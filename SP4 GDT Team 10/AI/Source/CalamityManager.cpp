@@ -23,6 +23,21 @@ void CalamityManager::AddToCalamityQueue(CalamityBase * cal)
 	calamityQueue.push(cal);
 }
 
+void CalamityManager::ClearAllCalamities()
+{
+	if (currCalamity != NULL)
+	{
+		delete currCalamity;
+		currCalamity = NULL;
+	}
+	while (!calamityQueue.empty())
+	{
+		CalamityBase* temp = calamityQueue.front();
+		calamityQueue.pop();
+		delete temp;
+	}
+}
+
 CalamityBase * CalamityManager::GetCurrCalamity()
 {
 	return this->currCalamity;

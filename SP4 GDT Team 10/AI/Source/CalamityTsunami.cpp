@@ -87,6 +87,10 @@ void CalamityTsunami::Update(float dt)
 	else if (state == STATE_STOPPING)
 	{
 		CSoundEngine::GetInstance()->StopASound("waves");
+		MessageCalamityEnd* msg = new MessageCalamityEnd();
+		PO->Send("Scene"
+			, msg
+		);
 	}
 }
 
