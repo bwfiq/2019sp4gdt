@@ -20,6 +20,7 @@
 #include "Tree.h"
 #include "Tsunami.h"
 #include "Tornado.h"
+#include "Meteor.h"
 
 #include "SMManager.h"
 
@@ -28,6 +29,7 @@
 #include "CalamityBlizzard.h"
 #include "CalamityTornado.h"
 #include "CalamityTsunami.h"
+#include "CalamityMeteorShower.h"
 #include "CalamityWorldEnd.h"
 
 using namespace rapidjson;
@@ -259,7 +261,7 @@ bool GameSave::LoadGame()
 		{
 			for (int i = 0; i < numCalamitiesGO; ++i)
 			{
-				//m_goList->push_back(LoadCalamityGo(objCalamityGO["Calamities GO"][i]));
+				m_goList->push_back(LoadCalamityGo(objCalamityGO["Calamities GO"][i]));
 			}
 		}
 		else
@@ -268,12 +270,17 @@ bool GameSave::LoadGame()
 			return false;
 		}
 
+		CalamityManager* CM = CalamityManager::GetInstance();
 		//Load Calamities
 		if (objCalamities.HasMember("Calamities"))
 		{
+			if (numCalamities > 1)
+			{
+				std::cout << "Error with num curr calamities" << std::endl;
+			}
 			for (int i = 0; i < numCalamities; ++i)
 			{
-				//LoadCalamity(objCalamities["Calamities"][i]);
+				CM->AddToCalamityQueue(LoadCalamity(objCalamities["Calamities"][i]));
 			}
 		}
 		else
@@ -287,7 +294,7 @@ bool GameSave::LoadGame()
 		{
 			for (int i = 0; i < numCalamitiesQ; ++i)
 			{
-				//LoadCalamity(objCalamities["CalamitiesQ"][i]);
+				CM->AddToCalamityQueue(LoadCalamity(objCalamities["CalamitiesQ"][i]));
 			}
 		}
 		else
@@ -534,6 +541,15 @@ rapidjson::Value GameSave::SaveVector3(Vector3 vector)
 	return vectorValue;
 }
 
+rapidjson::Value GameSave::SaveGridPt(GridPt gridPt)
+{
+	Document::AllocatorType& allocator = gameFile.GetAllocator();
+	Value gridValue(kObjectType);
+	gridValue.AddMember("x", gridPt.x, allocator);
+	gridValue.AddMember("z", gridPt.z, allocator);
+	return gridValue;
+}
+
 rapidjson::Value GameSave::SaveVillager(GameObject * go)
 {
 	Document::AllocatorType& allocator = gameFile.GetAllocator();
@@ -710,6 +726,7 @@ rapidjson::Value GameSave::SaveCalamityGo(GameObject * go)
 
 	Tsunami* goTsunami = dynamic_cast<Tsunami*>(go);
 	Tornado* goTornado = dynamic_cast<Tornado*>(go);
+	Meteor* goMeteor = dynamic_cast<Meteor*>(go);
 
 	Value calamityName(kStringType);
 	
@@ -720,7 +737,7 @@ rapidjson::Value GameSave::SaveCalamityGo(GameObject * go)
 
 		Value tsunamiStuff(kObjectType);
 		tsunamiStuff.AddMember("Power", goTsunami->fPower, allocator);
-		tsunamiStuff.AddMember("Tsunami Direciton", goTsunami->tsunami_direction, allocator);
+		tsunamiStuff.AddMember("Tsunami Direction", goTsunami->tsunami_direction, allocator);
 		tsunamiStuff.AddMember("Cloud Timer", goTsunami->fParticleTimer_Cloud, allocator);
 
 		aCalamityGO.AddMember("TsunamiGO Values", tsunamiStuff, allocator);
@@ -737,6 +754,18 @@ rapidjson::Value GameSave::SaveCalamityGo(GameObject * go)
 		tornadoStuff.AddMember("Elapsed Time", goTornado->fElapsedTime, allocator);
 
 		aCalamityGO.AddMember("TornadoGO Values", tornadoStuff, allocator);
+	}
+	else if (goMeteor)
+	{
+		calamityName.SetString("MeteorGO", allocator);
+		aCalamityGO.AddMember("Name", calamityName, allocator);
+
+		Value meteorStuff(kObjectType);
+		meteorStuff.AddMember("Power", goMeteor->fPower, allocator);
+		meteorStuff.AddMember("Fire Timer", goMeteor->fEffectTimer_Fire, allocator);
+		meteorStuff.AddMember("Vel", SaveVector3(goMeteor->vel), allocator);
+
+		aCalamityGO.AddMember("MeteorGO Values", meteorStuff, allocator);
 	}
 
 	aCalamityGO.AddMember("Type", go->type, allocator);
@@ -758,6 +787,7 @@ rapidjson::Value GameSave::SaveCalamity(CalamityBase * go)
 	CalamityEarthquake* cEarthquake = dynamic_cast<CalamityEarthquake*>(go);
 	CalamityTornado* cTornado = dynamic_cast<CalamityTornado*>(go);
 	CalamityTsunami* cTsunami = dynamic_cast<CalamityTsunami*>(go);
+	CalamityMeteorShower* cMeteor = dynamic_cast<CalamityMeteorShower*>(go);
 	CalamityWorldEnd* cWorldEnd = dynamic_cast<CalamityWorldEnd*>(go);
 
 	if (cBlizzard)
@@ -771,7 +801,7 @@ rapidjson::Value GameSave::SaveCalamity(CalamityBase * go)
 		blizzardStuff.AddMember("Blizzard Cloud Timer", cBlizzard->fEffectTimer_BlizzardCloud, allocator);
 		blizzardStuff.AddMember("State", cBlizzard->state, allocator);
 
-		aCalamity.AddMember("Earthquake Values", blizzardStuff, allocator);
+		aCalamity.AddMember("Blizzard Values", blizzardStuff, allocator);
 	}
 	else if (cEarthquake)
 	{
@@ -818,17 +848,40 @@ rapidjson::Value GameSave::SaveCalamity(CalamityBase * go)
 			lanes.AddMember(laneText, lane, allocator);
 			++i;
 		}
+		tsunamiStuff.AddMember("Number Lanes", i, allocator);
 		tsunamiStuff.AddMember("Lanes", lanes, allocator);
 
 		aCalamity.AddMember("Tsunami Values", tsunamiStuff, allocator);
+	}
+	else if (cMeteor)
+	{
+		calamityName.SetString("Meteor Shower", allocator);
+		aCalamity.AddMember("Name", calamityName, allocator);
+
+		Value meteorStuff(kObjectType);
+		meteorStuff.AddMember("UI Timer", cMeteor->fUIPopupTime, allocator);
+		meteorStuff.AddMember("State", cMeteor->state, allocator);
+
+		Value lanes(kObjectType);
+		int i = 0;
+		Value ptText(kStringType);
+		std::string somestring = "";
+		for (auto pt : cMeteor->meteorGridPts)
+		{
+			somestring = "Pt" + std::to_string(i);
+			ptText.SetString(somestring.c_str(), allocator);
+			lanes.AddMember(ptText, SaveGridPt(pt), allocator);
+			++i;
+		}
+		meteorStuff.AddMember("Pts", lanes, allocator);
+
+		aCalamity.AddMember("Meteor Shower Values", meteorStuff, allocator);
 	}
 	else if (cWorldEnd)
 	{
 		calamityName.SetString("World End", allocator);
 		aCalamity.AddMember("Name", calamityName, allocator);
 
-		float fUIPopupTime;
-		float fEffectTimer_Dirt;
 		Value worldEndStuff(kObjectType);
 		worldEndStuff.AddMember("UI Timer", cWorldEnd->fUIPopupTime, allocator);
 		worldEndStuff.AddMember("Dirt Timer", cWorldEnd->fEffectTimer_Dirt, allocator);
@@ -878,6 +931,34 @@ Vector3 GameSave::LoadVector3(rapidjson::Value& vectorValue)
 	else
 	{
 		std::cout << "Error Loading Vector3 z" << std::endl;
+		return NULL;
+	}
+	return temp;
+}
+
+GridPt GameSave::LoadGridPt(rapidjson::Value & gridValue)
+{
+	GridPt temp;
+
+	//Loading x
+	if (gridValue.HasMember("x"), gridValue["x"].IsInt())
+	{
+		temp.x = gridValue["x"].GetInt();
+	}
+	else
+	{
+		std::cout << "Error Loading GridPt x" << std::endl;
+		return NULL;
+	}
+
+	//Loading z
+	if (gridValue.HasMember("z"), gridValue["z"].IsInt())
+	{
+		temp.z = gridValue["z"].GetInt();
+	}
+	else
+	{
+		std::cout << "Error Loading GridPt z" << std::endl;
 		return NULL;
 	}
 	return temp;
@@ -1700,7 +1781,218 @@ GameObject* GameSave::LoadEnvironment(rapidjson::Value& environmentValue)
 
 GameObject* GameSave::LoadCalamityGo(rapidjson::Value& calamityGOValue)
 {
-	return nullptr;
+	GameObject* go = NULL;
+
+	//Load Type
+	GameObject::GAMEOBJECT_TYPE type;
+	if (calamityGOValue.HasMember("Type"), calamityGOValue["Type"].IsInt(), calamityGOValue["Type"].GetInt() < (int)(GameObject::GO_TOTAL))
+	{
+		type = (GameObject::GAMEOBJECT_TYPE)(calamityGOValue["Type"].GetInt());
+	}
+	else
+	{
+		std::cout << "Calamity GO Type error" << std::endl;
+		return nullptr;
+	}
+
+	switch (type)
+	{
+	case GameObject::GO_METEOR:
+	{
+		Meteor* goMeteor = new Meteor(type);
+		Value& meteorStuff = calamityGOValue["MeteorGO Values"];
+
+		//Load Power
+		if (meteorStuff.HasMember("Power") && meteorStuff["Power"].IsFloat())
+		{
+			goMeteor->fPower = meteorStuff["Power"].GetFloat();
+		}
+		else
+		{
+			std::cout << "Error Meteor Power" << std::endl;
+			delete goMeteor;
+			goMeteor = NULL;
+			return nullptr;
+		}
+
+		//Load Fire Timer
+		if (meteorStuff.HasMember("Fire Timer") && meteorStuff["Fire Timer"].IsFloat())
+		{
+			goMeteor->fEffectTimer_Fire = meteorStuff["Fire Timer"].GetFloat();
+		}
+		else
+		{
+			std::cout << "Error Meteor Fire Timer" << std::endl;
+			delete goMeteor;
+			goMeteor = NULL;
+			return nullptr;
+		}
+
+		//Load Vel
+		if (meteorStuff.HasMember("Vel") && meteorStuff["Vel"].IsObject())
+		{
+			goMeteor->vel = LoadVector3(meteorStuff["Vel"]);
+		}
+		else
+		{
+			std::cout << "Error Meteor Vel" << std::endl;
+			delete goMeteor;
+			goMeteor = NULL;
+			return nullptr;
+		}
+
+		go = goMeteor;
+	}
+	break;
+	case GameObject::GO_TSUNAMI:
+	{	
+		Tsunami* goTsunami = new Tsunami(type);
+		Value& tsunamiStuff = calamityGOValue["TsunamiGO Values"];
+		
+		//Load Power
+		if (tsunamiStuff.HasMember("Power") && tsunamiStuff["Power"].IsFloat())
+		{
+			goTsunami->fPower = tsunamiStuff["Power"].GetFloat();
+		}
+		else
+		{
+			std::cout << "Error Tsunami Power" << std::endl;
+			delete goTsunami;
+			goTsunami = NULL;
+			return nullptr;
+		}
+
+		//Load Direction
+		if (tsunamiStuff.HasMember("Tsunami Direction") && tsunamiStuff["Tsunami Direction"].IsInt() && tsunamiStuff["Tsunami Direction"].GetInt() < (int)(Tsunami::DIRECTION_TOTAL))
+		{
+			goTsunami->tsunami_direction = (Tsunami::TSUNAMI_DIRECTION)(tsunamiStuff["Tsunami Direction"].GetInt());
+		}
+		else
+		{
+			std::cout << "Error Tsunami Direction" << std::endl;
+			delete goTsunami;
+			goTsunami = NULL;
+			return nullptr;
+		}
+
+		//Load Cloud Timer
+		if (tsunamiStuff.HasMember("Cloud Timer") && tsunamiStuff["Cloud Timer"].IsFloat())
+		{
+			goTsunami->fParticleTimer_Cloud = tsunamiStuff["Cloud Timer"].GetFloat();
+		}
+		else
+		{
+			std::cout << "Error Tsunami Cloud Timer" << std::endl;
+			delete goTsunami;
+			goTsunami = NULL;
+			return nullptr;
+		}
+
+		go = goTsunami;
+	}
+	break;
+	case GameObject::GO_TORNADO:
+	{	
+		Tornado* goTornado = new Tornado(type);
+
+		Value& tornadoStuff = calamityGOValue["TornadoGO Values"];
+
+		//Load Power
+		if (tornadoStuff.HasMember("Power") && tornadoStuff["Power"].IsFloat())
+		{
+			goTornado->fPower = tornadoStuff["Power"].GetFloat();
+		}
+		else
+		{
+			std::cout << "Error Tornado Power" << std::endl;
+			delete goTornado;
+			goTornado = NULL;
+			return nullptr;
+		}
+
+		//Load Dirt Timer
+		if (tornadoStuff.HasMember("Dirt Timer") && tornadoStuff["Dirt Timer"].IsFloat())
+		{
+			goTornado->fEffectTimer_Dirt = tornadoStuff["Dirt Timer"].GetFloat();
+		}
+		else
+		{
+			std::cout << "Error Tornado Dirt Timer" << std::endl;
+			delete goTornado;
+			goTornado = NULL;
+			return nullptr;
+		}
+
+		//Load Cloud Timer
+		if (tornadoStuff.HasMember("Cloud Timer") && tornadoStuff["Cloud Timer"].IsFloat())
+		{
+			goTornado->fEffectTimer_Cloud = tornadoStuff["Cloud Timer"].GetFloat();
+		}
+		else
+		{
+			std::cout << "Error Tornado Cloud Timer" << std::endl;
+			delete goTornado;
+			goTornado = NULL;
+			return nullptr;
+		}
+
+		//Load Elapsed Time
+		if (tornadoStuff.HasMember("Elapsed Time") && tornadoStuff["Elapsed Time"].IsFloat())
+		{
+			goTornado->fElapsedTime = tornadoStuff["Elapsed Time"].GetFloat();
+		}
+		else
+		{
+			std::cout << "Error Tornado Elapsed Time" << std::endl;
+			delete goTornado;
+			goTornado = NULL;
+			return nullptr;
+		}
+
+		go = goTornado;
+	}
+	break;
+	default:
+		std::cout << "Calamity GO Wrong Type" << std::endl;
+		return nullptr;
+	}
+
+	if (calamityGOValue.HasMember("Pos") && calamityGOValue["Pos"].IsObject())
+	{
+		go->pos = LoadVector3(calamityGOValue["Pos"]);
+		if (go->pos == NULL)
+		{
+			std::cout << "Error Loading Vector 3 Pos" << std::endl;
+			delete go;
+			go = NULL;
+			return nullptr;
+		}
+	}
+	else
+	{
+		std::cout << "Error Loading Calamity GO Pos" << std::endl;
+		delete go;
+		go = NULL;
+		return nullptr;
+	}
+
+	if (calamityGOValue.HasMember("Speed") && calamityGOValue["Speed"].IsFloat())
+	{
+		go->moveSpeed = calamityGOValue["Speed"].GetFloat();
+	}
+	else
+	{
+		std::cout << "Error Loading Calamity GO Speed" << std::endl;
+		delete go;
+		go = NULL;
+		return nullptr;
+	}
+
+	if (go == NULL)
+	{
+		std::cout << "GameObject NULL Calamity GO" << std::endl;
+	}
+	return go;
 }
 
 GameObject * GameSave::LoadPig(rapidjson::Value & pigValue)
@@ -1861,5 +2153,358 @@ GameObject * GameSave::LoadPig(rapidjson::Value & pigValue)
 
 CalamityBase* GameSave::LoadCalamity(rapidjson::Value& calamityValue)
 {
-	return nullptr;
+	CalamityBase* go = NULL;
+
+	std::string name;
+	if (calamityValue.HasMember("Name") && calamityValue["Name"].IsString())
+	{
+		name = calamityValue["Name"].GetString();
+	}
+	else
+	{
+		std::cout << "Error Loading name" << std::endl;
+		return nullptr;
+	}
+
+	if (name == "Blizzard")
+	{
+		CalamityBlizzard* cBlizzard = new CalamityBlizzard();
+		Value& blizzardStuff = calamityValue["Blizzard Values"];
+
+		//Load UI Timer
+		if (blizzardStuff.HasMember("UI Timer") && blizzardStuff["UI Timer"].IsFloat())
+		{
+			cBlizzard->fUIPopupTime = blizzardStuff["UI Timer"].GetFloat();
+		}
+		else
+		{
+			std::cout << "Error Loading UI Timer, Calamity" << std::endl;
+			delete cBlizzard;
+			cBlizzard = NULL;
+			return nullptr;
+		}
+
+		//Load Cloud Timer
+		if (blizzardStuff.HasMember("Blizzard Cloud Timer") && blizzardStuff["Blizzard Cloud Timer"].IsFloat())
+		{
+			cBlizzard->fEffectTimer_BlizzardCloud = blizzardStuff["UI Timer"].GetFloat();
+		}
+		else
+		{
+			std::cout << "Error Loading Blizzard Cloud Timer, Calamity" << std::endl;
+			delete cBlizzard;
+			cBlizzard = NULL;
+			return nullptr;
+		}
+
+		//Load State
+		if (blizzardStuff.HasMember("State") && blizzardStuff["State"].IsInt() && blizzardStuff["State"].GetInt() < CalamityBlizzard::STATE_TOTAL)
+		{
+			cBlizzard->state = (CalamityBlizzard::CALAMITY_BLIZZARD_STATE)(blizzardStuff["State"].GetInt());
+		}
+		else
+		{
+			std::cout << "Error Loading State, Calamity" << std::endl;
+			delete cBlizzard;
+			cBlizzard = NULL;
+			return nullptr;
+		}
+
+		go = cBlizzard;
+	}
+	else if (name == "Earthquake")
+	{
+		CalamityEarthquake* cEarthquake = new CalamityEarthquake();
+		Value& earthquakeStuff = calamityValue["Earthquake Values"];
+
+		//Load UI Timer
+		if (earthquakeStuff.HasMember("UI Timer") && earthquakeStuff["UI Timer"].IsFloat())
+		{
+			cEarthquake->fUIPopupTime = earthquakeStuff["UI Timer"].GetFloat();
+		}
+		else
+		{
+			std::cout << "Error Loading UI Timer, Calamity" << std::endl;
+			delete cEarthquake;
+			cEarthquake = NULL;
+			return nullptr;
+		}
+
+		//Load Dirt Timer
+		if (earthquakeStuff.HasMember("Dirt Timer") && earthquakeStuff["Dirt Timer"].IsFloat())
+		{
+			cEarthquake->fEffectTimer_Dirt = earthquakeStuff["Dirt Timer"].GetFloat();
+		}
+		else
+		{
+			std::cout << "Error Loading Dirt Timer, Calamity" << std::endl;
+			delete cEarthquake;
+			cEarthquake = NULL;
+			return nullptr;
+		}
+
+		//Load State
+		if (earthquakeStuff.HasMember("State") && earthquakeStuff["State"].IsInt() && earthquakeStuff["State"].GetInt() < CalamityEarthquake::STATE_TOTAL)
+		{
+			cEarthquake->state = (CalamityEarthquake::CALAMITY_EARTHQUAKE_STATE)(earthquakeStuff["State"].GetInt());
+		}
+		else
+		{
+			std::cout << "Error Loading State, Calamity" << std::endl;
+			delete cEarthquake;
+			cEarthquake = NULL;
+			return nullptr;
+		}
+
+		go = cEarthquake;
+	}
+	else if (name == "Tornado")
+	{
+		CalamityTornado* cTornado = new CalamityTornado();
+		Value& tornadoStuff = calamityValue["Tornado Values"];
+
+		//Load UI Timer
+		if (tornadoStuff.HasMember("UI Timer") && tornadoStuff["UI Timer"].IsFloat())
+		{
+			cTornado->fUIPopupTime = tornadoStuff["UI Timer"].GetFloat();
+		}
+		else
+		{
+			std::cout << "Error Loading UI Timer, Calamity" << std::endl;
+			delete cTornado;
+			cTornado = NULL;
+			return nullptr;
+		}
+
+		//Load Dirt Timer
+		if (tornadoStuff.HasMember("Dirt Timer") && tornadoStuff["Dirt Timer"].IsFloat())
+		{
+			cTornado->fEffectTimer_Dirt = tornadoStuff["Dirt Timer"].GetFloat();
+		}
+		else
+		{
+			std::cout << "Error Loading Dirt Timer, Calamity" << std::endl;
+			delete cTornado;
+			cTornado = NULL;
+			return nullptr;
+		}
+
+		//Load State
+		if (tornadoStuff.HasMember("State") && tornadoStuff["State"].IsInt() && tornadoStuff["State"].GetInt() < CalamityTornado::STATE_TOTAL)
+		{
+			cTornado->state = (CalamityTornado::CALAMITY_TORNADO_STATE)(tornadoStuff["State"].GetInt());
+		}
+		else
+		{
+			std::cout << "Error Loading State, Calamity" << std::endl;
+			delete cTornado;
+			cTornado = NULL;
+			return nullptr;
+		}
+
+		go = cTornado;
+	}
+	else if (name == "Tsunami")
+	{
+		CalamityTsunami* cTsunami = new CalamityTsunami();
+		Value& tsunamiStuff = calamityValue["Tsunami Values"];
+
+		//Load UI Timer
+		if (tsunamiStuff.HasMember("UI Timer") && tsunamiStuff["UI Timer"].IsFloat())
+		{
+			cTsunami->fUIPopupTime = tsunamiStuff["UI Timer"].GetFloat();
+		}
+		else
+		{
+			std::cout << "Error Loading UI Timer, Calamity" << std::endl;
+			delete cTsunami;
+			cTsunami = NULL;
+			return nullptr;
+		}
+
+		//Load Warn Timer
+		if (tsunamiStuff.HasMember("Warn Timer") && tsunamiStuff["Warn Timer"].IsFloat())
+		{
+			cTsunami->fWarnTime = tsunamiStuff["Warn Timer"].GetFloat();
+		}
+		else
+		{
+			std::cout << "Error Loading Warn Timer, Calamity" << std::endl;
+			delete cTsunami;
+			cTsunami = NULL;
+			return nullptr;
+		}
+
+		//Load State
+		if (tsunamiStuff.HasMember("State") && tsunamiStuff["State"].IsInt() && tsunamiStuff["State"].GetInt() < CalamityTsunami::STATE_TOTAL)
+		{
+			cTsunami->state = (CalamityTsunami::CALAMITY_TSUNAMI_STATE)(tsunamiStuff["State"].GetInt());
+		}
+		else
+		{
+			std::cout << "Error Loading State, Calamity" << std::endl;
+			delete cTsunami;
+			cTsunami = NULL;
+			return nullptr;
+		}
+
+		//Load Duration
+		if (tsunamiStuff.HasMember("Duration") && tsunamiStuff["Duration"].IsFloat())
+		{
+			cTsunami->fDuration = tsunamiStuff["Duration"].GetFloat();
+		}
+		else
+		{
+			std::cout << "Error Loading Duration, Calamity" << std::endl;
+			delete cTsunami;
+			cTsunami = NULL;
+			return nullptr;
+		}
+
+		//Load Lanes
+		if (tsunamiStuff.HasMember("Lanes") && tsunamiStuff["Lanes"].IsObject())
+		{
+			for (Value::ConstMemberIterator itr = tsunamiStuff["Lanes"].MemberBegin(); itr != tsunamiStuff["Lanes"].MemberEnd(); ++itr)
+			{
+				cTsunami->lanes.push_back(itr->value.GetUint());
+			}
+		}
+		else
+		{
+			std::cout << "Error Loading Tsunami Lanes, Calamity" << std::endl;
+			delete cTsunami;
+			cTsunami = NULL;
+			return nullptr;
+		}
+
+		go = cTsunami;
+	}
+	else if (name == "Meteor Shower")
+	{
+		CalamityMeteorShower* cMeteor = new CalamityMeteorShower();
+		Value& meteorStuff = calamityValue["Meteor Shower Values"];
+
+		//Load UI Timer
+		if (meteorStuff.HasMember("UI Timer") && meteorStuff["UI Timer"].IsFloat())
+		{
+			cMeteor->fUIPopupTime = meteorStuff["UI Timer"].GetFloat();
+		}
+		else
+		{
+			std::cout << "Error Loading UI Timer, Calamity" << std::endl;
+			delete cMeteor;
+			cMeteor = NULL;
+			return nullptr;
+		}
+
+		//Load State
+		if (meteorStuff.HasMember("State") && meteorStuff["State"].IsInt() && meteorStuff["State"].GetInt() < CalamityMeteorShower::STATE_TOTAL)
+		{
+			cMeteor->state = (CalamityMeteorShower::CALAMITY_METEORSHOWER_STATE)(meteorStuff["State"].GetInt());
+		}
+		else
+		{
+			std::cout << "Error Loading State, Calamity" << std::endl;
+			delete cMeteor;
+			cMeteor = NULL;
+			return nullptr;
+		}
+
+		//Load GridPts
+		if (meteorStuff.HasMember("Pts") && meteorStuff["Pts"].IsObject())
+		{
+			for (Value::MemberIterator itr = meteorStuff["Pts"].MemberBegin(); itr != meteorStuff["Pts"].MemberEnd(); ++itr)
+			{
+				cMeteor->meteorGridPts.push_back(LoadGridPt(itr->value));
+			}
+		}
+		else
+		{
+			std::cout << "Error Loading lanes, Calamity" << std::endl;
+			delete cMeteor;
+			cMeteor = NULL;
+			return nullptr;
+		}
+
+		go = cMeteor;
+	}
+	else if (name == "World End")
+	{
+		CalamityWorldEnd* cWorldEnd = new CalamityWorldEnd();
+		Value& worldStuff = calamityValue["World End Values"];
+
+		//Load UI Timer
+		if (worldStuff.HasMember("UI Timer") && worldStuff["UI Timer"].IsFloat())
+		{
+			cWorldEnd->fUIPopupTime = worldStuff["UI Timer"].GetFloat();
+		}
+		else
+		{
+			std::cout << "Error Loading UI Timer, Calamity" << std::endl;
+			delete cWorldEnd;
+			cWorldEnd = NULL;
+			return nullptr;
+		}
+
+		//Load Dirt Timer
+		if (worldStuff.HasMember("Dirt Timer") && worldStuff["Dirt Timer"].IsFloat())
+		{
+			cWorldEnd->fEffectTimer_Dirt = worldStuff["Dirt Timer"].GetFloat();
+		}
+		else
+		{
+			std::cout << "Error Loading Dirt Timer, Calamity" << std::endl;
+			delete cWorldEnd;
+			cWorldEnd = NULL;
+			return nullptr;
+		}
+
+		go = cWorldEnd;
+	}
+
+	//Load Active
+	if (calamityValue.HasMember("Active") && calamityValue["Active"].IsBool())
+	{
+		go->bActive = calamityValue["Active"].GetBool();
+	}
+	else
+	{
+		std::cout << "Error Loading Active, Calamity" << std::endl;
+		delete go;
+		go = NULL;
+		return nullptr;
+	}
+
+	//Load Elapsed Time
+	if (calamityValue.HasMember("Elapsed Time") && calamityValue["Elapsed Time"].IsFloat())
+	{
+		go->fElapsedTime = calamityValue["Elapsed Time"].GetFloat();
+	}
+	else
+	{
+		std::cout << "Error Loading Elapsed Time, Calamity" << std::endl;
+		delete go;
+		go = NULL;
+		return nullptr;
+	}
+
+	//Load Calamity Duration
+	if (calamityValue.HasMember("Calamity Duration") && calamityValue["Calamity Duration"].IsFloat())
+	{
+		go->fCalamityDuration = calamityValue["Calamity Duration"].GetFloat();
+	}
+	else
+	{
+		std::cout << "Error Loading Calamity Duration, Calamity" << std::endl;
+		delete go;
+		go = NULL;
+		return nullptr;
+	}
+
+	if (go == NULL)
+	{
+		std::cout << "GameObject is NULL, Calamity" << std::endl;
+	}
+
+	return go;
 }

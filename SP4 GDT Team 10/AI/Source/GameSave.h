@@ -36,6 +36,7 @@ public:
 	void ResetGame(); //Clean the game file with a default value
 
 	rapidjson::Value SaveVector3(Vector3 vector);
+	rapidjson::Value SaveGridPt(GridPt gridPt);
 	rapidjson::Value SaveVillager(GameObject* go);
 	rapidjson::Value SavePig(GameObject* go);
 	rapidjson::Value SaveBuilding(GameObject* go);
@@ -44,6 +45,7 @@ public:
 	rapidjson::Value SaveCalamity(CalamityBase* go);
 
 	Vector3 LoadVector3(rapidjson::Value& vectorValue);
+	GridPt LoadGridPt(rapidjson::Value& gridValue);
 	GameObject* LoadVillager(rapidjson::Value& villgaerValue);
 	GameObject* LoadBuilding(rapidjson::Value& buildingValue);
 	GameObject* LoadEnvironment(rapidjson::Value& environmentValue);

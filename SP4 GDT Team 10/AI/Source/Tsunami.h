@@ -10,6 +10,7 @@ struct Tsunami : public GameObject
 		DIRECTION_DOWN,
 		DIRECTION_LEFT,
 		DIRECTION_RIGHT,
+		DIRECTION_TOTAL
 	};
 
 	TSUNAMI_DIRECTION tsunami_direction;

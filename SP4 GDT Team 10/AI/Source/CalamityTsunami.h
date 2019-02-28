@@ -17,6 +17,7 @@ public:
 		STATE_WARNING,
 		STATE_SPAWNING,
 		STATE_STOPPING,
+		STATE_TOTAL
 	};
 	CALAMITY_TSUNAMI_STATE state;
 	float fUIPopupTime;
