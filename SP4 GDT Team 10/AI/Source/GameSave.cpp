@@ -240,6 +240,32 @@ bool GameSave::LoadGame()
 		{
 			std::cout << "error loading Time Of Day";
 		}
+		
+		//Load Research
+		if (objVillagers.HasMember("Full Stone Research") && objVillagers["Full Stone Research"].IsBool())
+		{
+			SD->bFullStoneResearch = (objVillagers["Full Stone Research"].GetBool());	
+		}
+		else
+		{
+			std::cout << "error loading Full Stone Research";
+		}
+		if (objVillagers.HasMember("Stone Research") && objVillagers["Stone Research"].IsBool())
+		{
+			SD->bStoneResearch = (objVillagers["Stone Research"].GetBool());
+		}
+		else
+		{
+			std::cout << "error loading Stone Research";
+		}
+		if (objVillagers.HasMember("Wood Research") && objVillagers["Wood Research"].IsBool())
+		{
+			SD->bFullStoneResearch = (objVillagers["Wood Research"].GetBool());
+		}
+		else
+		{
+			std::cout << "error loading Wood Research";
+		}
 
 		//Load Villagers
 		if (objVillagers.HasMember("Villager"))
@@ -742,6 +768,9 @@ void GameSave::SaveGame()
 	gameFile.AddMember("Day", SD->GetCurrDay(), allocator);
 	gameFile.AddMember("Month", SD->GetCurrMonth(), allocator);
 	gameFile.AddMember("Time Of Day", SD->GetTimeOfDay(), allocator);
+	gameFile.AddMember("Full Stone Research", SD->bFullStoneResearch, allocator);
+	gameFile.AddMember("Stone Research", SD->bStoneResearch, allocator);
+	gameFile.AddMember("Wood Research", SD->bWoodResearch, allocator);
 	gameFile.AddMember("Villagers", objVillagers, allocator);
 	gameFile.AddMember("Pigs", objPigs, allocator);
 	gameFile.AddMember("Buildings", objBuildings, allocator);
