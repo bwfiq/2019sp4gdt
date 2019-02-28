@@ -4213,9 +4213,6 @@ void SceneSP::Update(double dt)
 		ProgressMonth();
 	}
 
-	//lose game
-	if (SD->GetPopulation() <= 0)
-		ChangeState(G_LOSESCREEN);
 
 	// sea movement
 	if (fSeaDeltaX >= SEA_WIDTH / 4)
@@ -4837,6 +4834,9 @@ void SceneSP::Update(double dt)
 	SD->SetFood(Math::Min(SD->GetFood(), SD->GetFoodLimit()));
 	SD->SetWood(Math::Min(SD->GetWood(), SD->GetWoodLimit()));
 	SD->SetStone(Math::Min(SD->GetStone(), SD->GetStoneLimit()));
+	//lose game
+	if (SD->GetPopulation() <= 0)
+		ChangeState(G_LOSESCREEN);
 	if (prevSelect != selected)
 	{
 		UpdateSelectedUI();
