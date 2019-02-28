@@ -7,7 +7,7 @@
 #include "Villager.h"
 #include "Bush.h"
 
-UIGameText::UIGameText(TEXT_TYPE textType, GameObject* go) :
+UIGameText::UIGameText(TEXT_TYPE textType, float x, float y, GameObject* go) :
 	UIBase()
 {
 	SceneData* SD = SceneData::GetInstance();
@@ -113,7 +113,6 @@ UIGameText::UIGameText(TEXT_TYPE textType, GameObject* go) :
 		if (go->type == GameObject::GO_CHIEFHUT)
 		{
 			uiComponents_list[COMPONENT_TEXT_5].text = "Chief Hut";
-			//uiComponents_list[COMPONENT_TEXT_5].pos.x += 0.02f;
 			uiComponents_list[COMPONENT_TEXT_3].textSize *= 0.65f;
 			uiComponents_list[COMPONENT_TEXT_3].text = "Makes blueprints that";
 			uiComponents_list[COMPONENT_TEXT_3].pos.x -= 0.105f;
@@ -162,6 +161,17 @@ UIGameText::UIGameText(TEXT_TYPE textType, GameObject* go) :
 			uiComponents_list[COMPONENT_TEXT_3].pos.x -= 0.055f;
 			uiComponents_list[COMPONENT_TEXT_2].textSize *= 0.85f;
 			uiComponents_list[COMPONENT_TEXT_2].text = "limit";
+			uiComponents_list[COMPONENT_TEXT_2].pos.x += 0.095f;
+		}
+		else if (go->type == GameObject::GO_RESEARCHLAB)
+		{
+			uiComponents_list[COMPONENT_TEXT_5].text = "Research Lab";
+			uiComponents_list[COMPONENT_TEXT_5].pos.x -= 0.1f;
+			uiComponents_list[COMPONENT_TEXT_3].textSize *= 0.85f;
+			uiComponents_list[COMPONENT_TEXT_3].text = "Unlocks building";
+			uiComponents_list[COMPONENT_TEXT_3].pos.x -= 0.055f;
+			uiComponents_list[COMPONENT_TEXT_2].textSize *= 0.85f;
+			uiComponents_list[COMPONENT_TEXT_2].text = "tiers";
 			uiComponents_list[COMPONENT_TEXT_2].pos.x += 0.095f;
 		}
 		switch (building->eCurrState)
@@ -330,11 +340,6 @@ void UIGameText::Update(float dt)
 			uiComponents_list[COMPONENT_TEXT_1].text = "Appeased";
 			uiComponents_list[COMPONENT_TEXT_1].textColor.Set(0, 0.8f, 0);
 		}
-	}
-		break;
-	case TEXT_SELECTED_RLAB:
-	{
-		//uiComponents_list[COMPONENT_TEXT_3].text = std::to_string((int)SD->GetResearchPoints());
 	}
 		break;
 	}

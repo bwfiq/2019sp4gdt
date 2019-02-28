@@ -16,7 +16,7 @@ public:
 
 		TEXT_TOTAL
 	};
-	UIGameText(TEXT_TYPE textType, GameObject* go = NULL);
+	UIGameText(TEXT_TYPE textType, float x = 0, float y = 0, GameObject* go = NULL);
 	~UIGameText();
 
 	virtual void Update(float dt);

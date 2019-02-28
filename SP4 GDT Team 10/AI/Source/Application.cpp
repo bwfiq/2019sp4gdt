@@ -17,6 +17,12 @@
 #include "KeyboardController.h"
 #include "SceneManager.h"
 
+#include "UIManager.h"
+#include "CalamityManager.h"
+#include "EffectManager.h"
+#include "MousePicker.h"
+#include "SceneData.h"
+
 GLFWwindow* m_window;
 const unsigned char FPS = 60; // FPS of this game
 const unsigned int frameTime = 1000 / FPS; // time for each frame
@@ -213,6 +219,11 @@ void Application::Run()
 
 	} //Check if the ESC key had been pressed or if the window had been closed
 	SceneManager::GetInstance()->Exit();
+	UIManager::Destroy();
+	EffectManager::Destroy();
+	CalamityManager::Destroy();
+	MousePicker::Destroy();
+	SceneData::Destroy();
 	//delete scene;
 }
 

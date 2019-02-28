@@ -4,7 +4,7 @@
 #include "ConcreteMessages.h"
 #include "GameObject.h"
 
-UIGameButton::UIGameButton(BUTTON_TYPE buttonType, unsigned order, GameObject* go) :
+UIGameButton::UIGameButton(BUTTON_TYPE buttonType, float x, float y, unsigned order, GameObject* go) :
 	UIBase()
 {
 	SceneData* SD = SceneData::GetInstance();
@@ -88,6 +88,17 @@ UIGameButton::UIGameButton(BUTTON_TYPE buttonType, unsigned order, GameObject* g
 			uiComponents_list[COMPONENT_TEXT].text = "House";
 		
 		break;
+	case BUTTON_RESEARCH_COST:
+		scale.Set(200, 50);
+		pos.Set(x,y);
+		anchorPoint.Set(0.5f,0.5f);
+		uiComponents_list[COMPONENT_BOARD].mesh = SD->GetMesh("ui_board_blank");
+		uiComponents_list[COMPONENT_TEXT].mesh = NULL;
+		uiComponents_list[COMPONENT_TEXT].text = "asffds";
+		uiComponents_list[COMPONENT_TEXT].textSize = scale.y * 0.5f;
+		uiComponents_list[COMPONENT_TEXT].pos.Set(0.2f, 0.5f);
+		uiComponents_list[COMPONENT_TEXT].anchorPoint.Set(0, 0);
+		break;
 	}
 	this->buttonType = buttonType;
 	
@@ -143,6 +154,7 @@ void UIGameButton::Update(float dt)
 				, new MessageBuildBuildings(GameObject::GO_WOODSHED));
 			break;
 		}
+		CSoundEngine::GetInstance()->PlayASound("selection");
 	}
 }
 
