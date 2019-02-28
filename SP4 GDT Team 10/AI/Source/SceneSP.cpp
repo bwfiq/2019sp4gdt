@@ -2992,6 +2992,12 @@ void SceneSP::UpdateSelectedUI()
 		UIManager::GetInstance()->AddUI("uiSelected_Villager_Info", newUI);
 		m_selectedUi.push_back(newUI);
 	}
+	else if (dynamic_cast<Pig*>(selected))
+	{
+		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_PIG, 0, 0, selected);
+		UIManager::GetInstance()->AddUI("uiSelected_Pig_Info", newUI);
+		m_selectedUi.push_back(newUI);
+	}
 	else if (dynamic_cast<Environment*>(selected))
 	{
 		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_ENVIRONMENT, 0, 0, selected);
@@ -3514,6 +3520,11 @@ void SceneSP::Update(double dt)
 		lights[0].type = Light::LIGHT_DIRECTIONAL;
 	else if (Application::IsKeyPressed('C') && bGodMode)
 		lights[0].type = Light::LIGHT_SPOT;	
+
+	if (KC->IsKeyPressed('V') && bGodMode)
+	{
+		gameSave.LoadEverything();
+	}
 
 	if (KC->IsKeyPressed('B') && bGodMode)
 	{

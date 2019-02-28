@@ -306,6 +306,268 @@ bool GameSave::LoadGame()
 	
 	return true;
 }
+bool GameSave::LoadEverything()
+{
+	SceneData* SD = SceneData::GetInstance();
+
+	struct stat statbuffer;
+	FILE* fp;
+
+	if (stat("Everything.json", &statbuffer) != 0)
+	{
+		std::cout << "hi, file does not exist, rapidjson" << std::endl;
+		fp = fopen("default.json", "rb"); // non-Windows use "r"
+	}
+	else
+	{
+		fp = fopen("Everything.json", "rb"); // non-Windows use "r"
+	}
+	char readBuffer[65536];
+	FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+
+	gameFile.ParseStream(is);
+	fclose(fp);
+	if (gameFile.HasParseError())
+	{
+		std::cout << "parse error" << std::endl;
+		ParseErrorCode errorCode = gameFile.GetParseError();
+		std::cout << GetParseError_En(errorCode) << std::endl;
+		return false;
+	}
+	//StringBuffer buffer;
+	//PrettyWriter<StringBuffer> writer(buffer);
+	//gameFile.Accept(writer);
+	//std::cout << buffer.GetString() << std::endl;
+
+	Value objVillagers(kObjectType);
+	Value objBuildings(kObjectType);
+	Value objEnvironments(kObjectType);
+	Value objCalamityGO(kObjectType);
+	Value objCalamities(kObjectType);
+
+	int numVil = 0;
+	int numBuilding = 0;
+	int numEnvironment = 0;
+	int numCalamitiesGO = 0;
+	int numCalamities = 0;
+	int numCalamitiesQ = 0;
+
+	if (gameFile.IsObject())
+	{
+		if (gameFile.HasMember("Villagers"))
+		{
+			objVillagers = gameFile["Villagers"];
+		}
+		else
+		{
+			std::cout << "Cannot find Villagers Data" << std::endl;
+			return false;
+		}
+		if (gameFile.HasMember("Buildings"))
+		{
+			objBuildings = gameFile["Buildings"];
+		}
+		else
+		{
+			std::cout << "Cannot find Buildings Data" << std::endl;
+			return false;
+		}
+		if (gameFile.HasMember("Environments"))
+		{
+			objEnvironments = gameFile["Environments"];
+		}
+		else
+		{
+			std::cout << "Cannot find Environments Data" << std::endl;
+			return false;
+		}
+		if (gameFile.HasMember("CalamityGO"))
+		{
+			objCalamityGO = gameFile["CalamityGO"];
+		}
+		else
+		{
+			std::cout << "Cannot find CalamityGO Data" << std::endl;
+			return false;
+		}
+		if (gameFile.HasMember("Calamities"))
+		{
+			objCalamities = gameFile["Calamities"];
+		}
+		else
+		{
+			std::cout << "Cannot find Calamities Data" << std::endl;
+			return false;
+		}
+	}
+	else
+	{
+		std::cout << "JSON file is empty" << std::endl;
+		return false;
+	}
+
+	std::vector<GameObject*>* m_goList = SD->GetGOList();
+	while (!m_goList->empty())
+	{
+		GameObject* temp = m_goList->back();
+		m_goList->pop_back();
+		delete temp;
+	}
+
+	//Guards to check for json file error
+	if (objVillagers.HasMember("Number"))
+	{
+		numVil = objVillagers["Number"].GetInt();
+	}
+	else
+	{
+		std::cout << "Cannot find Number in Villagers OBJ" << std::endl;
+		return false;
+	}
+
+	if (objBuildings.HasMember("Number"))
+	{
+		numBuilding = objBuildings["Number"].GetInt();
+	}
+	else
+	{
+		std::cout << "Cannot find Number in Buildings OBJ" << std::endl;
+		return false;
+	}
+
+	if (objEnvironments.HasMember("Number"))
+	{
+		numEnvironment = objEnvironments["Number"].GetInt();
+	}
+	else
+	{
+		std::cout << "Cannot find Number in Environments OBJ" << std::endl;
+		return false;
+	}
+
+	if (objCalamityGO.HasMember("Number"))
+	{
+		numCalamitiesGO = objCalamityGO["Number"].GetInt();
+	}
+	else
+	{
+		std::cout << "Cannot find Number in CalamityGO OBJ" << std::endl;
+		return false;
+	}
+
+	if (objCalamities.HasMember("Number"))
+	{
+		numCalamities = objCalamities["Number"].GetInt();
+	}
+	else
+	{
+		std::cout << "Cannot find Number in Calamities OBJ" << std::endl;
+		return false;
+	}
+
+	if (objCalamities.HasMember("Number Queue"))
+	{
+		numCalamitiesQ = objCalamities["Number Queue"].GetInt();
+	}
+	else
+	{
+		std::cout << "Cannot find Number Queue in Calamities OBJ" << std::endl;
+		return false;
+	}
+
+	//Loading all the stuff
+
+	//Load Villagers
+	if (objVillagers.HasMember("Villager"))
+	{
+		for (int i = 0; i < numVil; ++i)
+		{
+			m_goList->push_back(LoadVillager(objVillagers["Villager"][i]));
+		}
+	}
+	else
+	{
+		std::cout << "Cannot find Villager in Villagers OBJ" << std::endl;
+		return false;
+	}
+
+	//Load Buildings
+	if (objBuildings.HasMember("Building"))
+	{
+		for (int i = 0; i < numBuilding; ++i)
+		{
+			m_goList->push_back(LoadBuilding(objBuildings["Building"][i]));
+		}
+	}
+	else
+	{
+		std::cout << "Cannot find Building in Buildings OBJ" << std::endl;
+		return false;
+	}
+
+	//Load Environments
+	if (objEnvironments.HasMember("Environment"))
+	{
+		for (int i = 0; i < numEnvironment; ++i)
+		{
+			m_goList->push_back(LoadEnvironment(objEnvironments["Environment"][i]));
+		}
+	}
+	else
+	{
+		std::cout << "Cannot find Environment in Environments OBJ" << std::endl;
+		return false;
+	}
+
+	//Load CalamitiesGO
+	if (objCalamityGO.HasMember("Calamities GO"))
+	{
+		for (int i = 0; i < numCalamitiesGO; ++i)
+		{
+			m_goList->push_back(LoadCalamityGo(objCalamityGO["Calamities GO"][i]));
+		}
+	}
+	else
+	{
+		std::cout << "Cannot find Calamities GO in CalamityGO OBJ" << std::endl;
+		return false;
+	}
+
+	CalamityManager* CM = CalamityManager::GetInstance();
+	//Load Calamities
+	if (objCalamities.HasMember("Calamities"))
+	{
+		if (numCalamities > 1)
+		{
+			std::cout << "Error with num curr calamities" << std::endl;
+		}
+		for (int i = 0; i < numCalamities; ++i)
+		{
+			CM->AddToCalamityQueue(LoadCalamity(objCalamities["Calamities"][i]));
+		}
+	}
+	else
+	{
+		std::cout << "Cannot find Calamities in Calamities OBJ" << std::endl;
+		return false;
+	}
+
+	//Load CalamitiesQ
+	if (objCalamities.HasMember("CalamitiesQ"))
+	{
+		for (int i = 0; i < numCalamitiesQ; ++i)
+		{
+			CM->AddToCalamityQueue(LoadCalamity(objCalamities["CalamitiesQ"][i]));
+		}
+	}
+	else
+	{
+		std::cout << "Cannot find CalamitiesQ in Calamities OBJ" << std::endl;
+		return false;
+	}
+
+	return true;
+}
 void GameSave::SaveGame()
 {
 	gameFile.SetObject();
@@ -394,6 +656,14 @@ void GameSave::SaveGame()
 		}
 		Tornado* goTornado = dynamic_cast<Tornado*>(go);
 		if (goTornado)
+		{
+			calamitiesGO.PushBack(SaveCalamityGo(go), allocator);
+			++numCalamitiesGO;
+
+			continue;
+		}
+		Meteor* goMeteor = dynamic_cast<Meteor*>(go);
+		if (goMeteor)
 		{
 			calamitiesGO.PushBack(SaveCalamityGo(go), allocator);
 			++numCalamitiesGO;

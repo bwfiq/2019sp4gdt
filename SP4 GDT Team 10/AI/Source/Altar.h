@@ -10,6 +10,7 @@ struct Altar : public Building
 		TSUNAMI,
 		EARTHQUAKE,
 		TORNADO,
+		METEOR,
 		END_OF_THE_WORLD,
 		TOTAL
 	};
