@@ -2,6 +2,7 @@
 #include "UIMessagePopup.h"
 #include "ConcreteMessages.h"
 #include "EffectManager.h"
+#include "SceneData.h"
 
 CalamityWorldEnd::CalamityWorldEnd() :
 	CalamityBase(),
@@ -31,6 +32,12 @@ void CalamityWorldEnd::Update(float dt)
 	PO->Send("Scene"
 		, new MessageCalamityWorldEnd()
 	);
+	fEffectTimer_Dirt += dt;
+	if (fEffectTimer_Dirt > 0.2f)
+	{
+		float worldLength = SceneData::GetInstance()->GetGridSize() * SceneData::GetInstance()->GetNoGrid() * 0.5f;
+		EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, Vector3(Math::RandFloatMinMax(-worldLength, worldLength), 0.2f, Math::RandFloatMinMax(-worldLength, worldLength)));
+	}
 }
 
 void CalamityWorldEnd::Exit()

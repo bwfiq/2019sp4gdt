@@ -3042,15 +3042,16 @@ void SceneSP::UpdateSelectedUI()
 	if (selected == NULL) return;
 	if (selected->type == GameObject::GO_ALTAR)
 	{
-		//UIBase* newUI = new UIAltarPopup();
-		//UIManager::GetInstance()->AddUI("uiAltarPopup", newUI);
-		//m_selectedUi.push_back(newUI);
+		Building* selectedBuilding = static_cast<Building*>(selected);
 		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_ALTAR);
 		UIManager::GetInstance()->AddUI("uiSelected_Altar_Info", newUI);
 		m_selectedUi.push_back(newUI);
-		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_GENERAL_MOVE, 0, 0, 0);
-		UIManager::GetInstance()->AddUI("uiSelected_Altar_Move", newUI);
-		m_selectedUi.push_back(newUI);
+		if (selectedBuilding->eCurrState == Building::STATES::COMPLETED)
+		{
+			newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_GENERAL_MOVE, 0, 0, 0);
+			UIManager::GetInstance()->AddUI("uiSelected_Altar_Move", newUI);
+			m_selectedUi.push_back(newUI);
+		}
 		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_ALTAR_OFFER, 0, 0, 1);
 		UIManager::GetInstance()->AddUI("uiSelected_Altar_Offer", newUI);
 		m_selectedUi.push_back(newUI);
@@ -3069,9 +3070,12 @@ void SceneSP::UpdateSelectedUI()
 		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_BUILDING, 0, 0, selected);
 		UIManager::GetInstance()->AddUI("uiSelected_Building_Info", newUI);
 		m_selectedUi.push_back(newUI);
-		newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_GENERAL_MOVE, 0, 0, 0, selected);
-		UIManager::GetInstance()->AddUI("uiSelected_Building_Move", newUI);
-		m_selectedUi.push_back(newUI);
+		if (static_cast<Building*>(selected)->eCurrState == Building::STATES::COMPLETED)
+		{
+			newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_GENERAL_MOVE, 0, 0, 0, selected);
+			UIManager::GetInstance()->AddUI("uiSelected_Building_Move", newUI);
+			m_selectedUi.push_back(newUI);
+		}
 		if (selected->type == GameObject::GO_CHIEFHUT)
 		{
 			newUI = new UIGameButton(UIGameButton::BUTTON_SELECTED_CHIEFHUT_BUILD, 0, 0, 1, selected);
