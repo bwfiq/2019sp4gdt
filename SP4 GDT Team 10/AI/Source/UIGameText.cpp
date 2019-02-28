@@ -7,6 +7,8 @@
 #include "Villager.h"
 #include "Pig.h"
 #include "Bush.h"
+#include "Mountain.h"
+#include "Tree.h"
 
 UIGameText::UIGameText(TEXT_TYPE textType, float x, float y, GameObject* go) :
 	UIBase()
@@ -345,46 +347,75 @@ UIGameText::UIGameText(TEXT_TYPE textType, float x, float y, GameObject* go) :
 			uiComponents_list[COMPONENT_TEXT_1 + i].textSize = scale.y * 0.1f;
 		}
 		uiComponents_list[COMPONENT_TEXT_5].textSize *= 1.3f;
-		uiComponents_list[COMPONENT_TEXT_4].text = "Resource Type :";
-		uiComponents_list[COMPONENT_TEXT_3].textSize *= 1.15f;
-		uiComponents_list[COMPONENT_TEXT_3].pos.x += 0.03f;
+		uiComponents_list[COMPONENT_TEXT_4].text = "= Contains ";
+		uiComponents_list[COMPONENT_TEXT_4].textSize *= 0.9f;
+		uiComponents_list[COMPONENT_TEXT_4].pos.x -= 0.08f;
 		if (go->type == GameObject::GO_BUSH)
 		{
 			uiComponents_list[COMPONENT_TEXT_5].text = "Bush";
-			uiComponents_list[COMPONENT_TEXT_5].pos.x += 0.22f;
-			uiComponents_list[COMPONENT_TEXT_3].text = "Food";
-			uiComponents_list[COMPONENT_TEXT_3].textColor.Set(99.f / 255.f, 170.f / 255.f, 71.f / 255.f);
+			uiComponents_list[COMPONENT_TEXT_4].text += "Food =";
+			uiComponents_list[COMPONENT_TEXT_4].textColor.Set(99.f / 255.f, 170.f / 255.f, 71.f / 255.f);
+			uiComponents_list[COMPONENT_TEXT_3].textSize *= 0.75f;
+			uiComponents_list[COMPONENT_TEXT_3].text = "State: ";
 			uiComponents_list[COMPONENT_TEXT_2].textSize *= 0.75f;
-			uiComponents_list[COMPONENT_TEXT_2].text = "State: ";
+			uiComponents_list[COMPONENT_TEXT_2].text = "Amount: ";
 
 			Bush* goBush = dynamic_cast<Bush*>(go);
 			switch (goBush->eCurrState)
 			{
 			case Bush::LUSH:
-				uiComponents_list[COMPONENT_TEXT_2].text += "Lush";
+				uiComponents_list[COMPONENT_TEXT_3].text += "Lush";
 				break;
 			case Bush::DEPLETED:
-				uiComponents_list[COMPONENT_TEXT_2].text += "Depleted";
+				uiComponents_list[COMPONENT_TEXT_3].text += "Depleted";
 				break;
 			}
+			uiComponents_list[COMPONENT_TEXT_2].text += std::to_string(goBush->iFoodAmount);
+			
 		}
 		else if (go->type == GameObject::GO_MOUNTAIN)
 		{
 			uiComponents_list[COMPONENT_TEXT_5].text = "Mountain";
-			uiComponents_list[COMPONENT_TEXT_5].pos.x += 0.11f;
-			uiComponents_list[COMPONENT_TEXT_3].text = "Stone";
-			uiComponents_list[COMPONENT_TEXT_3].textColor.Set(0.3f, 0.3f, 0.3f);
+			uiComponents_list[COMPONENT_TEXT_4].text += "Stone =";
+			uiComponents_list[COMPONENT_TEXT_4].textColor.Set(0.3f, 0.3f, 0.3f);
+			uiComponents_list[COMPONENT_TEXT_3].textSize *= 0.75f;
+			uiComponents_list[COMPONENT_TEXT_3].text = "Amount: ";
+			uiComponents_list[COMPONENT_TEXT_2].textSize *= 0.75f;
+			uiComponents_list[COMPONENT_TEXT_2].text = "Gain: ";
+			
+			
+			Mountain* goMt = dynamic_cast<Mountain*>(go);
+			uiComponents_list[COMPONENT_TEXT_3].text += std::to_string(goMt->iStoneAmount);
+			uiComponents_list[COMPONENT_TEXT_2].text += std::to_string(goMt->iStoneGain);
 		}
 		else if (go->type == GameObject::GO_TREE)
 		{
-			uiComponents_list[COMPONENT_TEXT_5].text = "Tree";
-			uiComponents_list[COMPONENT_TEXT_5].pos.x += 0.22f;
-			uiComponents_list[COMPONENT_TEXT_3].text = "Wood";
-			uiComponents_list[COMPONENT_TEXT_3].textColor.Set(122.f / 255.f, 73.f / 255.f, 9.f / 255.f);
+			uiComponents_list[COMPONENT_TEXT_5].text = "Mountain";
+			uiComponents_list[COMPONENT_TEXT_4].text += "Wood =";
+			uiComponents_list[COMPONENT_TEXT_4].textColor.Set(122.f / 255.f, 73.f / 255.f, 9.f / 255.f);
+			uiComponents_list[COMPONENT_TEXT_3].textSize *= 0.75f;
+			uiComponents_list[COMPONENT_TEXT_3].text = "State: ";
+			uiComponents_list[COMPONENT_TEXT_2].textSize *= 0.75f;
+			uiComponents_list[COMPONENT_TEXT_2].text = "Amount: ";
+			
+			Tree* goTree = dynamic_cast<Tree*>(go);
+			switch (goTree->eCurrState)
+			{
+			case Tree::FULL:
+				uiComponents_list[COMPONENT_TEXT_3].text += "Full";
+				break;
+			case Tree::HALFCHOPPED:
+				uiComponents_list[COMPONENT_TEXT_3].text += "Half-chopped";
+				break;
+			case Tree::DEPLETED:
+				uiComponents_list[COMPONENT_TEXT_3].text += "Depleted";
+				break;
+			}
+			uiComponents_list[COMPONENT_TEXT_2].text += std::to_string(goTree->iWoodAmount);
 		}
-		uiComponents_list[COMPONENT_TEXT_5].pos.x -= 0.1f;
-		uiComponents_list[COMPONENT_TEXT_4].pos.x -= 0.04f;
-		uiComponents_list[COMPONENT_TEXT_3].pos.x += 0.08f;
+		uiComponents_list[COMPONENT_TEXT_5].pos.x += 0.03f;
+		
+		//uiComponents_list[COMPONENT_TEXT_3].pos.x += 0.08f;
 		break;
 	}
 	this->textType = textType;
