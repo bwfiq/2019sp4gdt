@@ -234,7 +234,8 @@ bool GameSave::LoadGame()
 		{
 			for (int i = 0; i < numBuilding; ++i)
 			{
-				m_goList->push_back(LoadBuilding(objBuildings["Building"][i]));
+				GameObject* go = LoadBuilding(objBuildings["Building"][i]);
+				m_goList->push_back(go);
 			}
 		}
 		else
