@@ -215,6 +215,58 @@ bool GameSave::LoadGame()
 
 		//Loading all the stuff
 
+		//Load time date
+		if (objVillagers.HasMember("Day") && objVillagers["Day"].IsInt())
+		{
+			SD->SetCurrDay(objVillagers["Day"].GetInt());
+		}
+		else
+		{
+			std::cout << "error loading day";
+		}
+		if (objVillagers.HasMember("Month") && objVillagers["Month"].IsInt())
+		{
+			SD->SetCurrMonth(objVillagers["Month"].GetInt());
+		}
+		else
+		{
+			std::cout << "error loading Month";
+		}
+		if (objVillagers.HasMember("Time Of Day") && objVillagers["Time Of Day"].IsFloat())
+		{
+			SD->SetTimeOfDay(objVillagers["Time Of Day"].GetFloat());
+		}
+		else
+		{
+			std::cout << "error loading Time Of Day";
+		}
+		
+		//Load Research
+		if (objVillagers.HasMember("Full Stone Research") && objVillagers["Full Stone Research"].IsBool())
+		{
+			SD->bFullStoneResearch = (objVillagers["Full Stone Research"].GetBool());	
+		}
+		else
+		{
+			std::cout << "error loading Full Stone Research";
+		}
+		if (objVillagers.HasMember("Stone Research") && objVillagers["Stone Research"].IsBool())
+		{
+			SD->bStoneResearch = (objVillagers["Stone Research"].GetBool());
+		}
+		else
+		{
+			std::cout << "error loading Stone Research";
+		}
+		if (objVillagers.HasMember("Wood Research") && objVillagers["Wood Research"].IsBool())
+		{
+			SD->bFullStoneResearch = (objVillagers["Wood Research"].GetBool());
+		}
+		else
+		{
+			std::cout << "error loading Wood Research";
+		}
+
 		//Load Villagers
 		if (objVillagers.HasMember("Villager"))
 		{
@@ -636,9 +688,11 @@ void GameSave::SaveGame()
 		Building* goBuilding = dynamic_cast<Building*>(go);
 		if (goBuilding)
 		{
-			buildings.PushBack(SaveBuilding(go), allocator);
-			++numBuilding;
-
+			if (goBuilding->eCurrState != Building::BLUEPRINT)
+			{
+				buildings.PushBack(SaveBuilding(go), allocator);
+				++numBuilding;
+			}
 			continue;
 		}
 		Environment* goEnvironment = dynamic_cast<Environment*>(go);
@@ -712,6 +766,12 @@ void GameSave::SaveGame()
 	objCalamities.AddMember("Number Queue", numCalamitiesQ, allocator);
 	objCalamities.AddMember("CalamitiesQ", calamitiesQ, allocator);
 
+	gameFile.AddMember("Day", SD->GetCurrDay(), allocator);
+	gameFile.AddMember("Month", SD->GetCurrMonth(), allocator);
+	gameFile.AddMember("Time Of Day", SD->GetTimeOfDay(), allocator);
+	gameFile.AddMember("Full Stone Research", SD->bFullStoneResearch, allocator);
+	gameFile.AddMember("Stone Research", SD->bStoneResearch, allocator);
+	gameFile.AddMember("Wood Research", SD->bWoodResearch, allocator);
 	gameFile.AddMember("Villagers", objVillagers, allocator);
 	gameFile.AddMember("Pigs", objPigs, allocator);
 	gameFile.AddMember("Buildings", objBuildings, allocator);

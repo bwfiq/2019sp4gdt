@@ -27,9 +27,12 @@ public:
 		G_SPLASHSCREEN = 0,	// pre-game
 		G_MAINMENU,			// pre-game
 		G_OPTIONS,			// pre-game
+
 		G_INPLAY,
 		G_INGAMEOPTIONS,	// overlay
 		G_RESEARCHTREE,		// overlay
+
+		G_LOSESCREEN,		// post-game
 
 		G_TOTAL
 	};
@@ -44,9 +47,7 @@ public:
 
 	void RenderPassGPass();
 	void RenderPassMain();
-	void RenderSplashScreen();
-	void RenderMainMenu();
-	void RenderOptions();
+	void RenderMenuState();
 	void RenderWorld();
 
 	GameObject* GetHoveredObject();
@@ -130,18 +131,18 @@ protected:
 	GameObject* goAltar;
 	GameObject* goResearchLab;
 
-	//Temporary
-	GameObject* goVillager;
-	GameObject* goBush;
-	GameObject* goTree;
-	GameObject* goTree2;
-	GameObject* goMountain;
-	GameObject* goLogs;
-	GameObject* goHouse;
+	////Temporary
+	//GameObject* goVillager;
+	//GameObject* goBush;
+	//GameObject* goTree;
+	//GameObject* goTree2;
+	//GameObject* goMountain;
+	//GameObject* goLogs;
+	//GameObject* goHouse;
 
-	GameObject* goGranary;
-	GameObject* goWoodshed;
-	GameObject* goPig;
+	//GameObject* goGranary;
+	//GameObject* goWoodshed;
+	//GameObject* goPig;
 
 	GameSave gameSave;
 };

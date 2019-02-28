@@ -1,4 +1,7 @@
 {
+	"Day": 1,
+    "Month": 1,
+    "Time Of Day": 8.0,
     "Villagers": {
         "Number": 1,
         "Villager": [

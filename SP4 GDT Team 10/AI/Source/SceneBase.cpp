@@ -232,6 +232,8 @@ void SceneBase::Init()
 	meshList[GEO_SPLASHSCREEN]->textureArray[0] = LoadTGA("Image//splashscreen.tga");
 	meshList[GEO_LOGO] = MeshBuilder::GenerateQuad("logo", Color(1, 1, 1));
 	meshList[GEO_LOGO]->textureArray[0] = LoadTGA("Image//logo1.tga");
+	meshList[GEO_LOSESCREEN] = MeshBuilder::GenerateQuad("losescreen", Color(1, 1, 1));
+	meshList[GEO_LOSESCREEN]->textureArray[0] = LoadTGA("Image//losescreen.tga");
 
 	meshList[GEO_BACKBUTTON] = MeshBuilder::GenerateQuad("backbutton", Color(1, 1, 1));
 	meshList[GEO_BACKBUTTON]->textureArray[0] = LoadTGA("Image//backbutton.tga");
@@ -249,6 +251,10 @@ void SceneBase::Init()
 	meshList[GEO_RESETBUTTON]->textureArray[0] = LoadTGA("Image//resetbutton.tga");
 	meshList[GEO_SAVEBUTTON] = MeshBuilder::GenerateQuad("savebutton", Color(1, 1, 1));
 	meshList[GEO_SAVEBUTTON]->textureArray[0] = LoadTGA("Image//savebutton.tga");
+	meshList[GEO_RESTARTBUTTON] = MeshBuilder::GenerateQuad("restartbutton", Color(1, 1, 1));
+	meshList[GEO_RESTARTBUTTON]->textureArray[0] = LoadTGA("Image//restartbutton.tga");
+	meshList[GEO_LOADBUTTON] = MeshBuilder::GenerateQuad("loadbutton", Color(1, 1, 1));
+	meshList[GEO_LOADBUTTON]->textureArray[0] = LoadTGA("Image//loadbutton.tga");
 
 	meshList[GEO_SEA] = MeshBuilder::GenerateQuad("sea", Color(1, 1, 1));
 	meshList[GEO_SEA]->textureArray[0] = LoadTGA("Image//sea.tga");

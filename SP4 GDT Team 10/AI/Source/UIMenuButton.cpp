@@ -17,6 +17,7 @@ UIMenuButton::UIMenuButton(const std::string& text, float x, float y) :
 
 	uiComponents_list[COMPONENT_OUTLINEBAR].scale.Set(1 + 0.2f / ratio, 1.2f);
 	uiComponents_list[COMPONENT_OUTLINEBAR].anchorPoint.Set(0, 0);
+	uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 0.f;
 
 	uiComponents_list[COMPONENT_GREYBAR].pos.Set(0, 0);
 	uiComponents_list[COMPONENT_GREYBAR].anchorPoint.Set(0, 0);
