@@ -5,6 +5,7 @@
 #include "CalamityTsunami.h"
 #include "CalamityEarthquake.h"
 #include "CalamityTornado.h"
+#include "CalamityMeteorShower.h"
 #include "CalamityWorldEnd.h"
 
 #include "PostOffice.h"
@@ -89,7 +90,7 @@ void Altar::Update(float dt)
 		if (fCountdown <= 0.f)
 		{
 			fCountdown = fMaxCountdown;
-			SpawnCalamity((Calamity)(Math::RandIntMinMax(0, (int)(TOTAL)-1)));
+			SpawnCalamity((Calamity)(Math::RandIntMinMax(0, (int)(END_OF_THE_WORLD)-1)));
 		}
 	}
 }
@@ -109,6 +110,9 @@ void Altar::SpawnCalamity(Calamity calamity)
 		break;
 	case TORNADO:
 		CM->AddToCalamityQueue(new CalamityTornado());
+		break;
+	case METEOR:
+		CM->AddToCalamityQueue(new CalamityMeteorShower());
 		break;
 	case END_OF_THE_WORLD:
 		CM->AddToCalamityQueue(new CalamityWorldEnd());

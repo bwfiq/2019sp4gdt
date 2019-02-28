@@ -400,6 +400,14 @@ void GameSave::SaveGame()
 
 			continue;
 		}
+		Meteor* goMeteor = dynamic_cast<Meteor*>(go);
+		if (goMeteor)
+		{
+			calamitiesGO.PushBack(SaveCalamityGo(go), allocator);
+			++numCalamitiesGO;
+
+			continue;
+		}
 	}
 
 	//Save current Calamity
