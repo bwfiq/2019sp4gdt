@@ -2941,6 +2941,12 @@ void SceneSP::UpdateSelectedUI()
 		UIManager::GetInstance()->AddUI("uiSelected_Villager_Info", newUI);
 		m_selectedUi.push_back(newUI);
 	}
+	else if (dynamic_cast<Pig*>(selected))
+	{
+		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_PIG, 0, 0, selected);
+		UIManager::GetInstance()->AddUI("uiSelected_Pig_Info", newUI);
+		m_selectedUi.push_back(newUI);
+	}
 	else if (dynamic_cast<Environment*>(selected))
 	{
 		UIBase* newUI = new UIGameText(UIGameText::TEXT_SELECTED_ENVIRONMENT, 0, 0, selected);
