@@ -15,7 +15,7 @@ Meteor::Meteor(GAMEOBJECT_TYPE typeValue)
 	//GameObject(typeValue);
 	std::cout << "Meteor Constructor" << std::endl;
 
-	fPower = 100.f;
+	fPower = 1000.f;
 	fEffectTimer_Fire = 0;
 }
 

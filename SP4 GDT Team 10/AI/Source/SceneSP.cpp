@@ -4839,7 +4839,7 @@ void SceneSP::Update(double dt)
 	SD->SetWood(Math::Min(SD->GetWood(), SD->GetWoodLimit()));
 	SD->SetStone(Math::Min(SD->GetStone(), SD->GetStoneLimit()));
 	//lose game
-	if (SD->GetPopulation() <= 0)
+	if (SD->GetPopulation() <= 0 || goAltar == NULL || goChiefHut == NULL || !goAltar->active || !goChiefHut->active)
 		ChangeState(G_LOSESCREEN);
 	if (prevSelect != selected)
 	{
