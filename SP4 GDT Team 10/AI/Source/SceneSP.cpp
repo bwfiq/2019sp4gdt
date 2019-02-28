@@ -3634,10 +3634,10 @@ void SceneSP::Update(double dt)
 			{
 				ChangeState(G_OPTIONS);
 			}
+
 			if (UIM->GetUI("quitbutton")->IsMousePressed())
 			{
-				//Application::GetInstance().QuitGame();
-				ChangeState(G_LOSESCREEN);
+				Application::GetInstance().QuitGame();
 			}
 		}
 		else // buttons animation
@@ -4216,6 +4216,10 @@ void SceneSP::Update(double dt)
 		SD->SetCurrDay(1);
 		ProgressMonth();
 	}
+
+	//lose game
+	if (SD->GetPopulation() <= 0)
+		ChangeState(G_LOSESCREEN);
 
 	// sea movement
 	if (fSeaDeltaX >= SEA_WIDTH / 4)
