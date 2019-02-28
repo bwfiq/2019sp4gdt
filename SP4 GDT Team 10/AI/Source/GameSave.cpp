@@ -635,9 +635,11 @@ void GameSave::SaveGame()
 		Building* goBuilding = dynamic_cast<Building*>(go);
 		if (goBuilding)
 		{
-			buildings.PushBack(SaveBuilding(go), allocator);
-			++numBuilding;
-
+			if (goBuilding->eCurrState != Building::BLUEPRINT)
+			{
+				buildings.PushBack(SaveBuilding(go), allocator);
+				++numBuilding;
+			}
 			continue;
 		}
 		Environment* goEnvironment = dynamic_cast<Environment*>(go);

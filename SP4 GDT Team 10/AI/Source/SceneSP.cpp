@@ -652,6 +652,7 @@ void SceneSP::Init()
 	bWorldEnd = false;
 	fWaterLevel = 0.7f;
 
+	/*
 	//Objects from maya, bottom of object to be translated down
 	goVillager = FetchGO(GameObject::GO_VILLAGER);
 	goVillager->scale.y = 1.f;
@@ -739,6 +740,7 @@ void SceneSP::Init()
 	mGo->iStoneAmount = 11;
 	mGo->iStoneGain = 5;
 	mGo->fTimer = 4;
+	*/
 
 	SceneData* SD = SceneData::GetInstance();
 	SD->SetFood(0);
@@ -3151,6 +3153,7 @@ void SceneSP::ChangeTimeOfDay()
 			if (iDifference > 10)
 			{
 				go = FetchGO(GameObject::GO_VILLAGER);
+				
 				go->scale.y = 1.f;
 				GridPt tempPt;
 				tempPt.Set(Math::RandIntMinMax(0, SD->GetNoGrid() - 1), Math::RandIntMinMax(0, SD->GetNoGrid() - 1));
@@ -3195,7 +3198,7 @@ void SceneSP::ChangeTimeOfDay()
 		lights[0].spotDirection.Set(0.f, 1.f, 0.f);
 		//bGodlights = true;
 		SceneData* SD = SceneData::GetInstance();
-		SD->SetFood(Math::Max(0, SD->GetFood() - SD->GetPopulation() * 5));// 5 food is eaten per Villager
+		int totalFood = SD->GetPopulation() * 5;// 5 food is eaten per Villager
 	
 		//Costs extra food for tired/sick/dying/panic villagers
 		for (auto go : m_goList)
@@ -3211,15 +3214,55 @@ void SceneSP::ChangeTimeOfDay()
 				//Exception for panic
 				if (goVil->eCurrState == Villager::PANIC)
 				{
-					SD->SetFood(Math::Max(0, SD->GetFood() - 2));
+					totalFood += 2;
 				}
 				else
 				{
 					int newState = Math::Max(0, (int)(goVil->eCurrState - 1));
 					int extraCost = newState * 2 + 2;
-					SD->SetFood(Math::Max(0, SD->GetFood() - extraCost));
+					goVil->eCurrState = (Villager::STATES)(newState);
+
+					totalFood += extraCost;
 				}
 				
+			}
+		}
+
+		if(SD->GetFood() >= totalFood)
+			SD->SetFood(Math::Max(0, SD->GetFood() - totalFood));
+		else
+		{
+			SD->SetFood(0);
+			bool someoneDied = false;
+			for (auto go : m_goList)
+			{
+				if (!go->active || go->type != GameObject::GO_VILLAGER)
+					continue;
+				if (static_cast<Villager*>(go)->eCurrState == Villager::DYING)
+				{
+					someoneDied = true;
+					go->active = false;
+				}
+			}
+			if (!someoneDied)
+			{
+				for (auto go : m_goList)
+				{
+					if (!go->active || go->type != GameObject::GO_VILLAGER)
+						continue;
+					if (!someoneDied)
+					{
+						go->active = false;
+						someoneDied = true;
+						continue;
+					}
+					Villager* goVil = static_cast<Villager*>(go);
+					int currState = goVil->eCurrState;
+					if (goVil->eCurrState != Villager::PANIC)
+					{
+						goVil->eCurrState = (Villager::STATES)(currState + 1);
+					}
+				}
 			}
 		}
 	}
@@ -3721,14 +3764,67 @@ void SceneSP::Update(double dt)
 								{
 									if (goBuilding->eCurrState == Building::BLUEPRINT)
 									{
-										//Should be trying to contruct now
-										if (!goBuilding->bBuilt)
-											goBuilding->eCurrState = Building::CONSTRUCTING;
+										bool costPaid = false;
+										if (!bGodMode)
+										{
+											//Cost
+											if (SD->bFullStoneResearch)
+											{
+												if (SD->GetStone() >= 10)
+												{
+													SD->SetStone(SD->GetStone() - 10);
+													costPaid = true;
+												}
+											}
+											else if (SD->bStoneResearch)
+											{
+												if (SD->GetStone() >= 5 && SD->GetWood() >= 5)
+												{
+													SD->SetStone(SD->GetStone() - 5);
+													SD->SetWood(SD->GetWood() - 5);
+													costPaid = true;
+												}
+											}
+											else if (SD->bWoodResearch)
+											{
+												if (SD->GetWood() >= 10)
+												{
+													SD->SetWood(SD->GetWood() - 10);
+													costPaid = true;
+												}
+											}
+											else //Straw
+											{
+												if (SD->GetWood() >= 5)
+												{
+													SD->SetWood(SD->GetWood() - 5);
+													costPaid = true;
+												}
+											}
+										}
 										else
-											goBuilding->eCurrState = Building::COMPLETED;
-										bShowGrid = false;
-										EM->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, selected->pos);
-										CSoundEngine::GetInstance()->PlayASound("place");
+										{
+											costPaid = true;
+										}
+
+										if (costPaid)
+										{
+											//Should be trying to contruct now
+											if (!goBuilding->bBuilt)
+												goBuilding->eCurrState = Building::CONSTRUCTING;
+											else
+												goBuilding->eCurrState = Building::COMPLETED;
+											bShowGrid = false;
+											EM->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, selected->pos);
+											CSoundEngine::GetInstance()->PlayASound("place");
+										}
+										else
+										{
+											//Not enouf resources
+											goBuilding->active = false;
+											selected = NULL;
+											//Maybe some ui for no resources
+										}
 									}
 								}
 							}
@@ -3814,7 +3910,6 @@ void SceneSP::Update(double dt)
 
 						}
 						selected = NULL;
-						goVillager->goTarget = NULL;
 					}
 				}
 			}
