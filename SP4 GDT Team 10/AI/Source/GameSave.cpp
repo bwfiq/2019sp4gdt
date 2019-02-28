@@ -215,6 +215,32 @@ bool GameSave::LoadGame()
 
 		//Loading all the stuff
 
+		//Load time date
+		if (objVillagers.HasMember("Day") && objVillagers["Day"].IsInt())
+		{
+			SD->SetCurrDay(objVillagers["Day"].GetInt());
+		}
+		else
+		{
+			std::cout << "error loading day";
+		}
+		if (objVillagers.HasMember("Month") && objVillagers["Month"].IsInt())
+		{
+			SD->SetCurrMonth(objVillagers["Month"].GetInt());
+		}
+		else
+		{
+			std::cout << "error loading Month";
+		}
+		if (objVillagers.HasMember("Time Of Day") && objVillagers["Time Of Day"].IsFloat())
+		{
+			SD->SetTimeOfDay(objVillagers["Time Of Day"].GetFloat());
+		}
+		else
+		{
+			std::cout << "error loading Time Of Day";
+		}
+
 		//Load Villagers
 		if (objVillagers.HasMember("Villager"))
 		{
@@ -713,6 +739,9 @@ void GameSave::SaveGame()
 	objCalamities.AddMember("Number Queue", numCalamitiesQ, allocator);
 	objCalamities.AddMember("CalamitiesQ", calamitiesQ, allocator);
 
+	gameFile.AddMember("Day", SD->GetCurrDay(), allocator);
+	gameFile.AddMember("Month", SD->GetCurrMonth(), allocator);
+	gameFile.AddMember("Time Of Day", SD->GetTimeOfDay(), allocator);
 	gameFile.AddMember("Villagers", objVillagers, allocator);
 	gameFile.AddMember("Pigs", objPigs, allocator);
 	gameFile.AddMember("Buildings", objBuildings, allocator);
