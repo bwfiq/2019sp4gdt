@@ -126,18 +126,18 @@ protected:
 	GameObject* goAltar;
 	GameObject* goResearchLab;
 
-	//Temporary
-	GameObject* goVillager;
-	GameObject* goBush;
-	GameObject* goTree;
-	GameObject* goTree2;
-	GameObject* goMountain;
-	GameObject* goLogs;
-	GameObject* goHouse;
+	////Temporary
+	//GameObject* goVillager;
+	//GameObject* goBush;
+	//GameObject* goTree;
+	//GameObject* goTree2;
+	//GameObject* goMountain;
+	//GameObject* goLogs;
+	//GameObject* goHouse;
 
-	GameObject* goGranary;
-	GameObject* goWoodshed;
-	GameObject* goPig;
+	//GameObject* goGranary;
+	//GameObject* goWoodshed;
+	//GameObject* goPig;
 
 	GameSave gameSave;
 };
