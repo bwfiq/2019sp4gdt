@@ -97,8 +97,11 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 	switch (newstate)
 	{
 	case G_SPLASHSCREEN:
+	{
 		camera.Init(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));	// splashscreen
-		break;
+
+	}
+	break;
 	case G_MAINMENU:
 	{
 		camera.Init(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));	// splashscreen
@@ -308,6 +311,24 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 				m_coreUi.push_back(newUI);
 			}
 		}
+	}
+	break;
+	case G_LOSESCREEN:
+	{
+		camera.Init(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3(0, 1, 0));	// splashscreen
+
+		newUI = new UIMenuButton("", 0.25f, 0.3f);
+		newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("restartbutton");
+		UIManager::GetInstance()->AddUI("restartbutton", newUI);
+		m_coreUi.push_back(newUI);
+		newUI = new UIMenuButton("", 0.5f, 0.3f);
+		newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("loadbutton");
+		UIManager::GetInstance()->AddUI("loadbutton", newUI);
+		m_coreUi.push_back(newUI);
+		newUI = new UIMenuButton("", 0.75f, 0.3f);
+		newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("quitbutton");
+		UIManager::GetInstance()->AddUI("quitbutton", newUI);
+		m_coreUi.push_back(newUI);
 	}
 	break;
 	default:
@@ -3496,7 +3517,8 @@ void SceneSP::Update(double dt)
 			}
 			if (UIM->GetUI("quitbutton")->IsMousePressed())
 			{
-				Application::GetInstance().QuitGame();
+				//Application::GetInstance().QuitGame();
+				ChangeState(G_LOSESCREEN);
 			}
 		}
 		else // buttons animation
@@ -3598,6 +3620,32 @@ void SceneSP::Update(double dt)
 				UIM->GetUI("objselectionbutton")->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("objselectionaabb");
 			else
 				UIM->GetUI("objselectionbutton")->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("objselectiongrid");
+		}
+		return;
+	}
+	break;
+	case G_LOSESCREEN:
+	{
+		if (UIM->GetUI("restartbutton")->IsMousePressed())
+		{
+			gameSave.ResetGame();
+			Reset();
+		}
+		if (UIM->GetUI("loadbutton")->IsMousePressed())
+		{
+			if (gameSave.LoadGame())
+			{
+				std::cout << "File Loaded Successfully" << std::endl;
+			}
+			else
+			{
+				std::cout << "File not Found" << std::endl;
+			}
+			ChangeState(G_INPLAY);
+		}
+		if (UIM->GetUI("quitbutton")->IsMousePressed())
+		{
+			Application::GetInstance().QuitGame();
 		}
 		return;
 	}
@@ -5232,7 +5280,7 @@ void SceneSP::RenderPassMain()
 	UIManager::GetInstance()->Render(this);
 }
 
-void SceneSP::RenderSplashScreen()
+void SceneSP::RenderMenuState()
 {
 	m_renderPass = RENDER_PASS_MAIN;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -5265,114 +5313,71 @@ void SceneSP::RenderSplashScreen()
 
 	//RenderMesh(meshList[GEO_AXES], false);
 
-	if (fOpenGLOutTimer > 0.f)
+	switch (game_state)
+	{
+	case G_SPLASHSCREEN:
+	{
+		if (fOpenGLOutTimer > 0.f)
+		{
+			modelStack.PushMatrix();
+			modelStack.Translate(m_worldWidth * 0.5f, m_worldHeight * 0.5f, 1.f);
+			modelStack.Scale(m_worldWidth, ((m_worldWidth / 1024) * 720), m_worldHeight);
+			if (fOpenGLInTimer < 1.0f)
+				RenderMesh(meshList[GEO_SPLASHSCREEN], false, fOpenGLInTimer);
+			else
+				RenderMesh(meshList[GEO_SPLASHSCREEN], false, fOpenGLOutTimer);
+			modelStack.PopMatrix();
+		}
+		else
+		{
+			modelStack.PushMatrix();
+			modelStack.Translate(m_worldWidth * 0.5f, m_worldHeight * 0.5f, 1.f);
+			modelStack.Scale(m_worldWidth, ((m_worldWidth / 1024) * 720), m_worldHeight);
+			if (fSplashScreenInTimer < 1.0f)
+				RenderMesh(meshList[GEO_LOGO], false, fSplashScreenInTimer);
+			else
+				RenderMesh(meshList[GEO_LOGO], false, fSplashScreenOutTimer);
+			modelStack.PopMatrix();
+		}
+	}
+	break;
+	case G_MAINMENU:
 	{
 		modelStack.PushMatrix();
-		modelStack.Translate(m_worldWidth * 0.5f, m_worldHeight * 0.5f, 1.f);
+		modelStack.Translate(Math::Clamp(fMainMenuDelta, m_worldWidth * 0.3f, m_worldWidth * 0.5f), m_worldHeight * 0.5f, 0.f);
 		modelStack.Scale(m_worldWidth, ((m_worldWidth / 1024) * 720), m_worldHeight);
-		if (fOpenGLInTimer < 1.0f)
-			RenderMesh(meshList[GEO_SPLASHSCREEN], false, fOpenGLInTimer);
-		else
-			RenderMesh(meshList[GEO_SPLASHSCREEN], false, fOpenGLOutTimer);
+		RenderMesh(meshList[GEO_LOGO], false);
 		modelStack.PopMatrix();
+
+		//if(fMainMenuDelta <= m_worldWidth * 0.3f)
+		if (SceneData::GetInstance()->GetMainMenuElapsedTime() > 1.f)
+			UIManager::GetInstance()->Render(this);
 	}
-	else
+	break;
+	case G_OPTIONS:
 	{
-		modelStack.PushMatrix();
-		modelStack.Translate(m_worldWidth * 0.5f, m_worldHeight * 0.5f, 1.f);
-		modelStack.Scale(m_worldWidth, ((m_worldWidth / 1024) * 720), m_worldHeight);
-		if (fSplashScreenInTimer < 1.0f)
-			RenderMesh(meshList[GEO_LOGO], false, fSplashScreenInTimer);
-		else
-			RenderMesh(meshList[GEO_LOGO], false, fSplashScreenOutTimer);
-		modelStack.PopMatrix();
-	}
-}
-
-void SceneSP::RenderMainMenu()
-{
-	m_renderPass = RENDER_PASS_MAIN;
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, Application::GetWindowWidth(),
-		Application::GetWindowHeight());
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glUseProgram(m_programID);
-	//pass light depth texture
-	m_lightDepthFBO.BindForReading(GL_TEXTURE8);
-	glUniform1i(m_parameters[U_SHADOW_MAP], 8);
-
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	// Projection matrix : Orthographic Projection
-	Mtx44 projection;
-	projection.SetToOrtho(0, m_worldWidth, 0, m_worldHeight, -10, 10);
-	projectionStack.LoadMatrix(projection);
-
-	// Camera matrix
-	viewStack.LoadIdentity();
-	viewStack.LookAt(
-		camera.position.x, camera.position.y, camera.position.z,
-		camera.target.x, camera.target.y, camera.target.z,
-		camera.up.x, camera.up.y, camera.up.z
-	);
-	// Model matrix : an identity matrix (model will be at the origin)
-	modelStack.LoadIdentity();
-
-	//RenderMesh(meshList[GEO_AXES], false);
-
-	modelStack.PushMatrix();
-	modelStack.Translate(Math::Clamp(fMainMenuDelta, m_worldWidth * 0.3f, m_worldWidth * 0.5f), m_worldHeight * 0.5f, 0.f);
-	modelStack.Scale(m_worldWidth, ((m_worldWidth / 1024) * 720), m_worldHeight);
-	RenderMesh(meshList[GEO_LOGO], false);
-	modelStack.PopMatrix();
-	
-	//if(fMainMenuDelta <= m_worldWidth * 0.3f)
-	if (SceneData::GetInstance()->GetMainMenuElapsedTime() > 1.f)
 		UIManager::GetInstance()->Render(this);
-}
+	}
+	break;
+	case G_LOSESCREEN:
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(m_worldWidth * 0.5f, m_worldHeight * 0.5f, 1.f);
+		modelStack.Scale(m_worldWidth, ((m_worldWidth / 1024) * 720), m_worldHeight);
+		RenderMesh(meshList[GEO_LOSESCREEN], false);
+		modelStack.PopMatrix();
 
-void SceneSP::RenderOptions()
-{
-	m_renderPass = RENDER_PASS_MAIN;
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, Application::GetWindowWidth(),
-		Application::GetWindowHeight());
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glUseProgram(m_programID);
-	//pass light depth texture
-	m_lightDepthFBO.BindForReading(GL_TEXTURE8);
-	glUniform1i(m_parameters[U_SHADOW_MAP], 8);
+		//if (SceneData::GetInstance()->GetMainMenuElapsedTime() > 1.f)
+			UIManager::GetInstance()->Render(this);
+	}
+	break;
+	default:
+	{
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+	break;
+	}
 
-	// Projection matrix : Orthographic Projection
-	Mtx44 projection;
-	projection.SetToOrtho(0, m_worldWidth, 0, m_worldHeight, -10, 10);
-	projectionStack.LoadMatrix(projection);
-
-	// Camera matrix
-	viewStack.LoadIdentity();
-	viewStack.LookAt(
-		camera.position.x, camera.position.y, camera.position.z,
-		camera.target.x, camera.target.y, camera.target.z,
-		camera.up.x, camera.up.y, camera.up.z
-	);
-	// Model matrix : an identity matrix (model will be at the origin)
-	modelStack.LoadIdentity();
-
-	//RenderMesh(meshList[GEO_AXES], false);
-
-	modelStack.PushMatrix();
-	modelStack.Translate(m_worldWidth * 0.5f, m_worldHeight * 0.5f, 0.f);
-	modelStack.Scale(m_worldWidth, ((m_worldWidth / 1024) * 720), m_worldHeight);
-	//RenderMesh(meshList[GEO_LOGO], false);
-	modelStack.PopMatrix();
-	
-	UIManager::GetInstance()->Render(this);
 }
 
 void SceneSP::RenderWorld()
@@ -5470,13 +5475,10 @@ void SceneSP::Render()
 	switch (game_state)
 	{
 	case G_SPLASHSCREEN:
-		RenderSplashScreen();
-		break;
 	case G_MAINMENU:
-		RenderMainMenu();
-		break;
 	case G_OPTIONS:
-		RenderOptions();
+	case G_LOSESCREEN:
+		RenderMenuState();
 		break;
 	case G_INPLAY:
 	case G_RESEARCHTREE:
