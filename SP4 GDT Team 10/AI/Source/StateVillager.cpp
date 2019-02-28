@@ -163,6 +163,12 @@ void StatePath::Enter(GameObject * m_go)
 		case Villager::TIRED:
 			m_go->GiveAnimation(new AnimationTiredWalk());
 			break;
+		case Villager::SICKLY:
+			m_go->GiveAnimation(new AnimationTiredWalk());
+			break;
+		case Villager::DYING:
+			m_go->GiveAnimation(new AnimationTiredWalk());
+			break;
 		}
 		return;
 	}
@@ -210,6 +216,12 @@ void StatePath::Update(double dt, GameObject * m_go)
 					m_go->GiveAnimation(new AnimationPanic());
 					break;
 				case Villager::TIRED:
+					m_go->GiveAnimation(new AnimationTiredWalk());
+					break;
+				case Villager::SICKLY:
+					m_go->GiveAnimation(new AnimationTiredWalk());
+					break;
+				case Villager::DYING:
 					m_go->GiveAnimation(new AnimationTiredWalk());
 					break;
 				}
@@ -590,12 +602,12 @@ void StateChopTree::Update(double dt, GameObject * m_go)
 	{
 		if (treeGo->eCurrState == Tree::FULL)
 		{
-			vGo->iWoodStored = Math::Min(vGo->fStats[Villager::WOODCUTTING] * treeGo->iWoodAmount + vGo->iWoodStored, (float)vGo->iMaxWoodStored);
+			vGo->iWoodStored = Math::Min(vGo->fEfficiency * vGo->fStats[Villager::WOODCUTTING] * treeGo->iWoodAmount + vGo->iWoodStored, (float)vGo->iMaxWoodStored);
 			treeGo->eCurrState = Tree::HALFCHOPPED;
 		}
 		else if (treeGo->eCurrState == Tree::HALFCHOPPED)
 		{
-			vGo->iWoodStored = Math::Min(vGo->fStats[Villager::WOODCUTTING] * treeGo->iWoodAmount + vGo->iWoodStored, (float)vGo->iMaxWoodStored);
+			vGo->iWoodStored = Math::Min(vGo->fEfficiency * vGo->fStats[Villager::WOODCUTTING] * treeGo->iWoodAmount + vGo->iWoodStored, (float)vGo->iMaxWoodStored);
 			treeGo->active = false;
 		}
 		EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_COMPLETEOBJECT, treeGo->pos);
@@ -675,7 +687,7 @@ void StateForaging::Update(double dt, GameObject * m_go)
 		if (vGo->fActionTimer <= 0.f)
 		{
 			//Insert gathering time here
-			vGo->iFoodStored = Math::Min(vGo->fStats[Villager::FORAGING] * bushGo->iFoodAmount + vGo->iFoodStored, (float)vGo->iMaxFoodStored);
+			vGo->iFoodStored = Math::Min(vGo->fEfficiency * vGo->fStats[Villager::FORAGING] * bushGo->iFoodAmount + vGo->iFoodStored, (float)vGo->iMaxFoodStored);
 			bushGo->eCurrState = Bush::DEPLETED;
 			m_go->goTarget = NULL;
 
@@ -760,7 +772,7 @@ void StateHunting::Update(double dt, GameObject * m_go)
 		if (vGo->fActionTimer <= 0.f)
 		{
 			//Insert gathering time here
-			vGo->iFoodStored = Math::Min((vGo->fStats[Villager::HUNTING] * pigGo->iFoodAmount) + vGo->iFoodStored, (float)vGo->iMaxFoodStored);
+			vGo->iFoodStored = Math::Min((vGo->fEfficiency * vGo->fStats[Villager::HUNTING] * pigGo->iFoodAmount) + vGo->iFoodStored, (float)vGo->iMaxFoodStored);
 			pigGo->m_nextState = SMManager::GetInstance()->GetSM(pigGo->smID)->GetState("Dying");
 			m_go->goTarget = NULL;
 
@@ -1014,7 +1026,7 @@ void StateConstructing::Update(double dt, GameObject* m_go)
 			}
 			else
 			{
-				vGo->fActionTimer -= dt;
+				vGo->fActionTimer -= dt * vGo->fEfficiency * vGo->fStats[Villager::BUILDING];
 			}
 		}
 		else
@@ -1094,7 +1106,7 @@ void StateMining::Update(double dt, GameObject* m_go)
 	//Insert gathering time here
 	if (vGo->fActionTimer <= 0.f)
 	{
-		vGo->iStoneStored = Math::Min(vGo->fStats[Villager::MINING] * mountainGo->iStoneGain, (float)vGo->iMaxStoneStored);
+		vGo->iStoneStored = Math::Min(vGo->fEfficiency * vGo->fStats[Villager::MINING] * mountainGo->iStoneGain, (float)vGo->iMaxStoneStored);
 		mountainGo->iStoneAmount -= mountainGo->iStoneGain;
 
 		if (mountainGo->iStoneAmount <= 0)

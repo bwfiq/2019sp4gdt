@@ -61,6 +61,11 @@ struct MessageCameraShake : public Message
 	float duration;
 };
 
+struct MessageCalamityEnd : public Message
+{
+	MessageCalamityEnd(){}
+	virtual ~MessageCalamityEnd() {}
+};
 struct MessageWarnLane : public Message
 {
 	MessageWarnLane() {}

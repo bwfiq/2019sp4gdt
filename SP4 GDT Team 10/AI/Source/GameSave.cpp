@@ -272,6 +272,7 @@ bool GameSave::LoadGame()
 		}
 
 		CalamityManager* CM = CalamityManager::GetInstance();
+		CM->ClearAllCalamities();
 		//Load Calamities
 		if (objCalamities.HasMember("Calamities"))
 		{
@@ -534,6 +535,7 @@ bool GameSave::LoadEverything()
 	}
 
 	CalamityManager* CM = CalamityManager::GetInstance();
+	CM->ClearAllCalamities();
 	//Load Calamities
 	if (objCalamities.HasMember("Calamities"))
 	{

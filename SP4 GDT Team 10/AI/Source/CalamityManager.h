@@ -12,6 +12,7 @@ public:
 	void Update(float dt);
 
 	void AddToCalamityQueue(CalamityBase* cal);
+	void ClearAllCalamities();
 
 	CalamityBase* GetCurrCalamity();
 	std::queue<CalamityBase*> GetCalamityQueue();

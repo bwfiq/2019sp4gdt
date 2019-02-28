@@ -100,6 +100,8 @@ private:
 
 	float fReligionValue, fMaxReligionValue;
 	int iFood, iFoodLimit, iPopulation, iPopulationLimit, iWood, iWoodLimit, iStone, iStoneLimit, iCurrMonth, iCurrDay;
+	
+	
 	float fTimeOfDay;
 
 	std::vector<GameObject*>* m_goList;

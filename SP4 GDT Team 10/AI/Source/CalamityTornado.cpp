@@ -44,13 +44,15 @@ void CalamityTornado::Update(float dt)
 	{
 		if (fElapsedTime > fCalamityDuration)
 		{
-
+			MessageCalamityEnd* msg = new MessageCalamityEnd();
+			PO->Send("Scene"
+				, msg
+			);
 			state = STATE_STOPPING;
 		}
 	}
 	else if (state == STATE_STOPPING)
 	{
-
 	}
 }
 
