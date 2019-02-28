@@ -79,6 +79,9 @@ public:
 	bool bWoodResearch;
 	bool bStoneResearch;
 	bool bFullStoneResearch;
+
+	//options
+	bool AABBRAY = false;
 private:
 	SceneData();
 	~SceneData();

@@ -130,7 +130,7 @@ void EffectManager::Render(SceneBase * scene)
 		}
 		else
 		{
-			if (AABBRAY)
+			if (SceneData::GetInstance()->AABBRAY)
 			{
 				if (camera->GetCamViewAngle() != Camera::VIEW_TOPDOWN)
 				{

@@ -5,6 +5,7 @@
 #include "GameObject.h"
 #include "Building.h"
 #include "Villager.h"
+#include "Pig.h"
 #include "Bush.h"
 
 UIGameText::UIGameText(TEXT_TYPE textType, float x, float y, GameObject* go) :
@@ -241,8 +242,41 @@ UIGameText::UIGameText(TEXT_TYPE textType, float x, float y, GameObject* go) :
 			uiComponents_list[COMPONENT_TEXT_1 + i].textSize *= 0.75f;
 			uiComponents_list[COMPONENT_TEXT_1 + i].pos.x -= 0.1f;
 		}
-		uiComponents_list[COMPONENT_TEXT_3].text = "Action:";
-		uiComponents_list[COMPONENT_TEXT_2].text = "Stat:";
+		//uiComponents_list[COMPONENT_TEXT_3].text = "Action:";
+		//uiComponents_list[COMPONENT_TEXT_2].text = "Stat:";
+		uiComponents_list[COMPONENT_TEXT_3].text = "Best at:";
+		Villager::STATS bestAt = (Villager::STATS)0;
+		for (int i = 0; i < Villager::STAT_TOTAL; ++i)
+		{
+			if (goVil->fStats[bestAt] < goVil->fStats[i])//if the iterating stat is better than the "current best" stat
+			{
+				bestAt = (Villager::STATS)i;
+			}
+		}
+		switch (bestAt)
+		{
+		case Villager::HUNTING:
+			uiComponents_list[COMPONENT_TEXT_3].text += "Hunting";
+			break;
+		case Villager::FORAGING:
+			uiComponents_list[COMPONENT_TEXT_3].text += "Foraging";
+			break;
+		case Villager::WOODCUTTING:
+			uiComponents_list[COMPONENT_TEXT_3].text += "Woodcutting";
+			break;
+		case Villager::BUILDING:
+			uiComponents_list[COMPONENT_TEXT_3].text += "Building";
+			break;
+		case Villager::BREEDING:
+			uiComponents_list[COMPONENT_TEXT_3].text += "Breeding";
+			break;
+		case Villager::COMBAT:
+			uiComponents_list[COMPONENT_TEXT_3].text += "Combat";
+			break;
+		case Villager::MINING:
+			uiComponents_list[COMPONENT_TEXT_3].text += "Mining";
+			break;
+		}
 		uiComponents_list[COMPONENT_TEXT_1].text = "State: ";
 		switch (goVil->eCurrState)
 		{
@@ -260,6 +294,42 @@ UIGameText::UIGameText(TEXT_TYPE textType, float x, float y, GameObject* go) :
 			break;
 		case Villager::DYING:
 			uiComponents_list[COMPONENT_TEXT_1].text += "Dying";
+			break;
+		}
+	}
+	break;
+	case TEXT_SELECTED_PIG:
+	{
+		Pig* goPig = dynamic_cast<Pig*>(go);
+		pos.Set(1, 0.25f);
+		scale.Set(250, 250);
+		anchorPoint.Set(1, 0);
+		uiComponents_list[COMPONENT_BOARD].mesh = SD->GetMesh("ui_board_blank");
+		for (int i = 0; i <= COMPONENT_TEXT_5 - COMPONENT_TEXT_1; ++i)
+		{
+			uiComponents_list[COMPONENT_TEXT_1 + i].text = "";
+			uiComponents_list[COMPONENT_TEXT_1 + i].textSize = scale.y * 0.1f;
+		}
+		uiComponents_list[COMPONENT_TEXT_5].textSize *= 1.3f;
+		uiComponents_list[COMPONENT_TEXT_5].text = "Pig";
+		//uiComponents_list[COMPONENT_TEXT_5].pos.x += 0.02f;
+		uiComponents_list[COMPONENT_TEXT_4].text = "v Info v";
+		uiComponents_list[COMPONENT_TEXT_4].pos.x += 0.04f;
+		for (int i = 0; i <= COMPONENT_TEXT_3 - COMPONENT_TEXT_1; ++i)
+		{
+			uiComponents_list[COMPONENT_TEXT_1 + i].textSize *= 0.75f;
+			uiComponents_list[COMPONENT_TEXT_1 + i].pos.x -= 0.1f;
+		}
+		uiComponents_list[COMPONENT_TEXT_3].text = "Chonkness: " + std::to_string(goPig->iFoodAmount);
+		//uiComponents_list[COMPONENT_TEXT_2].text = "Stat:";
+		uiComponents_list[COMPONENT_TEXT_1].text = "State: ";
+		switch (goPig->state)
+		{
+		case Pig::WILD:
+			uiComponents_list[COMPONENT_TEXT_1].text += "Wild";
+			break;
+		case Pig::TAME:
+			uiComponents_list[COMPONENT_TEXT_1].text += "Tame";
 			break;
 		}
 	}
