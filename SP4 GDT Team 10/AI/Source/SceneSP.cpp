@@ -144,6 +144,10 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 		newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("backbutton");
 		UIManager::GetInstance()->AddUI("backbutton", newUI);
 		m_coreUi.push_back(newUI);
+		newUI = new UIMenuButton("", 0.65f, 0.65f);
+		newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("resetbutton");
+		UIManager::GetInstance()->AddUI("resetbutton", newUI);
+		m_coreUi.push_back(newUI);
 		newUI = new UIMenuButton("", 0.35f, 0.65f);
 		if(SceneData::GetInstance()->AABBRAY)
 			newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("objselectionaabb");
@@ -165,6 +169,11 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 		camera = tempCamera;
 		camera.SetCamBounds(Vector3(worldRadius + 5, 0, worldRadius + 5));
 		Application::GetInstance().SetMouseVisiblity(false);
+
+		newUI = new UIMenuButton("", 0.1f, 0.1f);
+		newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("optionsbutton");
+		UIManager::GetInstance()->AddUI("optionsbutton", newUI);
+		m_coreUi.push_back(newUI);
 		case G_RESEARCHTREE: // will not init camera for overlays but will add ui for all ingame states
 		case G_INGAMEOPTIONS:
 		{
@@ -278,9 +287,17 @@ void SceneSP::ChangeState(GAME_STATE newstate)
 				newUI = new UIOverlay("", 0.5f, 0.45f);
 				UIManager::GetInstance()->AddUI("overlay", newUI);
 				m_coreUi.push_back(newUI);
-				newUI = new UIMenuButton("", 0.5f, 0.5f);
+				newUI = new UIMenuButton("", 0.5f, 0.45f);
 				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("backbutton");
 				UIManager::GetInstance()->AddUI("backbutton", newUI);
+				m_coreUi.push_back(newUI);
+				newUI = new UIMenuButton("", 0.5f, 0.25f);
+				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("savebutton");
+				UIManager::GetInstance()->AddUI("savebutton", newUI);
+				m_coreUi.push_back(newUI);
+				newUI = new UIMenuButton("", 0.65f, 0.65f);
+				newUI->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("resetbutton");
+				UIManager::GetInstance()->AddUI("resetbutton", newUI);
 				m_coreUi.push_back(newUI);
 				newUI = new UIMenuButton("", 0.35f, 0.65f);
 				if (SceneData::GetInstance()->AABBRAY)
@@ -3376,6 +3393,11 @@ void SceneSP::Update(double dt)
 		{
 			ChangeState(G_MAINMENU);
 		}
+		if (UIM->GetUI("resetbutton")->IsMousePressed())
+		{
+			gameSave.ResetGame();
+			Reset();
+		}
 		if (UIM->GetUI("objselectionbutton")->IsMousePressed())
 		{
 			SceneData::GetInstance()->AABBRAY = !SceneData::GetInstance()->AABBRAY;
@@ -3434,6 +3456,16 @@ void SceneSP::Update(double dt)
 		{
 			ChangeState(G_INPLAY);
 		}
+		if (UIM->GetUI("savebutton")->IsMousePressed())
+		{
+			gameSave.SaveGame();
+			Reset();
+		}
+		if (UIM->GetUI("resetbutton")->IsMousePressed())
+		{
+			gameSave.ResetGame();
+			Reset();
+		}
 		if (UIM->GetUI("objselectionbutton")->IsMousePressed())
 		{
 			SceneData::GetInstance()->AABBRAY = !SceneData::GetInstance()->AABBRAY;
@@ -3443,6 +3475,15 @@ void SceneSP::Update(double dt)
 				UIM->GetUI("objselectionbutton")->uiComponents_list[UIMenuButton::COMPONENT_GREYBAR].mesh = SceneData::GetInstance()->GetMesh("objselectiongrid");
 		}
 		return;
+	}
+	break;
+	case G_INPLAY:
+	{
+		UIM->GetUI("optionsbutton")->uiComponents_list[UIMenuButton::COMPONENT_OUTLINEBAR].alpha = 0.f;
+		if (UIM->GetUI("optionsbutton")->IsMousePressed())
+		{
+			ChangeState(G_INGAMEOPTIONS);
+		}
 	}
 	break;
 	default:
@@ -3476,19 +3517,19 @@ void SceneSP::Update(double dt)
 	else if (KC->IsKeyPressed('8') && bGodMode)
 		CM->AddToCalamityQueue(new CalamityMeteorShower());
 
-	if (KC->IsKeyPressed('S'))
+	if (KC->IsKeyPressed('S') && bGodMode)
 		gameSave.SaveGame();
-	if (KC->IsKeyPressed('L'))
+	if (KC->IsKeyPressed('L') && bGodMode)
 		gameSave.LoadGame();
-	if (KC->IsKeyPressed('C'))
+	if (KC->IsKeyPressed('C') && bGodMode)
 		gameSave.ResetGame();
 
-	if (KC->IsKeyPressed('U'))
+	if (KC->IsKeyPressed('U') && bGodMode)
 	{
 		tempCamera = camera;
 		ChangeState(G_RESEARCHTREE);
 	}
-	if (KC->IsKeyPressed('Y')) 
+	if (KC->IsKeyPressed('Y') && bGodMode)
 	{
 		tempCamera = camera;
 		ChangeState(G_INGAMEOPTIONS);
@@ -3514,12 +3555,12 @@ void SceneSP::Update(double dt)
 	if (fYPos != temp34)
 		std::cout << fYPos << std::endl;
 
-	if (Application::IsKeyPressed('Z') && bGodMode)
+	/*if (Application::IsKeyPressed('Z') && bGodMode)
 		lights[0].type = Light::LIGHT_POINT;
 	else if (Application::IsKeyPressed('X') && bGodMode)
 		lights[0].type = Light::LIGHT_DIRECTIONAL;
 	else if (Application::IsKeyPressed('C') && bGodMode)
-		lights[0].type = Light::LIGHT_SPOT;	
+		lights[0].type = Light::LIGHT_SPOT;	*/
 
 	if (KC->IsKeyPressed('V') && bGodMode)
 	{

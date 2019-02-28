@@ -241,10 +241,14 @@ void SceneBase::Init()
 	meshList[GEO_OPTIONSBUTTON]->textureArray[0] = LoadTGA("Image//optionsbutton.tga");
 	meshList[GEO_QUITBUTTON] = MeshBuilder::GenerateQuad("quitbutton", Color(1, 1, 1));
 	meshList[GEO_QUITBUTTON]->textureArray[0] = LoadTGA("Image//quitbutton.tga");
-	meshList[GEO_OBJSELECTION_GRID] = MeshBuilder::GenerateQuad	     ("objselectiongrid", Color(1, 1, 1));
+	meshList[GEO_OBJSELECTION_GRID] = MeshBuilder::GenerateQuad("objselectiongrid", Color(1, 1, 1));
 	meshList[GEO_OBJSELECTION_GRID]->textureArray[0] = LoadTGA("Image//objselectiongrid.tga");
-	meshList[GEO_OBJSELECTION_AABB] = MeshBuilder::GenerateQuad      ("objselectionaabb", Color(1, 1, 1));
+	meshList[GEO_OBJSELECTION_AABB] = MeshBuilder::GenerateQuad("objselectionaabb", Color(1, 1, 1));
 	meshList[GEO_OBJSELECTION_AABB]->textureArray[0] = LoadTGA("Image//objselectionaabb.tga");
+	meshList[GEO_RESETBUTTON] = MeshBuilder::GenerateQuad("resetbutton", Color(1, 1, 1));
+	meshList[GEO_RESETBUTTON]->textureArray[0] = LoadTGA("Image//resetbutton.tga");
+	meshList[GEO_SAVEBUTTON] = MeshBuilder::GenerateQuad("savebutton", Color(1, 1, 1));
+	meshList[GEO_SAVEBUTTON]->textureArray[0] = LoadTGA("Image//savebutton.tga");
 
 	meshList[GEO_SEA] = MeshBuilder::GenerateQuad("sea", Color(1, 1, 1));
 	meshList[GEO_SEA]->textureArray[0] = LoadTGA("Image//sea.tga");
