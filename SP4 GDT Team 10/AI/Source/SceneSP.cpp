@@ -46,6 +46,7 @@
 #include "Pig.h"
 #include "Granary.h"
 #include "WoodShed.h"
+#include "StoneShed.h"
 #include "House.h"
 #include "Building.h"
 #include "ChiefHut.h"
@@ -861,6 +862,33 @@ bool SceneSP::Handle(Message* message)
 			}
 		}
 		break;
+		case MessageWRU::FIND_NEAREST_STONESHED:
+		{
+			GridPt currGrid = messageWRU->go->currentPt;
+			int iDistance = INT_MAX;
+			GameObject* currTarget = NULL;
+			for (auto go : m_goList)
+			{
+				if (!go->active || go->type != GameObject::GO_STONESHED)
+					continue;
+				GridPt goGrid = go->currentPt;
+				int iTotalDist = (goGrid.x - currGrid.x) * (goGrid.x - currGrid.x) + (goGrid.z - currGrid.z) * (goGrid.z - currGrid.z);
+				if (iTotalDist < iDistance)
+				{
+					iDistance = iTotalDist;
+					currTarget = go;
+				}
+			}
+			if (currTarget != NULL)
+			{
+				messageWRU->go->goTarget = currTarget;
+			}
+			else
+			{
+				messageWRU->go->goTarget = goChiefHut;
+			}
+		}
+		break;
 		case MessageWRU::FIND_NEAREST_LUSH_BUSH:
 		{
 			GridPt currGrid = messageWRU->go->currentPt;
@@ -1219,6 +1247,10 @@ bool SceneSP::Handle(Message* message)
 		UIManager::GetInstance()->AddUI("uiBuild_Woodshed", newUI);
 		m_selectedUi.push_back(newUI);
 		m_buildUIs.push_back(newUI);
+		newUI = new UIGameButton(UIGameButton::BUTTON_BUILD_STONESHED, 0, 0, 4);
+		UIManager::GetInstance()->AddUI("uiBuild_StoneShed", newUI);
+		m_selectedUi.push_back(newUI);
+		m_buildUIs.push_back(newUI);
 		int increment = 0;
 		for (auto UI : m_buildUIs)
 		{
@@ -1294,6 +1326,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			case GameObject::GO_WOODSHED:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * .7f, 1.f, SceneData::GetInstance()->GetGridSize() * .7f);
 				break;
+			case GameObject::GO_STONESHED:
+				go->scale.Set(SceneData::GetInstance()->GetGridSize() * .7f, 1.f, SceneData::GetInstance()->GetGridSize() * .7f);
+				break;
 			case GameObject::GO_HOUSE:
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * .7f, 1.f, SceneData::GetInstance()->GetGridSize() * .7f);
 				break;
@@ -1359,6 +1394,9 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 			break;
 		case GameObject::GO_WOODSHED:
 			go = new WoodShed(type);
+			break;
+		case GameObject::GO_STONESHED:
+			go = new StoneShed(type);
 			break;
 		case GameObject::GO_CHIEFHUT:
 			go = new ChiefHut(type);
@@ -3110,7 +3148,7 @@ void SceneSP::Update(double dt)
 	{
 		std::cout << "There is a hovered obj" << std::endl;
 	}
-	if (Application::IsKeyPressed('R'))
+	if (Application::IsKeyPressed('R') && bGodMode)
 	{
 		Reset();
 		Sleep(100);
@@ -3147,11 +3185,11 @@ void SceneSP::Update(double dt)
 	SD->SetMousePos_World(mousePos);
 	
 	//debug stuff
-	if (Application::IsKeyPressed(VK_OEM_MINUS))
+	if (Application::IsKeyPressed(VK_OEM_MINUS) && bGodMode)
 	{
 		m_speed = Math::Max(0.f, m_speed - 0.1f);
 	}
-	if (Application::IsKeyPressed(VK_OEM_PLUS))
+	if (Application::IsKeyPressed(VK_OEM_PLUS) && bGodMode)
 	{
 		m_speed += 0.1f;
 	}
@@ -3167,17 +3205,23 @@ void SceneSP::Update(double dt)
 	// ui updates
 	UIM->Update(dt);
 	// goals
-	switch (SD->GetCurrMonth())
+	if (!bGoalAchieved)
 	{
-	case 1:
-		bGoalAchieved = SD->GetFood() >= 1;
-		break;
-	case 2:
-		bGoalAchieved = SD->GetWood() >= 1;
-		break;
-	default:
-		break;
+		switch (SD->GetCurrMonth())
+		{
+		case 1:
+			bGoalAchieved = SD->GetFood() >= 20;
+			break;
+		case 2:
+			bGoalAchieved = SD->GetWood() >= 20;
+			break;
+		default:
+			break;
+		}
+		if (KC->IsKeyPressed('E') && bGodMode) // press E in debug mode to set goal to done
+			bGoalAchieved = true;
 	}
+	
 	if (UIManager::GetInstance()->GetUI("ui_Text_DailyRequirement") != NULL)
 	{
 		for (int i = 0; i <= UIGameText::COMPONENT_TEXT_5 - UIGameText::COMPONENT_TEXT_1; ++i)
@@ -3468,6 +3512,11 @@ void SceneSP::Update(double dt)
 		lights[0].type = Light::LIGHT_DIRECTIONAL;
 	else if (Application::IsKeyPressed('C') && bGodMode)
 		lights[0].type = Light::LIGHT_SPOT;	
+
+	if (KC->IsKeyPressed('V') && bGodMode)
+	{
+		gameSave.LoadEverything();
+	}
 
 	if (KC->IsKeyPressed('B') && bGodMode)
 	{
@@ -4142,6 +4191,9 @@ void SceneSP::Update(double dt)
 		case GameObject::GO_WOODSHED:
 			SD->SetWoodLimit(SD->GetWoodLimit() + static_cast<WoodShed*>(go)->woodCapacity);
 			break;
+		case GameObject::GO_STONESHED:
+			SD->SetStoneLimit(SD->GetStoneLimit() + static_cast<StoneShed*>(go)->stoneCapacity);
+			break;
 		case GameObject::GO_MOUNTAIN:
 		{
 			Mountain* mountainGo = static_cast<Mountain*>(go);
@@ -4542,6 +4594,32 @@ void SceneSP::RenderGO(GameObject *go)
 		modelStack.PopMatrix();
 	}
 	break;
+	case GameObject::GO_STONESHED:
+	{
+		modelStack.PushMatrix();
+		modelStack.Translate(go->pos.x, go->pos.y, go->pos.z);
+		if (go->animation != NULL)
+			modelStack.MultMatrix(go->animation->GetCurrentTransformation());
+		modelStack.Rotate(-90, 0, 1, 0);
+		modelStack.Scale(go->scale.x, go->scale.y, go->scale.z);
+		//Current state of the building
+		switch (static_cast<Building*>(go)->eCurrState)
+		{
+		case Building::COMPLETED:
+			RenderMesh(meshList[GEO_STONESHED], bGodlights, 1.f);
+			break;
+		case Building::BLUEPRINT:
+			RenderMesh(meshList[GEO_STONESHED], false, 0.2f);
+			break;
+		case Building::CONSTRUCTING:
+			RenderMesh(meshList[GEO_STONESHED], false, 0.6f);
+			break;
+		case Building::BROKEN:
+			RenderMesh(meshList[GEO_BROKEN_STONESHED], bGodlights, 1.f);
+		}
+		modelStack.PopMatrix();
+	}
+	break;
 	case GameObject::GO_CHIEFHUT:
 	{
 		modelStack.PushMatrix();
@@ -4881,31 +4959,27 @@ void SceneSP::RenderPassMain()
 
 	}
 
-	if (selected != NULL)
-	{
-		modelStack.PushMatrix();
-		modelStack.Translate(selected->pos.x, selected->pos.y + selected->scale.y * 0.7f, selected->pos.z);
-		modelStack.Scale(0.1, 0.1, 0.1);
-		//RenderMesh(meshList[GEO_VILLAGER], false); // renders a red cube above GO if it is currently selected
-		modelStack.PopMatrix();
-	}
-
 	//On screen text
 	std::ostringstream ss;
 
 	ss.str("");
 	ss.precision(3);
 	ss << "Speed:" << m_speed;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 67, 6);
+	if (bGodMode)
+		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 67, 6);
 
 	ss.str("");
 	ss.precision(5);
 	ss << "FPS:" << fps;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 67, 3);
+	if (bGodMode)
+		RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 67, 3);
 
 	ss.str("");
-	ss << "God Mode:" << bGodMode;
-	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 3, 67, 0);
+	if (bGodMode)
+		ss << "[T] Player Mode";
+	else
+		ss << "[T] Debug Mode";
+	RenderTextOnScreen(meshList[GEO_TEXT], ss.str(), Color(0, 1, 0), 2, 67, 0);
 
 	UIManager::GetInstance()->Render(this);
 }

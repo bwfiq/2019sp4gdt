@@ -32,6 +32,7 @@ public:
 	rapidjson::Document gameFile;
 
 	bool LoadGame();
+	bool LoadEverything();
 	void SaveGame();
 	void ResetGame(); //Clean the game file with a default value
 

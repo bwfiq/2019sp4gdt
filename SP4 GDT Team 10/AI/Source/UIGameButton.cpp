@@ -69,6 +69,7 @@ UIGameButton::UIGameButton(BUTTON_TYPE buttonType, float x, float y, unsigned or
 	case BUTTON_BUILD_LOGS:
 	case BUTTON_BUILD_GRANARY:
 	case BUTTON_BUILD_HOUSE:
+	case BUTTON_BUILD_STONESHED:
 	case BUTTON_BUILD_WOODSHED:
 		scale.Set(250, 50);
 		pos.Set(1 - (scale.x / (float)Application::GetInstance().GetWindowWidth()), 0.25f + ((scale.y / (float)Application::GetInstance().GetWindowHeight())) * ((int)order - 1));
@@ -86,6 +87,8 @@ UIGameButton::UIGameButton(BUTTON_TYPE buttonType, float x, float y, unsigned or
 			uiComponents_list[COMPONENT_TEXT].text = "Woodshed";
 		else if (buttonType == BUTTON_BUILD_HOUSE)
 			uiComponents_list[COMPONENT_TEXT].text = "House";
+		else if (buttonType == BUTTON_BUILD_STONESHED)
+			uiComponents_list[COMPONENT_TEXT].text = "Stoneshed";
 		
 		break;
 	case BUTTON_RESEARCH_COST:
@@ -152,6 +155,10 @@ void UIGameButton::Update(float dt)
 		case BUTTON_BUILD_WOODSHED:
 			PO->Send("Scene"
 				, new MessageBuildBuildings(GameObject::GO_WOODSHED));
+			break;
+		case BUTTON_BUILD_STONESHED:
+			PO->Send("Scene"
+				, new MessageBuildBuildings(GameObject::GO_STONESHED));
 			break;
 		}
 		CSoundEngine::GetInstance()->PlayASound("selection");
