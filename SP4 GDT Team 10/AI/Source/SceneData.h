@@ -82,6 +82,9 @@ public:
 
 	//options
 	bool AABBRAY = false;
+
+	//etc
+	Vector3 aabbHitPoint;
 private:
 	SceneData();
 	~SceneData();

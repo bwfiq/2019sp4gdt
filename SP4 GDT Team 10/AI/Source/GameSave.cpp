@@ -60,7 +60,8 @@ bool GameSave::LoadGame()
 	{
 		fp = fopen(filename.c_str(), "rb"); // non-Windows use "r"
 	}
-		char readBuffer[65536];
+
+		char readBuffer[65536*5];
 		FileReadStream is(fp, readBuffer, sizeof(readBuffer));
 
 		gameFile.ParseStream(is);
@@ -90,6 +91,7 @@ bool GameSave::LoadGame()
 		int numCalamitiesGO = 0;
 		int numCalamities = 0;
 		int numCalamitiesQ = 0;
+		
 		
 		if (gameFile.IsObject())
 		{
@@ -225,55 +227,55 @@ bool GameSave::LoadGame()
 		//Loading all the stuff
 
 		//Load time date
-		if (objVillagers.HasMember("Day") && objVillagers["Day"].IsInt())
+		if (gameFile.HasMember("Day") && gameFile["Day"].IsInt())
 		{
-			SD->SetCurrDay(objVillagers["Day"].GetInt());
+			SD->SetCurrDay(gameFile["Day"].GetInt());
 		}
 		else
 		{
-			std::cout << "error loading day";
+			std::cout << "error loading day" << std::endl;
 		}
-		if (objVillagers.HasMember("Month") && objVillagers["Month"].IsInt())
+		if (gameFile.HasMember("Month") && gameFile["Month"].IsInt())
 		{
-			SD->SetCurrMonth(objVillagers["Month"].GetInt());
-		}
-		else
-		{
-			std::cout << "error loading Month";
-		}
-		if (objVillagers.HasMember("Time Of Day") && objVillagers["Time Of Day"].IsFloat())
-		{
-			SD->SetTimeOfDay(objVillagers["Time Of Day"].GetFloat());
+			SD->SetCurrMonth(gameFile["Month"].GetInt());
 		}
 		else
 		{
-			std::cout << "error loading Time Of Day";
+			std::cout << "error loading Month" << std::endl;
+		}
+		if (gameFile.HasMember("Time Of Day") && gameFile["Time Of Day"].IsFloat())
+		{
+			SD->SetTimeOfDay(gameFile["Time Of Day"].GetFloat());
+		}
+		else
+		{
+			std::cout << "error loading Time Of Day" << std::endl;
 		}
 		
 		//Load Research
-		if (objVillagers.HasMember("Full Stone Research") && objVillagers["Full Stone Research"].IsBool())
+		if (gameFile.HasMember("Full Stone Research") && gameFile["Full Stone Research"].IsBool())
 		{
-			SD->bFullStoneResearch = (objVillagers["Full Stone Research"].GetBool());	
+			SD->bFullStoneResearch = (gameFile["Full Stone Research"].GetBool());
 		}
 		else
 		{
-			std::cout << "error loading Full Stone Research";
+			std::cout << "error loading Full Stone Research"<<std::endl;
 		}
-		if (objVillagers.HasMember("Stone Research") && objVillagers["Stone Research"].IsBool())
+		if (gameFile.HasMember("Stone Research") && gameFile["Stone Research"].IsBool())
 		{
-			SD->bStoneResearch = (objVillagers["Stone Research"].GetBool());
-		}
-		else
-		{
-			std::cout << "error loading Stone Research";
-		}
-		if (objVillagers.HasMember("Wood Research") && objVillagers["Wood Research"].IsBool())
-		{
-			SD->bFullStoneResearch = (objVillagers["Wood Research"].GetBool());
+			SD->bStoneResearch = (gameFile["Stone Research"].GetBool());
 		}
 		else
 		{
-			std::cout << "error loading Wood Research";
+			std::cout << "error loading Stone Research" << std::endl;
+		}
+		if (gameFile.HasMember("Wood Research") && gameFile["Wood Research"].IsBool())
+		{
+			SD->bFullStoneResearch = (gameFile["Wood Research"].GetBool());
+		}
+		else
+		{
+			std::cout << "error loading Wood Research" << std::endl;
 		}
 
 		//Load Resources

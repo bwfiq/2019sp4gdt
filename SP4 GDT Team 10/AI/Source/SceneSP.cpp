@@ -5541,6 +5541,10 @@ GameObject * SceneSP::GetHoveredObject()
 			}
 		}
 	}
+	if (currGo == NULL)
+	{
+		SceneData::GetInstance()->aabbHitPoint.Set(0, -50, 0);
+	}
 	return currGo;
 }
 
@@ -5559,9 +5563,9 @@ bool SceneSP::GetIntersectionAABB(Vector3 lineStart, Vector3 lineEnd, Vector3 mi
 		|| (GetIsIntersecting(lineStart.z - maxAABB.z, lineEnd.z - maxAABB.z, lineStart, lineEnd, hitPosition) &&
 			InBox(hitPosition, minAABB, maxAABB, 3)))
 	{
+		SceneData::GetInstance()->aabbHitPoint = hitPosition;
 		return true;
 	}
-
 	return false;
 }
 

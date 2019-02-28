@@ -322,7 +322,7 @@ UIGameText::UIGameText(TEXT_TYPE textType, float x, float y, GameObject* go) :
 			uiComponents_list[COMPONENT_TEXT_1 + i].textSize *= 0.75f;
 			uiComponents_list[COMPONENT_TEXT_1 + i].pos.x -= 0.1f;
 		}
-		uiComponents_list[COMPONENT_TEXT_3].text = "Chonkness: " + std::to_string(goPig->iFoodAmount);
+		uiComponents_list[COMPONENT_TEXT_3].text = "Food: " + std::to_string(goPig->iFoodAmount);
 		//uiComponents_list[COMPONENT_TEXT_2].text = "Stat:";
 		uiComponents_list[COMPONENT_TEXT_1].text = "State: ";
 		switch (goPig->state)

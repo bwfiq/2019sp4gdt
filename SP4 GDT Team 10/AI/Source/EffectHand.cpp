@@ -102,8 +102,14 @@ void EffectHand::Update(float dt)
 		dir.SetZero();
 	}
 	//pos = SD->GetMousePos_World() + posOffset + dir * (-MC->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) + 4) * 0.7f;
-	pos = SD->GetMousePos_World() + posOffset;
-
+	if (SceneData::GetInstance()->AABBRAY)
+	{
+		pos = SD->aabbHitPoint;
+	}
+	else
+	{
+		pos = SD->GetMousePos_World() + posOffset;
+	}
 }
 
 void EffectHand::SetState(HAND_STATE state)

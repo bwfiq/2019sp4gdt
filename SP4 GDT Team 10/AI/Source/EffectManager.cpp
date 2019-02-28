@@ -130,14 +130,14 @@ void EffectManager::Render(SceneBase * scene)
 		}
 		else
 		{
-			if (SceneData::GetInstance()->AABBRAY)
+			/*if (SceneData::GetInstance()->AABBRAY)
 			{
 				if (camera->GetCamViewAngle() != Camera::VIEW_TOPDOWN)
 				{
 					scene->modelStack.PopMatrix();
 					continue;
 				}
-			}
+			}*/
 			scene->modelStack.Translate(Effect->pos.x, Effect->pos.y, Effect->pos.z);
 			if (!Effect->rotation.IsZero())
 			{

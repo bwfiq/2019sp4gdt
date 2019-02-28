@@ -2,6 +2,14 @@
 	"Day": 1,
     "Month": 1,
     "Time Of Day": 8.0,
+    "Full Stone Research": false,
+    "Stone Research": false,
+    "Wood Research": false,
+    "Resources": {
+        "Food": 0,
+        "Stone": 0,
+        "Wood": 0
+    },
     "Villagers": {
         "Number": 1,
         "Villager": [
