@@ -1430,6 +1430,7 @@ GameObject* SceneSP::FetchGO(GameObject::GAMEOBJECT_TYPE type)
 				goPig->state = Pig::WILD;
 				goPig->movement = Pig::WALKING;
 				go->scale.Set(SceneData::GetInstance()->GetGridSize() * .7f, .5f, SceneData::GetInstance()->GetGridSize() * .7f);
+				go->m_currState = go->m_nextState = SMManager::GetInstance()->GetSM(go->smID)->GetState("Idle");
 			}
 			break;
 			case GameObject::GO_GRANARY:
@@ -3191,8 +3192,8 @@ void SceneSP::ChangeTimeOfDay()
 		//bGodlights = false;
 		SceneData* SD = SceneData::GetInstance();
 		SD->SetCurrDay(SD->GetCurrDay() + 1);
-		int iAmountOfTrees, iAmountOfBushes, iAmountOfMountains;
-		iAmountOfTrees = iAmountOfBushes = iAmountOfMountains = 0;
+		int iAmountOfTrees, iAmountOfBushes, iAmountOfMountains, iAmountOfPigs;
+		iAmountOfTrees = iAmountOfBushes = iAmountOfMountains = iAmountOfPigs = 0;
 		//Resetting objects that need to be reset
 		for (auto go : m_goList)
 		{
@@ -3212,6 +3213,10 @@ void SceneSP::ChangeTimeOfDay()
 			{
 				++iAmountOfTrees;
 			}
+			else if (go->type == GameObject::GO_PIG)
+			{
+				++iAmountOfPigs;
+			}
 		}
 
 		//Spawning of Villagers
@@ -3225,7 +3230,7 @@ void SceneSP::ChangeTimeOfDay()
 			{
 				go = FetchGO(GameObject::GO_VILLAGER);
 				
-				go->scale.y = Math::RandFloatMinMax(0.4f, 0.6f);
+				go->scale.y = Math::RandFloatMinMax(0.5f, 0.9f);
 				GridPt tempPt;
 				tempPt.Set(Math::RandIntMinMax(0, SD->GetNoGrid() - 1), Math::RandIntMinMax(0, SD->GetNoGrid() - 1));
 				while (!m_grid[GetGridIndex(tempPt)] == Grid::TILE_EMPTY)
@@ -3248,7 +3253,7 @@ void SceneSP::ChangeTimeOfDay()
 			{
 				go = FetchGO(GameObject::GO_VILLAGER);
 				
-				go->scale.y = Math::RandFloatMinMax(0.4f, 0.6f);
+				go->scale.y = Math::RandFloatMinMax(0.5f, 0.9f);
 				GridPt tempPt;
 				tempPt.Set(Math::RandIntMinMax(0, SD->GetNoGrid() - 1), Math::RandIntMinMax(0, SD->GetNoGrid() - 1));
 				while (!m_grid[GetGridIndex(tempPt)] == Grid::TILE_EMPTY)
@@ -3266,7 +3271,40 @@ void SceneSP::ChangeTimeOfDay()
 				EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, go->pos);
 			}
 		}
+
 		int totalGridAmts = SD->GetNoGrid() * SD->GetNoGrid();
+
+		if (iAmountOfPigs < 4)
+		{
+			for (int i = 0; i < Math::RandIntMinMax(-1, 3); ++i)
+			{
+				GridPt tempPt;
+				int trySpawnCount = 0;
+				do
+				{
+					tempPt.Set(Math::RandIntMinMax(0, SD->GetNoGrid() - 1), Math::RandIntMinMax(0, SD->GetNoGrid() - 1));
+					trySpawnCount++;
+				} while (!m_grid[GetGridIndex(tempPt)] == Grid::TILE_EMPTY && trySpawnCount < totalGridAmts);
+				if (trySpawnCount >= totalGridAmts)
+					break;
+
+/*				Tree* spawnedGO = dynamic_cast<Tree*>(FetchGO(GameObject::GO_TREE));
+				spawnedGO->eCurrState = Tree::FULL;
+				spawnedGO->fTimer = Math::RandFloatMinMax(3.5f, 6.5f);
+				spawnedGO->iWoodAmount = Math::RandIntMinMax(8, 14);
+				spawnedGO->pos = GetGridPos(tempPt);
+				spawnedGO->pos.y = spawnedGO->scale.y * 0.5f;*/
+				Pig* spawnedGO = dynamic_cast<Pig*>(FetchGO(GameObject::GO_PIG));
+				spawnedGO->scale.y = 0.75f;
+				spawnedGO->pos = GetGridPos(tempPt);
+				spawnedGO->pos.y = spawnedGO->scale.y * 0.5f;
+				spawnedGO->GiveAnimation(new AnimationJump());
+				spawnedGO->iFoodAmount = Math::RandIntMinMax(1, 15);
+				spawnedGO->fTimer = Math::RandFloatMinMax(0.5f, 1.5f);
+				EffectManager::GetInstance()->DoPrefabEffect(EffectManager::PREFAB_PLACEOBJECT, spawnedGO->pos);
+			}
+		}
+
 		if (iAmountOfTrees < 8)
 		{
 			for (int i = 0; i < Math::RandIntMinMax(-1, 3); ++i)
@@ -4196,7 +4234,7 @@ void SceneSP::Update(double dt)
 	}
 
 	// day/night cycle
-	fTimeOfDay += dt * m_speed;
+	fTimeOfDay += dt * m_speed * 0.35f;
 	if (fTimeOfDay >= 24.f)
 		fTimeOfDay = 0;
 	else if (fTimeOfDay >= 6.f && fTimeOfDay <= 18.f && !bDay) // 0600 to 1800 day
@@ -4575,6 +4613,8 @@ void SceneSP::Update(double dt)
 		{	
 			ChiefHut* goHouse = static_cast<ChiefHut*>(go);
 			SD->SetFoodLimit(SD->GetFoodLimit() + 10);
+			SD->SetWoodLimit(SD->GetWoodLimit() + 10);
+			SD->SetStoneLimit(SD->GetStoneLimit() + 10);
 			if (goHouse->eCurrState == Building::COMPLETED)
 			{
 				SD->SetPopulationLimit(SD->GetPopulationLimit() + goHouse->iHousingSpace);
@@ -4603,14 +4643,35 @@ void SceneSP::Update(double dt)
 		case GameObject::GO_BUSH:
 			break;
 		case GameObject::GO_GRANARY:
-			SD->SetFoodLimit(SD->GetFoodLimit() + static_cast<Granary*>(go)->foodCapacity);
-			break;
+		{
+			float capacityMultiplier = 0;
+			if (static_cast<Building*>(go)->eCurrState == Building::COMPLETED)
+				capacityMultiplier = 1;
+			else if (static_cast<Building*>(go)->eCurrState == Building::BROKEN)
+				capacityMultiplier = 0.5f;
+			SD->SetFoodLimit(SD->GetFoodLimit() + static_cast<Granary*>(go)->foodCapacity * capacityMultiplier);
+		}
+		break;
 		case GameObject::GO_WOODSHED:
-			SD->SetWoodLimit(SD->GetWoodLimit() + static_cast<WoodShed*>(go)->woodCapacity);
-			break;
+		{
+			float capacityMultiplier = 0;
+			if (static_cast<Building*>(go)->eCurrState == Building::COMPLETED)
+				capacityMultiplier = 1;
+			else if (static_cast<Building*>(go)->eCurrState == Building::BROKEN)
+				capacityMultiplier = 0.5f;
+			SD->SetWoodLimit(SD->GetWoodLimit() + static_cast<WoodShed*>(go)->woodCapacity * capacityMultiplier);
+		}
+		break;
 		case GameObject::GO_STONESHED:
-			SD->SetStoneLimit(SD->GetStoneLimit() + static_cast<StoneShed*>(go)->stoneCapacity);
-			break;
+		{
+			float capacityMultiplier = 0;
+			if (static_cast<Building*>(go)->eCurrState == Building::COMPLETED)
+				capacityMultiplier = 1;
+			else if (static_cast<Building*>(go)->eCurrState == Building::BROKEN)
+				capacityMultiplier = 0.5f;
+			SD->SetStoneLimit(SD->GetStoneLimit() + static_cast<StoneShed*>(go)->stoneCapacity * capacityMultiplier);
+		}
+		break;
 		case GameObject::GO_MOUNTAIN:
 		{
 			Mountain* mountainGo = static_cast<Mountain*>(go);

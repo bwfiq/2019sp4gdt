@@ -86,11 +86,7 @@ void CalamityTsunami::Update(float dt)
 	}
 	else if (state == STATE_STOPPING)
 	{
-		CSoundEngine::GetInstance()->StopASound("waves");
-		MessageCalamityEnd* msg = new MessageCalamityEnd();
-		PO->Send("Scene"
-			, msg
-		);
+		
 	}
 }
 
@@ -98,5 +94,10 @@ void CalamityTsunami::Exit()
 {
 	PostOffice::GetInstance()->Send("Scene"
 		, new MessageCameraShake(MessageCameraShake::SHAKE_EARTHQUAKE, 0)
+	);
+	CSoundEngine::GetInstance()->StopASound("waves");
+	MessageCalamityEnd* msg = new MessageCalamityEnd();
+	PostOffice::GetInstance()->Send("Scene"
+		, msg
 	);
 }

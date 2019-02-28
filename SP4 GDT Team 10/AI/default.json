@@ -6,7 +6,7 @@
     "Stone Research": false,
     "Wood Research": false,
     "Resources": {
-        "Food": 0,
+        "Food": 10,
         "Stone": 0,
         "Wood": 0
     },

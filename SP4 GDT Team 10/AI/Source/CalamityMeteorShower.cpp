@@ -72,10 +72,7 @@ void CalamityMeteorShower::Update(float dt)
 	{
 		if (fElapsedTime > fCalamityDuration)
 		{
-			MessageCalamityEnd* msg = new MessageCalamityEnd();
-			PO->Send("Scene"
-				, msg
-			);
+			
 			state = STATE_STOPPING;
 		}
 	}
@@ -88,5 +85,9 @@ void CalamityMeteorShower::Exit()
 {
 	PostOffice::GetInstance()->Send("Scene"
 		, new MessageCameraShake(MessageCameraShake::SHAKE_EARTHQUAKE, 0)
+	);
+	MessageCalamityEnd* msg = new MessageCalamityEnd();
+	PostOffice::GetInstance()->Send("Scene"
+		, msg
 	);
 }
