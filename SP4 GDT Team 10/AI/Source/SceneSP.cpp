@@ -3217,6 +3217,13 @@ void SceneSP::ChangeTimeOfDay()
 			{
 				++iAmountOfPigs;
 			}
+			else if (go->type == GameObject::GO_GRANARY)
+			{
+				if (static_cast<Building*>(go)->eCurrState == Building::COMPLETED)
+				{
+					SD->SetFood(Math::Min(SD->GetFoodLimit(), SD->GetFood() + 4));
+				}
+			}
 		}
 
 		//Spawning of Villagers
